@@ -1,70 +1,80 @@
 import json
+import requests
 from datetime import datetime
 
-def process_crypto():
-    # Bucket A = Cash-Flow Networks, Bucket B = Pure Money/Store of Value
-    bucket_a = ["ETH", "SOL", "UNI"] 
-    bucket_b = ["BTC", "DOGE"]
-    
+# --- SOURCES ---
+COINGECKO_LIST_URL = "https://api.coingecko.com/api/v3/coins/list"
+# We use a constant for Gold Market Cap (~$14-15 Trillion) for Method 6
+GOLD_MARKET_CAP = 15000000000000 
+
+def run_crypto_analysis():
     results = {}
+    print("Fetching master coin list...")
     
-    # Mock API Data (Replace with CoinGecko / DefiLlama API calls later)
-    mock_data = {
-        "ETH": {"fdv": 400000000000, "annual_fees": 2500000000, "fees_burned": 2000000000, "circulating": 120, "max_supply": 120},
-        "BTC": {"market_cap": 1200000000000, "active_addresses": 1000000, "gold_mc": 15000000000000},
-    }
+    try:
+        # 1. Fetch the top 500 coins by Market Cap (Smarter than fetching 15,000)
+        # This ensures we get the ones people actually search for first.
+        market_url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1"
+        response = requests.get(market_url)
+        coins = response.json()
+        
+        print(f"Analyzing top {len(coins)} cryptocurrencies...")
 
-    # --- PROCESS BUCKET A (CASH FLOW) ---
-    for coin in bucket_a:
-        print(f"Analyzing Cash-Flow Crypto: {coin}...")
-        try:
-            data = mock_data.get(coin)
-            if not data: continue
+        for coin in coins:
+            symbol = coin['symbol'].upper()
+            coin_id = coin['id']
             
-            # Method 2: Price-to-Sales (FDV / Fees)
-            p_s = data['fdv'] / data['annual_fees'] if data['annual_fees'] > 0 else 0
+            # --- BUCKET SEPARATION ---
+            # Bucket B: Store of Value (BTC, LTC, DOGE, etc.)
+            # Bucket A: Utility/Smart Contract (Everything else)
+            is_store_of_value = symbol in ["BTC", "LTC", "DOGE", "BCH", "XMR"]
             
-            # Method 3: Price-to-Earnings (FDV / Fees Burned or Distributed)
-            p_e = data['fdv'] / data['fees_burned'] if data['fees_burned'] > 0 else 0
+            mc = coin.get('market_cap') or 0
+            fdv = coin.get('fully_diluted_valuation') or mc
+            circulating = coin.get('circulating_supply') or 0
+            total_supply = coin.get('total_supply') or circulating
+
+            # --- VALUATION MATH ---
             
-            # Method 10: Dilution Ratio (Circulating / Max Supply)
-            dilution_ratio = data['circulating'] / data['max_supply'] if data['max_supply'] > 0 else 1
+            # Method 6: Monetary Premium (Relative to Gold)
+            monetary_premium = (mc / GOLD_MARKET_CAP) * 100 if GOLD_MARKET_CAP > 0 else 0
             
-            results[coin] = {
-                "asset_type": "Crypto - Cash Flow",
-                "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "Method_2_Price_to_Sales": round(p_s, 2),
-                "Method_3_Price_to_Earnings": round(p_e, 2),
-                "Method_10_Dilution_Ratio": f"{round(dilution_ratio * 100, 2)}%"
+            # Method 10: Dilution Ratio (Circulating / Total)
+            # High ratio = low future sell pressure from unlocks
+            dilution_score = (circulating / total_supply) * 100 if total_supply > 0 else 100
+            
+            # Method 7: Metcalfe's Law Proxy 
+            # (Since Active Addresses require a paid API, we use a Trading Volume/MC multiplier)
+            metcalfe_proxy = (coin.get('total_volume', 0) ** 0.5) * 10 # Simplified proxy for network activity
+            
+            # Calculate a "Speculative Fair Value" 
+            # For Bucket A: Based on FDV and Volume. For Bucket B: Based on Gold parity.
+            if is_store_of_value:
+                # Store of Value coins are valued on scarcity and gold-capture
+                spec_value = mc * 1.1 # Placeholder logic: 10% premium over current
+                asset_type = "Crypto - Store of Value"
+            else:
+                # Utility coins are valued on usage and dilution
+                spec_value = mc * (dilution_score / 100)
+                asset_type = "Crypto - Utility/Platform"
+
+            results[symbol] = {
+                "asset_type": asset_type,
+                "Current_Price": coin.get('current_price'),
+                "Method_6_Monetary_Premium": f"{round(monetary_premium, 4)}%",
+                "Method_7_Metcalfe_Proxy_Value": round(metcalfe_proxy, 2),
+                "Method_10_Dilution_Health": f"{round(dilution_score, 2)}%",
+                "Final_Speculative_Value": round(spec_value / circulating, 2) if circulating > 0 else 0,
+                "Last_Updated": datetime.now().strftime("%Y-%m-%d %H:%M")
             }
-        except Exception as e:
-            results[coin] = {"error": str(e)}
 
-    # --- PROCESS BUCKET B (STORE OF VALUE) ---
-    for coin in bucket_b:
-        print(f"Analyzing Network Crypto: {coin}...")
-        try:
-            data = mock_data.get(coin)
-            if not data: continue
-            
-            # Method 6: Monetary Premium (Coin MC / Gold MC)
-            monetary_premium = data['market_cap'] / data['gold_mc']
-            
-            # Method 7: Metcalfe's Law (Active Addresses ^ 2 * constant)
-            metcalfe_value = (data['active_addresses'] ** 2) * 0.000001
-            
-            results[coin] = {
-                "asset_type": "Crypto - Network Value",
-                "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "Method_6_Monetary_Premium_vs_Gold": f"{round(monetary_premium * 100, 2)}%",
-                "Method_7_Metcalfes_Law_Value": round(metcalfe_value, 2)
-            }
-        except Exception as e:
-            results[coin] = {"error": str(e)}
+        # 2. SAVE TO JSON
+        with open('crypto_valuations.json', 'w') as f:
+            json.dump(results, f, indent=4)
+        print("✅ Crypto Valuations Updated!")
 
-    with open('crypto_valuations.json', 'w') as f:
-        json.dump(results, f, indent=4)
-    print("✅ Crypto updated!")
+    except Exception as e:
+        print(f"❌ Error updating crypto: {e}")
 
 if __name__ == "__main__":
-    process_crypto()
+    run_crypto_analysis()
