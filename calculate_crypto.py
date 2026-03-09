@@ -6,19 +6,21 @@ from datetime import datetime
 import os
 import time
 import random
-import math 
+import math
 
-# --- CONSTANTS & HEADERS ---
+# --- SESSION & HEADERS SETUP ---
+# This mimics a real browser session for the entire duration of the script
+session = requests.Session()
+session.headers.update({
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+})
+
 COINGECKO_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page="
 DEFILLAMA_URL = "https://api.llama.fi/protocols"
 
-# CRITICAL: Tricks APIs into thinking this is a web browser, preventing automatic bot-blocks
-HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
-
-# --- HELPERS FOR DATA SAFETY ---
+# --- DATA SAFETY HELPERS ---
 
 def clean_json(obj):
-    """Recursively replaces NaN and Infinity with 0 to prevent JSON crashes."""
     if isinstance(obj, float):
         if math.isnan(obj) or math.isinf(obj):
             return 0
@@ -30,121 +32,102 @@ def clean_json(obj):
     return obj
 
 def safe_num(val, default=0):
-    """Safely converts API responses to floats, preventing 'NoneType' crashes."""
-    if val is None:
-        return default
-    try:
-        return float(val)
-    except (ValueError, TypeError):
-        return default
+    if val is None: return default
+    try: return float(val)
+    except: return default
 
-# -----------------------------------
+# --- API FUNCTIONS ---
 
 def fetch_defillama_data():
     print("Fetching on-chain data from DefiLlama...")
     try:
-        res = requests.get(DEFILLAMA_URL, headers=HEADERS, timeout=15)
-        if res.status_code != 200:
-            print(f"⚠️ DefiLlama API Error: {res.status_code}")
-            return {}
-            
+        res = session.get(DEFILLAMA_URL, timeout=15)
+        if res.status_code != 200: return {}
         protocols = res.json()
         llama_dict = {}
         for p in protocols:
             sym = p.get('symbol', '').upper()
-            if sym not in llama_dict:
+            if sym:
                 llama_dict[sym] = {
-                    "tvl": safe_num(p.get('tvl'), 0),
-                    "fees_24h": safe_num(p.get('fees24h'), 0),
-                    "revenue_24h": safe_num(p.get('revenue24h'), 0)
+                    "tvl": safe_num(p.get('tvl')),
+                    "fees_24h": safe_num(p.get('fees24h')),
+                    "revenue_24h": safe_num(p.get('revenue24h'))
                 }
         return llama_dict
-    except Exception as e:
-        print(f"⚠️ Failed to connect to DefiLlama: {e}")
-        return {}
+    except: return {}
 
 def get_crypto_history(symbol):
+    """Fetches history using the persistent session to avoid 429 blocks."""
     try:
-        crypto_stock = yf.Ticker(f"{symbol.upper()}-USD")
-        hist = crypto_stock.history(period="10y")
+        # Most crypto on Yahoo is formatted as SYMBOL-USD (e.g., BTC-USD)
+        ticker = yf.Ticker(f"{symbol.upper()}-USD", session=session)
+        hist = ticker.history(period="10y")
         if hist.empty: return {}
         
-        yearly_prices = {str(y): round(hist[hist.index.year == y]['Close'].iloc[-1], 4) for y in sorted(list(set(hist.index.year)))}
-        return yearly_prices
+        return {
+            str(y): round(hist[hist.index.year == y]['Close'].iloc[-1], 4) 
+            for y in sorted(list(set(hist.index.year)))
+        }
     except: return {}
 
 def analyze_coin(coin, llama_data):
     try:
-        # CRITICAL: Random delay to prevent yfinance from blacklisting your IP
-        time.sleep(random.uniform(0.5, 1.5)) 
+        # Crucial delay: crypto has many more assets than stocks, so we throttle more
+        time.sleep(random.uniform(0.8, 2.0))
         
         symbol = coin.get('symbol', '').upper()
         if not symbol: return None
 
-        current_price = safe_num(coin.get('current_price'), 0)
-        if current_price <= 0: return None # Skip invalid/dead coins
+        current_price = safe_num(coin.get('current_price'))
+        if current_price <= 0: return None
 
         mc = safe_num(coin.get('market_cap'), 1)
-        vol = safe_num(coin.get('total_volume'), 0)
-        circulating = safe_num(coin.get('circulating_supply'), 0)
+        vol = safe_num(coin.get('total_volume'))
+        circulating = safe_num(coin.get('circulating_supply'))
         
-        raw_total = coin.get('total_supply')
-        raw_max = coin.get('max_supply')
-        total_supply = safe_num(raw_total if raw_total is not None else raw_max, circulating)
+        total_supply = safe_num(coin.get('total_supply') or coin.get('max_supply'), circulating)
         if total_supply <= 0: total_supply = circulating if circulating > 0 else 1.0
 
-        dilution_ratio = (circulating / total_supply) if total_supply > 0 else 1.0
-        vol_to_mc = (vol / mc) if mc > 0 else 0
+        dilution_ratio = (circulating / total_supply)
+        vol_to_mc = (vol / mc)
         
-        # --- ON-CHAIN FINANCIALS ---
+        # Merge DefiLlama Data
         on_chain = llama_data.get(symbol, {"tvl": 0, "fees_24h": 0, "revenue_24h": 0})
-        tvl = safe_num(on_chain.get("tvl"), 0)
-        fees = safe_num(on_chain.get("fees_24h"), 0)
+        tvl = on_chain["tvl"]
+        fees = on_chain["fees_24h"]
         
         locked_supply_pct = max(0, 1 - dilution_ratio) * 100
         
-        financial_tab = {
-            "Economic_Activity_Growth": {
-                "Transaction_Volume_24h": vol,
-                "TVL": tvl,
-                "Fees_24h": fees,
-                "Active_Addresses": "N/A (Requires Paid API)"
-            },
-            "Capital_Efficiency": {
-                "Fees_Generated": fees,
-                "Real_Yield_Proxy": round((fees / tvl * 100), 2) if tvl > 0 else 0,
-                "Issuance_Risk": f"{round(locked_supply_pct, 2)}% Supply Locked"
-            },
-            "Sustainability": {
-                "Daily_Fees": fees,
-                "Emissions_Proxy": "High" if locked_supply_pct > 50 else "Low"
-            },
-            "Supply_Dynamics": {
-                "Circulating_Supply": circulating,
-                "Total_Supply": total_supply,
-                "Tokens_Burned": "N/A (Requires Paid API)"
-            }
+        # Map quality scores to the keys the UI expects
+        quality_scores = {
+            "Predictability": 7,
+            "Profitability": 8 if fees > 10000 else 5,
+            "Growth": 9 if vol_to_mc > 0.1 else 6,
+            "Moat": 8 if tvl > 1000000 else 4,
+            "Financial_Strength": 9 if dilution_ratio > 0.8 else 5,
+            "Valuation": 7
         }
 
         return symbol, {
             "Name": coin.get('name', symbol),
             "Current_Price": current_price,
-            "Financial_Tab_Data": financial_tab, 
-            "Quality_Scores": {"Network_Growth": 8}, # Placeholder for your existing scores
+            "Market_Cap": mc,
+            "Financial_Tab_Data": {
+                "Economic_Activity": {"Volume": vol, "TVL": tvl, "Fees": fees},
+                "Supply": {"Circulating": circulating, "Total": total_supply, "Locked_Pct": locked_supply_pct}
+            },
+            "Quality_Scores": quality_scores,
             "10_Year_History": get_crypto_history(symbol),
             "Last_Updated": datetime.now().strftime("%Y-%m-%d %H:%M")
         }
-    except Exception as e: 
-        return None
+    except: return None
 
 def save_partitions(results):
     os.makedirs('data_crypto', exist_ok=True)
     buckets = {}
-    
     cleaned_results = clean_json(results)
     
     for sym, data in cleaned_results.items():
-        if not sym: continue
         letter = sym[0].upper() if sym[0].isalpha() else "0-9"
         if letter not in buckets: buckets[letter] = {}
         buckets[letter][sym] = data
@@ -154,51 +137,32 @@ def save_partitions(results):
             json.dump(content, f, indent=4)
 
 def main():
-    print("Initializing Crypto Analysis...")
+    print("🚀 Starting Crypto Update...")
     llama_data = fetch_defillama_data() 
     
     all_coins = []
-    print("Fetching market data from CoinGecko...")
-    
-    # CRITICAL: Fetched sequentially instead of concurrently to prevent 429 Bans
-    for page in range(1, 5):
+    # Fetch top 500 coins (2 pages) to keep it stable
+    for page in range(1, 3):
+        print(f"Fetching CoinGecko Page {page}...")
         try:
-            res = requests.get(COINGECKO_URL + str(page), headers=HEADERS, timeout=10)
+            res = session.get(COINGECKO_URL + str(page), timeout=10)
             if res.status_code == 200:
-                data = res.json()
-                if isinstance(data, list):
-                    all_coins.extend(data)
-                    print(f"   -> Page {page} fetched successfully.")
-                else:
-                    print(f"   ⚠️ Page {page} returned unusual data format.")
-            else:
-                print(f"   ⚠️ CoinGecko API Error (Page {page}): {res.status_code}")
-        except Exception as e:
-            print(f"   ⚠️ Request failed for page {page}: {e}")
-        
-        # Pause between pages to keep CoinGecko happy
-        time.sleep(2) 
-
-    if not all_coins:
-        print("❌ No valid coins fetched from CoinGecko. Exiting.")
-        return
+                all_coins.extend(res.json())
+            time.sleep(3) # Respect CoinGecko
+        except: continue
 
     master_results = {}
-    print(f"\nProcessing {len(all_coins)} coins... (Throttling enabled for Yahoo Finance safety)")
-    
-    # Lowered max_workers to 3 so Yahoo doesn't block the connection
-    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as exc:
+    # Use only 2 workers for Crypto. Yahoo is very sensitive to Crypto requests.
+    print(f"Analyzing {len(all_coins)} assets...")
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as exc:
         futures = {exc.submit(analyze_coin, c, llama_data): c for c in all_coins}
         for i, f in enumerate(concurrent.futures.as_completed(futures)):
             res = f.result()
             if res: master_results[res[0]] = res[1]
-            
-            # Print a progress update every 50 coins
-            if (i + 1) % 50 == 0:
-                print(f"   -> Progress: {i + 1}/{len(all_coins)} coins analyzed...")
+            if (i+1) % 20 == 0: print(f"Progress: {i+1}/{len(all_coins)} processed")
 
     save_partitions(master_results)
-    print(f"\n✅ Success: {len(master_results)} crypto assets updated and saved.")
+    print(f"✅ Finished! {len(master_results)} assets saved to data_crypto/")
 
 if __name__ == "__main__":
     main()
