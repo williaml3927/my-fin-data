@@ -6,9 +6,13 @@ from datetime import datetime
 import time
 import random
 import math
+import requests
 
-# Use a common browser User-Agent to avoid immediate bot detection
-HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
+# 1. NEW: Create a custom session to properly pass the User-Agent to Yahoo Finance
+session = requests.Session()
+session.headers.update({
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+})
 
 def clean_json(obj):
     """Recursively replaces NaN and Infinity with 0 for JSON safety."""
@@ -25,17 +29,16 @@ def clean_json(obj):
 def fetch_stock_data(ticker_symbol):
     """Fetches data for a single ticker with rate-limit protection."""
     try:
-        # 1. Random delay to mimic human behavior
+        # Random delay to mimic human behavior
         time.sleep(random.uniform(1.0, 2.5))
         
-        ticker = yf.Ticker(ticker_symbol)
+        # Pass the custom session to yfinance so it doesn't block us
+        ticker = yf.Ticker(ticker_symbol, session=session)
         
-        # Get Info (Key stats)
         info = ticker.info
         if not info or 'symbol' not in info:
             return None
             
-        # Get 10-Year History
         hist = ticker.history(period="10y")
         yearly_prices = {}
         if not hist.empty:
@@ -61,7 +64,6 @@ def save_partitions(results):
     os.makedirs('data', exist_ok=True)
     buckets = {}
     
-    # Scrub the entire result set of NaN/Inf before saving
     clean_results = clean_json(results)
     
     for sym, data in clean_results.items():
@@ -74,13 +76,23 @@ def save_partitions(results):
             json.dump(content, f, indent=4)
 
 def main():
-    # Example list - replace with your full list of tickers
-    tickers = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META", "NVDA", "BRK-B"] 
+    # 2. NEW: A much larger list of the top 100 S&P 500 stocks to populate your JSON files
+    tickers = [
+        "AAPL", "MSFT", "NVDA", "GOOGL", "AMZN", "META", "BRK-B", "LLY", "AVGO", "V", 
+        "JPM", "TSLA", "WMT", "UNH", "MA", "PG", "JNJ", "HD", "ORCL", "MRK", 
+        "COST", "ABBV", "CVX", "CRM", "BAC", "KO", "NFLX", "PEP", "TMO", "AMD", 
+        "LIN", "MCD", "DIS", "ADBE", "ABT", "CSCO", "INTU", "WFC", "QCOM", "IBM", 
+        "AMAT", "CAT", "CMCSA", "DHR", "VZ", "PFE", "UBER", "NOW", "BX", "GE", 
+        "AMGN", "ISRG", "TXN", "PM", "BA", "HON", "COP", "UNP", "INTC", "SPGI", 
+        "RTX", "LRCX", "AXP", "LOW", "PGR", "SYK", "ELV", "T", "BLK", "TJX", 
+        "MDT", "C", "BSX", "VRTX", "CB", "GS", "CI", "MMC", "REGN", "ADP", 
+        "SCHW", "FI", "CVS", "PANW", "GILD", "BMY", "MDLZ", "ETN", "CME", "ADI", 
+        "KLAC", "SNPS", "SHW", "DE", "CDNS", "SO", "DUK", "ICE", "MO", "SLB"
+    ] 
     
     print(f"Updating {len(tickers)} stocks... (Slow mode enabled for rate safety)")
     
     master_results = {}
-    # 2. Lower max_workers to 2 to avoid Yahoo's "Too Many Requests" wall
     with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
         futures = {executor.submit(fetch_stock_data, t): t for t in tickers}
         
@@ -89,7 +101,6 @@ def main():
             if res:
                 master_results[res[0]] = res[1]
             
-            # Progress tracker
             if (i + 1) % 5 == 0:
                 print(f"Progress: {i + 1}/{len(tickers)} processed...")
 
