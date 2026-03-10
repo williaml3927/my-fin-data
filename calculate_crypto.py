@@ -1,80 +1,95 @@
 import json
 import requests
+import concurrent.futures
 from datetime import datetime
+import os
 
-# --- SOURCES ---
-COINGECKO_LIST_URL = "https://api.coingecko.com/api/v3/coins/list"
-# We use a constant for Gold Market Cap (~$14-15 Trillion) for Method 6
-GOLD_MARKET_CAP = 15000000000000 
+# --- SETTINGS ---
+# Fetching top 1000 covers 99% of user interest while staying within API limits
+COINGECKO_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page="
+GOLD_MARKET_CAP = 15000000000000 # Used for Store of Value math
 
-def run_crypto_analysis():
-    results = {}
-    print("Fetching master coin list...")
-    
+def fetch_page(page_num):
+    """Worker to fetch a single page of 250 coins."""
     try:
-        # 1. Fetch the top 500 coins by Market Cap (Smarter than fetching 15,000)
-        # This ensures we get the ones people actually search for first.
-        market_url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1"
-        response = requests.get(market_url)
-        coins = response.json()
+        response = requests.get(COINGECKO_URL + str(page_num), timeout=10)
+        return response.json()
+    except:
+        return []
+
+def analyze_coin(coin):
+    """Valuation logic for a single coin."""
+    try:
+        symbol = coin['symbol'].upper()
+        mc = coin.get('market_cap') or 0
+        circulating = coin.get('circulating_supply') or 0
+        total_supply = coin.get('total_supply') or circulating
         
-        print(f"Analyzing top {len(coins)} cryptocurrencies...")
+        # Determine Category
+        is_sov = symbol in ["BTC", "LTC", "DOGE", "BCH", "XMR"]
+        
+        # 1. Scarcity/Dilution Health
+        dilution = (circulating / total_supply * 100) if total_supply > 0 else 100
+        
+        # 2. Network Value (Metcalfe Proxy)
+        # Using volume relative to market cap as a high-activity indicator
+        vol_to_mc = (coin.get('total_volume', 0) / mc) if mc > 0 else 0
+        
+        # 3. Monetary Premium (vs Gold)
+        monetary_prem = (mc / GOLD_MARKET_CAP * 100)
+        
+        # Final Speculative Value Logic
+        if is_sov:
+            # Store of Value: Weighted by gold capture and scarcity
+            spec_price = coin['current_price'] * (1 + (monetary_prem/100))
+        else:
+            # Utility: Weighted by network activity and dilution health
+            spec_price = coin['current_price'] * (dilution / 100) * (1 + vol_to_mc)
 
-        for coin in coins:
-            symbol = coin['symbol'].upper()
-            coin_id = coin['id']
-            
-            # --- BUCKET SEPARATION ---
-            # Bucket B: Store of Value (BTC, LTC, DOGE, etc.)
-            # Bucket A: Utility/Smart Contract (Everything else)
-            is_store_of_value = symbol in ["BTC", "LTC", "DOGE", "BCH", "XMR"]
-            
-            mc = coin.get('market_cap') or 0
-            fdv = coin.get('fully_diluted_valuation') or mc
-            circulating = coin.get('circulating_supply') or 0
-            total_supply = coin.get('total_supply') or circulating
+        return symbol, {
+            "Name": coin['name'],
+            "Current_Price": coin['current_price'],
+            "Market_Cap_Rank": coin['market_cap_rank'],
+            "Dilution_Health": f"{round(dilution, 2)}%",
+            "Metcalfe_Activity_Score": round(vol_to_mc * 100, 2),
+            "Final_Speculative_Value": round(spec_price, 4),
+            "Last_Updated": datetime.now().strftime("%Y-%m-%d %H:%M")
+        }
+    except:
+        return None
 
-            # --- VALUATION MATH ---
-            
-            # Method 6: Monetary Premium (Relative to Gold)
-            monetary_premium = (mc / GOLD_MARKET_CAP) * 100 if GOLD_MARKET_CAP > 0 else 0
-            
-            # Method 10: Dilution Ratio (Circulating / Total)
-            # High ratio = low future sell pressure from unlocks
-            dilution_score = (circulating / total_supply) * 100 if total_supply > 0 else 100
-            
-            # Method 7: Metcalfe's Law Proxy 
-            # (Since Active Addresses require a paid API, we use a Trading Volume/MC multiplier)
-            metcalfe_proxy = (coin.get('total_volume', 0) ** 0.5) * 10 # Simplified proxy for network activity
-            
-            # Calculate a "Speculative Fair Value" 
-            # For Bucket A: Based on FDV and Volume. For Bucket B: Based on Gold parity.
-            if is_store_of_value:
-                # Store of Value coins are valued on scarcity and gold-capture
-                spec_value = mc * 1.1 # Placeholder logic: 10% premium over current
-                asset_type = "Crypto - Store of Value"
-            else:
-                # Utility coins are valued on usage and dilution
-                spec_value = mc * (dilution_score / 100)
-                asset_type = "Crypto - Utility/Platform"
+def save_partitions(results):
+    """Saves data into data_crypto/crypto_A.json, etc."""
+    if not os.path.exists('data_crypto'): os.makedirs('data_crypto')
+    
+    buckets = {}
+    for sym, data in results.items():
+        letter = sym[0].upper()
+        if not letter.isalpha(): letter = "0-9"
+        if letter not in buckets: buckets[letter] = {}
+        buckets[letter][sym] = data
+        
+    for letter, content in buckets.items():
+        with open(f'data_crypto/crypto_{letter}.json', 'w') as f:
+            json.dump(content, f, indent=4)
 
-            results[symbol] = {
-                "asset_type": asset_type,
-                "Current_Price": coin.get('current_price'),
-                "Method_6_Monetary_Premium": f"{round(monetary_premium, 4)}%",
-                "Method_7_Metcalfe_Proxy_Value": round(metcalfe_proxy, 2),
-                "Method_10_Dilution_Health": f"{round(dilution_score, 2)}%",
-                "Final_Speculative_Value": round(spec_value / circulating, 2) if circulating > 0 else 0,
-                "Last_Updated": datetime.now().strftime("%Y-%m-%d %H:%M")
-            }
-
-        # 2. SAVE TO JSON
-        with open('crypto_valuations.json', 'w') as f:
-            json.dump(results, f, indent=4)
-        print("✅ Crypto Valuations Updated!")
-
-    except Exception as e:
-        print(f"❌ Error updating crypto: {e}")
+def main():
+    print("Fetching Top 1000 Cryptos...")
+    all_coins = []
+    # Fetch 4 pages of 250 coins each
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+        pages = list(executor.map(fetch_page, range(1, 5)))
+        for p in pages: all_coins.extend(p)
+        
+    print(f"Analyzing {len(all_coins)} coins...")
+    master_results = {}
+    for coin in all_coins:
+        res = analyze_coin(coin)
+        if res:
+            master_results[res[0]] = res[1]
+            
+    save_partitions(master_results)
+    print("✅ Crypto buckets updated successfully.")
 
 if __name__ == "__main__":
-    run_crypto_analysis()
+    main()
