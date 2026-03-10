@@ -5,37 +5,18 @@ import concurrent.futures
 from datetime import datetime
 import os
 import time
-import random
-import math
-
-# --- ANTI-BOT SESSION ---
-session = requests.Session()
-session.headers.update({
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-})
 
 # --- SOURCES ---
 NYSE_URL = "https://raw.githubusercontent.com/williaml3927/NYSE-list/refs/heads/main/NYSE.json"
 OTHER_URL = "https://raw.githubusercontent.com/williaml3927/NYSE-list/refs/heads/main/Other%20list.json"
+
 CORE_PRIORITY = ["AAPL", "TSLA", "MSFT", "NVDA", "GOOGL", "AMZN", "META", "BRK-B", "LLY", "AVGO"]
 
-def clean_json(obj):
-    """Prevents JSON crashes by converting NaN and Infinity to 0"""
-    if isinstance(obj, float):
-        if math.isnan(obj) or math.isinf(obj): return 0
-        return obj
-    elif isinstance(obj, dict):
-        return {k: clean_json(v) for k, v in obj.items()}
-    elif isinstance(obj, list):
-        return [clean_json(v) for v in obj]
-    return obj
-
 def get_all_tickers():
-    """Fetches the massive list of thousands of stocks to ensure an A-Z output"""
     tickers = CORE_PRIORITY.copy()
     for url in [NYSE_URL, OTHER_URL]:
         try:
-            res = session.get(url, timeout=10)
+            res = requests.get(url)
             data = res.json()
             for item in data:
                 symbol = item.get('Symbol') or item.get('ACT Symbol') or item.get('ticker')
@@ -57,10 +38,10 @@ def analyze_ticker(ticker, retries=3):
     """Worker function with built-in retries to bypass API blocking."""
     for attempt in range(retries):
         try:
-            time.sleep(random.uniform(0.5, 1.5)) # Human-like delay
+            # Adding a tiny human-like delay to prevent spamming Yahoo
+            time.sleep(0.5) 
             
-            # Using the protected session
-            stock = yf.Ticker(ticker, session=session)
+            stock = yf.Ticker(ticker)
             info = stock.info
             
             if not info or 'sharesOutstanding' not in info: 
@@ -90,18 +71,16 @@ def analyze_ticker(ticker, retries=3):
             
         except Exception as e:
             if "429" in str(e) or "Too Many Requests" in str(e):
+                # If Yahoo blocks us, sleep for 5 seconds and try again
                 time.sleep(5)
-            continue 
+            continue # Try the next attempt
             
+    # If it fails all retries, return None
     return None
 
 def save_partitioned_data(master_results):
     partitions = {}
-    
-    # CRITICAL: Clean the data before saving so JSON doesn't crash
-    clean_data = clean_json(master_results)
-    
-    for ticker, data in clean_data.items():
+    for ticker, data in master_results.items():
         letter = ticker[0].upper()
         if not letter.isalpha(): letter = "0-9"
         if letter not in partitions: partitions[letter] = {}
@@ -113,15 +92,16 @@ def save_partitioned_data(master_results):
         with open(f'data/stocks_{letter}.json', 'w') as f:
             json.dump(content, f, indent=4)
             
-    print(f"✅ Saved {len(partitions)} A-Z files containing {len(clean_data)} total stocks.")
+    print(f"✅ Saved {len(partitions)} A-Z files containing {len(master_results)} total stocks.")
 
 def main():
     tickers = get_all_tickers()
     master_results = {}
     
-    print(f"Starting analysis with 4 safe threads...")
+    # Dropped from 15 to 5 workers to stay under the radar
+    print(f"Starting analysis with 5 safe threads...")
     
-    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         future_to_ticker = {executor.submit(analyze_ticker, t): t for t in tickers}
         
         for future in concurrent.futures.as_completed(future_to_ticker):
