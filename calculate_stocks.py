@@ -514,12 +514,18 @@ def calc_mean_pb(info, mean_pb):
     return round(ratio * bvps, 2)
 
 def calc_psg(info, shares):
+    """
+    PSG fair value = Revenue per share x (Revenue growth rate as a whole number)
+    Mirrors PEG logic: fair value is the price at which PSG = 1.0
+    i.e. P/S ratio equals the revenue growth rate expressed as a percentage.
+    Example: AAPL rev/share $25.40 x 6.1% growth = $154.94 fair value
+    """
     rev        = _safe(info.get('totalRevenue'))
     rev_growth = _safe(info.get('revenueGrowth'))
-    ps         = _safe(info.get('priceToSalesTrailing12Months'))
-    if None in (rev, rev_growth, ps) or shares <= 0: return None
-    if ps <= 0 or rev_growth <= 0: return None
-    return round((rev / shares) * (rev_growth / ps), 2)
+    if None in (rev, rev_growth) or shares <= 0: return None
+    if rev_growth <= 0 or rev <= 0: return None
+    rev_ps = rev / shares
+    return round(rev_ps * (rev_growth * 100), 2)
 
 def calc_peg(info):
     eps    = _safe(info.get('trailingEps'))
