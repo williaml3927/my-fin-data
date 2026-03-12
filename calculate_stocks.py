@@ -939,11 +939,24 @@ def analyze_ticker(ticker, retries=3):
             stock = yf.Ticker(ticker)
             info  = stock.info
 
-            if not info or 'sharesOutstanding' not in info:
+            if not info:
+                print(f"  [SKIP] {ticker}: yfinance returned empty info")
                 return None
 
-            shares = info.get('sharesOutstanding', 1)
-            if shares <= 0:
+            # Robust share count — yfinance uses different keys depending on
+            # the security type. 'sharesOutstanding' is absent for many tickers
+            # (meme stocks, ETFs, ADRs). Try all known alternatives in order.
+            shares = (
+                info.get('sharesOutstanding') or
+                info.get('impliedSharesOutstanding') or
+                info.get('floatShares') or
+                0
+            )
+            if not shares or shares <= 0:
+                print(f"  [SKIP] {ticker}: no share count available "
+                      f"(sharesOutstanding={info.get('sharesOutstanding')}, "
+                      f"impliedSharesOutstanding={info.get('impliedSharesOutstanding')}, "
+                      f"floatShares={info.get('floatShares')})")
                 return None
 
             # Pull annual financials once — reused across quality metrics
@@ -1099,8 +1112,12 @@ def analyze_ticker(ticker, retries=3):
             }
 
         except Exception as e:
-            if "429" in str(e) or "Too Many Requests" in str(e):
+            err = str(e)
+            if "429" in err or "Too Many Requests" in err:
+                print(f"  [RATE LIMIT] {ticker} attempt {attempt+1} — waiting 5s")
                 time.sleep(5)
+            else:
+                print(f"  [ERROR] {ticker} attempt {attempt+1}: {err[:120]}")
             continue
 
     return None
@@ -1130,14 +1147,23 @@ def main():
     master_results = {}
     print(f"Starting analysis of {len(tickers)} tickers with 5 safe threads...")
 
+    skipped = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         future_to_ticker = {executor.submit(analyze_ticker, t): t for t in tickers}
         for future in concurrent.futures.as_completed(future_to_ticker):
+            t   = future_to_ticker[future]
             res = future.result()
             if res:
                 master_results[res[0]] = res[1]
                 if len(master_results) % 50 == 0:
                     print(f"  Processed {len(master_results)} stocks...")
+            else:
+                skipped.append(t)
+
+    if skipped:
+        print(f"\n⚠️  {len(skipped)} tickers skipped (see [SKIP]/[ERROR] lines above):")
+        for chunk in [skipped[i:i+10] for i in range(0, len(skipped), 10)]:
+            print(f"   {', '.join(chunk)}")
 
     save_partitioned_data(master_results)
 
