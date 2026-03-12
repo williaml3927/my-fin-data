@@ -7,6 +7,12 @@ import os
 import time
 import pandas as pd
 import numpy as np
+try:
+    from finvizfinance.quote import finvizfinance as fvz
+    FINVIZ_AVAILABLE = True
+except ImportError:
+    FINVIZ_AVAILABLE = False
+    print("Warning: finvizfinance not installed. Falling back to yfinance growth rates.")
 
 # =============================================================================
 # VALUATION CONFIG — tiered by fundamental quality (two-stage growth model)
@@ -51,6 +57,24 @@ HISTORY_YEARS = 5
 MAX_PE = 50    # anything above this is speculative / earnings-distorted
 MAX_PS = 20    # revenue multiples above this are growth-premium territory
 MAX_PB = 20    # book multiples above this indicate intangible-heavy distortion
+
+# =============================================================================
+# GROWTH RATE CAPS — applied to ALL growth inputs including Finviz
+#
+# MAX_GROWTH_RATE: caps the stage 1 DCF growth rate per ticker.
+#   Prevents distortion from yfinance reporting 500%+ growth for companies
+#   recovering from near-zero earnings (e.g. GME, turnarounds).
+#
+# MAX_PEG_PSG_GROWTH: tighter cap specifically for PEG and PSG fair value
+#   formulas. Lynch's PEG formula multiplies EPS by growth-as-whole-number,
+#   so even 30% growth gives EPS x 30 which is already generous.
+#   Above 30%, the result becomes an unreliable outlier.
+#
+# MIN_GROWTH_RATE: floor so DCF doesn't collapse to zero for shrinking firms.
+# =============================================================================
+MAX_GROWTH_RATE     = 0.30   # 30% cap on DCF stage 1 growth
+MAX_PEG_PSG_GROWTH  = 0.30   # 30% cap specifically for PEG and PSG formulas
+MIN_GROWTH_RATE     = 0.02   # 2% floor — even declining firms get minimal growth
 
 # =============================================================================
 # TERMINAL VALUE CAP — prevents DCF terminal value from dominating the mean.
@@ -225,6 +249,44 @@ def _trend_score(series, max_pts=3):
     elif declines <= len(series) // 2:
         return 1
     return 0
+
+# =============================================================================
+# FINVIZ GROWTH FETCHER
+#
+# Fetches "EPS Next 5Y" (analyst consensus forward EPS growth) from Finviz.
+# More accurate than yfinance trailing earningsGrowth for DCF inputs because:
+#   - Forward analyst consensus rather than backward-looking actuals
+#   - Smooths out one-off recovery spikes (e.g. GME 500%+ trailing growth)
+#
+# Fallback chain:
+#   1. Finviz "EPS next 5Y"       (best  -- forward analyst consensus)
+#   2. yfinance earningsGrowth    (ok    -- trailing, may be distorted)
+#   3. MIN_GROWTH_RATE (2%)       (floor -- prevents DCF collapse)
+#
+# All values clamped between MIN_GROWTH_RATE and MAX_GROWTH_RATE.
+# =============================================================================
+def get_forward_growth(ticker, info):
+    # Attempt 1: Finviz EPS Next 5Y
+    if FINVIZ_AVAILABLE:
+        try:
+            fundamentals = fvz(ticker).ticker_fundament()
+            raw_str = fundamentals.get("EPS next 5Y", "")
+            if raw_str and raw_str not in ("-", "N/A", ""):
+                raw     = float(raw_str.replace("%", "").strip()) / 100
+                clamped = max(MIN_GROWTH_RATE, min(raw, MAX_GROWTH_RATE))
+                return {"rate": clamped, "source": "finviz", "raw": round(raw, 4)}
+        except Exception:
+            pass
+
+    # Attempt 2: yfinance trailing earningsGrowth
+    yf_growth = _safe(info.get("earningsGrowth"))
+    if yf_growth is not None and yf_growth > 0:
+        clamped = max(MIN_GROWTH_RATE, min(yf_growth, MAX_GROWTH_RATE))
+        return {"rate": clamped, "source": "yfinance", "raw": round(yf_growth, 4)}
+
+    # Attempt 3: default floor
+    return {"rate": MIN_GROWTH_RATE, "source": "default", "raw": MIN_GROWTH_RATE}
+
 
 # =============================================================================
 # QUALITY METRIC 1 — Profitability (0–10)
@@ -626,24 +688,47 @@ def calc_mean_pb(info, mean_pb):
     if ratio > MAX_PB: return None    # reject — book multiple too distorted to be meaningful
     return round(ratio * bvps, 2)
 
-def calc_psg(info, shares):
+def calc_psg(info, shares, forward_growth=None):
     """
-    PSG fair value = Revenue per share x (Revenue growth rate as a whole number)
-    Mirrors PEG logic: fair value is the price at which PSG = 1.0
-    i.e. P/S ratio equals the revenue growth rate expressed as a percentage.
-    Example: AAPL rev/share $25.40 x 6.1% growth = $154.94 fair value
+    PSG fair value = Revenue per share x (growth rate as a whole number)
+    Fair value is the price at which PSG = 1.0.
+    Uses forward_growth (from Finviz) if provided, else falls back to
+    yfinance revenueGrowth. Capped at MAX_PEG_PSG_GROWTH to prevent
+    turnaround/recovery spikes from inflating the result.
     """
-    rev        = _safe(info.get('totalRevenue'))
-    rev_growth = _safe(info.get('revenueGrowth'))
-    if None in (rev, rev_growth) or shares <= 0: return None
-    if rev_growth <= 0 or rev <= 0: return None
-    rev_ps = rev / shares
-    return round(rev_ps * (rev_growth * 100), 2)
+    rev = _safe(info.get('totalRevenue'))
+    if rev is None or rev <= 0 or shares <= 0: return None
 
-def calc_peg(info):
-    eps    = _safe(info.get('trailingEps'))
-    growth = _safe(info.get('earningsGrowth'))
-    if None in (eps, growth) or eps <= 0 or growth <= 0: return None
+    # Prefer forward growth; fall back to trailing revenue growth
+    if forward_growth is not None and forward_growth > 0:
+        growth = min(forward_growth, MAX_PEG_PSG_GROWTH)
+    else:
+        rev_growth = _safe(info.get('revenueGrowth'))
+        if rev_growth is None or rev_growth <= 0: return None
+        growth = min(rev_growth, MAX_PEG_PSG_GROWTH)
+
+    rev_ps = rev / shares
+    return round(rev_ps * (growth * 100), 2)
+
+def calc_peg(info, forward_growth=None):
+    """
+    PEG fair value = EPS x (growth rate as a whole number)
+    Fair value is the price at which PEG = 1.0 (Lynch framework).
+    Uses forward_growth (from Finviz) if provided, else yfinance earningsGrowth.
+    Capped at MAX_PEG_PSG_GROWTH (30%) — above this the formula produces
+    unreliable outliers (e.g. GME recovery spike giving $199 fair value).
+    """
+    eps = _safe(info.get('trailingEps'))
+    if eps is None or eps <= 0: return None
+
+    # Prefer forward growth; fall back to trailing earnings growth
+    if forward_growth is not None and forward_growth > 0:
+        growth = min(forward_growth, MAX_PEG_PSG_GROWTH)
+    else:
+        yf_growth = _safe(info.get('earningsGrowth'))
+        if yf_growth is None or yf_growth <= 0: return None
+        growth = min(yf_growth, MAX_PEG_PSG_GROWTH)
+
     return round(eps * (growth * 100), 2)
 
 def calc_ev_ebitda(info, shares):
@@ -766,7 +851,20 @@ def analyze_ticker(ticker, retries=3):
             terminal            = tier_data["terminal_growth"]
 
             # ------------------------------------------------------------------
-            # STAGE 2 — Historical multiples
+            # STAGE 2 — Forward growth rate (Finviz primary, yfinance fallback)
+            # ------------------------------------------------------------------
+            fwd_growth      = get_forward_growth(ticker, info)
+            fwd_rate        = fwd_growth["rate"]     # clamped 2%-30%
+            fwd_source      = fwd_growth["source"]   # finviz | yfinance | default
+            fwd_raw         = fwd_growth["raw"]
+
+            # Override tier stage1 growth with forward rate — more accurate
+            # Stage2 tapers from forward rate to preserve two-stage shape
+            growth_s1 = fwd_rate
+            growth_s2 = max(MIN_GROWTH_RATE, fwd_rate * 0.50)  # stage2 = 50% of stage1
+
+            # ------------------------------------------------------------------
+            # STAGE 3 — Historical multiples
             # ------------------------------------------------------------------
             hist_multiples = get_historical_mean_multiples(stock, shares)
             mean_pe = hist_multiples.get("mean_pe")
@@ -774,7 +872,7 @@ def analyze_ticker(ticker, retries=3):
             mean_pb = hist_multiples.get("mean_pb")
 
             # ------------------------------------------------------------------
-            # STAGE 3 — All 10 valuations using tier-adjusted inputs
+            # STAGE 4 — All 10 valuations using tier-adjusted inputs
             # ------------------------------------------------------------------
             # Compute DCF FCF first — used as terminal value cap reference
             dcf_fcf_val = calc_dcf_fcf(info, shares, growth_s1, growth_s2, discount)
@@ -787,8 +885,8 @@ def analyze_ticker(ticker, retries=3):
                 "5_Mean_PS":            calc_mean_ps(info, shares, mean_ps),
                 "6_Mean_PE":            calc_mean_pe(info, mean_pe),
                 "7_Mean_PB":            calc_mean_pb(info, mean_pb),
-                "8_PSG":                calc_psg(info, shares),
-                "9_PEG":                calc_peg(info),
+                "8_PSG":                calc_psg(info, shares, fwd_rate),
+                "9_PEG":                calc_peg(info, fwd_rate),
                 "10_EV_EBITDA":         calc_ev_ebitda(info, shares),
             }
             aggregate  = calc_intrinsic_value(valuations, tier=tier_data["tier"])
@@ -799,6 +897,8 @@ def analyze_ticker(ticker, retries=3):
                 "pb_source":       "historical_mean" if mean_pb else "current_trailing",
                 "pe_approx":       True,
                 "peg_approx":      True,
+                "growth_source":   fwd_source,
+                "growth_raw":      fwd_raw,
                 "discount_rate":   discount,
                 "growth_stage1":   growth_s1,
                 "growth_stage2":   growth_s2,
