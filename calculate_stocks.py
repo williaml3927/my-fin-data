@@ -53,6 +53,80 @@ MAX_PS = 20    # revenue multiples above this are growth-premium territory
 MAX_PB = 20    # book multiples above this indicate intangible-heavy distortion
 
 # =============================================================================
+# TERMINAL VALUE CAP — prevents DCF terminal value from dominating the mean.
+# Terminal value is capped at this multiple of the DCF FCF result.
+# e.g. if DCF FCF = $187, terminal value is capped at $187 x 3 = $561.
+# This prevents perpetual growth assumptions from inflating weak companies.
+# =============================================================================
+TERMINAL_VALUE_CAP_MULTIPLIER = 3.0
+
+# =============================================================================
+# SECTOR MEDIAN EV/EBITDA MULTIPLES
+# Used instead of the company's own multiple to prevent circular valuation.
+# A struggling retailer is valued at the sector median, not its own premium.
+# Source: long-run sector medians based on S&P 500 historical averages.
+# =============================================================================
+SECTOR_EV_EBITDA = {
+    "Technology":                20,
+    "Healthcare":                15,
+    "Consumer Discretionary":    12,
+    "Consumer Staples":          14,
+    "Financials":                12,
+    "Energy":                     8,
+    "Industrials":               12,
+    "Utilities":                 10,
+    "Real Estate":               18,
+    "Materials":                 10,
+    "Communication Services":    14,
+    "Default":                   12,
+}
+
+# =============================================================================
+# TIER WEIGHTS — each method weighted by reliability for that tier.
+# Strong companies: DCF and terminal value weighted more heavily.
+# Weak companies:   asset/revenue multiples weighted more heavily.
+# All weights per tier sum to 1.0.
+# =============================================================================
+TIER_WEIGHTS = {
+    "Strong": {
+        "1_DCF_Operating_CF":   0.15,
+        "2_DCF_FCF":            0.15,
+        "3_DCF_Net_Income":     0.08,
+        "4_DCF_Terminal_Value": 0.15,
+        "5_Mean_PS":            0.08,
+        "6_Mean_PE":            0.10,
+        "7_Mean_PB":            0.05,
+        "8_PSG":                0.08,
+        "9_PEG":                0.06,
+        "10_EV_EBITDA":         0.10,
+    },
+    "Average": {
+        "1_DCF_Operating_CF":   0.12,
+        "2_DCF_FCF":            0.12,
+        "3_DCF_Net_Income":     0.10,
+        "4_DCF_Terminal_Value": 0.12,
+        "5_Mean_PS":            0.10,
+        "6_Mean_PE":            0.12,
+        "7_Mean_PB":            0.08,
+        "8_PSG":                0.08,
+        "9_PEG":                0.08,
+        "10_EV_EBITDA":         0.08,
+    },
+    "Weak": {
+        "1_DCF_Operating_CF":   0.08,
+        "2_DCF_FCF":            0.08,
+        "3_DCF_Net_Income":     0.08,
+        "4_DCF_Terminal_Value": 0.08,
+        "5_Mean_PS":            0.12,
+        "6_Mean_PE":            0.08,
+        "7_Mean_PB":            0.15,
+        "8_PSG":                0.08,
+        "9_PEG":                0.08,
+        "10_EV_EBITDA":         0.17,
+    },
+}
+
+# =============================================================================
 # SOURCES
 # =============================================================================
 NYSE_URL  = "https://raw.githubusercontent.com/williaml3927/NYSE-list/refs/heads/main/NYSE.json"
@@ -497,19 +571,34 @@ def calc_dcf_net_income(info, shares, growth_s1, growth_s2, discount):
     if ni is None or shares <= 0: return None
     return _dcf_sum(ni / shares, growth_s1, growth_s2, discount)
 
-def calc_dcf_terminal_value(info, shares, growth_s1, growth_s2, discount, terminal_growth):
+def calc_dcf_terminal_value(info, shares, growth_s1, growth_s2, discount, terminal_growth, dcf_fcf_value=None):
+    """
+    Two-stage DCF with Gordon Growth terminal value.
+    Terminal value is capped at TERMINAL_VALUE_CAP_MULTIPLIER x DCF FCF
+    to prevent perpetual growth assumptions from inflating weak companies
+    or creating unrealistic outliers that skew the weighted mean.
+    """
     fcf = _safe(info.get('freeCashflow'))
     if fcf is None or shares <= 0: return None
     fcf_ps = fcf / shares
     if fcf_ps <= 0: return None
-    pv_cf   = _dcf_sum(fcf_ps, growth_s1, growth_s2, discount)
-    # Terminal value anchored to end-of-stage-2 cash flow
-    cf_end  = fcf_ps
+
+    pv_cf  = _dcf_sum(fcf_ps, growth_s1, growth_s2, discount)
+    cf_end = fcf_ps
     for t in range(1, DCF_YEARS + 1):
         cf_end = cf_end * (1 + (growth_s1 if t <= 10 else growth_s2))
     if discount <= terminal_growth: return None
-    pv_tv   = ((cf_end * (1 + terminal_growth)) / (discount - terminal_growth)) / (1 + discount) ** DCF_YEARS
-    return round(pv_cf + pv_tv, 2)
+    pv_tv  = ((cf_end * (1 + terminal_growth)) / (discount - terminal_growth)) / (1 + discount) ** DCF_YEARS
+
+    result = round(pv_cf + pv_tv, 2)
+
+    # Apply terminal value cap relative to plain DCF FCF
+    if dcf_fcf_value and dcf_fcf_value > 0:
+        cap = dcf_fcf_value * TERMINAL_VALUE_CAP_MULTIPLIER
+        if result > cap:
+            result = round(cap, 2)
+
+    return result
 
 def calc_mean_ps(info, shares, mean_ps):
     rev = _safe(info.get('totalRevenue'))
@@ -558,38 +647,61 @@ def calc_peg(info):
     return round(eps * (growth * 100), 2)
 
 def calc_ev_ebitda(info, shares):
+    """
+    Uses the SECTOR MEDIAN EV/EBITDA multiple rather than the company's own
+    multiple. This prevents circular valuation where an overpriced stock
+    (e.g. GME trading at 200x EV/EBITDA) simply validates its own premium.
+
+    Sector is read from info['sector']. Falls back to 'Default' (12x) if
+    the sector is unrecognised or missing.
+    """
     ebitda = _safe(info.get('ebitda'))
-    ev     = _safe(info.get('enterpriseValue'))
     debt   = _safe(info.get('totalDebt'), 0)
     cash   = _safe(info.get('totalCash'), 0)
-    if None in (ebitda, ev) or ebitda <= 0 or ev <= 0 or shares <= 0: return None
-    multiple     = ev / ebitda
-    if multiple <= 0: return None
+    if ebitda is None or ebitda <= 0 or shares <= 0: return None
+
+    sector   = info.get('sector', 'Default') or 'Default'
+    multiple = SECTOR_EV_EBITDA.get(sector, SECTOR_EV_EBITDA['Default'])
+
     equity_value = (ebitda * multiple) - debt + cash
     if equity_value <= 0: return None
     return round(equity_value / shares, 2)
 
 # =============================================================================
-# INTRINSIC VALUE AGGREGATOR
+# INTRINSIC VALUE AGGREGATOR — tier-weighted mean
+#
+# Each method is weighted by its reliability for the company's tier.
+# Valid methods only (non-null, > 0, < $1M). Weights are renormalised
+# across valid methods so the result is always a proper weighted mean
+# even when some methods return null.
 # =============================================================================
-def calc_intrinsic_value(valuations: dict) -> dict:
+def calc_intrinsic_value(valuations: dict, tier: str = "Average") -> dict:
     keys = [
         "1_DCF_Operating_CF", "2_DCF_FCF", "3_DCF_Net_Income",
         "4_DCF_Terminal_Value", "5_Mean_PS", "6_Mean_PE",
         "7_Mean_PB", "8_PSG", "9_PEG", "10_EV_EBITDA",
     ]
-    valid = [
-        v for k in keys
-        if (v := valuations.get(k)) is not None
-        and isinstance(v, (int, float))
-        and 0 < v < 1_000_000
-    ]
-    count = len(valid)
+    weights = TIER_WEIGHTS.get(tier, TIER_WEIGHTS["Average"])
+
+    valid_vals, valid_weights = [], []
+    for k in keys:
+        v = valuations.get(k)
+        if v is not None and isinstance(v, (int, float)) and 0 < v < 1_000_000:
+            valid_vals.append(v)
+            valid_weights.append(weights.get(k, 0.10))
+
+    count = len(valid_vals)
     if count == 0:
         return {"intrinsic_value": None, "methods_used": 0, "confidence": "Insufficient Data"}
+
+    # Renormalise weights across valid methods only
+    total_w   = sum(valid_weights)
+    norm_w    = [w / total_w for w in valid_weights]
+    intrinsic = round(float(np.dot(valid_vals, norm_w)), 2)
     confidence = "High" if count >= 7 else "Medium" if count >= 4 else "Low"
+
     return {
-        "intrinsic_value": round(float(np.mean(valid)), 2),
+        "intrinsic_value": intrinsic,
         "methods_used":    count,
         "confidence":      confidence,
     }
@@ -664,11 +776,14 @@ def analyze_ticker(ticker, retries=3):
             # ------------------------------------------------------------------
             # STAGE 3 — All 10 valuations using tier-adjusted inputs
             # ------------------------------------------------------------------
+            # Compute DCF FCF first — used as terminal value cap reference
+            dcf_fcf_val = calc_dcf_fcf(info, shares, growth_s1, growth_s2, discount)
+
             valuations = {
                 "1_DCF_Operating_CF":   calc_dcf_operating_cf(info, shares, growth_s1, growth_s2, discount),
-                "2_DCF_FCF":            calc_dcf_fcf(info, shares, growth_s1, growth_s2, discount),
+                "2_DCF_FCF":            dcf_fcf_val,
                 "3_DCF_Net_Income":     calc_dcf_net_income(info, shares, growth_s1, growth_s2, discount),
-                "4_DCF_Terminal_Value": calc_dcf_terminal_value(info, shares, growth_s1, growth_s2, discount, terminal),
+                "4_DCF_Terminal_Value": calc_dcf_terminal_value(info, shares, growth_s1, growth_s2, discount, terminal, dcf_fcf_val),
                 "5_Mean_PS":            calc_mean_ps(info, shares, mean_ps),
                 "6_Mean_PE":            calc_mean_pe(info, mean_pe),
                 "7_Mean_PB":            calc_mean_pb(info, mean_pb),
@@ -676,7 +791,7 @@ def analyze_ticker(ticker, retries=3):
                 "9_PEG":                calc_peg(info),
                 "10_EV_EBITDA":         calc_ev_ebitda(info, shares),
             }
-            aggregate  = calc_intrinsic_value(valuations)
+            aggregate  = calc_intrinsic_value(valuations, tier=tier_data["tier"])
             valuations.update(aggregate)
             valuations["_meta"] = {
                 "pe_source":       "historical_mean" if mean_pe else "current_trailing",
@@ -689,6 +804,7 @@ def analyze_ticker(ticker, retries=3):
                 "growth_stage2":   growth_s2,
                 "terminal_growth": terminal,
                 "tier":            tier_data["tier"],
+                "weights_applied": TIER_WEIGHTS.get(tier_data["tier"], TIER_WEIGHTS["Average"]),
             }
 
             # ------------------------------------------------------------------
