@@ -41,6 +41,18 @@ DCF_YEARS     = 20
 HISTORY_YEARS = 5
 
 # =============================================================================
+# MULTIPLE CAPS — prevents distorted valuations from outlier ratios
+#
+# P/E above 50x on near-zero earnings (e.g. GME, turnarounds) produces
+# astronomical fair values that are meaningless. Similarly P/S > 20x
+# and P/B > 20x are capped to prevent single methods skewing the mean.
+# These caps apply to both historical means and current trailing ratios.
+# =============================================================================
+MAX_PE = 50    # anything above this is speculative / earnings-distorted
+MAX_PS = 20    # revenue multiples above this are growth-premium territory
+MAX_PB = 20    # book multiples above this indicate intangible-heavy distortion
+
+# =============================================================================
 # SOURCES
 # =============================================================================
 NYSE_URL  = "https://raw.githubusercontent.com/williaml3927/NYSE-list/refs/heads/main/NYSE.json"
@@ -424,7 +436,10 @@ def get_historical_mean_multiples(stock, shares):
                 )
                 if ni_row is not None and shares > 0:
                     eps = float(ni_row[col]) / shares
-                    if eps > 0: pe_list.append(price / eps)
+                    if eps > 0:
+                        pe = price / eps
+                        if pe <= MAX_PE:           # discard distorted years
+                            pe_list.append(pe)
             except Exception: pass
 
             try:
@@ -435,7 +450,10 @@ def get_historical_mean_multiples(stock, shares):
                 )
                 if rev_row is not None and shares > 0:
                     rps = float(rev_row[col]) / shares
-                    if rps > 0: ps_list.append(price / rps)
+                    if rps > 0:
+                        ps = price / rps
+                        if ps <= MAX_PS:           # discard hyper-growth outliers
+                            ps_list.append(ps)
             except Exception: pass
 
             try:
@@ -448,7 +466,10 @@ def get_historical_mean_multiples(stock, shares):
                     )
                     if eq_row is not None and shares > 0:
                         bvps = float(eq_row[col]) / shares
-                        if bvps > 0: pb_list.append(price / bvps)
+                        if bvps > 0:
+                            pb = price / bvps
+                            if pb <= MAX_PB:       # discard intangible-heavy outliers
+                                pb_list.append(pb)
             except Exception: pass
 
         if pe_list: result["mean_pe"] = round(float(np.mean(pe_list)), 4)
@@ -497,6 +518,7 @@ def calc_mean_ps(info, shares, mean_ps):
     if rev_ps <= 0: return None
     ratio = mean_ps if mean_ps is not None else _safe(info.get('priceToSalesTrailing12Months'))
     if ratio is None or ratio <= 0: return None
+    if ratio > MAX_PS: return None    # reject — revenue multiple too elevated to be meaningful
     return round(ratio * rev_ps, 2)
 
 def calc_mean_pe(info, mean_pe):
@@ -504,6 +526,7 @@ def calc_mean_pe(info, mean_pe):
     if eps is None or eps <= 0: return None
     ratio = mean_pe if mean_pe is not None else _safe(info.get('trailingPE'))
     if ratio is None or ratio <= 0: return None
+    if ratio > MAX_PE: return None    # reject — earnings too distorted to value on P/E
     return round(ratio * eps, 2)
 
 def calc_mean_pb(info, mean_pb):
@@ -511,6 +534,7 @@ def calc_mean_pb(info, mean_pb):
     if bvps is None or bvps <= 0: return None
     ratio = mean_pb if mean_pb is not None else _safe(info.get('priceToBook'))
     if ratio is None or ratio <= 0: return None
+    if ratio > MAX_PB: return None    # reject — book multiple too distorted to be meaningful
     return round(ratio * bvps, 2)
 
 def calc_psg(info, shares):
