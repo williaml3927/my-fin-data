@@ -9,23 +9,31 @@ import pandas as pd
 import numpy as np
 
 # =============================================================================
-# VALUATION CONFIG — tiered by fundamental quality
+# VALUATION CONFIG — tiered by fundamental quality (two-stage growth model)
+#
+# Stage 1 (Years 1–10)  : near-term growth — higher visibility, more optimistic
+# Stage 2 (Years 11–20) : long-term growth — tapering as business matures
+# Terminal growth        : perpetual rate beyond year 20 (Gordon Growth Model)
+# Discount rate          : tier-adjusted hurdle rate
 # =============================================================================
 TIER_CONFIG = {
     "Strong": {
-        "discount_rate":   0.08,
-        "growth_rate":     0.08,
-        "terminal_growth": 0.04,
+        "discount_rate":   0.075,  # 7.5% — blue chip quality warrants lower hurdle
+        "growth_stage1":   0.12,   # 12% years 1–10
+        "growth_stage2":   0.06,   # 6%  years 11–20
+        "terminal_growth": 0.04,   # 4%  terminal
     },
     "Average": {
-        "discount_rate":   0.10,
-        "growth_rate":     0.05,
-        "terminal_growth": 0.03,
+        "discount_rate":   0.10,   # 10% — standard S&P hurdle rate
+        "growth_stage1":   0.07,   # 7%  years 1–10
+        "growth_stage2":   0.04,   # 4%  years 11–20
+        "terminal_growth": 0.03,   # 3%  terminal
     },
     "Weak": {
-        "discount_rate":   0.12,
-        "growth_rate":     0.03,
-        "terminal_growth": 0.02,
+        "discount_rate":   0.12,   # 12% — elevated risk premium
+        "growth_stage1":   0.03,   # 3%  years 1–10
+        "growth_stage2":   0.02,   # 2%  years 11–20
+        "terminal_growth": 0.02,   # 2%  terminal
     },
 }
 
@@ -79,15 +87,21 @@ def _safe(val, fallback=None):
     return val
 
 # =============================================================================
-# HELPER — DCF summation
+# HELPER -- Two-stage DCF summation
+# Stage 1 (Years 1-10)  : higher near-term growth rate
+# Stage 2 (Years 11-20) : lower long-term taper rate
+# Cash flow is compounded forward year-by-year using the appropriate
+# stage rate, then discounted back at the hurdle rate.
 # =============================================================================
-def _dcf_sum(base_val_per_share, growth, discount, years):
+def _dcf_sum(base_val_per_share, growth_s1, growth_s2, discount, years=20):
     if base_val_per_share is None or base_val_per_share <= 0:
         return None
-    total = sum(
-        base_val_per_share * (1 + growth) ** t / (1 + discount) ** t
-        for t in range(1, years + 1)
-    )
+    total = 0.0
+    cf    = base_val_per_share
+    for t in range(1, years + 1):
+        rate  = growth_s1 if t <= 10 else growth_s2
+        cf    = cf * (1 + rate)
+        total += cf / (1 + discount) ** t
     return round(total, 2)
 
 # =============================================================================
@@ -371,7 +385,14 @@ def classify_quality(scores: dict, subtotal_pct: float) -> dict:
 def resolve_tier(label: str) -> dict:
     mapping   = {"Safe": "Strong", "Speculative": "Average", "Dangerous": "Weak"}
     tier_name = mapping.get(label, "Average")
-    return {"tier": tier_name, **TIER_CONFIG[tier_name]}
+    config    = TIER_CONFIG[tier_name]
+    return {
+        "tier":            tier_name,
+        "discount_rate":   config["discount_rate"],
+        "growth_stage1":   config["growth_stage1"],
+        "growth_stage2":   config["growth_stage2"],
+        "terminal_growth": config["terminal_growth"],
+    }
 
 # =============================================================================
 # HISTORICAL MEAN MULTIPLES  (3–5yr average)
@@ -440,30 +461,33 @@ def get_historical_mean_multiples(stock, shares):
 # =============================================================================
 # VALUATION METHODS 1–10
 # =============================================================================
-def calc_dcf_operating_cf(info, shares, growth, discount):
+def calc_dcf_operating_cf(info, shares, growth_s1, growth_s2, discount):
     ocf = _safe(info.get('operatingCashflow'))
     if ocf is None or shares <= 0: return None
-    return _dcf_sum(ocf / shares, growth, discount, DCF_YEARS)
+    return _dcf_sum(ocf / shares, growth_s1, growth_s2, discount)
 
-def calc_dcf_fcf(info, shares, growth, discount):
+def calc_dcf_fcf(info, shares, growth_s1, growth_s2, discount):
     fcf = _safe(info.get('freeCashflow'))
     if fcf is None or shares <= 0: return None
-    return _dcf_sum(fcf / shares, growth, discount, DCF_YEARS)
+    return _dcf_sum(fcf / shares, growth_s1, growth_s2, discount)
 
-def calc_dcf_net_income(info, shares, growth, discount):
+def calc_dcf_net_income(info, shares, growth_s1, growth_s2, discount):
     ni = _safe(info.get('netIncomeToCommon'))
     if ni is None or shares <= 0: return None
-    return _dcf_sum(ni / shares, growth, discount, DCF_YEARS)
+    return _dcf_sum(ni / shares, growth_s1, growth_s2, discount)
 
-def calc_dcf_terminal_value(info, shares, growth, discount, terminal_growth):
+def calc_dcf_terminal_value(info, shares, growth_s1, growth_s2, discount, terminal_growth):
     fcf = _safe(info.get('freeCashflow'))
     if fcf is None or shares <= 0: return None
     fcf_ps = fcf / shares
     if fcf_ps <= 0: return None
-    pv_cf   = _dcf_sum(fcf_ps, growth, discount, DCF_YEARS)
-    fcf_end = fcf_ps * (1 + growth) ** DCF_YEARS
+    pv_cf   = _dcf_sum(fcf_ps, growth_s1, growth_s2, discount)
+    # Terminal value anchored to end-of-stage-2 cash flow
+    cf_end  = fcf_ps
+    for t in range(1, DCF_YEARS + 1):
+        cf_end = cf_end * (1 + (growth_s1 if t <= 10 else growth_s2))
     if discount <= terminal_growth: return None
-    pv_tv   = ((fcf_end * (1 + terminal_growth)) / (discount - terminal_growth)) / (1 + discount) ** DCF_YEARS
+    pv_tv   = ((cf_end * (1 + terminal_growth)) / (discount - terminal_growth)) / (1 + discount) ** DCF_YEARS
     return round(pv_cf + pv_tv, 2)
 
 def calc_mean_ps(info, shares, mean_ps):
@@ -595,7 +619,8 @@ def analyze_ticker(ticker, retries=3):
             prelim_class        = classify_quality(prelim_scores, prelim_pct)
             tier_data           = resolve_tier(prelim_class["label"])
             discount            = tier_data["discount_rate"]
-            growth              = tier_data["growth_rate"]
+            growth_s1           = tier_data["growth_stage1"]
+            growth_s2           = tier_data["growth_stage2"]
             terminal            = tier_data["terminal_growth"]
 
             # ------------------------------------------------------------------
@@ -610,10 +635,10 @@ def analyze_ticker(ticker, retries=3):
             # STAGE 3 — All 10 valuations using tier-adjusted inputs
             # ------------------------------------------------------------------
             valuations = {
-                "1_DCF_Operating_CF":   calc_dcf_operating_cf(info, shares, growth, discount),
-                "2_DCF_FCF":            calc_dcf_fcf(info, shares, growth, discount),
-                "3_DCF_Net_Income":     calc_dcf_net_income(info, shares, growth, discount),
-                "4_DCF_Terminal_Value": calc_dcf_terminal_value(info, shares, growth, discount, terminal),
+                "1_DCF_Operating_CF":   calc_dcf_operating_cf(info, shares, growth_s1, growth_s2, discount),
+                "2_DCF_FCF":            calc_dcf_fcf(info, shares, growth_s1, growth_s2, discount),
+                "3_DCF_Net_Income":     calc_dcf_net_income(info, shares, growth_s1, growth_s2, discount),
+                "4_DCF_Terminal_Value": calc_dcf_terminal_value(info, shares, growth_s1, growth_s2, discount, terminal),
                 "5_Mean_PS":            calc_mean_ps(info, shares, mean_ps),
                 "6_Mean_PE":            calc_mean_pe(info, mean_pe),
                 "7_Mean_PB":            calc_mean_pb(info, mean_pb),
@@ -630,7 +655,8 @@ def analyze_ticker(ticker, retries=3):
                 "pe_approx":       True,
                 "peg_approx":      True,
                 "discount_rate":   discount,
-                "growth_rate":     growth,
+                "growth_stage1":   growth_s1,
+                "growth_stage2":   growth_s2,
                 "terminal_growth": terminal,
                 "tier":            tier_data["tier"],
             }
@@ -675,9 +701,9 @@ def analyze_ticker(ticker, retries=3):
             price_history = get_10yr_history(stock)
             current_year  = datetime.now().year
             forecast = {
-                str(current_year + i): round(intrinsic_value * (1 + growth) ** i, 2)
+                str(current_year + i): round(intrinsic_value * (1 + growth_s1) ** i, 2)
                 for i in range(1, 6)
-            } if intrinsic_value and intrinsic_value > 0 else {}
+            } if intrinsic_value and intrinsic_value > 0 else {}  # uses stage1 growth for near-term forecast
 
             return ticker, {
                 "valuations":      valuations,
