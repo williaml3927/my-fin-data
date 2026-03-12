@@ -543,6 +543,129 @@ def resolve_tier(label: str) -> dict:
     }
 
 # =============================================================================
+# ROE AND ROIC CALCULATOR
+#
+# ROE  — already available from yfinance info["returnOnEquity"]
+#         Stored directly, no calculation needed.
+#
+# ROIC — not exposed by yfinance directly. Calculated from annual financials:
+#
+#   NOPAT           = Operating Income x (1 - Effective Tax Rate)
+#   Invested Capital = Total Assets - Current Liabilities - Excess Cash
+#   ROIC            = NOPAT / Invested Capital
+#
+#   Effective Tax Rate = Income Tax Expense / Pretax Income
+#                        (clamped 0-50%, defaults to 21% if unavailable)
+#
+#   Excess Cash = max(0, Cash - 2% of Revenue)
+#                 (2% of revenue is a standard working capital cash reserve)
+#
+# Uses the most recent fiscal year from stock.financials and stock.balance_sheet
+# which are already fetched during quality scoring — no new API calls needed.
+#
+# Returns:
+#   {
+#     "roe":          float | None,   # e.g. 0.1714 = 17.14%
+#     "roic":         float | None,   # e.g. 0.2831 = 28.31%
+#     "roe_pct":      str   | None,   # e.g. "17.14%"
+#     "roic_pct":     str   | None,   # e.g. "28.31%"
+#     "roic_source":  str,            # "calculated" | "unavailable"
+#   }
+# =============================================================================
+def calc_roe_roic(info, financials, balance):
+    result = {
+        "roe":         None,
+        "roic":        None,
+        "roe_pct":     None,
+        "roic_pct":    None,
+        "roic_source": "unavailable",
+    }
+
+    # --- ROE --- (direct from yfinance)
+    roe = _safe(info.get("returnOnEquity"))
+    if roe is not None:
+        result["roe"]     = round(roe, 4)
+        result["roe_pct"] = f"{round(roe * 100, 2)}%"
+
+    # --- ROIC --- (calculated from annual statements)
+    try:
+        if financials is None or financials.empty: return result
+        if balance    is None or balance.empty:    return result
+
+        # Use most recent fiscal year column
+        fin_col = financials.columns[0]
+        bal_col = balance.columns[0]
+
+        # --- Operating Income ---
+        op_inc = None
+        for name in ["Operating Income", "OperatingIncome",
+                     "Total Operating Income As Reported"]:
+            if name in financials.index:
+                op_inc = _safe(float(financials.loc[name, fin_col]))
+                break
+        if op_inc is None or op_inc <= 0:
+            return result
+
+        # --- Effective Tax Rate ---
+        tax_rate = 0.21   # US corporate default
+        try:
+            pretax = None
+            for name in ["Pretax Income", "PretaxIncome",
+                         "Income Before Tax", "IncomeBeforeTax"]:
+                if name in financials.index:
+                    pretax = _safe(float(financials.loc[name, fin_col]))
+                    break
+            tax_exp = None
+            for name in ["Tax Provision", "TaxProvision",
+                         "Income Tax Expense", "IncomeTaxExpense"]:
+                if name in financials.index:
+                    tax_exp = _safe(float(financials.loc[name, fin_col]))
+                    break
+            if pretax and pretax > 0 and tax_exp and tax_exp > 0:
+                tax_rate = max(0.0, min(tax_exp / pretax, 0.50))
+        except Exception:
+            pass
+
+        nopat = op_inc * (1 - tax_rate)
+
+        # --- Invested Capital ---
+        total_assets = None
+        for name in ["Total Assets", "TotalAssets"]:
+            if name in balance.index:
+                total_assets = _safe(float(balance.loc[name, bal_col]))
+                break
+
+        current_liab = None
+        for name in ["Current Liabilities", "CurrentLiabilities",
+                     "Total Current Liabilities", "TotalCurrentLiabilities"]:
+            if name in balance.index:
+                current_liab = _safe(float(balance.loc[name, bal_col]))
+                break
+
+        cash = _safe(float(balance.loc["Cash And Cash Equivalents",    bal_col])) if "Cash And Cash Equivalents"    in balance.index else                _safe(float(balance.loc["CashAndCashEquivalents",       bal_col])) if "CashAndCashEquivalents"       in balance.index else                _safe(info.get("totalCash"), 0)
+
+        rev = _safe(info.get("totalRevenue"), 0)
+        excess_cash = max(0, (cash or 0) - 0.02 * (rev or 0))
+
+        if total_assets is None or current_liab is None:
+            return result
+
+        invested_capital = total_assets - current_liab - excess_cash
+        if invested_capital <= 0:
+            return result
+
+        roic = nopat / invested_capital
+        result["roic"]        = round(roic, 4)
+        result["roic_pct"]    = f"{round(roic * 100, 2)}%"
+        result["roic_source"] = "calculated"
+
+    except Exception:
+        pass
+
+    return result
+
+
+# =============================================================================
 # HISTORICAL MEAN MULTIPLES  (3–5yr average)
 # =============================================================================
 def get_historical_mean_multiples(stock, shares):
@@ -942,18 +1065,34 @@ def analyze_ticker(ticker, retries=3):
             }
 
             # ------------------------------------------------------------------
-            # STAGE 5 — History & forecast
+            # STAGE 5 — ROE and ROIC
+            # Calculated here using financials already fetched in Stage 1.
+            # Stored in JSON for AI Studio to display — no live Finviz call needed.
+            # ------------------------------------------------------------------
+            roe_roic = calc_roe_roic(info, financials, stock.balance_sheet)
+
+            fundamentals = {
+                "roe":         roe_roic["roe"],
+                "roic":        roe_roic["roic"],
+                "roe_pct":     roe_roic["roe_pct"],
+                "roic_pct":    roe_roic["roic_pct"],
+                "roic_source": roe_roic["roic_source"],
+            }
+
+            # ------------------------------------------------------------------
+            # STAGE 6 — History & forecast
             # ------------------------------------------------------------------
             price_history = get_10yr_history(stock)
             current_year  = datetime.now().year
             forecast = {
                 str(current_year + i): round(intrinsic_value * (1 + growth_s1) ** i, 2)
                 for i in range(1, 6)
-            } if intrinsic_value and intrinsic_value > 0 else {}  # uses stage1 growth for near-term forecast
+            } if intrinsic_value and intrinsic_value > 0 else {}
 
             return ticker, {
                 "valuations":      valuations,
                 "quality":         quality,
+                "fundamentals":    fundamentals,
                 "10_Year_History": price_history,
                 "5_Year_Forecast": forecast,
                 "Last_Updated":    datetime.now().strftime("%Y-%m-%d %H:%M"),
