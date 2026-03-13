@@ -1031,13 +1031,28 @@ def analyze_ticker(ticker, retries=3):
 # =============================================================================
 # A–Z PARTITIONED JSON SAVER
 # =============================================================================
+def _sanitize(obj):
+    """
+    Recursively walks the output structure and replaces any float NaN or
+    Infinity with None (serialized as JSON null). Python's json.dump allows
+    NaN by default but it is not valid JSON and breaks browser JSON.parse.
+    """
+    if isinstance(obj, dict):
+        return {k: _sanitize(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_sanitize(v) for v in obj]
+    if isinstance(obj, float) and (obj != obj or obj == float('inf') or obj == float('-inf')):
+        return None   # NaN and ±Inf → null
+    return obj
+
+
 def save_partitioned_data(master_results):
     partitions = {}
     for ticker, data in master_results.items():
         letter = ticker[0].upper()
         if not letter.isalpha(): letter = "0-9"
         if letter not in partitions: partitions[letter] = {}
-        partitions[letter][ticker] = data
+        partitions[letter][ticker] = _sanitize(data)   # strip NaN before writing
     os.makedirs('data', exist_ok=True)
     for letter, content in partitions.items():
         with open(f'data/stocks_{letter}.json', 'w') as f:
