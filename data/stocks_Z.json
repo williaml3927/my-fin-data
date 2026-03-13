@@ -1,30 +1,118 @@
 {
-    "ZBIO": {
+    "ZBH": {
+        "valuations": {
+            "1_DCF_Operating_CF": 91.88,
+            "2_DCF_FCF": 73.2,
+            "3_DCF_Net_Income": 38.17,
+            "4_DCF_Terminal_Value": 88.84,
+            "5_Mean_PS": 120.6,
+            "6_Mean_PE": 83.33,
+            "7_Mean_PB": 112.39,
+            "8_PSG": 217.93,
+            "9_PEG": 18.39,
+            "10_EV_EBITDA": 154.24,
+            "intrinsic_value": 106.49,
+            "methods_used": 10,
+            "confidence": "High",
+            "_meta": {
+                "pe_source": "historical_mean",
+                "ps_source": "historical_mean",
+                "pb_source": "historical_mean",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "finviz",
+                "growth_raw": 0.0518,
+                "discount_rate": 0.12,
+                "growth_stage1": 0.0518,
+                "growth_stage2": 0.0259,
+                "terminal_growth": 0.02,
+                "tier": "Weak",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.08,
+                    "2_DCF_FCF": 0.08,
+                    "3_DCF_Net_Income": 0.08,
+                    "4_DCF_Terminal_Value": 0.08,
+                    "5_Mean_PS": 0.12,
+                    "6_Mean_PE": 0.08,
+                    "7_Mean_PB": 0.15,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.08,
+                    "10_EV_EBITDA": 0.17
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 6,
+                "financial_strength": 5,
+                "growth": 5,
+                "predictability": 8,
+                "valuation": 5,
+                "moat": null
+            },
+            "python_subtotal": 29,
+            "python_subtotal_pct": 58.0,
+            "classification": "Speculative",
+            "penalty_pct": 5,
+            "final_score_pct": 53.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 02:43"
+        },
+        "fundamentals": {
+            "roe": 0.056,
+            "roic": 0.0573,
+            "roe_pct": "5.6%",
+            "roic_pct": "5.73%",
+            "roic_source": "calculated"
+        },
+        "10_Year_History": {
+            "2016": 93.17,
+            "2017": 109.81,
+            "2018": 95.2,
+            "2019": 138.39,
+            "2020": 143.61,
+            "2021": 119.17,
+            "2022": 124.21,
+            "2023": 119.48,
+            "2024": 104.6,
+            "2025": 89.92,
+            "2026": 92.59
+        },
+        "5_Year_Forecast": {
+            "2027": 112.01,
+            "2028": 117.81,
+            "2029": 123.91,
+            "2030": 130.33,
+            "2031": 137.08
+        },
+        "Last_Updated": "2026-03-13 02:43"
+    },
+    "ZEPP": {
         "valuations": {
             "1_DCF_Operating_CF": null,
             "2_DCF_FCF": null,
             "3_DCF_Net_Income": null,
             "4_DCF_Terminal_Value": null,
-            "5_Mean_PS": null,
-            "6_Mean_PE": 24.5,
-            "7_Mean_PB": 6.55,
-            "8_PSG": 2.58,
-            "9_PEG": 126.45,
+            "5_Mean_PS": 3.48,
+            "6_Mean_PE": null,
+            "7_Mean_PB": 2.12,
+            "8_PSG": 66.25,
+            "9_PEG": null,
             "10_EV_EBITDA": null,
-            "intrinsic_value": 34.01,
-            "methods_used": 4,
-            "confidence": "Medium",
+            "intrinsic_value": 17.24,
+            "methods_used": 3,
+            "confidence": "Low",
             "_meta": {
-                "pe_source": "current_trailing",
-                "ps_source": "current_trailing",
+                "pe_source": "historical_mean",
+                "ps_source": "historical_mean",
                 "pb_source": "historical_mean",
                 "pe_approx": true,
                 "peg_approx": true,
-                "growth_source": "finviz",
-                "growth_raw": 0.0925,
+                "growth_source": "default",
+                "growth_raw": 0.02,
                 "discount_rate": 0.12,
-                "growth_stage1": 0.0925,
-                "growth_stage2": 0.04625,
+                "growth_stage1": 0.02,
+                "growth_stage2": 0.02,
                 "terminal_growth": 0.02,
                 "tier": "Weak",
                 "weights_applied": {
@@ -44,9 +132,596 @@
         "quality": {
             "scores": {
                 "profitability": 0,
+                "financial_strength": 1,
+                "growth": 4,
+                "predictability": 1,
+                "valuation": 4,
+                "moat": null
+            },
+            "python_subtotal": 10,
+            "python_subtotal_pct": 20.0,
+            "classification": "Dangerous",
+            "penalty_pct": 10,
+            "final_score_pct": 10.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 02:43"
+        },
+        "fundamentals": {
+            "roe": -0.2436,
+            "roic": null,
+            "roe_pct": "-24.36%",
+            "roic_pct": null,
+            "roic_source": "unavailable"
+        },
+        "10_Year_History": {
+            "2018": 38.03,
+            "2019": 46.5,
+            "2020": 45.85,
+            "2021": 19.54,
+            "2022": 5.8,
+            "2023": 5.68,
+            "2024": 2.6,
+            "2025": 26.94,
+            "2026": 20.59
+        },
+        "5_Year_Forecast": {
+            "2027": 17.58,
+            "2028": 17.94,
+            "2029": 18.3,
+            "2030": 18.66,
+            "2031": 19.03
+        },
+        "Last_Updated": "2026-03-13 02:43"
+    },
+    "ZETA": {
+        "valuations": {
+            "1_DCF_Operating_CF": 63.11,
+            "2_DCF_FCF": 108.8,
+            "3_DCF_Net_Income": null,
+            "4_DCF_Terminal_Value": 189.89,
+            "5_Mean_PS": 19.38,
+            "6_Mean_PE": null,
+            "7_Mean_PB": 29.8,
+            "8_PSG": 171.48,
+            "9_PEG": null,
+            "10_EV_EBITDA": 7.74,
+            "intrinsic_value": 66.81,
+            "methods_used": 7,
+            "confidence": "High",
+            "_meta": {
+                "pe_source": "current_trailing",
+                "ps_source": "historical_mean",
+                "pb_source": "historical_mean",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "finviz",
+                "growth_raw": 0.2898,
+                "discount_rate": 0.12,
+                "growth_stage1": 0.2898,
+                "growth_stage2": 0.1449,
+                "terminal_growth": 0.02,
+                "tier": "Weak",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.08,
+                    "2_DCF_FCF": 0.08,
+                    "3_DCF_Net_Income": 0.08,
+                    "4_DCF_Terminal_Value": 0.08,
+                    "5_Mean_PS": 0.12,
+                    "6_Mean_PE": 0.08,
+                    "7_Mean_PB": 0.15,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.08,
+                    "10_EV_EBITDA": 0.17
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 2,
+                "financial_strength": 6,
+                "growth": 7,
+                "predictability": 8,
+                "valuation": 5,
+                "moat": null
+            },
+            "python_subtotal": 28,
+            "python_subtotal_pct": 56.0,
+            "classification": "Speculative",
+            "penalty_pct": 5,
+            "final_score_pct": 51.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 02:43"
+        },
+        "fundamentals": {
+            "roe": -0.0425,
+            "roic": 0.0292,
+            "roe_pct": "-4.25%",
+            "roic_pct": "2.92%",
+            "roic_source": "calculated"
+        },
+        "10_Year_History": {
+            "2021": 8.42,
+            "2022": 8.17,
+            "2023": 8.82,
+            "2024": 17.99,
+            "2025": 20.35,
+            "2026": 18.05
+        },
+        "5_Year_Forecast": {
+            "2027": 86.17,
+            "2028": 111.14,
+            "2029": 143.35,
+            "2030": 184.9,
+            "2031": 238.48
+        },
+        "Last_Updated": "2026-03-13 02:43"
+    },
+    "ZGN": {
+        "valuations": {
+            "1_DCF_Operating_CF": 33.99,
+            "2_DCF_FCF": 16.54,
+            "3_DCF_Net_Income": 12.22,
+            "4_DCF_Terminal_Value": 25.01,
+            "5_Mean_PS": 11.78,
+            "6_Mean_PE": 14.37,
+            "7_Mean_PB": 13.75,
+            "8_PSG": 149.77,
+            "9_PEG": 8.55,
+            "10_EV_EBITDA": 5.14,
+            "intrinsic_value": 25.19,
+            "methods_used": 10,
+            "confidence": "High",
+            "_meta": {
+                "pe_source": "historical_mean",
+                "ps_source": "historical_mean",
+                "pb_source": "historical_mean",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "finviz",
+                "growth_raw": 0.1988,
+                "discount_rate": 0.12,
+                "growth_stage1": 0.19879999999999998,
+                "growth_stage2": 0.09939999999999999,
+                "terminal_growth": 0.02,
+                "tier": "Weak",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.08,
+                    "2_DCF_FCF": 0.08,
+                    "3_DCF_Net_Income": 0.08,
+                    "4_DCF_Terminal_Value": 0.08,
+                    "5_Mean_PS": 0.12,
+                    "6_Mean_PE": 0.08,
+                    "7_Mean_PB": 0.15,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.08,
+                    "10_EV_EBITDA": 0.17
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 5,
+                "financial_strength": 4,
+                "growth": 6,
+                "predictability": 8,
+                "valuation": 8,
+                "moat": null
+            },
+            "python_subtotal": 31,
+            "python_subtotal_pct": 62.0,
+            "classification": "Speculative",
+            "penalty_pct": 5,
+            "final_score_pct": 57.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 02:43"
+        },
+        "fundamentals": {
+            "roe": 0.1151,
+            "roic": 0.0645,
+            "roe_pct": "11.51%",
+            "roic_pct": "6.45%",
+            "roic_source": "calculated"
+        },
+        "10_Year_History": {
+            "2021": 10.03,
+            "2022": 10.1,
+            "2023": 11.26,
+            "2024": 8.13,
+            "2025": 10.25,
+            "2026": 10.05
+        },
+        "5_Year_Forecast": {
+            "2027": 30.2,
+            "2028": 36.2,
+            "2029": 43.4,
+            "2030": 52.03,
+            "2031": 62.37
+        },
+        "Last_Updated": "2026-03-13 02:43"
+    },
+    "ZH": {
+        "valuations": {
+            "1_DCF_Operating_CF": null,
+            "2_DCF_FCF": null,
+            "3_DCF_Net_Income": 10.52,
+            "4_DCF_Terminal_Value": null,
+            "5_Mean_PS": 11.65,
+            "6_Mean_PE": 3.08,
+            "7_Mean_PB": 1.3,
+            "8_PSG": 70.89,
+            "9_PEG": 0.3,
+            "10_EV_EBITDA": null,
+            "intrinsic_value": 14.2,
+            "methods_used": 6,
+            "confidence": "Medium",
+            "_meta": {
+                "pe_source": "current_trailing",
+                "ps_source": "historical_mean",
+                "pb_source": "historical_mean",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "default",
+                "growth_raw": 0.02,
+                "discount_rate": 0.12,
+                "growth_stage1": 0.02,
+                "growth_stage2": 0.02,
+                "terminal_growth": 0.02,
+                "tier": "Weak",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.08,
+                    "2_DCF_FCF": 0.08,
+                    "3_DCF_Net_Income": 0.08,
+                    "4_DCF_Terminal_Value": 0.08,
+                    "5_Mean_PS": 0.12,
+                    "6_Mean_PE": 0.08,
+                    "7_Mean_PB": 0.15,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.08,
+                    "10_EV_EBITDA": 0.17
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 2,
                 "financial_strength": 3,
                 "growth": 2,
                 "predictability": 4,
+                "valuation": 9,
+                "moat": null
+            },
+            "python_subtotal": 20,
+            "python_subtotal_pct": 40.0,
+            "classification": "Dangerous",
+            "penalty_pct": 10,
+            "final_score_pct": 30.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 02:43"
+        },
+        "fundamentals": {
+            "roe": 0.0241,
+            "roic": null,
+            "roe_pct": "2.41%",
+            "roic_pct": null,
+            "roic_source": "unavailable"
+        },
+        "10_Year_History": {
+            "2021": 33.24,
+            "2022": 7.8,
+            "2023": 5.62,
+            "2024": 3.54,
+            "2025": 3.28,
+            "2026": 3.08
+        },
+        "5_Year_Forecast": {
+            "2027": 14.48,
+            "2028": 14.77,
+            "2029": 15.07,
+            "2030": 15.37,
+            "2031": 15.68
+        },
+        "Last_Updated": "2026-03-13 02:43"
+    },
+    "ZIM": {
+        "valuations": {
+            "1_DCF_Operating_CF": 164.71,
+            "2_DCF_FCF": 97.66,
+            "3_DCF_Net_Income": 34.32,
+            "4_DCF_Terminal_Value": 115.44,
+            "5_Mean_PS": 9.19,
+            "6_Mean_PE": 4.36,
+            "7_Mean_PB": 11.61,
+            "8_PSG": 114.62,
+            "9_PEG": 16.62,
+            "10_EV_EBITDA": 61.7,
+            "intrinsic_value": 57.15,
+            "methods_used": 10,
+            "confidence": "High",
+            "_meta": {
+                "pe_source": "historical_mean",
+                "ps_source": "historical_mean",
+                "pb_source": "historical_mean",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "default",
+                "growth_raw": 0.02,
+                "discount_rate": 0.12,
+                "growth_stage1": 0.02,
+                "growth_stage2": 0.02,
+                "terminal_growth": 0.02,
+                "tier": "Weak",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.08,
+                    "2_DCF_FCF": 0.08,
+                    "3_DCF_Net_Income": 0.08,
+                    "4_DCF_Terminal_Value": 0.08,
+                    "5_Mean_PS": 0.12,
+                    "6_Mean_PE": 0.08,
+                    "7_Mean_PB": 0.15,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.08,
+                    "10_EV_EBITDA": 0.17
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 7,
+                "financial_strength": 4,
+                "growth": 2,
+                "predictability": 5,
+                "valuation": 10,
+                "moat": null
+            },
+            "python_subtotal": 28,
+            "python_subtotal_pct": 56.0,
+            "classification": "Speculative",
+            "penalty_pct": 5,
+            "final_score_pct": 51.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 02:43"
+        },
+        "fundamentals": {
+            "roe": 0.1194,
+            "roic": 0.3199,
+            "roe_pct": "11.94%",
+            "roic_pct": "31.99%",
+            "roic_source": "calculated"
+        },
+        "10_Year_History": {
+            "2021": 16.34,
+            "2022": 7.73,
+            "2023": 6.1,
+            "2024": 16.9,
+            "2025": 21.23,
+            "2026": 27.2
+        },
+        "5_Year_Forecast": {
+            "2027": 58.29,
+            "2028": 59.46,
+            "2029": 60.65,
+            "2030": 61.86,
+            "2031": 63.1
+        },
+        "Last_Updated": "2026-03-13 02:43"
+    },
+    "ZKH": {
+        "valuations": {
+            "1_DCF_Operating_CF": null,
+            "2_DCF_FCF": null,
+            "3_DCF_Net_Income": null,
+            "4_DCF_Terminal_Value": null,
+            "5_Mean_PS": 9.99,
+            "6_Mean_PE": null,
+            "7_Mean_PB": 1.09,
+            "8_PSG": 132.85,
+            "9_PEG": null,
+            "10_EV_EBITDA": null,
+            "intrinsic_value": 34.26,
+            "methods_used": 3,
+            "confidence": "Low",
+            "_meta": {
+                "pe_source": "current_trailing",
+                "ps_source": "historical_mean",
+                "pb_source": "historical_mean",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "default",
+                "growth_raw": 0.02,
+                "discount_rate": 0.12,
+                "growth_stage1": 0.02,
+                "growth_stage2": 0.02,
+                "terminal_growth": 0.02,
+                "tier": "Weak",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.08,
+                    "2_DCF_FCF": 0.08,
+                    "3_DCF_Net_Income": 0.08,
+                    "4_DCF_Terminal_Value": 0.08,
+                    "5_Mean_PS": 0.12,
+                    "6_Mean_PE": 0.08,
+                    "7_Mean_PB": 0.15,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.08,
+                    "10_EV_EBITDA": 0.17
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 0,
+                "financial_strength": 2,
+                "growth": 5,
+                "predictability": 8,
+                "valuation": 7,
+                "moat": null
+            },
+            "python_subtotal": 22,
+            "python_subtotal_pct": 44.0,
+            "classification": "Dangerous",
+            "penalty_pct": 10,
+            "final_score_pct": 34.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 02:43"
+        },
+        "fundamentals": {
+            "roe": -0.0575,
+            "roic": null,
+            "roe_pct": "-5.75%",
+            "roic_pct": null,
+            "roic_source": "unavailable"
+        },
+        "10_Year_History": {
+            "2023": 16.31,
+            "2024": 3.51,
+            "2025": 3.68,
+            "2026": 3.33
+        },
+        "5_Year_Forecast": {
+            "2027": 34.95,
+            "2028": 35.64,
+            "2029": 36.36,
+            "2030": 37.08,
+            "2031": 37.83
+        },
+        "Last_Updated": "2026-03-13 02:43"
+    },
+    "ZTO": {
+        "valuations": {
+            "1_DCF_Operating_CF": 326.49,
+            "2_DCF_FCF": 76.02,
+            "3_DCF_Net_Income": 273.55,
+            "4_DCF_Terminal_Value": 114.33,
+            "5_Mean_PS": 29.71,
+            "6_Mean_PE": 2.92,
+            "7_Mean_PB": 2.67,
+            "8_PSG": 816.07,
+            "9_PEG": 14.85,
+            "10_EV_EBITDA": 326.68,
+            "intrinsic_value": 185.52,
+            "methods_used": 10,
+            "confidence": "High",
+            "_meta": {
+                "pe_source": "historical_mean",
+                "ps_source": "historical_mean",
+                "pb_source": "historical_mean",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "finviz",
+                "growth_raw": 0.0952,
+                "discount_rate": 0.1,
+                "growth_stage1": 0.09519999999999999,
+                "growth_stage2": 0.047599999999999996,
+                "terminal_growth": 0.03,
+                "tier": "Average",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.12,
+                    "2_DCF_FCF": 0.12,
+                    "3_DCF_Net_Income": 0.1,
+                    "4_DCF_Terminal_Value": 0.12,
+                    "5_Mean_PS": 0.1,
+                    "6_Mean_PE": 0.12,
+                    "7_Mean_PB": 0.08,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.08,
+                    "10_EV_EBITDA": 0.08
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 7,
+                "financial_strength": 7,
+                "growth": 8,
+                "predictability": 10,
+                "valuation": 8,
+                "moat": null
+            },
+            "python_subtotal": 40,
+            "python_subtotal_pct": 80.0,
+            "classification": "Safe",
+            "penalty_pct": 0,
+            "final_score_pct": 80.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 02:43"
+        },
+        "fundamentals": {
+            "roe": 0.1421,
+            "roic": 0.1728,
+            "roe_pct": "14.21%",
+            "roic_pct": "17.28%",
+            "roic_source": "calculated"
+        },
+        "10_Year_History": {
+            "2016": 10.54,
+            "2017": 13.85,
+            "2018": 14.01,
+            "2019": 20.95,
+            "2020": 26.45,
+            "2021": 25.81,
+            "2022": 24.82,
+            "2023": 19.92,
+            "2024": 19.17,
+            "2025": 20.89,
+            "2026": 23.49
+        },
+        "5_Year_Forecast": {
+            "2027": 203.18,
+            "2028": 222.52,
+            "2029": 243.71,
+            "2030": 266.91,
+            "2031": 292.32
+        },
+        "Last_Updated": "2026-03-13 02:43"
+    },
+    "ZIP": {
+        "valuations": {
+            "1_DCF_Operating_CF": 1.32,
+            "2_DCF_FCF": 1.3,
+            "3_DCF_Net_Income": null,
+            "4_DCF_Terminal_Value": 1.54,
+            "5_Mean_PS": 7.14,
+            "6_Mean_PE": null,
+            "7_Mean_PB": null,
+            "8_PSG": 12.58,
+            "9_PEG": null,
+            "10_EV_EBITDA": null,
+            "intrinsic_value": 4.99,
+            "methods_used": 5,
+            "confidence": "Medium",
+            "_meta": {
+                "pe_source": "historical_mean",
+                "ps_source": "historical_mean",
+                "pb_source": "current_trailing",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "default",
+                "growth_raw": 0.02,
+                "discount_rate": 0.12,
+                "growth_stage1": 0.02,
+                "growth_stage2": 0.02,
+                "terminal_growth": 0.02,
+                "tier": "Weak",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.08,
+                    "2_DCF_FCF": 0.08,
+                    "3_DCF_Net_Income": 0.08,
+                    "4_DCF_Terminal_Value": 0.08,
+                    "5_Mean_PS": 0.12,
+                    "6_Mean_PE": 0.08,
+                    "7_Mean_PB": 0.15,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.08,
+                    "10_EV_EBITDA": 0.17
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 0,
+                "financial_strength": 5,
+                "growth": 1,
+                "predictability": 3,
                 "valuation": 6,
                 "moat": null
             },
@@ -56,28 +731,466 @@
             "penalty_pct": 10,
             "final_score_pct": 20.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 02:43"
         },
         "fundamentals": {
-            "roe": -0.6833,
+            "roe": null,
             "roic": null,
-            "roe_pct": "-68.33%",
+            "roe_pct": null,
             "roic_pct": null,
             "roic_source": "unavailable"
         },
         "10_Year_History": {
-            "2024": 8.19,
-            "2025": 36.31,
-            "2026": 24.5
+            "2021": 24.94,
+            "2022": 16.42,
+            "2023": 13.9,
+            "2024": 7.24,
+            "2025": 3.9,
+            "2026": 2.86
         },
         "5_Year_Forecast": {
-            "2027": 37.16,
-            "2028": 40.59,
-            "2029": 44.35,
-            "2030": 48.45,
-            "2031": 52.93
+            "2027": 5.09,
+            "2028": 5.19,
+            "2029": 5.3,
+            "2030": 5.4,
+            "2031": 5.51
         },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 02:43"
+    },
+    "ZTR": {
+        "valuations": {
+            "1_DCF_Operating_CF": 13.31,
+            "2_DCF_FCF": null,
+            "3_DCF_Net_Income": 7.94,
+            "4_DCF_Terminal_Value": null,
+            "5_Mean_PS": 6.8,
+            "6_Mean_PE": 6.82,
+            "7_Mean_PB": 6.82,
+            "8_PSG": 0.89,
+            "9_PEG": 1.13,
+            "10_EV_EBITDA": null,
+            "intrinsic_value": 6.34,
+            "methods_used": 7,
+            "confidence": "High",
+            "_meta": {
+                "pe_source": "current_trailing",
+                "ps_source": "current_trailing",
+                "pb_source": "current_trailing",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "default",
+                "growth_raw": 0.02,
+                "discount_rate": 0.12,
+                "growth_stage1": 0.02,
+                "growth_stage2": 0.02,
+                "terminal_growth": 0.02,
+                "tier": "Weak",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.08,
+                    "2_DCF_FCF": 0.08,
+                    "3_DCF_Net_Income": 0.08,
+                    "4_DCF_Terminal_Value": 0.08,
+                    "5_Mean_PS": 0.12,
+                    "6_Mean_PE": 0.08,
+                    "7_Mean_PB": 0.15,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.08,
+                    "10_EV_EBITDA": 0.17
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 3,
+                "financial_strength": 3,
+                "growth": 1,
+                "predictability": 0,
+                "valuation": 6,
+                "moat": null
+            },
+            "python_subtotal": 13,
+            "python_subtotal_pct": 26.0,
+            "classification": "Dangerous",
+            "penalty_pct": 10,
+            "final_score_pct": 16.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 02:43"
+        },
+        "fundamentals": {
+            "roe": null,
+            "roic": null,
+            "roe_pct": null,
+            "roic_pct": null,
+            "roic_source": "unavailable"
+        },
+        "10_Year_History": {
+            "2016": 3.91,
+            "2017": 5.07,
+            "2018": 3.81,
+            "2019": 5.51,
+            "2020": 4.81,
+            "2021": 5.8,
+            "2022": 4.57,
+            "2023": 4.42,
+            "2024": 5.23,
+            "2025": 6.2,
+            "2026": 6.82
+        },
+        "5_Year_Forecast": {
+            "2027": 6.47,
+            "2028": 6.6,
+            "2029": 6.73,
+            "2030": 6.86,
+            "2031": 7.0
+        },
+        "Last_Updated": "2026-03-13 02:43"
+    },
+    "ZTS": {
+        "valuations": {
+            "1_DCF_Operating_CF": 134.73,
+            "2_DCF_FCF": 83.09,
+            "3_DCF_Net_Income": 124.02,
+            "4_DCF_Terminal_Value": 182.71,
+            "5_Mean_PS": 166.85,
+            "6_Mean_PE": 165.49,
+            "7_Mean_PB": 117.22,
+            "8_PSG": 187.26,
+            "9_PEG": 50.35,
+            "10_EV_EBITDA": 127.9,
+            "intrinsic_value": 136.55,
+            "methods_used": 10,
+            "confidence": "High",
+            "_meta": {
+                "pe_source": "historical_mean",
+                "ps_source": "historical_mean",
+                "pb_source": "historical_mean",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "finviz",
+                "growth_raw": 0.0835,
+                "discount_rate": 0.075,
+                "growth_stage1": 0.08349999999999999,
+                "growth_stage2": 0.041749999999999995,
+                "terminal_growth": 0.04,
+                "tier": "Strong",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.15,
+                    "2_DCF_FCF": 0.15,
+                    "3_DCF_Net_Income": 0.08,
+                    "4_DCF_Terminal_Value": 0.15,
+                    "5_Mean_PS": 0.08,
+                    "6_Mean_PE": 0.1,
+                    "7_Mean_PB": 0.05,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.06,
+                    "10_EV_EBITDA": 0.1
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 10,
+                "financial_strength": 7,
+                "growth": 7,
+                "predictability": 10,
+                "valuation": 4,
+                "moat": null
+            },
+            "python_subtotal": 38,
+            "python_subtotal_pct": 76.0,
+            "classification": "Safe",
+            "penalty_pct": 0,
+            "final_score_pct": 76.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 02:43"
+        },
+        "fundamentals": {
+            "roe": 0.6599,
+            "roic": 0.2575,
+            "roe_pct": "65.99%",
+            "roic_pct": "25.75%",
+            "roic_source": "calculated"
+        },
+        "10_Year_History": {
+            "2016": 49.69,
+            "2017": 67.36,
+            "2018": 80.46,
+            "2019": 125.28,
+            "2020": 157.55,
+            "2021": 233.59,
+            "2022": 141.31,
+            "2023": 192.05,
+            "2024": 160.11,
+            "2025": 125.29,
+            "2026": 115.46
+        },
+        "5_Year_Forecast": {
+            "2027": 147.95,
+            "2028": 160.31,
+            "2029": 173.69,
+            "2030": 188.19,
+            "2031": 203.91
+        },
+        "Last_Updated": "2026-03-13 02:43"
+    },
+    "ZVIA": {
+        "valuations": {
+            "1_DCF_Operating_CF": null,
+            "2_DCF_FCF": 0.07,
+            "3_DCF_Net_Income": null,
+            "4_DCF_Terminal_Value": 0.08,
+            "5_Mean_PS": 3.17,
+            "6_Mean_PE": null,
+            "7_Mean_PB": 2.07,
+            "8_PSG": 5.0,
+            "9_PEG": null,
+            "10_EV_EBITDA": null,
+            "intrinsic_value": 2.16,
+            "methods_used": 5,
+            "confidence": "Medium",
+            "_meta": {
+                "pe_source": "current_trailing",
+                "ps_source": "historical_mean",
+                "pb_source": "historical_mean",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "default",
+                "growth_raw": 0.02,
+                "discount_rate": 0.12,
+                "growth_stage1": 0.02,
+                "growth_stage2": 0.02,
+                "terminal_growth": 0.02,
+                "tier": "Weak",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.08,
+                    "2_DCF_FCF": 0.08,
+                    "3_DCF_Net_Income": 0.08,
+                    "4_DCF_Terminal_Value": 0.08,
+                    "5_Mean_PS": 0.12,
+                    "6_Mean_PE": 0.08,
+                    "7_Mean_PB": 0.15,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.08,
+                    "10_EV_EBITDA": 0.17
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 0,
+                "financial_strength": 5,
+                "growth": 3,
+                "predictability": 7,
+                "valuation": 7,
+                "moat": null
+            },
+            "python_subtotal": 22,
+            "python_subtotal_pct": 44.0,
+            "classification": "Dangerous",
+            "penalty_pct": 10,
+            "final_score_pct": 34.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 02:43"
+        },
+        "fundamentals": {
+            "roe": -0.2843,
+            "roic": null,
+            "roe_pct": "-28.43%",
+            "roic_pct": null,
+            "roic_source": "unavailable"
+        },
+        "10_Year_History": {
+            "2021": 7.05,
+            "2022": 4.09,
+            "2023": 2.01,
+            "2024": 4.19,
+            "2025": 2.32,
+            "2026": 1.29
+        },
+        "5_Year_Forecast": {
+            "2027": 2.2,
+            "2028": 2.25,
+            "2029": 2.29,
+            "2030": 2.34,
+            "2031": 2.38
+        },
+        "Last_Updated": "2026-03-13 02:43"
+    },
+    "ZWS": {
+        "valuations": {
+            "1_DCF_Operating_CF": 36.2,
+            "2_DCF_FCF": 29.57,
+            "3_DCF_Net_Income": 20.1,
+            "4_DCF_Terminal_Value": 44.65,
+            "5_Mean_PS": 36.32,
+            "6_Mean_PE": 44.83,
+            "7_Mean_PB": 33.16,
+            "8_PSG": 98.83,
+            "9_PEG": 10.89,
+            "10_EV_EBITDA": 25.49,
+            "intrinsic_value": 37.74,
+            "methods_used": 10,
+            "confidence": "High",
+            "_meta": {
+                "pe_source": "historical_mean",
+                "ps_source": "historical_mean",
+                "pb_source": "historical_mean",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "finviz",
+                "growth_raw": 0.0972,
+                "discount_rate": 0.1,
+                "growth_stage1": 0.09720000000000001,
+                "growth_stage2": 0.048600000000000004,
+                "terminal_growth": 0.03,
+                "tier": "Average",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.12,
+                    "2_DCF_FCF": 0.12,
+                    "3_DCF_Net_Income": 0.1,
+                    "4_DCF_Terminal_Value": 0.12,
+                    "5_Mean_PS": 0.1,
+                    "6_Mean_PE": 0.12,
+                    "7_Mean_PB": 0.08,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.08,
+                    "10_EV_EBITDA": 0.08
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 7,
+                "financial_strength": 7,
+                "growth": 8,
+                "predictability": 10,
+                "valuation": 2,
+                "moat": null
+            },
+            "python_subtotal": 34,
+            "python_subtotal_pct": 68.0,
+            "classification": "Safe",
+            "penalty_pct": 0,
+            "final_score_pct": 68.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 02:43"
+        },
+        "fundamentals": {
+            "roe": 0.1206,
+            "roic": 0.1006,
+            "roe_pct": "12.06%",
+            "roic_pct": "10.06%",
+            "roic_source": "calculated"
+        },
+        "10_Year_History": {
+            "2016": 8.93,
+            "2017": 11.86,
+            "2018": 10.46,
+            "2019": 14.86,
+            "2020": 18.17,
+            "2021": 34.98,
+            "2022": 20.47,
+            "2023": 28.79,
+            "2024": 36.87,
+            "2025": 46.39,
+            "2026": 45.86
+        },
+        "5_Year_Forecast": {
+            "2027": 41.41,
+            "2028": 45.43,
+            "2029": 49.85,
+            "2030": 54.69,
+            "2031": 60.01
+        },
+        "Last_Updated": "2026-03-13 02:43"
+    },
+    "Z": {
+        "valuations": {
+            "1_DCF_Operating_CF": 149.53,
+            "2_DCF_FCF": 34.44,
+            "3_DCF_Net_Income": 9.35,
+            "4_DCF_Terminal_Value": 61.05,
+            "5_Mean_PS": 68.27,
+            "6_Mean_PE": null,
+            "7_Mean_PB": 46.94,
+            "8_PSG": 412.58,
+            "9_PEG": 2.7,
+            "10_EV_EBITDA": 9.65,
+            "intrinsic_value": 76.57,
+            "methods_used": 9,
+            "confidence": "High",
+            "_meta": {
+                "pe_source": "current_trailing",
+                "ps_source": "historical_mean",
+                "pb_source": "historical_mean",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "finviz",
+                "growth_raw": 0.317,
+                "discount_rate": 0.12,
+                "growth_stage1": 0.3,
+                "growth_stage2": 0.15,
+                "terminal_growth": 0.02,
+                "tier": "Weak",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.08,
+                    "2_DCF_FCF": 0.08,
+                    "3_DCF_Net_Income": 0.08,
+                    "4_DCF_Terminal_Value": 0.08,
+                    "5_Mean_PS": 0.12,
+                    "6_Mean_PE": 0.08,
+                    "7_Mean_PB": 0.15,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.08,
+                    "10_EV_EBITDA": 0.17
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 2,
+                "financial_strength": 5,
+                "growth": 5,
+                "predictability": 8,
+                "valuation": 6,
+                "moat": null
+            },
+            "python_subtotal": 26,
+            "python_subtotal_pct": 52.0,
+            "classification": "Speculative",
+            "penalty_pct": 5,
+            "final_score_pct": 47.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 03:50"
+        },
+        "fundamentals": {
+            "roe": 0.0047,
+            "roic": null,
+            "roe_pct": "0.47%",
+            "roic_pct": null,
+            "roic_source": "unavailable"
+        },
+        "10_Year_History": {
+            "2016": 36.47,
+            "2017": 40.92,
+            "2018": 31.58,
+            "2019": 45.94,
+            "2020": 129.8,
+            "2021": 63.85,
+            "2022": 32.21,
+            "2023": 57.86,
+            "2024": 74.05,
+            "2025": 68.22,
+            "2026": 41.25
+        },
+        "5_Year_Forecast": {
+            "2027": 99.54,
+            "2028": 129.4,
+            "2029": 168.22,
+            "2030": 218.69,
+            "2031": 284.3
+        },
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZBAI": {
         "valuations": {
@@ -136,7 +1249,7 @@
             "penalty_pct": 10,
             "final_score_pct": 26.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": -0.8054,
@@ -162,7 +1275,7 @@
             "2030": 31.52,
             "2031": 32.15
         },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZBAO": {
         "valuations": {
@@ -221,7 +1334,7 @@
             "penalty_pct": 10,
             "final_score_pct": 34.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": -1.3987,
@@ -242,7 +1355,87 @@
             "2030": 13.03,
             "2031": 13.29
         },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
+    },
+    "ZBIO": {
+        "valuations": {
+            "1_DCF_Operating_CF": null,
+            "2_DCF_FCF": null,
+            "3_DCF_Net_Income": null,
+            "4_DCF_Terminal_Value": null,
+            "5_Mean_PS": null,
+            "6_Mean_PE": 24.5,
+            "7_Mean_PB": 6.55,
+            "8_PSG": 2.58,
+            "9_PEG": 126.45,
+            "10_EV_EBITDA": null,
+            "intrinsic_value": 34.01,
+            "methods_used": 4,
+            "confidence": "Medium",
+            "_meta": {
+                "pe_source": "current_trailing",
+                "ps_source": "current_trailing",
+                "pb_source": "historical_mean",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "finviz",
+                "growth_raw": 0.0925,
+                "discount_rate": 0.12,
+                "growth_stage1": 0.0925,
+                "growth_stage2": 0.04625,
+                "terminal_growth": 0.02,
+                "tier": "Weak",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.08,
+                    "2_DCF_FCF": 0.08,
+                    "3_DCF_Net_Income": 0.08,
+                    "4_DCF_Terminal_Value": 0.08,
+                    "5_Mean_PS": 0.12,
+                    "6_Mean_PE": 0.08,
+                    "7_Mean_PB": 0.15,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.08,
+                    "10_EV_EBITDA": 0.17
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 0,
+                "financial_strength": 3,
+                "growth": 2,
+                "predictability": 4,
+                "valuation": 6,
+                "moat": null
+            },
+            "python_subtotal": 15,
+            "python_subtotal_pct": 30.0,
+            "classification": "Dangerous",
+            "penalty_pct": 10,
+            "final_score_pct": 20.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 03:50"
+        },
+        "fundamentals": {
+            "roe": -0.6833,
+            "roic": null,
+            "roe_pct": "-68.33%",
+            "roic_pct": null,
+            "roic_source": "unavailable"
+        },
+        "10_Year_History": {
+            "2024": 8.19,
+            "2025": 36.31,
+            "2026": 24.5
+        },
+        "5_Year_Forecast": {
+            "2027": 37.16,
+            "2028": 40.59,
+            "2029": 44.35,
+            "2030": 48.45,
+            "2031": 52.93
+        },
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZBRA": {
         "valuations": {
@@ -301,7 +1494,7 @@
             "penalty_pct": 5,
             "final_score_pct": 57.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": 0.1168,
@@ -330,7 +1523,7 @@
             "2030": 561.87,
             "2031": 628.51
         },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZCMD": {
         "valuations": {
@@ -389,7 +1582,7 @@
             "penalty_pct": 10,
             "final_score_pct": 20.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": -0.0593,
@@ -414,95 +1607,7 @@
             "2030": 30.47,
             "2031": 31.08
         },
-        "Last_Updated": "2026-03-13 00:55"
-    },
-    "ZD": {
-        "valuations": {
-            "1_DCF_Operating_CF": 93.28,
-            "2_DCF_FCF": 66.56,
-            "3_DCF_Net_Income": 10.85,
-            "4_DCF_Terminal_Value": 78.68,
-            "5_Mean_PS": 61.36,
-            "6_Mean_PE": 41.06,
-            "7_Mean_PB": 54.77,
-            "8_PSG": 77.08,
-            "9_PEG": 2.3,
-            "10_EV_EBITDA": 151.02,
-            "intrinsic_value": 70.84,
-            "methods_used": 10,
-            "confidence": "High",
-            "_meta": {
-                "pe_source": "historical_mean",
-                "ps_source": "historical_mean",
-                "pb_source": "historical_mean",
-                "pe_approx": true,
-                "peg_approx": true,
-                "growth_source": "finviz",
-                "growth_raw": 0.0195,
-                "discount_rate": 0.12,
-                "growth_stage1": 0.02,
-                "growth_stage2": 0.02,
-                "terminal_growth": 0.02,
-                "tier": "Weak",
-                "weights_applied": {
-                    "1_DCF_Operating_CF": 0.08,
-                    "2_DCF_FCF": 0.08,
-                    "3_DCF_Net_Income": 0.08,
-                    "4_DCF_Terminal_Value": 0.08,
-                    "5_Mean_PS": 0.12,
-                    "6_Mean_PE": 0.08,
-                    "7_Mean_PB": 0.15,
-                    "8_PSG": 0.08,
-                    "9_PEG": 0.08,
-                    "10_EV_EBITDA": 0.17
-                }
-            }
-        },
-        "quality": {
-            "scores": {
-                "profitability": 5,
-                "financial_strength": 6,
-                "growth": 2,
-                "predictability": 7,
-                "valuation": 9,
-                "moat": null
-            },
-            "python_subtotal": 29,
-            "python_subtotal_pct": 58.0,
-            "classification": "Speculative",
-            "penalty_pct": 5,
-            "final_score_pct": 53.0,
-            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
-        },
-        "fundamentals": {
-            "roe": 0.0266,
-            "roic": 0.0624,
-            "roe_pct": "2.66%",
-            "roic_pct": "6.24%",
-            "roic_source": "calculated"
-        },
-        "10_Year_History": {
-            "2016": 67.59,
-            "2017": 63.21,
-            "2018": 59.7,
-            "2019": 81.49,
-            "2020": 84.95,
-            "2021": 110.86,
-            "2022": 79.1,
-            "2023": 67.19,
-            "2024": 54.34,
-            "2025": 35.15,
-            "2026": 39.47
-        },
-        "5_Year_Forecast": {
-            "2027": 72.26,
-            "2028": 73.7,
-            "2029": 75.18,
-            "2030": 76.68,
-            "2031": 78.21
-        },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZDAI": {
         "valuations": {
@@ -561,7 +1666,7 @@
             "penalty_pct": 10,
             "final_score_pct": 28.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": -2.073,
@@ -582,7 +1687,95 @@
             "2030": 7.7,
             "2031": 7.85
         },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
+    },
+    "ZD": {
+        "valuations": {
+            "1_DCF_Operating_CF": 93.28,
+            "2_DCF_FCF": 66.56,
+            "3_DCF_Net_Income": 10.85,
+            "4_DCF_Terminal_Value": 78.68,
+            "5_Mean_PS": 61.36,
+            "6_Mean_PE": 41.06,
+            "7_Mean_PB": 54.77,
+            "8_PSG": 77.08,
+            "9_PEG": 2.3,
+            "10_EV_EBITDA": 151.02,
+            "intrinsic_value": 70.84,
+            "methods_used": 10,
+            "confidence": "High",
+            "_meta": {
+                "pe_source": "historical_mean",
+                "ps_source": "historical_mean",
+                "pb_source": "historical_mean",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "finviz",
+                "growth_raw": 0.0195,
+                "discount_rate": 0.12,
+                "growth_stage1": 0.02,
+                "growth_stage2": 0.02,
+                "terminal_growth": 0.02,
+                "tier": "Weak",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.08,
+                    "2_DCF_FCF": 0.08,
+                    "3_DCF_Net_Income": 0.08,
+                    "4_DCF_Terminal_Value": 0.08,
+                    "5_Mean_PS": 0.12,
+                    "6_Mean_PE": 0.08,
+                    "7_Mean_PB": 0.15,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.08,
+                    "10_EV_EBITDA": 0.17
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 5,
+                "financial_strength": 6,
+                "growth": 2,
+                "predictability": 7,
+                "valuation": 9,
+                "moat": null
+            },
+            "python_subtotal": 29,
+            "python_subtotal_pct": 58.0,
+            "classification": "Speculative",
+            "penalty_pct": 5,
+            "final_score_pct": 53.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 03:50"
+        },
+        "fundamentals": {
+            "roe": 0.0266,
+            "roic": 0.0624,
+            "roe_pct": "2.66%",
+            "roic_pct": "6.24%",
+            "roic_source": "calculated"
+        },
+        "10_Year_History": {
+            "2016": 67.59,
+            "2017": 63.21,
+            "2018": 59.7,
+            "2019": 81.49,
+            "2020": 84.95,
+            "2021": 110.86,
+            "2022": 79.1,
+            "2023": 67.19,
+            "2024": 54.34,
+            "2025": 35.15,
+            "2026": 39.47
+        },
+        "5_Year_Forecast": {
+            "2027": 72.26,
+            "2028": 73.7,
+            "2029": 75.18,
+            "2030": 76.68,
+            "2031": 78.21
+        },
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZENA": {
         "valuations": {
@@ -641,7 +1834,7 @@
             "penalty_pct": 10,
             "final_score_pct": 12.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": -1.0095,
@@ -662,7 +1855,7 @@
             "2030": 1.17,
             "2031": 1.19
         },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZENV": {
         "valuations": {
@@ -721,7 +1914,7 @@
             "penalty_pct": 10,
             "final_score_pct": 40.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": -0.1545,
@@ -745,7 +1938,7 @@
             "2030": 83.82,
             "2031": 85.5
         },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZEO": {
         "valuations": {
@@ -804,7 +1997,7 @@
             "penalty_pct": 10,
             "final_score_pct": 24.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": -0.4774,
@@ -828,7 +2021,7 @@
             "2030": 9.35,
             "2031": 9.54
         },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZEOWW": {
         "valuations": {
@@ -887,7 +2080,7 @@
             "penalty_pct": 10,
             "final_score_pct": 22.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": -0.4774,
@@ -906,7 +2099,7 @@
             "2030": 16.6,
             "2031": 16.94
         },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZEUS": {
         "valuations": {
@@ -965,7 +2158,7 @@
             "penalty_pct": 10,
             "final_score_pct": 32.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": 0.024,
@@ -994,95 +2187,7 @@
             "2030": 61.83,
             "2031": 63.07
         },
-        "Last_Updated": "2026-03-13 00:55"
-    },
-    "ZG": {
-        "valuations": {
-            "1_DCF_Operating_CF": 611.94,
-            "2_DCF_FCF": 140.93,
-            "3_DCF_Net_Income": 38.25,
-            "4_DCF_Terminal_Value": 249.83,
-            "5_Mean_PS": 66.64,
-            "6_Mean_PE": null,
-            "7_Mean_PB": 11.2,
-            "8_PSG": 1688.46,
-            "9_PEG": 2.7,
-            "10_EV_EBITDA": 39.48,
-            "intrinsic_value": 255.39,
-            "methods_used": 9,
-            "confidence": "High",
-            "_meta": {
-                "pe_source": "current_trailing",
-                "ps_source": "historical_mean",
-                "pb_source": "historical_mean",
-                "pe_approx": true,
-                "peg_approx": true,
-                "growth_source": "finviz",
-                "growth_raw": 0.3198,
-                "discount_rate": 0.12,
-                "growth_stage1": 0.3,
-                "growth_stage2": 0.15,
-                "terminal_growth": 0.02,
-                "tier": "Weak",
-                "weights_applied": {
-                    "1_DCF_Operating_CF": 0.08,
-                    "2_DCF_FCF": 0.08,
-                    "3_DCF_Net_Income": 0.08,
-                    "4_DCF_Terminal_Value": 0.08,
-                    "5_Mean_PS": 0.12,
-                    "6_Mean_PE": 0.08,
-                    "7_Mean_PB": 0.15,
-                    "8_PSG": 0.08,
-                    "9_PEG": 0.08,
-                    "10_EV_EBITDA": 0.17
-                }
-            }
-        },
-        "quality": {
-            "scores": {
-                "profitability": 2,
-                "financial_strength": 5,
-                "growth": 5,
-                "predictability": 8,
-                "valuation": 6,
-                "moat": null
-            },
-            "python_subtotal": 26,
-            "python_subtotal_pct": 52.0,
-            "classification": "Speculative",
-            "penalty_pct": 5,
-            "final_score_pct": 47.0,
-            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
-        },
-        "fundamentals": {
-            "roe": 0.0047,
-            "roic": null,
-            "roe_pct": "0.47%",
-            "roic_pct": null,
-            "roic_source": "unavailable"
-        },
-        "10_Year_History": {
-            "2016": 36.45,
-            "2017": 40.74,
-            "2018": 31.43,
-            "2019": 45.74,
-            "2020": 135.94,
-            "2021": 62.22,
-            "2022": 31.21,
-            "2023": 56.72,
-            "2024": 70.85,
-            "2025": 68.23,
-            "2026": 40.81
-        },
-        "5_Year_Forecast": {
-            "2027": 332.01,
-            "2028": 431.61,
-            "2029": 561.09,
-            "2030": 729.42,
-            "2031": 948.25
-        },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZGM": {
         "valuations": {
@@ -1141,7 +2246,7 @@
             "penalty_pct": 5,
             "final_score_pct": 51.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": 0.2343,
@@ -1161,7 +2266,95 @@
             "2030": 1.82,
             "2031": 1.85
         },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
+    },
+    "ZG": {
+        "valuations": {
+            "1_DCF_Operating_CF": 611.94,
+            "2_DCF_FCF": 140.93,
+            "3_DCF_Net_Income": 38.25,
+            "4_DCF_Terminal_Value": 249.83,
+            "5_Mean_PS": 66.64,
+            "6_Mean_PE": null,
+            "7_Mean_PB": 11.2,
+            "8_PSG": 1688.46,
+            "9_PEG": 2.7,
+            "10_EV_EBITDA": 39.48,
+            "intrinsic_value": 255.39,
+            "methods_used": 9,
+            "confidence": "High",
+            "_meta": {
+                "pe_source": "current_trailing",
+                "ps_source": "historical_mean",
+                "pb_source": "historical_mean",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "finviz",
+                "growth_raw": 0.3198,
+                "discount_rate": 0.12,
+                "growth_stage1": 0.3,
+                "growth_stage2": 0.15,
+                "terminal_growth": 0.02,
+                "tier": "Weak",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.08,
+                    "2_DCF_FCF": 0.08,
+                    "3_DCF_Net_Income": 0.08,
+                    "4_DCF_Terminal_Value": 0.08,
+                    "5_Mean_PS": 0.12,
+                    "6_Mean_PE": 0.08,
+                    "7_Mean_PB": 0.15,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.08,
+                    "10_EV_EBITDA": 0.17
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 2,
+                "financial_strength": 5,
+                "growth": 5,
+                "predictability": 8,
+                "valuation": 6,
+                "moat": null
+            },
+            "python_subtotal": 26,
+            "python_subtotal_pct": 52.0,
+            "classification": "Speculative",
+            "penalty_pct": 5,
+            "final_score_pct": 47.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 03:50"
+        },
+        "fundamentals": {
+            "roe": 0.0047,
+            "roic": null,
+            "roe_pct": "0.47%",
+            "roic_pct": null,
+            "roic_source": "unavailable"
+        },
+        "10_Year_History": {
+            "2016": 36.45,
+            "2017": 40.74,
+            "2018": 31.43,
+            "2019": 45.74,
+            "2020": 135.94,
+            "2021": 62.22,
+            "2022": 31.21,
+            "2023": 56.72,
+            "2024": 70.85,
+            "2025": 68.23,
+            "2026": 40.81
+        },
+        "5_Year_Forecast": {
+            "2027": 332.01,
+            "2028": 431.61,
+            "2029": 561.09,
+            "2030": 729.42,
+            "2031": 948.25
+        },
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZION": {
         "valuations": {
@@ -1220,7 +2413,7 @@
             "penalty_pct": 10,
             "final_score_pct": 38.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": 0.1351,
@@ -1249,87 +2442,7 @@
             "2030": 68.38,
             "2031": 71.23
         },
-        "Last_Updated": "2026-03-13 00:55"
-    },
-    "ZJK": {
-        "valuations": {
-            "1_DCF_Operating_CF": 0.12,
-            "2_DCF_FCF": null,
-            "3_DCF_Net_Income": 4.91,
-            "4_DCF_Terminal_Value": null,
-            "5_Mean_PS": 11.45,
-            "6_Mean_PE": 1.92,
-            "7_Mean_PB": 12.02,
-            "8_PSG": 21.76,
-            "9_PEG": 2.1,
-            "10_EV_EBITDA": 0.86,
-            "intrinsic_value": 6.89,
-            "methods_used": 8,
-            "confidence": "High",
-            "_meta": {
-                "pe_source": "current_trailing",
-                "ps_source": "historical_mean",
-                "pb_source": "historical_mean",
-                "pe_approx": true,
-                "peg_approx": true,
-                "growth_source": "finviz",
-                "growth_raw": 0.3751,
-                "discount_rate": 0.12,
-                "growth_stage1": 0.3,
-                "growth_stage2": 0.15,
-                "terminal_growth": 0.02,
-                "tier": "Weak",
-                "weights_applied": {
-                    "1_DCF_Operating_CF": 0.08,
-                    "2_DCF_FCF": 0.08,
-                    "3_DCF_Net_Income": 0.08,
-                    "4_DCF_Terminal_Value": 0.08,
-                    "5_Mean_PS": 0.12,
-                    "6_Mean_PE": 0.08,
-                    "7_Mean_PB": 0.15,
-                    "8_PSG": 0.08,
-                    "9_PEG": 0.08,
-                    "10_EV_EBITDA": 0.17
-                }
-            }
-        },
-        "quality": {
-            "scores": {
-                "profitability": 5,
-                "financial_strength": 6,
-                "growth": 8,
-                "predictability": 6,
-                "valuation": 7,
-                "moat": null
-            },
-            "python_subtotal": 32,
-            "python_subtotal_pct": 64.0,
-            "classification": "Speculative",
-            "penalty_pct": 5,
-            "final_score_pct": 59.0,
-            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
-        },
-        "fundamentals": {
-            "roe": 0.1288,
-            "roic": 0.069,
-            "roe_pct": "12.88%",
-            "roic_pct": "6.9%",
-            "roic_source": "calculated"
-        },
-        "10_Year_History": {
-            "2024": 9.35,
-            "2025": 2.0,
-            "2026": 1.92
-        },
-        "5_Year_Forecast": {
-            "2027": 8.96,
-            "2028": 11.64,
-            "2029": 15.14,
-            "2030": 19.68,
-            "2031": 25.58
-        },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZIONP": {
         "valuations": {
@@ -1388,7 +2501,7 @@
             "penalty_pct": 5,
             "final_score_pct": 49.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": 0.1351,
@@ -1417,7 +2530,87 @@
             "2030": 678.35,
             "2031": 881.86
         },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
+    },
+    "ZJK": {
+        "valuations": {
+            "1_DCF_Operating_CF": 0.12,
+            "2_DCF_FCF": null,
+            "3_DCF_Net_Income": 4.91,
+            "4_DCF_Terminal_Value": null,
+            "5_Mean_PS": 11.45,
+            "6_Mean_PE": 1.92,
+            "7_Mean_PB": 12.02,
+            "8_PSG": 21.76,
+            "9_PEG": 2.1,
+            "10_EV_EBITDA": 0.86,
+            "intrinsic_value": 6.89,
+            "methods_used": 8,
+            "confidence": "High",
+            "_meta": {
+                "pe_source": "current_trailing",
+                "ps_source": "historical_mean",
+                "pb_source": "historical_mean",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "finviz",
+                "growth_raw": 0.3751,
+                "discount_rate": 0.12,
+                "growth_stage1": 0.3,
+                "growth_stage2": 0.15,
+                "terminal_growth": 0.02,
+                "tier": "Weak",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.08,
+                    "2_DCF_FCF": 0.08,
+                    "3_DCF_Net_Income": 0.08,
+                    "4_DCF_Terminal_Value": 0.08,
+                    "5_Mean_PS": 0.12,
+                    "6_Mean_PE": 0.08,
+                    "7_Mean_PB": 0.15,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.08,
+                    "10_EV_EBITDA": 0.17
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 5,
+                "financial_strength": 6,
+                "growth": 8,
+                "predictability": 6,
+                "valuation": 7,
+                "moat": null
+            },
+            "python_subtotal": 32,
+            "python_subtotal_pct": 64.0,
+            "classification": "Speculative",
+            "penalty_pct": 5,
+            "final_score_pct": 59.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 03:50"
+        },
+        "fundamentals": {
+            "roe": 0.1288,
+            "roic": 0.069,
+            "roe_pct": "12.88%",
+            "roic_pct": "6.9%",
+            "roic_source": "calculated"
+        },
+        "10_Year_History": {
+            "2024": 9.35,
+            "2025": 2.0,
+            "2026": 1.92
+        },
+        "5_Year_Forecast": {
+            "2027": 8.96,
+            "2028": 11.64,
+            "2029": 15.14,
+            "2030": 19.68,
+            "2031": 25.58
+        },
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZJYL": {
         "valuations": {
@@ -1476,7 +2669,7 @@
             "penalty_pct": 10,
             "final_score_pct": 36.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": 0.0475,
@@ -1498,7 +2691,7 @@
             "2030": 0.28,
             "2031": 0.29
         },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZKIN": {
         "valuations": {
@@ -1557,7 +2750,7 @@
             "penalty_pct": 10,
             "final_score_pct": 16.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": -0.1517,
@@ -1585,7 +2778,7 @@
             "2030": 2.71,
             "2031": 2.76
         },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZLAB": {
         "valuations": {
@@ -1644,7 +2837,7 @@
             "penalty_pct": 10,
             "final_score_pct": 34.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": -0.2256,
@@ -1672,7 +2865,7 @@
             "2030": 98.2,
             "2031": 120.01
         },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZM": {
         "valuations": {
@@ -1731,7 +2924,7 @@
             "penalty_pct": 0,
             "final_score_pct": 82.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": 0.2028,
@@ -1757,7 +2950,7 @@
             "2030": 123.12,
             "2031": 127.21
         },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZNB": {
         "valuations": {
@@ -1816,7 +3009,7 @@
             "penalty_pct": 10,
             "final_score_pct": 34.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": -2.0551,
@@ -1845,87 +3038,7 @@
             "2030": 2598.25,
             "2031": 2650.21
         },
-        "Last_Updated": "2026-03-13 00:55"
-    },
-    "ZOOZ": {
-        "valuations": {
-            "1_DCF_Operating_CF": null,
-            "2_DCF_FCF": null,
-            "3_DCF_Net_Income": null,
-            "4_DCF_Terminal_Value": null,
-            "5_Mean_PS": null,
-            "6_Mean_PE": null,
-            "7_Mean_PB": null,
-            "8_PSG": 0.01,
-            "9_PEG": null,
-            "10_EV_EBITDA": null,
-            "intrinsic_value": 0.01,
-            "methods_used": 1,
-            "confidence": "Low",
-            "_meta": {
-                "pe_source": "current_trailing",
-                "ps_source": "current_trailing",
-                "pb_source": "current_trailing",
-                "pe_approx": true,
-                "peg_approx": true,
-                "growth_source": "default",
-                "growth_raw": 0.02,
-                "discount_rate": 0.12,
-                "growth_stage1": 0.02,
-                "growth_stage2": 0.02,
-                "terminal_growth": 0.02,
-                "tier": "Weak",
-                "weights_applied": {
-                    "1_DCF_Operating_CF": 0.08,
-                    "2_DCF_FCF": 0.08,
-                    "3_DCF_Net_Income": 0.08,
-                    "4_DCF_Terminal_Value": 0.08,
-                    "5_Mean_PS": 0.12,
-                    "6_Mean_PE": 0.08,
-                    "7_Mean_PB": 0.15,
-                    "8_PSG": 0.08,
-                    "9_PEG": 0.08,
-                    "10_EV_EBITDA": 0.17
-                }
-            }
-        },
-        "quality": {
-            "scores": {
-                "profitability": 0,
-                "financial_strength": 0,
-                "growth": 3,
-                "predictability": 4,
-                "valuation": 0,
-                "moat": null
-            },
-            "python_subtotal": 7,
-            "python_subtotal_pct": 14.0,
-            "classification": "Dangerous",
-            "penalty_pct": 10,
-            "final_score_pct": 4.0,
-            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
-        },
-        "fundamentals": {
-            "roe": -2.1787,
-            "roic": null,
-            "roe_pct": "-217.88%",
-            "roic_pct": null,
-            "roic_source": "unavailable"
-        },
-        "10_Year_History": {
-            "2024": 2.45,
-            "2025": 0.44,
-            "2026": 0.37
-        },
-        "5_Year_Forecast": {
-            "2027": 0.01,
-            "2028": 0.01,
-            "2029": 0.01,
-            "2030": 0.01,
-            "2031": 0.01
-        },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZNTL": {
         "valuations": {
@@ -1984,7 +3097,7 @@
             "penalty_pct": 10,
             "final_score_pct": 24.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": -0.4918,
@@ -2009,7 +3122,87 @@
             "2030": 14.89,
             "2031": 16.72
         },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
+    },
+    "ZOOZ": {
+        "valuations": {
+            "1_DCF_Operating_CF": null,
+            "2_DCF_FCF": null,
+            "3_DCF_Net_Income": null,
+            "4_DCF_Terminal_Value": null,
+            "5_Mean_PS": null,
+            "6_Mean_PE": null,
+            "7_Mean_PB": null,
+            "8_PSG": 0.01,
+            "9_PEG": null,
+            "10_EV_EBITDA": null,
+            "intrinsic_value": 0.01,
+            "methods_used": 1,
+            "confidence": "Low",
+            "_meta": {
+                "pe_source": "current_trailing",
+                "ps_source": "current_trailing",
+                "pb_source": "current_trailing",
+                "pe_approx": true,
+                "peg_approx": true,
+                "growth_source": "default",
+                "growth_raw": 0.02,
+                "discount_rate": 0.12,
+                "growth_stage1": 0.02,
+                "growth_stage2": 0.02,
+                "terminal_growth": 0.02,
+                "tier": "Weak",
+                "weights_applied": {
+                    "1_DCF_Operating_CF": 0.08,
+                    "2_DCF_FCF": 0.08,
+                    "3_DCF_Net_Income": 0.08,
+                    "4_DCF_Terminal_Value": 0.08,
+                    "5_Mean_PS": 0.12,
+                    "6_Mean_PE": 0.08,
+                    "7_Mean_PB": 0.15,
+                    "8_PSG": 0.08,
+                    "9_PEG": 0.08,
+                    "10_EV_EBITDA": 0.17
+                }
+            }
+        },
+        "quality": {
+            "scores": {
+                "profitability": 0,
+                "financial_strength": 0,
+                "growth": 3,
+                "predictability": 4,
+                "valuation": 0,
+                "moat": null
+            },
+            "python_subtotal": 7,
+            "python_subtotal_pct": 14.0,
+            "classification": "Dangerous",
+            "penalty_pct": 10,
+            "final_score_pct": 4.0,
+            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
+            "last_calculated": "2026-03-13 03:50"
+        },
+        "fundamentals": {
+            "roe": -2.1787,
+            "roic": null,
+            "roe_pct": "-217.88%",
+            "roic_pct": null,
+            "roic_source": "unavailable"
+        },
+        "10_Year_History": {
+            "2024": 2.45,
+            "2025": 0.44,
+            "2026": 0.37
+        },
+        "5_Year_Forecast": {
+            "2027": 0.01,
+            "2028": 0.01,
+            "2029": 0.01,
+            "2030": 0.01,
+            "2031": 0.01
+        },
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZOOZW": {
         "valuations": {
@@ -2068,7 +3261,7 @@
             "penalty_pct": 10,
             "final_score_pct": 14.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": -2.1787,
@@ -2077,9 +3270,7 @@
             "roic_pct": null,
             "roic_source": "unavailable"
         },
-        "10_Year_History": {
-            "2026": 0.02
-        },
+        "10_Year_History": {},
         "5_Year_Forecast": {
             "2027": 0.2,
             "2028": 0.21,
@@ -2087,7 +3278,7 @@
             "2030": 0.22,
             "2031": 0.22
         },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
     },
     "ZS": {
         "valuations": {
@@ -2095,18 +3286,18 @@
             "2_DCF_FCF": 193.18,
             "3_DCF_Net_Income": null,
             "4_DCF_Terminal_Value": 288.06,
-            "5_Mean_PS": 270.04,
+            "5_Mean_PS": 151.61,
             "6_Mean_PE": null,
             "7_Mean_PB": 151.61,
             "8_PSG": 354.82,
             "9_PEG": null,
             "10_EV_EBITDA": null,
-            "intrinsic_value": 235.41,
+            "intrinsic_value": 211.33,
             "methods_used": 6,
             "confidence": "Medium",
             "_meta": {
                 "pe_source": "current_trailing",
-                "ps_source": "historical_mean",
+                "ps_source": "current_trailing",
                 "pb_source": "current_trailing",
                 "pe_approx": true,
                 "peg_approx": true,
@@ -2146,7 +3337,7 @@
             "penalty_pct": 10,
             "final_score_pct": 40.0,
             "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
+            "last_calculated": "2026-03-13 03:50"
         },
         "fundamentals": {
             "roe": -0.0356,
@@ -2155,698 +3346,14 @@
             "roic_pct": null,
             "roic_source": "unavailable"
         },
-        "10_Year_History": {
-            "2018": 39.21,
-            "2019": 46.5,
-            "2020": 199.71,
-            "2021": 321.33,
-            "2022": 111.9,
-            "2023": 221.56,
-            "2024": 180.41,
-            "2025": 224.92,
-            "2026": 151.61
-        },
+        "10_Year_History": {},
         "5_Year_Forecast": {
-            "2027": 280.16,
-            "2028": 333.42,
-            "2029": 396.8,
-            "2030": 472.24,
-            "2031": 562.01
+            "2027": 251.5,
+            "2028": 299.31,
+            "2029": 356.21,
+            "2030": 423.93,
+            "2031": 504.52
         },
-        "Last_Updated": "2026-03-13 00:55"
-    },
-    "ZSPC": {
-        "valuations": {
-            "1_DCF_Operating_CF": null,
-            "2_DCF_FCF": null,
-            "3_DCF_Net_Income": null,
-            "4_DCF_Terminal_Value": null,
-            "5_Mean_PS": 13.16,
-            "6_Mean_PE": 0.19,
-            "7_Mean_PB": null,
-            "8_PSG": 1.89,
-            "9_PEG": 1.64,
-            "10_EV_EBITDA": null,
-            "intrinsic_value": 5.21,
-            "methods_used": 4,
-            "confidence": "Medium",
-            "_meta": {
-                "pe_source": "current_trailing",
-                "ps_source": "historical_mean",
-                "pb_source": "current_trailing",
-                "pe_approx": true,
-                "peg_approx": true,
-                "growth_source": "default",
-                "growth_raw": 0.02,
-                "discount_rate": 0.12,
-                "growth_stage1": 0.02,
-                "growth_stage2": 0.02,
-                "terminal_growth": 0.02,
-                "tier": "Weak",
-                "weights_applied": {
-                    "1_DCF_Operating_CF": 0.08,
-                    "2_DCF_FCF": 0.08,
-                    "3_DCF_Net_Income": 0.08,
-                    "4_DCF_Terminal_Value": 0.08,
-                    "5_Mean_PS": 0.12,
-                    "6_Mean_PE": 0.08,
-                    "7_Mean_PB": 0.15,
-                    "8_PSG": 0.08,
-                    "9_PEG": 0.08,
-                    "10_EV_EBITDA": 0.17
-                }
-            }
-        },
-        "quality": {
-            "scores": {
-                "profitability": 0,
-                "financial_strength": 0,
-                "growth": 2,
-                "predictability": 4,
-                "valuation": 8,
-                "moat": null
-            },
-            "python_subtotal": 14,
-            "python_subtotal_pct": 28.0,
-            "classification": "Dangerous",
-            "penalty_pct": 10,
-            "final_score_pct": 18.0,
-            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
-        },
-        "fundamentals": {
-            "roe": null,
-            "roic": null,
-            "roe_pct": null,
-            "roic_pct": null,
-            "roic_source": "unavailable"
-        },
-        "10_Year_History": {
-            "2024": 15.89,
-            "2025": 0.47,
-            "2026": 0.19
-        },
-        "5_Year_Forecast": {
-            "2027": 5.31,
-            "2028": 5.42,
-            "2029": 5.53,
-            "2030": 5.64,
-            "2031": 5.75
-        },
-        "Last_Updated": "2026-03-13 00:55"
-    },
-    "ZSTK": {
-        "valuations": {
-            "1_DCF_Operating_CF": null,
-            "2_DCF_FCF": null,
-            "3_DCF_Net_Income": null,
-            "4_DCF_Terminal_Value": null,
-            "5_Mean_PS": 65.22,
-            "6_Mean_PE": null,
-            "7_Mean_PB": 625.37,
-            "8_PSG": 29.35,
-            "9_PEG": null,
-            "10_EV_EBITDA": null,
-            "intrinsic_value": 297.09,
-            "methods_used": 3,
-            "confidence": "Low",
-            "_meta": {
-                "pe_source": "current_trailing",
-                "ps_source": "historical_mean",
-                "pb_source": "historical_mean",
-                "pe_approx": true,
-                "peg_approx": true,
-                "growth_source": "default",
-                "growth_raw": 0.02,
-                "discount_rate": 0.12,
-                "growth_stage1": 0.02,
-                "growth_stage2": 0.02,
-                "terminal_growth": 0.02,
-                "tier": "Weak",
-                "weights_applied": {
-                    "1_DCF_Operating_CF": 0.08,
-                    "2_DCF_FCF": 0.08,
-                    "3_DCF_Net_Income": 0.08,
-                    "4_DCF_Terminal_Value": 0.08,
-                    "5_Mean_PS": 0.12,
-                    "6_Mean_PE": 0.08,
-                    "7_Mean_PB": 0.15,
-                    "8_PSG": 0.08,
-                    "9_PEG": 0.08,
-                    "10_EV_EBITDA": 0.17
-                }
-            }
-        },
-        "quality": {
-            "scores": {
-                "profitability": 0,
-                "financial_strength": 1,
-                "growth": 5,
-                "predictability": 2,
-                "valuation": 8,
-                "moat": null
-            },
-            "python_subtotal": 16,
-            "python_subtotal_pct": 32.0,
-            "classification": "Dangerous",
-            "penalty_pct": 10,
-            "final_score_pct": 22.0,
-            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
-        },
-        "fundamentals": {
-            "roe": -3.0751,
-            "roic": null,
-            "roe_pct": "-307.51%",
-            "roic_pct": null,
-            "roic_source": "unavailable"
-        },
-        "10_Year_History": {
-            "2021": 1388.4,
-            "2022": 177.84,
-            "2023": 52.65,
-            "2024": 40.17,
-            "2025": 6.26,
-            "2026": 7.01
-        },
-        "5_Year_Forecast": {
-            "2027": 303.03,
-            "2028": 309.09,
-            "2029": 315.27,
-            "2030": 321.58,
-            "2031": 328.01
-        },
-        "Last_Updated": "2026-03-13 00:55"
-    },
-    "ZTEK": {
-        "valuations": {
-            "1_DCF_Operating_CF": null,
-            "2_DCF_FCF": null,
-            "3_DCF_Net_Income": null,
-            "4_DCF_Terminal_Value": null,
-            "5_Mean_PS": null,
-            "6_Mean_PE": null,
-            "7_Mean_PB": 0.37,
-            "8_PSG": 0.02,
-            "9_PEG": null,
-            "10_EV_EBITDA": null,
-            "intrinsic_value": 0.25,
-            "methods_used": 2,
-            "confidence": "Low",
-            "_meta": {
-                "pe_source": "current_trailing",
-                "ps_source": "current_trailing",
-                "pb_source": "historical_mean",
-                "pe_approx": true,
-                "peg_approx": true,
-                "growth_source": "default",
-                "growth_raw": 0.02,
-                "discount_rate": 0.12,
-                "growth_stage1": 0.02,
-                "growth_stage2": 0.02,
-                "terminal_growth": 0.02,
-                "tier": "Weak",
-                "weights_applied": {
-                    "1_DCF_Operating_CF": 0.08,
-                    "2_DCF_FCF": 0.08,
-                    "3_DCF_Net_Income": 0.08,
-                    "4_DCF_Terminal_Value": 0.08,
-                    "5_Mean_PS": 0.12,
-                    "6_Mean_PE": 0.08,
-                    "7_Mean_PB": 0.15,
-                    "8_PSG": 0.08,
-                    "9_PEG": 0.08,
-                    "10_EV_EBITDA": 0.17
-                }
-            }
-        },
-        "quality": {
-            "scores": {
-                "profitability": 0,
-                "financial_strength": 1,
-                "growth": 6,
-                "predictability": 4,
-                "valuation": 0,
-                "moat": null
-            },
-            "python_subtotal": 11,
-            "python_subtotal_pct": 22.0,
-            "classification": "Dangerous",
-            "penalty_pct": 10,
-            "final_score_pct": 12.0,
-            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
-        },
-        "fundamentals": {
-            "roe": -0.5664,
-            "roic": null,
-            "roe_pct": "-56.64%",
-            "roic_pct": null,
-            "roic_source": "unavailable"
-        },
-        "10_Year_History": {
-            "2016": 0.64,
-            "2017": 0.54,
-            "2018": 0.3,
-            "2019": 0.28,
-            "2020": 2.83,
-            "2021": 3.88,
-            "2022": 1.55,
-            "2023": 1.08,
-            "2024": 0.94,
-            "2025": 0.64,
-            "2026": 0.64
-        },
-        "5_Year_Forecast": {
-            "2027": 0.26,
-            "2028": 0.26,
-            "2029": 0.27,
-            "2030": 0.27,
-            "2031": 0.28
-        },
-        "Last_Updated": "2026-03-13 00:55"
-    },
-    "ZUMZ": {
-        "valuations": {
-            "1_DCF_Operating_CF": 227.36,
-            "2_DCF_FCF": 194.59,
-            "3_DCF_Net_Income": 38.64,
-            "4_DCF_Terminal_Value": 344.96,
-            "5_Mean_PS": 20.81,
-            "6_Mean_PE": 3.99,
-            "7_Mean_PB": 20.68,
-            "8_PSG": 1622.89,
-            "9_PEG": 12.3,
-            "10_EV_EBITDA": 29.38,
-            "intrinsic_value": 206.17,
-            "methods_used": 10,
-            "confidence": "High",
-            "_meta": {
-                "pe_source": "historical_mean",
-                "ps_source": "historical_mean",
-                "pb_source": "historical_mean",
-                "pe_approx": true,
-                "peg_approx": true,
-                "growth_source": "finviz",
-                "growth_raw": 0.314,
-                "discount_rate": 0.12,
-                "growth_stage1": 0.3,
-                "growth_stage2": 0.15,
-                "terminal_growth": 0.02,
-                "tier": "Weak",
-                "weights_applied": {
-                    "1_DCF_Operating_CF": 0.08,
-                    "2_DCF_FCF": 0.08,
-                    "3_DCF_Net_Income": 0.08,
-                    "4_DCF_Terminal_Value": 0.08,
-                    "5_Mean_PS": 0.12,
-                    "6_Mean_PE": 0.08,
-                    "7_Mean_PB": 0.15,
-                    "8_PSG": 0.08,
-                    "9_PEG": 0.08,
-                    "10_EV_EBITDA": 0.17
-                }
-            }
-        },
-        "quality": {
-            "scores": {
-                "profitability": 2,
-                "financial_strength": 4,
-                "growth": 4,
-                "predictability": 5,
-                "valuation": 7,
-                "moat": null
-            },
-            "python_subtotal": 22,
-            "python_subtotal_pct": 44.0,
-            "classification": "Dangerous",
-            "penalty_pct": 10,
-            "final_score_pct": 34.0,
-            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
-        },
-        "fundamentals": {
-            "roe": 0.0279,
-            "roic": 0.0025,
-            "roe_pct": "2.79%",
-            "roic_pct": "0.25%",
-            "roic_source": "calculated"
-        },
-        "10_Year_History": {
-            "2016": 21.85,
-            "2017": 20.83,
-            "2018": 19.17,
-            "2019": 34.54,
-            "2020": 36.78,
-            "2021": 47.99,
-            "2022": 21.74,
-            "2023": 20.34,
-            "2024": 19.17,
-            "2025": 26.05,
-            "2026": 23.44
-        },
-        "5_Year_Forecast": {
-            "2027": 268.02,
-            "2028": 348.43,
-            "2029": 452.96,
-            "2030": 588.84,
-            "2031": 765.49
-        },
-        "Last_Updated": "2026-03-13 00:55"
-    },
-    "ZURA": {
-        "valuations": {
-            "1_DCF_Operating_CF": null,
-            "2_DCF_FCF": null,
-            "3_DCF_Net_Income": null,
-            "4_DCF_Terminal_Value": null,
-            "5_Mean_PS": null,
-            "6_Mean_PE": null,
-            "7_Mean_PB": 7.56,
-            "8_PSG": null,
-            "9_PEG": null,
-            "10_EV_EBITDA": null,
-            "intrinsic_value": 7.56,
-            "methods_used": 1,
-            "confidence": "Low",
-            "_meta": {
-                "pe_source": "current_trailing",
-                "ps_source": "current_trailing",
-                "pb_source": "historical_mean",
-                "pe_approx": true,
-                "peg_approx": true,
-                "growth_source": "finviz",
-                "growth_raw": -0.0366,
-                "discount_rate": 0.12,
-                "growth_stage1": 0.02,
-                "growth_stage2": 0.02,
-                "terminal_growth": 0.02,
-                "tier": "Weak",
-                "weights_applied": {
-                    "1_DCF_Operating_CF": 0.08,
-                    "2_DCF_FCF": 0.08,
-                    "3_DCF_Net_Income": 0.08,
-                    "4_DCF_Terminal_Value": 0.08,
-                    "5_Mean_PS": 0.12,
-                    "6_Mean_PE": 0.08,
-                    "7_Mean_PB": 0.15,
-                    "8_PSG": 0.08,
-                    "9_PEG": 0.08,
-                    "10_EV_EBITDA": 0.17
-                }
-            }
-        },
-        "quality": {
-            "scores": {
-                "profitability": 0,
-                "financial_strength": 3,
-                "growth": 3,
-                "predictability": 5,
-                "valuation": 4,
-                "moat": null
-            },
-            "python_subtotal": 15,
-            "python_subtotal_pct": 30.0,
-            "classification": "Dangerous",
-            "penalty_pct": 10,
-            "final_score_pct": 20.0,
-            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
-        },
-        "fundamentals": {
-            "roe": -0.4501,
-            "roic": null,
-            "roe_pct": "-45.01%",
-            "roic_pct": null,
-            "roic_source": "unavailable"
-        },
-        "10_Year_History": {
-            "2023": 4.67,
-            "2024": 2.5,
-            "2025": 5.24,
-            "2026": 6.79
-        },
-        "5_Year_Forecast": {
-            "2027": 7.71,
-            "2028": 7.87,
-            "2029": 8.02,
-            "2030": 8.18,
-            "2031": 8.35
-        },
-        "Last_Updated": "2026-03-13 00:55"
-    },
-    "ZVRA": {
-        "valuations": {
-            "1_DCF_Operating_CF": null,
-            "2_DCF_FCF": null,
-            "3_DCF_Net_Income": 48.34,
-            "4_DCF_Terminal_Value": null,
-            "5_Mean_PS": 31.79,
-            "6_Mean_PE": 10.19,
-            "7_Mean_PB": 17.06,
-            "8_PSG": 39.24,
-            "9_PEG": 9.75,
-            "10_EV_EBITDA": null,
-            "intrinsic_value": 25.38,
-            "methods_used": 6,
-            "confidence": "Medium",
-            "_meta": {
-                "pe_source": "current_trailing",
-                "ps_source": "historical_mean",
-                "pb_source": "historical_mean",
-                "pe_approx": true,
-                "peg_approx": true,
-                "growth_source": "finviz",
-                "growth_raw": 0.2075,
-                "discount_rate": 0.12,
-                "growth_stage1": 0.2075,
-                "growth_stage2": 0.10375,
-                "terminal_growth": 0.02,
-                "tier": "Weak",
-                "weights_applied": {
-                    "1_DCF_Operating_CF": 0.08,
-                    "2_DCF_FCF": 0.08,
-                    "3_DCF_Net_Income": 0.08,
-                    "4_DCF_Terminal_Value": 0.08,
-                    "5_Mean_PS": 0.12,
-                    "6_Mean_PE": 0.08,
-                    "7_Mean_PB": 0.15,
-                    "8_PSG": 0.08,
-                    "9_PEG": 0.08,
-                    "10_EV_EBITDA": 0.17
-                }
-            }
-        },
-        "quality": {
-            "scores": {
-                "profitability": 6,
-                "financial_strength": 3,
-                "growth": 4,
-                "predictability": 1,
-                "valuation": 7,
-                "moat": null
-            },
-            "python_subtotal": 21,
-            "python_subtotal_pct": 42.0,
-            "classification": "Dangerous",
-            "penalty_pct": 10,
-            "final_score_pct": 32.0,
-            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
-        },
-        "fundamentals": {
-            "roe": 0.8566,
-            "roic": null,
-            "roe_pct": "85.66%",
-            "roic_pct": null,
-            "roic_source": "unavailable"
-        },
-        "10_Year_History": {
-            "2016": 47.2,
-            "2017": 64.8,
-            "2018": 28.48,
-            "2019": 6.06,
-            "2020": 11.2,
-            "2021": 8.71,
-            "2022": 4.59,
-            "2023": 6.55,
-            "2024": 8.34,
-            "2025": 8.96,
-            "2026": 10.19
-        },
-        "5_Year_Forecast": {
-            "2027": 30.65,
-            "2028": 37.01,
-            "2029": 44.68,
-            "2030": 53.96,
-            "2031": 65.15
-        },
-        "Last_Updated": "2026-03-13 00:55"
-    },
-    "ZYBT": {
-        "valuations": {
-            "1_DCF_Operating_CF": 2.26,
-            "2_DCF_FCF": 4.41,
-            "3_DCF_Net_Income": null,
-            "4_DCF_Terminal_Value": 5.21,
-            "5_Mean_PS": 0.77,
-            "6_Mean_PE": null,
-            "7_Mean_PB": 0.77,
-            "8_PSG": 6.49,
-            "9_PEG": null,
-            "10_EV_EBITDA": null,
-            "intrinsic_value": 2.84,
-            "methods_used": 6,
-            "confidence": "Medium",
-            "_meta": {
-                "pe_source": "current_trailing",
-                "ps_source": "current_trailing",
-                "pb_source": "current_trailing",
-                "pe_approx": true,
-                "peg_approx": true,
-                "growth_source": "default",
-                "growth_raw": 0.02,
-                "discount_rate": 0.12,
-                "growth_stage1": 0.02,
-                "growth_stage2": 0.02,
-                "terminal_growth": 0.02,
-                "tier": "Weak",
-                "weights_applied": {
-                    "1_DCF_Operating_CF": 0.08,
-                    "2_DCF_FCF": 0.08,
-                    "3_DCF_Net_Income": 0.08,
-                    "4_DCF_Terminal_Value": 0.08,
-                    "5_Mean_PS": 0.12,
-                    "6_Mean_PE": 0.08,
-                    "7_Mean_PB": 0.15,
-                    "8_PSG": 0.08,
-                    "9_PEG": 0.08,
-                    "10_EV_EBITDA": 0.17
-                }
-            }
-        },
-        "quality": {
-            "scores": {
-                "profitability": 2,
-                "financial_strength": 4,
-                "growth": 2,
-                "predictability": 6,
-                "valuation": 8,
-                "moat": null
-            },
-            "python_subtotal": 22,
-            "python_subtotal_pct": 44.0,
-            "classification": "Dangerous",
-            "penalty_pct": 10,
-            "final_score_pct": 34.0,
-            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
-        },
-        "fundamentals": {
-            "roe": -0.0638,
-            "roic": 0.047,
-            "roe_pct": "-6.38%",
-            "roic_pct": "4.7%",
-            "roic_source": "calculated"
-        },
-        "10_Year_History": {
-            "2025": 1.15,
-            "2026": 0.77
-        },
-        "5_Year_Forecast": {
-            "2027": 2.9,
-            "2028": 2.95,
-            "2029": 3.01,
-            "2030": 3.07,
-            "2031": 3.14
-        },
-        "Last_Updated": "2026-03-13 00:55"
-    },
-    "ZYME": {
-        "valuations": {
-            "1_DCF_Operating_CF": null,
-            "2_DCF_FCF": null,
-            "3_DCF_Net_Income": null,
-            "4_DCF_Terminal_Value": null,
-            "5_Mean_PS": 15.79,
-            "6_Mean_PE": null,
-            "7_Mean_PB": 11.91,
-            "8_PSG": 2.87,
-            "9_PEG": null,
-            "10_EV_EBITDA": null,
-            "intrinsic_value": 11.17,
-            "methods_used": 3,
-            "confidence": "Low",
-            "_meta": {
-                "pe_source": "historical_mean",
-                "ps_source": "historical_mean",
-                "pb_source": "historical_mean",
-                "pe_approx": true,
-                "peg_approx": true,
-                "growth_source": "default",
-                "growth_raw": 0.02,
-                "discount_rate": 0.12,
-                "growth_stage1": 0.02,
-                "growth_stage2": 0.02,
-                "terminal_growth": 0.02,
-                "tier": "Weak",
-                "weights_applied": {
-                    "1_DCF_Operating_CF": 0.08,
-                    "2_DCF_FCF": 0.08,
-                    "3_DCF_Net_Income": 0.08,
-                    "4_DCF_Terminal_Value": 0.08,
-                    "5_Mean_PS": 0.12,
-                    "6_Mean_PE": 0.08,
-                    "7_Mean_PB": 0.15,
-                    "8_PSG": 0.08,
-                    "9_PEG": 0.08,
-                    "10_EV_EBITDA": 0.17
-                }
-            }
-        },
-        "quality": {
-            "scores": {
-                "profitability": 0,
-                "financial_strength": 3,
-                "growth": 2,
-                "predictability": 3,
-                "valuation": 0,
-                "moat": null
-            },
-            "python_subtotal": 8,
-            "python_subtotal_pct": 16.0,
-            "classification": "Dangerous",
-            "penalty_pct": 10,
-            "final_score_pct": 6.0,
-            "note": "Moat score is null. AI Studio adds moat score and recalculates Investment Quality Score and classification using all 6 metrics out of 60.",
-            "last_calculated": "2026-03-13 00:55"
-        },
-        "fundamentals": {
-            "roe": -0.2672,
-            "roic": null,
-            "roe_pct": "-26.72%",
-            "roic_pct": null,
-            "roic_source": "unavailable"
-        },
-        "10_Year_History": {
-            "2017": 7.59,
-            "2018": 14.68,
-            "2019": 45.46,
-            "2020": 47.26,
-            "2021": 16.39,
-            "2022": 7.86,
-            "2023": 10.39,
-            "2024": 14.64,
-            "2025": 26.33,
-            "2026": 23.23
-        },
-        "5_Year_Forecast": {
-            "2027": 11.39,
-            "2028": 11.62,
-            "2029": 11.85,
-            "2030": 12.09,
-            "2031": 12.33
-        },
-        "Last_Updated": "2026-03-13 00:55"
+        "Last_Updated": "2026-03-13 03:50"
     }
 }
