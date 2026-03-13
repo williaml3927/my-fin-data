@@ -999,7 +999,14 @@ def analyze_ticker(ticker, retries=3):
             }
 
             # ------------------------------------------------------------------
-            # STAGE 7 — History & forecast
+            # STAGE 7 — Financials chart data
+            # Pre-computes all four Financials tab charts so AI Studio does
+            # not need to make live GuruFocus calls at query time.
+            # ------------------------------------------------------------------
+            financials_charts = get_financials_chart_data(stock, info)
+
+            # ------------------------------------------------------------------
+            # STAGE 8 — History & forecast
             # ------------------------------------------------------------------
             price_history = get_10yr_history(stock)
             current_year  = datetime.now().year
@@ -1009,12 +1016,13 @@ def analyze_ticker(ticker, retries=3):
             } if intrinsic_value and intrinsic_value > 0 else {}
 
             return ticker, {
-                "valuations":      valuations,
-                "quality":         quality,
-                "fundamentals":    fundamentals,
-                "10_Year_History": price_history,
-                "5_Year_Forecast": forecast,
-                "Last_Updated":    datetime.now().strftime("%Y-%m-%d %H:%M"),
+                "valuations":         valuations,
+                "quality":            quality,
+                "fundamentals":       fundamentals,
+                "financials_charts":  financials_charts,
+                "10_Year_History":    price_history,
+                "5_Year_Forecast":    forecast,
+                "Last_Updated":       datetime.now().strftime("%Y-%m-%d %H:%M"),
             }
 
         except Exception as e:
@@ -1027,6 +1035,247 @@ def analyze_ticker(ticker, retries=3):
             continue
 
     return None
+
+# =============================================================================
+# FINANCIALS CHART DATA
+#
+# Pre-computes all data needed for the four Financials tab bar charts.
+# Eliminates the need for AI Studio to make live GuruFocus API calls.
+#
+# Chart 1 — Revenue vs Net Income (5yr annual)
+#   Source: stock.financials
+#
+# Chart 2 — Free Cash Flow vs Total Debt (5yr annual)
+#   FCF:  stock.cashflow  → "Free Cash Flow" or derived Operating CF - CapEx
+#   Debt: stock.balance_sheet → "Total Debt"
+#
+# Chart 3 — Shares Outstanding vs Buybacks (5yr annual)
+#   Shares: stock.balance_sheet → "Ordinary Shares Number" or derived
+#   Buybacks: stock.cashflow → "Repurchase Of Capital Stock" (negative = buyback)
+#
+# Chart 4 — 10-Year Returns Trajectory (ROE and ROIC calculated per year)
+#   ROE:  Net Income / Stockholders Equity  (per year)
+#   ROIC: NOPAT / Invested Capital          (per year)
+#         NOPAT = Operating Income x (1 - tax rate)
+#         Invested Capital = Total Assets - Current Liabilities - Excess Cash
+#
+# All monetary values stored in millions (USD) for readability in charts.
+# All values are sanitized — None rather than NaN/Inf.
+# =============================================================================
+def get_financials_chart_data(stock, info):
+    result = {
+        "revenue_vs_net_income": {},
+        "fcf_vs_debt":           {},
+        "shares_vs_buybacks":    {},
+        "returns_trajectory":    {},
+    }
+
+    def to_m(val):
+        """Convert raw value to millions, return None if invalid."""
+        try:
+            v = float(val)
+            if not np.isfinite(v): return None
+            return round(v / 1_000_000, 2)
+        except (TypeError, ValueError):
+            return None
+
+    def pct(val):
+        """Convert decimal ratio to rounded percentage, return None if invalid."""
+        try:
+            v = float(val)
+            if not np.isfinite(v): return None
+            return round(v * 100, 2)
+        except (TypeError, ValueError):
+            return None
+
+    try:
+        financials = stock.financials        # income statement — columns = fiscal years
+        cashflow   = stock.cashflow          # cash flow statement
+        balance    = stock.balance_sheet     # balance sheet
+
+        if financials is None or financials.empty:
+            return result
+
+        cols = list(financials.columns)[:5]  # up to 5 most recent fiscal years
+
+        # ------------------------------------------------------------------
+        # Chart 1 — Revenue vs Net Income
+        # ------------------------------------------------------------------
+        rev_ni = {}
+        for col in cols:
+            year = str(col.year)
+            rev, ni = None, None
+            for name in ["Total Revenue", "TotalRevenue"]:
+                if name in financials.index:
+                    rev = to_m(financials.loc[name, col]); break
+            for name in ["Net Income", "NetIncome"]:
+                if name in financials.index:
+                    ni = to_m(financials.loc[name, col]); break
+            if rev is not None or ni is not None:
+                rev_ni[year] = {"revenue": rev, "net_income": ni}
+        result["revenue_vs_net_income"] = rev_ni
+
+        # ------------------------------------------------------------------
+        # Chart 2 — Free Cash Flow vs Total Debt
+        # ------------------------------------------------------------------
+        fcf_debt = {}
+        for col in cols:
+            year = str(col.year)
+            fcf, debt = None, None
+
+            # FCF: try direct first, then derive Operating CF - CapEx
+            if cashflow is not None and not cashflow.empty and col in cashflow.columns:
+                for name in ["Free Cash Flow", "FreeCashFlow"]:
+                    if name in cashflow.index:
+                        fcf = to_m(cashflow.loc[name, col]); break
+                if fcf is None:
+                    ocf, capex = None, None
+                    for name in ["Operating Cash Flow", "OperatingCashFlow",
+                                 "Cash Flow From Continuing Operating Activities"]:
+                        if name in cashflow.index:
+                            ocf = to_m(cashflow.loc[name, col]); break
+                    for name in ["Capital Expenditure", "CapitalExpenditure",
+                                 "Purchase Of PPE"]:
+                        if name in cashflow.index:
+                            capex = to_m(cashflow.loc[name, col]); break
+                    if ocf is not None and capex is not None:
+                        fcf = round(ocf - abs(capex), 2)
+
+            # Debt: from balance sheet for that year
+            if balance is not None and not balance.empty and col in balance.columns:
+                for name in ["Total Debt", "TotalDebt", "Long Term Debt", "LongTermDebt"]:
+                    if name in balance.index:
+                        debt = to_m(balance.loc[name, col]); break
+
+            if fcf is not None or debt is not None:
+                fcf_debt[year] = {"free_cash_flow": fcf, "total_debt": debt}
+        result["fcf_vs_debt"] = fcf_debt
+
+        # ------------------------------------------------------------------
+        # Chart 3 — Shares Outstanding vs Buybacks
+        # ------------------------------------------------------------------
+        shares_buybacks = {}
+        for col in cols:
+            year  = str(col.year)
+            sh, buyback = None, None
+
+            # Shares: balance sheet preferred, fallback to info
+            if balance is not None and not balance.empty and col in balance.columns:
+                for name in ["Ordinary Shares Number", "OrdinarySharesNumber",
+                             "Share Issued", "ShareIssued",
+                             "Common Stock Shares Outstanding"]:
+                    if name in balance.index:
+                        try:
+                            v = float(balance.loc[name, col])
+                            if np.isfinite(v):
+                                sh = round(v / 1_000_000, 2)  # in millions of shares
+                        except (TypeError, ValueError): pass
+                        break
+
+            # Buybacks: repurchase of capital stock (stored as negative in cashflow)
+            if cashflow is not None and not cashflow.empty and col in cashflow.columns:
+                for name in ["Repurchase Of Capital Stock", "RepurchaseOfCapitalStock",
+                             "Common Stock Repurchased", "Purchase Of Business"]:
+                    if name in cashflow.index:
+                        try:
+                            v = float(cashflow.loc[name, col])
+                            if np.isfinite(v):
+                                # Buybacks are negative outflows — store as positive
+                                buyback = round(abs(v) / 1_000_000, 2)
+                        except (TypeError, ValueError): pass
+                        break
+
+            if sh is not None or buyback is not None:
+                shares_buybacks[year] = {
+                    "shares_outstanding_m": sh,
+                    "buybacks_m":           buyback,
+                }
+        result["shares_vs_buybacks"] = shares_buybacks
+
+        # ------------------------------------------------------------------
+        # Chart 4 — 10-Year Returns Trajectory (ROE and ROIC per year)
+        # ------------------------------------------------------------------
+        returns = {}
+        all_cols = list(financials.columns)[:10]  # up to 10 years
+
+        for col in all_cols:
+            year = str(col.year)
+            roe_val, roic_val = None, None
+
+            # ROE = Net Income / Stockholders Equity
+            try:
+                ni_val = None
+                for name in ["Net Income", "NetIncome"]:
+                    if name in financials.index:
+                        ni_val = float(financials.loc[name, col]); break
+
+                eq_val = None
+                if balance is not None and not balance.empty and col in balance.columns:
+                    for name in ["Stockholders Equity", "StockholdersEquity",
+                                 "Total Stockholder Equity", "TotalStockholderEquity"]:
+                        if name in balance.index:
+                            eq_val = float(balance.loc[name, col]); break
+
+                if ni_val is not None and eq_val and eq_val > 0:
+                    roe_val = pct(ni_val / eq_val)
+            except Exception: pass
+
+            # ROIC = NOPAT / Invested Capital
+            try:
+                op_inc = None
+                for name in ["Operating Income", "OperatingIncome",
+                             "Total Operating Income As Reported"]:
+                    if name in financials.index:
+                        op_inc = float(financials.loc[name, col]); break
+
+                if op_inc and op_inc > 0:
+                    # Tax rate
+                    tax_rate = 0.21
+                    try:
+                        pretax, tax_exp = None, None
+                        for name in ["Pretax Income", "PretaxIncome"]:
+                            if name in financials.index:
+                                pretax = float(financials.loc[name, col]); break
+                        for name in ["Tax Provision", "TaxProvision"]:
+                            if name in financials.index:
+                                tax_exp = float(financials.loc[name, col]); break
+                        if pretax and pretax > 0 and tax_exp and tax_exp > 0:
+                            tax_rate = max(0.0, min(tax_exp / pretax, 0.50))
+                    except Exception: pass
+
+                    nopat = op_inc * (1 - tax_rate)
+
+                    if balance is not None and not balance.empty and col in balance.columns:
+                        ta, cl, cash_val = None, None, 0
+                        for name in ["Total Assets", "TotalAssets"]:
+                            if name in balance.index:
+                                ta = float(balance.loc[name, col]); break
+                        for name in ["Current Liabilities", "CurrentLiabilities",
+                                     "Total Current Liabilities"]:
+                            if name in balance.index:
+                                cl = float(balance.loc[name, col]); break
+                        for name in ["Cash And Cash Equivalents", "CashAndCashEquivalents"]:
+                            if name in balance.index:
+                                cash_val = float(balance.loc[name, col]); break
+
+                        if ta and cl:
+                            rev_val = _safe(info.get("totalRevenue"), 0)
+                            excess  = max(0, cash_val - 0.02 * (rev_val or 0))
+                            inv_cap = ta - cl - excess
+                            if inv_cap > 0:
+                                roic_val = pct(nopat / inv_cap)
+            except Exception: pass
+
+            if roe_val is not None or roic_val is not None:
+                returns[year] = {"roe_pct": roe_val, "roic_pct": roic_val}
+
+        result["returns_trajectory"] = returns
+
+    except Exception:
+        pass
+
+    return result
+
 
 # =============================================================================
 # A–Z PARTITIONED JSON SAVER
