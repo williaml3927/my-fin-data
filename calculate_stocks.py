@@ -1049,6 +1049,216 @@ def analyze_ticker(ticker, retries=3):
     return None
 
 # =============================================================================
+# SEC EDGAR FINANCIAL FETCHER
+#
+# Fetches up to 20 years of annual (10-K) financial data from the SEC EDGAR
+# XBRL API. Completely free, no API key, no rate-limit tier.
+#
+# SEC requires a descriptive User-Agent header identifying the application.
+# Max recommended request rate: 10 requests/second — we sleep 0.1s between
+# the three calls (income, balance, cashflow) per ticker.
+#
+# Data flow:
+#   1. Fetch ticker → CIK mapping once per run (cached in EDGAR_CIK_CACHE)
+#   2. Fetch company facts JSON for the ticker's CIK
+#   3. Extract annual 10-K values for each GAAP concept needed
+#   4. Return data keyed by fiscal year (integer)
+#
+# GAAP concept fallback chains handle the fact that companies report the
+# same economic line item under different concept names across time.
+#
+# Returns:
+#   {
+#     "income":   { 2024: {...}, 2023: {...}, ... },
+#     "balance":  { 2024: {...}, 2023: {...}, ... },
+#     "cashflow": { 2024: {...}, 2023: {...}, ... },
+#     "source":   "edgar" | "unavailable"
+#   }
+# =============================================================================
+EDGAR_CIK_CACHE = {}   # ticker → zero-padded CIK string, populated once per run
+EDGAR_USER_AGENT = "InvestingApp contact@example.com"   # SEC requires this header
+
+def _edgar_get_cik(ticker):
+    """Return zero-padded CIK for ticker, or None if not found."""
+    global EDGAR_CIK_CACHE
+    if EDGAR_CIK_CACHE:
+        return EDGAR_CIK_CACHE.get(ticker.upper())
+    try:
+        resp = requests.get(
+            "https://www.sec.gov/files/company_tickers.json",
+            headers={"User-Agent": EDGAR_USER_AGENT},
+            timeout=15,
+        )
+        if resp.status_code != 200:
+            return None
+        data = resp.json()
+        for entry in data.values():
+            t   = str(entry.get("ticker", "")).upper()
+            cik = str(entry.get("cik_str", "")).zfill(10)
+            EDGAR_CIK_CACHE[t] = cik
+        return EDGAR_CIK_CACHE.get(ticker.upper())
+    except Exception as e:
+        print(f"  [EDGAR] CIK lookup failed: {e}")
+        return None
+
+
+def _edgar_extract(facts, *concept_names):
+    """
+    Search XBRL facts for the first matching concept name.
+    Returns a dict of { fiscal_year(int): value(float) } from annual 10-K filings.
+    Deduplicates by year — keeps the most recently filed value.
+    """
+    us_gaap = facts.get("facts", {}).get("us-gaap", {})
+    for name in concept_names:
+        if name not in us_gaap:
+            continue
+        units = us_gaap[name].get("units", {})
+        usd   = units.get("USD") or units.get("shares") or []
+        year_map = {}   # year → (filed_date, value)
+        for entry in usd:
+            # Only annual 10-K filings with full-year period
+            if entry.get("form") != "10-K":
+                continue
+            if entry.get("fp") not in ("FY", "CY"):
+                continue
+            fy    = entry.get("fy")
+            val   = entry.get("val")
+            filed = entry.get("filed", "")
+            if fy is None or val is None:
+                continue
+            # Keep the most recently filed entry per fiscal year
+            if fy not in year_map or filed > year_map[fy][0]:
+                year_map[fy] = (filed, float(val))
+        if year_map:
+            return {yr: v for yr, (_, v) in year_map.items()}
+    return {}
+
+
+def get_edgar_financials(ticker):
+    """Fetch 10-K annual data from SEC EDGAR for the four financials charts."""
+    empty = {"income": {}, "balance": {}, "cashflow": {}, "source": "unavailable"}
+
+    cik = _edgar_get_cik(ticker)
+    if not cik:
+        return empty
+
+    try:
+        url  = f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json"
+        resp = requests.get(
+            url,
+            headers={"User-Agent": EDGAR_USER_AGENT},
+            timeout=20,
+        )
+        if resp.status_code != 200:
+            print(f"  [EDGAR] {ticker}: HTTP {resp.status_code}")
+            return empty
+
+        facts = resp.json()
+        time.sleep(0.12)   # stay well within SEC's 10 req/s guideline
+
+        # ── Income statement concepts ─────────────────────────────────────
+        revenue = _edgar_extract(facts,
+            "RevenueFromContractWithCustomerExcludingAssessedTax",
+            "RevenueFromContractWithCustomerIncludingAssessedTax",
+            "Revenues", "SalesRevenueNet",
+            "SalesRevenueGoodsNet", "RevenuesNetOfInterestExpense")
+
+        net_income = _edgar_extract(facts,
+            "NetIncomeLoss", "ProfitLoss",
+            "NetIncomeLossAvailableToCommonStockholdersBasic")
+
+        op_income = _edgar_extract(facts,
+            "OperatingIncomeLoss",
+            "IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest")
+
+        pretax = _edgar_extract(facts,
+            "IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+            "IncomeLossFromContinuingOperationsBeforeIncomeTaxesDomestic")
+
+        tax_exp = _edgar_extract(facts,
+            "IncomeTaxExpenseBenefit")
+
+        # ── Balance sheet concepts ────────────────────────────────────────
+        total_assets = _edgar_extract(facts,
+            "Assets")
+
+        current_liab = _edgar_extract(facts,
+            "LiabilitiesCurrent")
+
+        equity = _edgar_extract(facts,
+            "StockholdersEquity",
+            "StockholdersEquityAttributableToParent",
+            "CommonStockholdersEquity")
+
+        cash = _edgar_extract(facts,
+            "CashAndCashEquivalentsAtCarryingValue",
+            "CashCashEquivalentsAndShortTermInvestments",
+            "Cash")
+
+        total_debt = _edgar_extract(facts,
+            "LongTermDebtAndCapitalLeaseObligation",
+            "LongTermDebt",
+            "DebtAndCapitalLeaseObligations",
+            "LongTermDebtNoncurrent")
+
+        shares = _edgar_extract(facts,
+            "CommonStockSharesOutstanding")
+
+        # ── Cash flow concepts ────────────────────────────────────────────
+        op_cf = _edgar_extract(facts,
+            "NetCashProvidedByUsedInOperatingActivities")
+
+        capex = _edgar_extract(facts,
+            "PaymentsToAcquirePropertyPlantAndEquipment",
+            "PaymentsToAcquireProductiveAssets")
+
+        buybacks = _edgar_extract(facts,
+            "PaymentsForRepurchaseOfCommonStock",
+            "PaymentsForRepurchaseOfEquity")
+
+        # ── Organise by fiscal year ───────────────────────────────────────
+        all_years = sorted(
+            set(revenue) | set(net_income) | set(total_assets) | set(op_cf),
+            reverse=True
+        )[:10]
+
+        income_out, balance_out, cashflow_out = {}, {}, {}
+
+        for yr in all_years:
+            income_out[yr] = {
+                "revenue":           revenue.get(yr),
+                "netIncome":         net_income.get(yr),
+                "operatingIncome":   op_income.get(yr),
+                "incomeBeforeTax":   pretax.get(yr),
+                "incomeTaxExpense":  tax_exp.get(yr),
+            }
+            balance_out[yr] = {
+                "totalAssets":                  total_assets.get(yr),
+                "totalCurrentLiabilities":      current_liab.get(yr),
+                "totalStockholdersEquity":       equity.get(yr),
+                "cashAndCashEquivalents":        cash.get(yr),
+                "totalDebt":                    total_debt.get(yr),
+                "commonStockSharesOutstanding": shares.get(yr),
+            }
+            cashflow_out[yr] = {
+                "operatingCashFlow":         op_cf.get(yr),
+                "capitalExpenditure":        capex.get(yr),
+                "commonStockRepurchased":    buybacks.get(yr),
+            }
+
+        return {
+            "income":   income_out,
+            "balance":  balance_out,
+            "cashflow": cashflow_out,
+            "source":   "edgar",
+        }
+
+    except Exception as e:
+        print(f"  [EDGAR] {ticker}: {str(e)[:100]}")
+        return empty
+
+
+# =============================================================================
 # FMP FINANCIAL STATEMENT FETCHER
 #
 # Fetches 10 years of annual income statement, balance sheet and cash flow
@@ -1168,97 +1378,109 @@ def get_financials_chart_data(stock, info, ticker=""):
         return None
 
     # ------------------------------------------------------------------
-    # Attempt FMP first (10yr history), fall back to yfinance (~4yr)
+    # Source priority:
+    #   1. SEC EDGAR  — free, unlimited, up to 20yr history
+    #   2. FMP        — paid fallback, up to 5-10yr
+    #   3. yfinance   — last resort, ~4yr
     # ------------------------------------------------------------------
-    fmp = get_fmp_financials(ticker) if ticker else {"source": "unavailable"}
-    use_fmp = fmp["source"] == "fmp"
 
-    if use_fmp:
-        print(f"  [FMP] {ticker}: using FMP data for financials charts")
+    # Helper — build charts from a generic data dict (same shape for EDGAR/FMP)
+    def _build_charts(data, years):
+        """Populate all four chart dicts from a normalised data source."""
+        rv, fd, sb, rt = {}, {}, {}, {}
+        for yr in years:
+            inc = data["income"].get(yr, {})
+            bal = data["balance"].get(yr, {})
+            cf  = data["cashflow"].get(yr, {})
+
+            # Chart 1
+            rev = to_m(_fv(inc, "revenue"))
+            ni  = to_m(_fv(inc, "netIncome"))
+            if rev is not None or ni is not None:
+                rv[str(yr)] = {"revenue": rev, "net_income": ni}
+
+            # Chart 2 — FCF derived from op_cf - capex if no direct field
+            fcf_direct = to_m(_fv(cf, "freeCashFlow"))
+            if fcf_direct is None:
+                ocf_v   = _fv(cf, "operatingCashFlow")
+                capex_v = _fv(cf, "capitalExpenditure")
+                if ocf_v is not None and capex_v is not None:
+                    fcf_direct = round(
+                        (ocf_v - abs(capex_v)) / 1_000_000, 2
+                    )
+            debt = to_m(_fv(bal, "totalDebt", "longTermDebt"))
+            if fcf_direct is not None or debt is not None:
+                fd[str(yr)] = {"free_cash_flow": fcf_direct, "total_debt": debt}
+
+            # Chart 3
+            sh_raw = _fv(bal, "commonStockSharesOutstanding", "sharesOutstanding")
+            sh     = round(sh_raw / 1_000_000, 2) if sh_raw else None
+            bb_raw = _fv(cf, "commonStockRepurchased")
+            bb     = round(abs(bb_raw) / 1_000_000, 2) if bb_raw else None
+            if sh is not None or bb is not None:
+                sb[str(yr)] = {"shares_outstanding_m": sh, "buybacks_m": bb}
+
+            # Chart 4
+            roe_val = roic_val = None
+            ni_val  = _fv(inc, "netIncome")
+            eq_val  = _fv(bal, "totalStockholdersEquity", "stockholdersEquity")
+            if ni_val is not None and eq_val and eq_val > 0:
+                roe_val = pct(ni_val / eq_val)
+
+            op_inc  = _fv(inc, "operatingIncome")
+            pretax  = _fv(inc, "incomeBeforeTax")
+            tax_exp = _fv(inc, "incomeTaxExpense")
+            ta      = _fv(bal, "totalAssets")
+            cl      = _fv(bal, "totalCurrentLiabilities")
+            csh     = _fv(bal, "cashAndCashEquivalents") or 0
+            rev_v   = _fv(inc, "revenue") or 0
+            if op_inc and op_inc > 0 and ta and cl:
+                tr = 0.21
+                if pretax and pretax > 0 and tax_exp and tax_exp > 0:
+                    tr = max(0.0, min(tax_exp / pretax, 0.50))
+                nopat   = op_inc * (1 - tr)
+                excess  = max(0, csh - 0.02 * rev_v)
+                inv_cap = ta - cl - excess
+                if inv_cap > 0:
+                    roic_val = pct(nopat / inv_cap)
+            if roe_val is not None or roic_val is not None:
+                rt[str(yr)] = {"roe_pct": roe_val, "roic_pct": roic_val}
+
+        return rv, fd, sb, rt
+
+    # --- Attempt 1: SEC EDGAR (free, 20yr) ---
+    if ticker:
+        edgar = get_edgar_financials(ticker)
+        if edgar["source"] == "edgar":
+            print(f"  [EDGAR] {ticker}: using EDGAR data for financials charts")
+            years = sorted(
+                set(edgar["income"]) | set(edgar["balance"]) | set(edgar["cashflow"]),
+                reverse=True
+            )[:10]
+            rv, fd, sb, rt = _build_charts(edgar, years)
+            result["revenue_vs_net_income"] = rv
+            result["fcf_vs_debt"]           = fd
+            result["shares_vs_buybacks"]    = sb
+            result["returns_trajectory"]    = rt
+            return result
+
+    # --- Attempt 2: FMP (paid, 5-10yr) ---
+    fmp = get_fmp_financials(ticker) if ticker else {"source": "unavailable"}
+    if fmp["source"] == "fmp":
+        print(f"  [FMP] {ticker}: EDGAR unavailable, using FMP data")
         years = sorted(
             set(fmp["income"]) | set(fmp["balance"]) | set(fmp["cashflow"]),
             reverse=True
         )[:10]
-
-        # Chart 1 — Revenue vs Net Income
-        rev_ni = {}
-        for yr in years:
-            row = fmp["income"].get(yr, {})
-            rev = to_m(_fv(row, "revenue"))
-            ni  = to_m(_fv(row, "netIncome"))
-            if rev is not None or ni is not None:
-                rev_ni[str(yr)] = {"revenue": rev, "net_income": ni}
-        result["revenue_vs_net_income"] = rev_ni
-
-        # Chart 2 — FCF vs Total Debt
-        fcf_debt = {}
-        for yr in years:
-            cf_row  = fmp["cashflow"].get(yr, {})
-            bal_row = fmp["balance"].get(yr, {})
-            fcf  = to_m(_fv(cf_row,  "freeCashFlow"))
-            debt = to_m(_fv(bal_row, "totalDebt", "longTermDebt"))
-            if fcf is not None or debt is not None:
-                fcf_debt[str(yr)] = {"free_cash_flow": fcf, "total_debt": debt}
-        result["fcf_vs_debt"] = fcf_debt
-
-        # Chart 3 — Shares vs Buybacks
-        shares_buybacks = {}
-        for yr in years:
-            cf_row  = fmp["cashflow"].get(yr, {})
-            bal_row = fmp["balance"].get(yr, {})
-            # Shares in millions
-            sh_raw = _fv(bal_row, "commonStock", "sharesOutstanding")
-            sh     = round(sh_raw / 1_000_000, 2) if sh_raw else None
-            # Buybacks — FMP stores as negative, take abs
-            bb_raw = _fv(cf_row, "commonStockRepurchased", "purchasesOfInvestments")
-            bb     = round(abs(bb_raw) / 1_000_000, 2) if bb_raw else None
-            if sh is not None or bb is not None:
-                shares_buybacks[str(yr)] = {"shares_outstanding_m": sh, "buybacks_m": bb}
-        result["shares_vs_buybacks"] = shares_buybacks
-
-        # Chart 4 — Returns Trajectory (ROE and ROIC)
-        returns = {}
-        for yr in years:
-            inc_row = fmp["income"].get(yr, {})
-            bal_row = fmp["balance"].get(yr, {})
-            roe_val, roic_val = None, None
-
-            # ROE = Net Income / Stockholders Equity
-            ni_val  = _fv(inc_row, "netIncome")
-            eq_val  = _fv(bal_row, "totalStockholdersEquity", "stockholdersEquity")
-            if ni_val is not None and eq_val and eq_val > 0:
-                roe_val = pct(ni_val / eq_val)
-
-            # ROIC = NOPAT / Invested Capital
-            op_inc  = _fv(inc_row, "operatingIncome")
-            pretax  = _fv(inc_row, "incomeBeforeTax")
-            tax_exp = _fv(inc_row, "incomeTaxExpense")
-            ta      = _fv(bal_row, "totalAssets")
-            cl      = _fv(bal_row, "totalCurrentLiabilities")
-            cash    = _fv(bal_row, "cashAndCashEquivalents",
-                          "cashAndShortTermInvestments") or 0
-            rev_val = _fv(fmp["income"].get(yr, {}), "revenue") or 0
-
-            if op_inc and op_inc > 0 and ta and cl:
-                tax_rate = 0.21
-                if pretax and pretax > 0 and tax_exp and tax_exp > 0:
-                    tax_rate = max(0.0, min(tax_exp / pretax, 0.50))
-                nopat   = op_inc * (1 - tax_rate)
-                excess  = max(0, cash - 0.02 * rev_val)
-                inv_cap = ta - cl - excess
-                if inv_cap > 0:
-                    roic_val = pct(nopat / inv_cap)
-
-            if roe_val is not None or roic_val is not None:
-                returns[str(yr)] = {"roe_pct": roe_val, "roic_pct": roic_val}
-        result["returns_trajectory"] = returns
-
+        rv, fd, sb, rt = _build_charts(fmp, years)
+        result["revenue_vs_net_income"] = rv
+        result["fcf_vs_debt"]           = fd
+        result["shares_vs_buybacks"]    = sb
+        result["returns_trajectory"]    = rt
         return result
 
-    # ------------------------------------------------------------------
-    # FMP unavailable — fall back to yfinance (~4 years)
-    # ------------------------------------------------------------------
-    print(f"  [FMP] {ticker}: FMP unavailable, falling back to yfinance")
+    # --- Attempt 3: yfinance (~4yr) ---
+    print(f"  [EDGAR/FMP] {ticker}: both unavailable, falling back to yfinance")
     try:
         # yfinance annual statements — typically 4 years of history.
         # Use all available columns rather than capping at 5.
