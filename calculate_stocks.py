@@ -125,6 +125,18 @@ CORE_PRIORITY = [
 ]
 
 # =============================================================================
+# FINANCIAL MODELING PREP (FMP) CONFIG
+#
+# FMP provides up to 10 years of annual financial statement history —
+# significantly more than yfinance which caps at ~4 years.
+# Used exclusively for the Financials tab charts.
+#
+# Free API key: https://financialmodelingprep.com/developer/docs
+# Paste your key below. If left empty the script falls back to yfinance.
+# =============================================================================
+FMP_API_KEY = "p9L0gFU6BZv1UKrKn1GxA92CX3LQghKz"
+
+# =============================================================================
 # TICKER LOADER
 # =============================================================================
 def get_all_tickers():
@@ -1003,7 +1015,7 @@ def analyze_ticker(ticker, retries=3):
             # Pre-computes all four Financials tab charts so AI Studio does
             # not need to make live GuruFocus calls at query time.
             # ------------------------------------------------------------------
-            financials_charts = get_financials_chart_data(stock, info)
+            financials_charts = get_financials_chart_data(stock, info, ticker)
 
             # ------------------------------------------------------------------
             # STAGE 8 — History & forecast
@@ -1037,6 +1049,63 @@ def analyze_ticker(ticker, retries=3):
     return None
 
 # =============================================================================
+# FMP FINANCIAL STATEMENT FETCHER
+#
+# Fetches 10 years of annual income statement, balance sheet and cash flow
+# from Financial Modeling Prep. Used only for the financials_charts block.
+#
+# FMP returns lists of dicts keyed by "date" (e.g. "2024-09-28").
+# We index by fiscal year (integer) for easy lookup.
+#
+# Returns:
+#   {
+#     "income":    { 2024: {...}, 2023: {...}, ... },
+#     "balance":   { 2024: {...}, 2023: {...}, ... },
+#     "cashflow":  { 2024: {...}, 2023: {...}, ... },
+#     "source":    "fmp" | "unavailable"
+#   }
+#
+# Returns source="unavailable" if key is empty, ticker not found, or any
+# network/parse error — caller falls back to yfinance in that case.
+# =============================================================================
+def get_fmp_financials(ticker):
+    empty = {"income": {}, "balance": {}, "cashflow": {}, "source": "unavailable"}
+
+    if not FMP_API_KEY or FMP_API_KEY.strip() == "":
+        return empty
+
+    base = "https://financialmodelingprep.com/api/v3"
+    endpoints = {
+        "income":   f"{base}/income-statement/{ticker}?limit=10&apikey={FMP_API_KEY}",
+        "balance":  f"{base}/balance-sheet-statement/{ticker}?limit=10&apikey={FMP_API_KEY}",
+        "cashflow": f"{base}/cash-flow-statement/{ticker}?limit=10&apikey={FMP_API_KEY}",
+    }
+
+    result = {"income": {}, "balance": {}, "cashflow": {}, "source": "unavailable"}
+
+    try:
+        for key, url in endpoints.items():
+            resp = requests.get(url, timeout=10)
+            if resp.status_code != 200:
+                return empty
+            data = resp.json()
+            # FMP returns error dicts or empty lists for unknown tickers
+            if not data or isinstance(data, dict):
+                return empty
+            for row in data:
+                try:
+                    year = int(row["date"][:4])
+                    result[key][year] = row
+                except (KeyError, ValueError):
+                    continue
+        result["source"] = "fmp"
+        return result
+    except Exception as e:
+        print(f"  [FMP] {ticker}: {str(e)[:80]}")
+        return empty
+
+
+# =============================================================================
 # FINANCIALS CHART DATA
 #
 # Pre-computes all data needed for the four Financials tab bar charts.
@@ -1062,7 +1131,7 @@ def analyze_ticker(ticker, retries=3):
 # All monetary values stored in millions (USD) for readability in charts.
 # All values are sanitized — None rather than NaN/Inf.
 # =============================================================================
-def get_financials_chart_data(stock, info):
+def get_financials_chart_data(stock, info, ticker=""):
     result = {
         "revenue_vs_net_income": {},
         "fcf_vs_debt":           {},
@@ -1088,6 +1157,108 @@ def get_financials_chart_data(stock, info):
         except (TypeError, ValueError):
             return None
 
+    def _fv(row, *keys):
+        """Extract first matching key from an FMP row dict as float or None."""
+        for k in keys:
+            if k in row:
+                try:
+                    v = float(row[k])
+                    if np.isfinite(v): return v
+                except (TypeError, ValueError): pass
+        return None
+
+    # ------------------------------------------------------------------
+    # Attempt FMP first (10yr history), fall back to yfinance (~4yr)
+    # ------------------------------------------------------------------
+    fmp = get_fmp_financials(ticker) if ticker else {"source": "unavailable"}
+    use_fmp = fmp["source"] == "fmp"
+
+    if use_fmp:
+        print(f"  [FMP] {ticker}: using FMP data for financials charts")
+        years = sorted(
+            set(fmp["income"]) | set(fmp["balance"]) | set(fmp["cashflow"]),
+            reverse=True
+        )[:10]
+
+        # Chart 1 — Revenue vs Net Income
+        rev_ni = {}
+        for yr in years:
+            row = fmp["income"].get(yr, {})
+            rev = to_m(_fv(row, "revenue"))
+            ni  = to_m(_fv(row, "netIncome"))
+            if rev is not None or ni is not None:
+                rev_ni[str(yr)] = {"revenue": rev, "net_income": ni}
+        result["revenue_vs_net_income"] = rev_ni
+
+        # Chart 2 — FCF vs Total Debt
+        fcf_debt = {}
+        for yr in years:
+            cf_row  = fmp["cashflow"].get(yr, {})
+            bal_row = fmp["balance"].get(yr, {})
+            fcf  = to_m(_fv(cf_row,  "freeCashFlow"))
+            debt = to_m(_fv(bal_row, "totalDebt", "longTermDebt"))
+            if fcf is not None or debt is not None:
+                fcf_debt[str(yr)] = {"free_cash_flow": fcf, "total_debt": debt}
+        result["fcf_vs_debt"] = fcf_debt
+
+        # Chart 3 — Shares vs Buybacks
+        shares_buybacks = {}
+        for yr in years:
+            cf_row  = fmp["cashflow"].get(yr, {})
+            bal_row = fmp["balance"].get(yr, {})
+            # Shares in millions
+            sh_raw = _fv(bal_row, "commonStock", "sharesOutstanding")
+            sh     = round(sh_raw / 1_000_000, 2) if sh_raw else None
+            # Buybacks — FMP stores as negative, take abs
+            bb_raw = _fv(cf_row, "commonStockRepurchased", "purchasesOfInvestments")
+            bb     = round(abs(bb_raw) / 1_000_000, 2) if bb_raw else None
+            if sh is not None or bb is not None:
+                shares_buybacks[str(yr)] = {"shares_outstanding_m": sh, "buybacks_m": bb}
+        result["shares_vs_buybacks"] = shares_buybacks
+
+        # Chart 4 — Returns Trajectory (ROE and ROIC)
+        returns = {}
+        for yr in years:
+            inc_row = fmp["income"].get(yr, {})
+            bal_row = fmp["balance"].get(yr, {})
+            roe_val, roic_val = None, None
+
+            # ROE = Net Income / Stockholders Equity
+            ni_val  = _fv(inc_row, "netIncome")
+            eq_val  = _fv(bal_row, "totalStockholdersEquity", "stockholdersEquity")
+            if ni_val is not None and eq_val and eq_val > 0:
+                roe_val = pct(ni_val / eq_val)
+
+            # ROIC = NOPAT / Invested Capital
+            op_inc  = _fv(inc_row, "operatingIncome")
+            pretax  = _fv(inc_row, "incomeBeforeTax")
+            tax_exp = _fv(inc_row, "incomeTaxExpense")
+            ta      = _fv(bal_row, "totalAssets")
+            cl      = _fv(bal_row, "totalCurrentLiabilities")
+            cash    = _fv(bal_row, "cashAndCashEquivalents",
+                          "cashAndShortTermInvestments") or 0
+            rev_val = _fv(fmp["income"].get(yr, {}), "revenue") or 0
+
+            if op_inc and op_inc > 0 and ta and cl:
+                tax_rate = 0.21
+                if pretax and pretax > 0 and tax_exp and tax_exp > 0:
+                    tax_rate = max(0.0, min(tax_exp / pretax, 0.50))
+                nopat   = op_inc * (1 - tax_rate)
+                excess  = max(0, cash - 0.02 * rev_val)
+                inv_cap = ta - cl - excess
+                if inv_cap > 0:
+                    roic_val = pct(nopat / inv_cap)
+
+            if roe_val is not None or roic_val is not None:
+                returns[str(yr)] = {"roe_pct": roe_val, "roic_pct": roic_val}
+        result["returns_trajectory"] = returns
+
+        return result
+
+    # ------------------------------------------------------------------
+    # FMP unavailable — fall back to yfinance (~4 years)
+    # ------------------------------------------------------------------
+    print(f"  [FMP] {ticker}: FMP unavailable, falling back to yfinance")
     try:
         # yfinance annual statements — typically 4 years of history.
         # Use all available columns rather than capping at 5.
