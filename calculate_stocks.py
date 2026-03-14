@@ -1089,14 +1089,16 @@ def get_financials_chart_data(stock, info):
             return None
 
     try:
-        financials = stock.financials        # income statement — columns = fiscal years
-        cashflow   = stock.cashflow          # cash flow statement
-        balance    = stock.balance_sheet     # balance sheet
+        # yfinance annual statements — typically 4 years of history.
+        # Use all available columns rather than capping at 5.
+        financials = stock.financials
+        cashflow   = stock.cashflow
+        balance    = stock.balance_sheet
 
         if financials is None or financials.empty:
             return result
 
-        cols = list(financials.columns)[:5]  # up to 5 most recent fiscal years
+        cols = list(financials.columns)  # all available fiscal years (usually 4)
 
         # ------------------------------------------------------------------
         # Chart 1 — Revenue vs Net Income
@@ -1194,80 +1196,109 @@ def get_financials_chart_data(stock, info):
 
         # ------------------------------------------------------------------
         # Chart 4 — 10-Year Returns Trajectory (ROE and ROIC per year)
+        #
+        # yfinance stock.financials typically holds only 4 years of annual
+        # statement data. To extend towards 10 years we also try:
+        #   - stock.get_income_stmt() which may return more columns
+        #   - stock.income_stmt (alias)
+        # All sources are merged; the most recent value per year wins.
+        # Years with no data are omitted cleanly rather than showing nulls.
         # ------------------------------------------------------------------
         returns = {}
-        all_cols = list(financials.columns)[:10]  # up to 10 years
 
-        for col in all_cols:
-            year = str(col.year)
-            roe_val, roic_val = None, None
+        # Collect all available annual income statement sources
+        fin_sources = [financials]
+        try:
+            extra = stock.get_income_stmt(freq="annual", pretty=False)
+            if extra is not None and not extra.empty:
+                fin_sources.append(extra)
+        except Exception: pass
+        try:
+            alias = stock.income_stmt
+            if alias is not None and not alias.empty:
+                fin_sources.append(alias)
+        except Exception: pass
+
+        # Collect all available annual balance sheet sources
+        bal_sources = [balance] if (balance is not None and not balance.empty) else []
+        try:
+            extra_b = stock.get_balance_sheet(freq="annual", pretty=False)
+            if extra_b is not None and not extra_b.empty:
+                bal_sources.append(extra_b)
+        except Exception: pass
+
+        def _get_row(sources, row_names, col):
+            """Return first valid float found across sources for given row names and column."""
+            for src in sources:
+                if src is None or src.empty: continue
+                if col not in src.columns: continue
+                for name in row_names:
+                    if name in src.index:
+                        try:
+                            v = float(src.loc[name, col])
+                            if np.isfinite(v): return v
+                        except (TypeError, ValueError): pass
+            return None
+
+        # Collect all fiscal year columns across all sources, up to 10 years
+        all_year_cols = {}
+        for src in fin_sources:
+            if src is None or src.empty: continue
+            for col in src.columns:
+                yr = str(col.year)
+                if yr not in all_year_cols:
+                    all_year_cols[yr] = col
+        # Keep most recent 10 years, sorted newest first
+        sorted_years = sorted(all_year_cols.keys(), reverse=True)[:10]
+
+        for yr in sorted_years:
+            col      = all_year_cols[yr]
+            roe_val  = None
+            roic_val = None
 
             # ROE = Net Income / Stockholders Equity
             try:
-                ni_val = None
-                for name in ["Net Income", "NetIncome"]:
-                    if name in financials.index:
-                        ni_val = float(financials.loc[name, col]); break
-
-                eq_val = None
-                if balance is not None and not balance.empty and col in balance.columns:
-                    for name in ["Stockholders Equity", "StockholdersEquity",
-                                 "Total Stockholder Equity", "TotalStockholderEquity"]:
-                        if name in balance.index:
-                            eq_val = float(balance.loc[name, col]); break
-
+                ni_val = _get_row(fin_sources,
+                                  ["Net Income", "NetIncome"], col)
+                eq_val = _get_row(bal_sources,
+                                  ["Stockholders Equity", "StockholdersEquity",
+                                   "Total Stockholder Equity", "TotalStockholderEquity"], col)
                 if ni_val is not None and eq_val and eq_val > 0:
                     roe_val = pct(ni_val / eq_val)
             except Exception: pass
 
             # ROIC = NOPAT / Invested Capital
             try:
-                op_inc = None
-                for name in ["Operating Income", "OperatingIncome",
-                             "Total Operating Income As Reported"]:
-                    if name in financials.index:
-                        op_inc = float(financials.loc[name, col]); break
-
+                op_inc = _get_row(fin_sources,
+                                  ["Operating Income", "OperatingIncome",
+                                   "Total Operating Income As Reported"], col)
                 if op_inc and op_inc > 0:
-                    # Tax rate
                     tax_rate = 0.21
                     try:
-                        pretax, tax_exp = None, None
-                        for name in ["Pretax Income", "PretaxIncome"]:
-                            if name in financials.index:
-                                pretax = float(financials.loc[name, col]); break
-                        for name in ["Tax Provision", "TaxProvision"]:
-                            if name in financials.index:
-                                tax_exp = float(financials.loc[name, col]); break
+                        pretax  = _get_row(fin_sources, ["Pretax Income", "PretaxIncome"], col)
+                        tax_exp = _get_row(fin_sources, ["Tax Provision", "TaxProvision"], col)
                         if pretax and pretax > 0 and tax_exp and tax_exp > 0:
                             tax_rate = max(0.0, min(tax_exp / pretax, 0.50))
                     except Exception: pass
 
-                    nopat = op_inc * (1 - tax_rate)
-
-                    if balance is not None and not balance.empty and col in balance.columns:
-                        ta, cl, cash_val = None, None, 0
-                        for name in ["Total Assets", "TotalAssets"]:
-                            if name in balance.index:
-                                ta = float(balance.loc[name, col]); break
-                        for name in ["Current Liabilities", "CurrentLiabilities",
-                                     "Total Current Liabilities"]:
-                            if name in balance.index:
-                                cl = float(balance.loc[name, col]); break
-                        for name in ["Cash And Cash Equivalents", "CashAndCashEquivalents"]:
-                            if name in balance.index:
-                                cash_val = float(balance.loc[name, col]); break
-
-                        if ta and cl:
-                            rev_val = _safe(info.get("totalRevenue"), 0)
-                            excess  = max(0, cash_val - 0.02 * (rev_val or 0))
-                            inv_cap = ta - cl - excess
-                            if inv_cap > 0:
-                                roic_val = pct(nopat / inv_cap)
+                    nopat    = op_inc * (1 - tax_rate)
+                    ta       = _get_row(bal_sources, ["Total Assets", "TotalAssets"], col)
+                    cl       = _get_row(bal_sources,
+                                        ["Current Liabilities", "CurrentLiabilities",
+                                         "Total Current Liabilities"], col)
+                    cash_val = _get_row(bal_sources,
+                                        ["Cash And Cash Equivalents",
+                                         "CashAndCashEquivalents"], col) or 0
+                    if ta and cl:
+                        rev_val = _safe(info.get("totalRevenue"), 0)
+                        excess  = max(0, cash_val - 0.02 * (rev_val or 0))
+                        inv_cap = ta - cl - excess
+                        if inv_cap > 0:
+                            roic_val = pct(nopat / inv_cap)
             except Exception: pass
 
             if roe_val is not None or roic_val is not None:
-                returns[year] = {"roe_pct": roe_val, "roic_pct": roic_val}
+                returns[yr] = {"roe_pct": roe_val, "roic_pct": roic_val}
 
         result["returns_trajectory"] = returns
 
