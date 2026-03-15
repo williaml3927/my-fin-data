@@ -1105,27 +1105,30 @@ def _edgar_get_cik(ticker):
 def _edgar_extract(facts, *concept_names):
     """
     Search XBRL facts for the first matching concept name.
-    Returns a dict of { fiscal_year(int): value(float) } from annual 10-K filings.
+    Returns a dict of { period_year(int): value(float) } from annual 10-K filings.
 
-    Key validations applied to each entry:
-      1. form == "10-K"  — annual filing only (excludes 10-Q quarterly)
-      2. fp in ("FY","CY") — full-year period designator
-      3. Period duration 330–370 days — excludes transition years (e.g. 9-month
-         fiscal year change), partial periods, and cumulative YTD figures that
-         EDGAR sometimes tags with 10-K form type incorrectly.
-         Balance sheet point-in-time concepts (Assets, Equity etc.) have no
-         start date — those skip the duration check entirely.
-      4. Deduplication by fiscal year — most recently filed value wins
-         (handles amendments and restatements correctly).
+    KEY FIX — keyed by END DATE YEAR, not by EDGAR fy field.
 
-    This duration check is the critical fix for values diverging from
-    GuruFocus — without it EDGAR returns whichever entry was filed last
-    regardless of whether it covers a full 12-month period.
+    EDGAR's fy field = the fiscal year of the FILING (e.g. Apple's FY2025 10-K
+    filed Oct 2025 includes comparative FY2023 data tagged as fy=2025).
+    Using fy as the key therefore labels every value 2 years too late.
+
+    The correct key is the year from the period END date field, which directly
+    represents the year the data actually covers.
+
+    Validations:
+      1. form == "10-K"         — annual filing only
+      2. fp in ("FY", "CY")     — full-year period flag
+      3. end date present       — required for year key
+      4. Duration 320-380 days  — full year check for flow concepts (income,
+                                   cashflow). Balance sheet snapshots have no
+                                   start date so this check is skipped for them.
+      5. Deduplication by end year — most recently filed value wins so
+                                   amendments and restatements are handled.
     """
     from datetime import datetime
 
     def _days(start_str, end_str):
-        """Return number of days between two YYYY-MM-DD strings, or None."""
         try:
             s = datetime.strptime(start_str, "%Y-%m-%d")
             e = datetime.strptime(end_str,   "%Y-%m-%d")
@@ -1139,38 +1142,40 @@ def _edgar_extract(facts, *concept_names):
             continue
         units = us_gaap[name].get("units", {})
         usd   = units.get("USD") or units.get("shares") or []
-        year_map = {}   # fiscal_year(int) → (filed_date str, value float)
+        year_map = {}   # period_end_year(int) → (filed_date str, value float)
 
         for entry in usd:
-            # 1. Annual 10-K filings only
+            # 1. Annual 10-K only
             if entry.get("form") != "10-K":
                 continue
-            # 2. Full-year period designator
+            # 2. Full-year period flag
             if entry.get("fp") not in ("FY", "CY"):
                 continue
 
-            fy    = entry.get("fy")
             val   = entry.get("val")
             filed = entry.get("filed", "")
-            start = entry.get("start")   # present for flow/income concepts
-            end   = entry.get("end")     # present for all concepts
+            start = entry.get("start")
+            end   = entry.get("end")
 
-            if fy is None or val is None:
+            if val is None or not end:
                 continue
 
-            # 3. Duration check for flow concepts (those with a start date).
-            #    Balance sheet snapshots have no start date — skip check.
+            # 3. Derive year from actual period end date
+            try:
+                period_year = int(end[:4])
+            except (ValueError, TypeError):
+                continue
+
+            # 4. Duration check for flow concepts (start date present)
+            #    Skip for balance sheet snapshots (no start date)
             if start and end:
                 days = _days(start, end)
-                if days is None or not (330 <= days <= 370):
-                    # Not a full ~12-month period — skip this entry.
-                    # This excludes 9-month transition years, partial periods,
-                    # and mis-tagged cumulative YTD quarterly figures.
+                if days is None or not (320 <= days <= 380):
                     continue
 
-            # 4. Keep the most recently filed entry per fiscal year
-            if fy not in year_map or filed > year_map[fy][0]:
-                year_map[fy] = (filed, float(val))
+            # 5. Keep most recently filed entry per period end year
+            if period_year not in year_map or filed > year_map[period_year][0]:
+                year_map[period_year] = (filed, float(val))
 
         if year_map:
             return {yr: v for yr, (_, v) in year_map.items()}
