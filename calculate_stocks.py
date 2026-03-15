@@ -1208,8 +1208,14 @@ def get_edgar_financials(ticker):
         revenue = _edgar_extract(facts,
             "RevenueFromContractWithCustomerExcludingAssessedTax",
             "RevenueFromContractWithCustomerIncludingAssessedTax",
-            "Revenues", "SalesRevenueNet",
-            "SalesRevenueGoodsNet", "RevenuesNetOfInterestExpense")
+            "Revenues",
+            "SalesRevenueNet",
+            "SalesRevenueGoodsNet",
+            "RevenuesNetOfInterestExpense",
+            "SalesRevenueServicesNet",
+            "RevenueFromContractWithCustomerExcludingAssessedTaxAndDiscontinuedOperations",
+            "NetRevenues",
+            "TotalRevenues")
 
         net_income = _edgar_extract(facts,
             "NetIncomeLoss", "ProfitLoss",
@@ -1236,29 +1242,42 @@ def get_edgar_financials(ticker):
         equity = _edgar_extract(facts,
             "StockholdersEquity",
             "StockholdersEquityAttributableToParent",
-            "CommonStockholdersEquity")
+            "CommonStockholdersEquity",
+            "RetainedEarningsAccumulatedDeficit",  # last resort proxy
+            "LiabilitiesAndStockholdersEquity")    # broad fallback
 
         cash = _edgar_extract(facts,
             "CashAndCashEquivalentsAtCarryingValue",
             "CashCashEquivalentsAndShortTermInvestments",
             "Cash")
 
-        # Total debt = long-term + short-term combined where available.
-        # DebtAndCapitalLeaseObligations is the most complete concept.
+        # Financial debt only — deliberately excludes operating lease
+        # liabilities (OperatingLeaseLiability) which EDGAR sometimes
+        # files under broad debt concepts. Using interest-bearing debt
+        # concepts only to match what GuruFocus reports as "Total Debt".
         total_debt = _edgar_extract(facts,
-            "DebtAndCapitalLeaseObligations",
-            "LongTermDebtAndCapitalLeaseObligation",
-            "LiabilitiesAndStockholdersEquity",  # not ideal but broadest fallback
             "LongTermDebt",
-            "LongTermDebtNoncurrent")
+            "LongTermDebtNoncurrent",
+            "SeniorNotes",
+            "UnsecuredDebt",
+            "SecuredDebt")
 
         short_term_debt = _edgar_extract(facts,
             "ShortTermBorrowings",
             "DebtCurrent",
-            "LongTermDebtCurrent")
+            "LongTermDebtCurrent",
+            "NotesPayableCurrent",
+            "CommercialPaper")
 
         shares = _edgar_extract(facts,
             "CommonStockSharesOutstanding")
+
+        # Cash and equivalents — needed for FCF vs Debt chart comparison
+        cash_and_equiv = _edgar_extract(facts,
+            "CashAndCashEquivalentsAtCarryingValue",
+            "CashCashEquivalentsAndShortTermInvestments",
+            "CashAndCashEquivalentsAndShortTermInvestments",
+            "Cash")
 
         # ── Cash flow concepts ────────────────────────────────────────────
         op_cf = _edgar_extract(facts,
@@ -1288,17 +1307,19 @@ def get_edgar_financials(ticker):
                 "incomeBeforeTax":   pretax.get(yr),
                 "incomeTaxExpense":  tax_exp.get(yr),
             }
+            # Combine long-term + short-term financial debt
+            lt  = total_debt.get(yr)
+            st  = short_term_debt.get(yr)
+            combined_debt = None
+            if lt is not None or st is not None:
+                combined_debt = (lt or 0) + (st or 0)
+
             balance_out[yr] = {
                 "totalAssets":                  total_assets.get(yr),
                 "totalCurrentLiabilities":      current_liab.get(yr),
                 "totalStockholdersEquity":       equity.get(yr),
-                "cashAndCashEquivalents":        cash.get(yr),
-                # Combine long-term and short-term debt where both available
-                "totalDebt": (
-                    total_debt.get(yr, 0) + short_term_debt.get(yr, 0)
-                    if total_debt.get(yr) is not None or short_term_debt.get(yr) is not None
-                    else None
-                ),
+                "cashAndCashEquivalents":        cash_and_equiv.get(yr),
+                "totalDebt":                    combined_debt,
                 "commonStockSharesOutstanding": shares.get(yr),
             }
             cashflow_out[yr] = {
