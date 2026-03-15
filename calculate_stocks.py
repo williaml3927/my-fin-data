@@ -1496,10 +1496,10 @@ def get_financials_chart_data(stock, info, ticker=""):
                 rv[str(yr)] = {"revenue": rev, "net_income": ni}
 
             # ----------------------------------------------------------
-            # Chart 2 — FCF vs Total Debt (both in $M)
-            # FCF = freeCashFlow if available, else operatingCashFlow - capex
-            # Debt = totalDebt (short + long term) preferred over longTermDebt
-            #        alone, which understates leverage vs GuruFocus figures
+            # Chart 2 — Cash Balance vs Total Debt (both in $M)
+            # Shows actual cash held on balance sheet vs financial debt.
+            # FCF is also stored for reference but NOT used as cash proxy —
+            # FCF can be negative even when a company holds large cash reserves.
             # ----------------------------------------------------------
             fcf_val = to_m(_fv(cf, "freeCashFlow"))
             if fcf_val is None:
@@ -1507,20 +1507,28 @@ def get_financials_chart_data(stock, info, ticker=""):
                 capex_v = _fv(cf, "capitalExpenditure")
                 if ocf_v is not None and capex_v is not None:
                     fcf_val = to_m(ocf_v - abs(capex_v))
-            # Prefer totalDebt (includes short-term); fall back to long-term only
+            # Actual cash balance from balance sheet
+            cash_bal = to_m(_fv(bal, "cashAndCashEquivalents"))
+            # Prefer totalDebt; fall back to long-term only
             debt = to_m(_fv(bal, "totalDebt"))
             if debt is None:
                 debt = to_m(_fv(bal, "longTermDebt"))
-            if fcf_val is not None or debt is not None:
-                fd[str(yr)] = {"free_cash_flow": fcf_val, "total_debt": debt}
+            if cash_bal is not None or debt is not None or fcf_val is not None:
+                fd[str(yr)] = {
+                    "cash_balance":  cash_bal,   # actual cash held — use for chart
+                    "free_cash_flow": fcf_val,   # FCF for reference
+                    "total_debt":    debt,
+                }
 
             # ----------------------------------------------------------
             # Chart 3 — Shares Outstanding (millions) vs Buybacks ($M)
+            # Split adjustment: if latest year shares > 1.5x the next year,
+            # a split likely occurred. We normalise all historical share counts
+            # to the most recent share count basis so the chart is comparable.
+            # This is applied post-loop below.
             # ----------------------------------------------------------
             sh_raw = _fv(bal, "commonStockSharesOutstanding", "sharesOutstanding")
-            # shares are already a count — divide by 1M for millions of shares
             sh = round(sh_raw / 1_000_000, 2) if sh_raw else None
-            # buybacks are a cash outflow in USD — divide by 1M for $M
             bb_raw = _fv(cf, "commonStockRepurchased")
             bb = to_m(abs(bb_raw)) if bb_raw else None
             if sh is not None or bb is not None:
@@ -1553,6 +1561,41 @@ def get_financials_chart_data(stock, info, ticker=""):
                     roic_val = pct(nopat / inv_cap)
             if roe_val is not None or roic_val is not None:
                 rt[str(yr)] = {"roe_pct": roe_val, "roic_pct": roic_val}
+
+        # ── Split-adjust historical share counts ─────────────────────
+        # Detect forward splits (share count jumps up) and reverse splits
+        # (share count drops). Normalise all years to the most recent
+        # share count basis so the chart shows a consistent series.
+        # Method: walk chronologically and accumulate a split ratio.
+        if sb:
+            sorted_yrs = sorted(sb.keys())   # oldest first
+            # Build list of (year, shares) for years that have share data
+            sh_pairs = [(y, sb[y]["shares_outstanding_m"])
+                        for y in sorted_yrs if sb[y].get("shares_outstanding_m")]
+            if len(sh_pairs) >= 2:
+                # Detect cumulative split factor vs most recent year
+                # by walking backwards and looking for large jumps
+                latest_sh = sh_pairs[-1][1]
+                cumulative = 1.0
+                adjusted   = {}
+                for i in range(len(sh_pairs) - 1, -1, -1):
+                    yr_k, sh_val = sh_pairs[i]
+                    if i < len(sh_pairs) - 1:
+                        next_sh = sh_pairs[i + 1][1]
+                        ratio   = next_sh / sh_val if sh_val else 1.0
+                        # Only treat as split if ratio is close to a round number
+                        # (2x, 3x, 4x, 0.5x etc.) to avoid adjusting normal buybacks
+                        rounded = round(ratio)
+                        if rounded >= 2 and abs(ratio - rounded) < 0.15:
+                            cumulative *= rounded   # forward split going back
+                        elif 0 < ratio < 0.7 and abs(ratio - round(ratio, 1)) < 0.05:
+                            cumulative /= round(1 / ratio)  # reverse split going back
+                    adjusted[yr_k] = round(sh_val * cumulative, 2)
+                # Write adjusted values back
+                for yr_k in sorted_yrs:
+                    if yr_k in adjusted:
+                        sb[yr_k]["shares_outstanding_m"] = adjusted[yr_k]
+                        sb[yr_k]["split_adjusted"] = True
 
         return rv, fd, sb, rt
 
