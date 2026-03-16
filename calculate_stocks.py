@@ -235,16 +235,68 @@ def _get_annual_series(financials, row_names):
     return []
 
 def _trend_score(series, max_pts=3):
+    """
+    Scores a chronological value series (oldest first) for CONSISTENT
+    upward trend. Specifically designed to penalise companies that had
+    one exceptional year followed by weakness — a pattern that looks
+    good on simple decline-counting but signals poor predictability.
+
+    Scoring method:
+      1. Count YoY growth rate for each consecutive pair
+      2. Calculate the percentage of years with positive growth
+      3. Also check if the END value is meaningfully higher than the START
+         (ensures the overall direction is up, not just volatile)
+
+    max_pts=3:
+      3 pts — ≥ 85% of years growing AND end > start × 1.2  (strong consistent)
+      2 pts — ≥ 70% of years growing AND end > start        (mostly consistent)
+      1 pt  — ≥ 50% of years growing OR end > start         (mixed but positive)
+      0 pts — majority declining or end ≤ start              (declining trend)
+
+    For short series (< 4 years) falls back to simple decline counting
+    since there isn't enough data for percentage-based scoring.
+    """
     if len(series) < 2:
         return 1
-    declines = sum(1 for i in range(1, len(series)) if series[i] < series[i - 1])
-    if declines == 0:
-        return max_pts
-    elif declines == 1:
-        return max_pts - 1
-    elif declines <= len(series) // 2:
-        return 1
-    return 0
+
+    # Short series — use simple approach
+    if len(series) < 4:
+        declines = sum(1 for i in range(1, len(series)) if series[i] < series[i-1])
+        if declines == 0:              return max_pts
+        elif declines == 1:            return max(0, max_pts - 1)
+        return 0
+
+    # Filter out zeros/negatives from growth rate calculation
+    # (negative NI years are valid data — don't skip them)
+    yoy_positive = 0
+    yoy_total    = 0
+    for i in range(1, len(series)):
+        prev = series[i - 1]
+        curr = series[i]
+        yoy_total += 1
+        if curr > prev:
+            yoy_positive += 1
+
+    pct_growing = yoy_positive / yoy_total
+
+    # Overall direction — is the final value higher than the starting value?
+    start = series[0]
+    end   = series[-1]
+    # Use absolute comparison for NI which can be negative
+    if start != 0:
+        overall_up      = end > start
+        strong_overall  = end > start * 1.20   # at least 20% higher overall
+    else:
+        overall_up     = end > 0
+        strong_overall = end > 0
+
+    if pct_growing >= 0.85 and strong_overall:
+        return max_pts          # strong consistent upward trend
+    elif pct_growing >= 0.70 and overall_up:
+        return max(1, max_pts - 1)   # mostly consistent
+    elif pct_growing >= 0.50 or overall_up:
+        return 1                # mixed but net positive direction
+    return 0                    # declining or highly volatile
 
 # =============================================================================
 # FINVIZ GROWTH FETCHER
@@ -354,83 +406,266 @@ def score_profitability(info):
 
 # =============================================================================
 # QUALITY METRIC 2 — Financial Strength (0–10)
+#
+# Uses the same three pre-computed ratios displayed in the Ratios tab so
+# the quality score and the displayed metrics are always consistent.
+#
+# Current Ratio       (3 pts) — liquidity
+#   > 2.0  → 3   excellent short-term coverage
+#   > 1.2  → 2   adequate coverage
+#   > 0.8  → 1   tight but manageable
+#   ≤ 0.8  → 0   potential liquidity risk
+#
+# Debt-to-EBITDA      (3 pts) — leverage
+#   < 1.0  → 3   minimal leverage / debt-free
+#   < 3.0  → 2   moderate leverage
+#   < 5.0  → 1   elevated leverage
+#   ≥ 5.0  → 0   high leverage risk
+#
+# Debt Servicing Ratio (2 pts) — ability to service debt from operations
+#   < 0.10 → 2   interest is trivial vs operating cash flow
+#   < 0.25 → 1   manageable interest burden
+#   ≥ 0.25 → 0   interest is a significant drain
+#   = 0.0  → 2   no interest expense (debt-free)
+#
+# Positive FCF        (2 pts) — free cash flow generation
+#   FCF > 0 and OCF > 0 → 2
+#   FCF > 0 only        → 1
 # =============================================================================
-def score_financial_strength(info):
-    score  = 0
-    debt   = _safe(info.get('totalDebt'), 0)
-    ebitda = _safe(info.get('ebitda'))
-    if ebitda and ebitda > 0:
-        ratio = debt / ebitda
-        if ratio < 1:    score += 3
-        elif ratio < 3:  score += 2
-        elif ratio < 5:  score += 1
-    cr = _safe(info.get('currentRatio'))
+def score_financial_strength(info,
+                              current_ratio=None,
+                              debt_to_ebitda=None,
+                              debt_service_ratio=None,
+                              cash_debt_history=None):
+    """
+    cash_debt_history: dict of { year_str: {"cash_balance": float,
+                                             "total_debt": float} }
+                       from financials_charts["fcf_vs_debt"] — the same data
+                       powering the 10Y Cash & Total Debt chart.
+                       Used to score long-term cash vs debt trajectory.
+    """
+    score = 0
+
+    # ── Current Ratio (2 pts) ─────────────────────────────────────────────────
+    cr = current_ratio if current_ratio is not None else _safe(info.get('currentRatio'))
     if cr is not None:
-        if cr > 2.0:    score += 3
-        elif cr > 1.2:  score += 2
-        elif cr > 0.8:  score += 1
-    interest = _safe(info.get('interestExpense'))
-    if ebitda and ebitda > 0 and interest and interest > 0:
-        coverage = ebitda / interest
-        if coverage > 10:  score += 2
-        elif coverage > 5: score += 1
-    fcf = _safe(info.get('freeCashflow'))
-    if fcf is not None and fcf > 0:
-        score += 2
-    return min(score, 10)
+        if cr > 2.0:    score += 2
+        elif cr > 1.2:  score += 1
 
-# =============================================================================
-# QUALITY METRIC 3 — Growth (0–10)
-# =============================================================================
-def score_growth(info, financials):
-    score = 0
-    rev_growth  = _safe(info.get('revenueGrowth'))
-    if rev_growth is not None:
-        if rev_growth > 0.15:   score += 3
-        elif rev_growth > 0.05: score += 2
-        elif rev_growth > 0:    score += 1
-    earn_growth = _safe(info.get('earningsGrowth'))
-    if earn_growth is not None:
-        if earn_growth > 0.20:   score += 3
-        elif earn_growth > 0.05: score += 2
-        elif earn_growth > 0:    score += 1
-    if financials is not None and not financials.empty:
-        rev_series = _get_annual_series(financials, ['Total Revenue', 'TotalRevenue'])
-        if rev_series:
-            score += _trend_score(rev_series[-4:], max_pts=2)
-        ni_series  = _get_annual_series(financials, ['Net Income', 'NetIncome'])
-        if ni_series:
-            score += _trend_score(ni_series[-4:], max_pts=2)
-    return min(score, 10)
+    # ── Debt-to-EBITDA (2 pts) ────────────────────────────────────────────────
+    if debt_to_ebitda is not None:
+        if debt_to_ebitda == 0:    score += 2   # debt-free
+        elif debt_to_ebitda < 1:   score += 2
+        elif debt_to_ebitda < 3:   score += 1
+    else:
+        debt   = _safe(info.get('totalDebt'))
+        ebitda = _safe(info.get('ebitda'))
+        if debt is not None and ebitda and ebitda > 0:
+            ratio = debt / ebitda
+            if ratio == 0:   score += 2
+            elif ratio < 1:  score += 2
+            elif ratio < 3:  score += 1
 
-# =============================================================================
-# QUALITY METRIC 4 — Predictability (0–10)
-# =============================================================================
-def score_predictability(info, financials):
-    score = 0
-    if financials is not None and not financials.empty:
-        ni_series  = _get_annual_series(financials, ['Net Income', 'NetIncome'])
-        if ni_series:
-            score += _trend_score(ni_series[-5:], max_pts=3)
-        rev_series = _get_annual_series(financials, ['Total Revenue', 'TotalRevenue'])
-        if rev_series:
-            score += _trend_score(rev_series[-5:], max_pts=3)
-        if ni_series and rev_series:
-            min_len = min(len(ni_series), len(rev_series), 5)
-            margins = []
-            for i in range(min_len):
-                if rev_series[i] and rev_series[i] > 0:
-                    margins.append(ni_series[i] / rev_series[i])
-            if len(margins) >= 2:
-                variance = float(np.std(margins))
-                if variance < 0.05:   score += 2
-                elif variance < 0.10: score += 1
+    # ── Debt Servicing Ratio (2 pts) ──────────────────────────────────────────
+    if debt_service_ratio is not None:
+        if debt_service_ratio == 0:     score += 2
+        elif debt_service_ratio < 0.10: score += 2
+        elif debt_service_ratio < 0.25: score += 1
+    else:
+        ebitda   = _safe(info.get('ebitda'))
+        interest = _safe(info.get('interestExpense'))
+        if ebitda and ebitda > 0 and interest and interest > 0:
+            coverage = ebitda / abs(interest)
+            if coverage > 10:  score += 2
+            elif coverage > 5: score += 1
+
+    # ── 10Y Cash vs Debt trend (2 pts) ────────────────────────────────────────
+    # Uses the same data as the 10Y Cash & Total Debt chart.
+    # Rewards companies where cash exceeds debt and/or cash is growing
+    # relative to debt over the long term.
+    if cash_debt_history and len(cash_debt_history) >= 3:
+        try:
+            sorted_yrs = sorted(cash_debt_history.keys())
+            cash_vals  = [cash_debt_history[y].get("cash_balance") for y in sorted_yrs]
+            debt_vals  = [cash_debt_history[y].get("total_debt")   for y in sorted_yrs]
+            # Filter to years where both values are present
+            pairs = [(c, d) for c, d in zip(cash_vals, debt_vals)
+                     if c is not None and d is not None]
+            if pairs:
+                # Most recent year: does cash exceed debt?
+                latest_cash, latest_debt = pairs[-1]
+                cash_exceeds_debt = latest_cash >= latest_debt
+
+                # Trend: is cash growing or debt shrinking over time?
+                cash_improving = (
+                    pairs[-1][0] > pairs[0][0] or           # cash growing
+                    pairs[-1][1] < pairs[0][1] or           # debt shrinking
+                    (pairs[-1][0] - pairs[-1][1]) >         # net cash position improving
+                    (pairs[0][0]  - pairs[0][1])
+                )
+
+                if cash_exceeds_debt and cash_improving:
+                    score += 2   # cash > debt AND trajectory improving
+                elif cash_exceeds_debt or cash_improving:
+                    score += 1   # either cash > debt OR improving trend
+        except Exception:
+            pass
+
+    # ── Positive FCF (2 pts) ──────────────────────────────────────────────────
     fcf = _safe(info.get('freeCashflow'))
     ocf = _safe(info.get('operatingCashflow'))
     if fcf is not None and fcf > 0 and ocf is not None and ocf > 0:
         score += 2
     elif fcf is not None and fcf > 0:
         score += 1
+
+    return min(score, 10)
+
+# =============================================================================
+# QUALITY METRIC 3 — Growth (0–10)
+#
+# Now incorporates three KPI signals alongside the trailing YoY metrics:
+#
+# EPS Next 5Y  (2 pts) — forward analyst consensus growth (from Finviz)
+#   > 15%  → 2   strong forward growth expected
+#   > 5%   → 1   moderate forward growth expected
+#   ≤ 5%   → 0   low or no growth expected
+#
+# ROE          (2 pts) — return on equity (efficiency of retained earnings)
+#   > 20%  → 2   high-quality capital allocation
+#   > 10%  → 1   decent returns
+#   ≤ 10%  → 0   poor capital efficiency
+#
+# ROIC         (2 pts) — return on invested capital (all capital, not just equity)
+#   > 15%  → 2   excellent returns on total capital
+#   > 8%   → 1   acceptable returns
+#   ≤ 8%   → 0   poor capital deployment
+#
+# Revenue YoY  (2 pts — trailing) and Earnings YoY (2 pts — trailing) retained
+# but capped at 2 pts each to balance forward vs trailing signals.
+# Total remains capped at 10.
+# =============================================================================
+def score_growth(info, financials,
+                 eps_next_5y=None, roe=None, roic=None):
+    score = 0
+
+    # ── EPS Next 5Y — forward analyst consensus (2 pts) ──────────────────────
+    # Uses Finviz forward growth rate if available, falls back to yfinance
+    if eps_next_5y is not None:
+        if eps_next_5y > 0.15:   score += 2
+        elif eps_next_5y > 0.05: score += 1
+    else:
+        # Fallback to trailing earningsGrowth if forward rate not passed
+        eg = _safe(info.get('earningsGrowth'))
+        if eg is not None:
+            if eg > 0.15:   score += 2
+            elif eg > 0.05: score += 1
+
+    # ── ROE — Return on Equity (2 pts) ────────────────────────────────────────
+    roe_val = roe if roe is not None else _safe(info.get('returnOnEquity'))
+    if roe_val is not None:
+        if roe_val > 0.20:   score += 2
+        elif roe_val > 0.10: score += 1
+
+    # ── ROIC — Return on Invested Capital (2 pts) ─────────────────────────────
+    if roic is not None:
+        if roic > 0.15:   score += 2
+        elif roic > 0.08: score += 1
+
+    # ── Revenue YoY — trailing (2 pts) ────────────────────────────────────────
+    rev_growth = _safe(info.get('revenueGrowth'))
+    if rev_growth is not None:
+        if rev_growth > 0.15:   score += 2
+        elif rev_growth > 0.05: score += 1
+        elif rev_growth > 0:    score += 1
+
+    # ── Revenue trend from financials (1 pt) ──────────────────────────────────
+    if financials is not None and not financials.empty:
+        rev_series = _get_annual_series(financials, ['Total Revenue', 'TotalRevenue'])
+        if rev_series:
+            score += _trend_score(rev_series[-4:], max_pts=1)
+
+    return min(score, 10)
+
+# =============================================================================
+# QUALITY METRIC 4 — Predictability (0–10)
+#
+# Now uses the same 10-year revenue and net income series that powers the
+# 10Y Revenue & Net Income chart in the Financials tab. EDGAR provides up
+# to 10 years vs ~4 years from yfinance — giving a much more meaningful
+# measure of long-term consistency.
+#
+# Long-term revenue trend   (3 pts) — is revenue consistently growing?
+#   All years up            → 3
+#   One declining year      → 2
+#   Mixed but mostly up     → 1
+#   Two+ declining years    → 0
+#
+# Long-term NI trend        (3 pts) — is net income consistently growing?
+#   Same bands as revenue
+#
+# Margin stability          (2 pts) — are profit margins predictable?
+#   Std dev of NI/Rev < 5%  → 2   (very stable margins)
+#   Std dev < 10%           → 1
+#   ≥ 10%                   → 0
+#
+# FCF consistency           (2 pts) — is free cash flow reliably positive?
+#   FCF > 0 and OCF > 0    → 2
+#   FCF > 0 only           → 1
+# =============================================================================
+def score_predictability(info, financials,
+                          long_rev_series=None,
+                          long_ni_series=None):
+    """
+    long_rev_series: chronological list of annual revenue values (oldest first)
+                     from EDGAR — up to 10 years. Falls back to stock.financials.
+    long_ni_series:  same for net income.
+    """
+    score = 0
+
+    # Use long-term EDGAR series if available, fall back to stock.financials
+    if long_rev_series and len(long_rev_series) >= 2:
+        rev_series = long_rev_series
+    elif financials is not None and not financials.empty:
+        rev_series = _get_annual_series(financials, ['Total Revenue', 'TotalRevenue'])
+    else:
+        rev_series = []
+
+    if long_ni_series and len(long_ni_series) >= 2:
+        ni_series = long_ni_series
+    elif financials is not None and not financials.empty:
+        ni_series = _get_annual_series(financials, ['Net Income', 'NetIncome'])
+    else:
+        ni_series = []
+
+    # ── Long-term revenue trend (3 pts) ──────────────────────────────────────
+    if rev_series:
+        score += _trend_score(rev_series, max_pts=3)
+
+    # ── Long-term net income trend (3 pts) ────────────────────────────────────
+    if ni_series:
+        score += _trend_score(ni_series, max_pts=3)
+
+    # ── Profit margin stability (2 pts) ───────────────────────────────────────
+    if rev_series and ni_series:
+        min_len = min(len(rev_series), len(ni_series))
+        margins = []
+        for i in range(min_len):
+            if rev_series[i] and rev_series[i] > 0:
+                margins.append(ni_series[i] / rev_series[i])
+        if len(margins) >= 3:   # need at least 3 years for meaningful variance
+            variance = float(np.std(margins))
+            if variance < 0.05:   score += 2
+            elif variance < 0.10: score += 1
+
+    # ── FCF consistency (2 pts) ───────────────────────────────────────────────
+    fcf = _safe(info.get('freeCashflow'))
+    ocf = _safe(info.get('operatingCashflow'))
+    if fcf is not None and fcf > 0 and ocf is not None and ocf > 0:
+        score += 2
+    elif fcf is not None and fcf > 0:
+        score += 1
+
     return min(score, 10)
 
 # =============================================================================
@@ -992,13 +1227,161 @@ def analyze_ticker(ticker, retries=3):
                 financials = None
 
             # ------------------------------------------------------------------
-            # STAGE 1 — Preliminary quality scores → determines tier
+            # STAGE 1a — Pre-compute KPIs used in quality scoring
+            # Calculated before quality scores so all three metrics
+            # (growth, financial_strength, predictability) use the same
+            # values that are displayed in the UI tabs.
+            # ------------------------------------------------------------------
+
+            # Forward growth rate (Finviz primary, yfinance fallback)
+            # Moved here from Stage 2 so it feeds into score_growth
+            fwd_growth = get_forward_growth(ticker, info)
+            growth_s1  = fwd_growth["rate"]
+            growth_s2  = max(MIN_GROWTH_RATE, fwd_growth["rate"] * 0.50)
+            peg_rate   = fwd_growth["peg_rate"]
+            eps_next_5y = fwd_growth["raw"]   # raw unclamped rate for growth scoring
+
+            # ROE — direct from yfinance info
+            pre_roe = _safe(info.get('returnOnEquity'))
+
+            # ROIC — calculated from balance sheet and income statement
+            try:
+                pre_roic_result = calc_roe_roic(info, financials, stock.balance_sheet)
+                pre_roic = pre_roic_result.get("roic")   # decimal e.g. 0.5862
+            except Exception:
+                pre_roic = None
+            # Current Ratio
+            pre_current_ratio = None
+            try:
+                bal_sheet_pre = stock.balance_sheet
+                if bal_sheet_pre is not None and not bal_sheet_pre.empty:
+                    col = bal_sheet_pre.columns[0]
+                    ca, cl = None, None
+                    for name in ["Current Assets", "TotalCurrentAssets",
+                                 "CurrentAssets"]:
+                        if name in bal_sheet_pre.index:
+                            ca = _safe(float(bal_sheet_pre.loc[name, col])); break
+                    for name in ["Current Liabilities", "TotalCurrentLiabilities",
+                                 "CurrentLiabilities"]:
+                        if name in bal_sheet_pre.index:
+                            cl = _safe(float(bal_sheet_pre.loc[name, col])); break
+                    if ca and cl and cl > 0:
+                        pre_current_ratio = round(ca / cl, 2)
+            except Exception:
+                pass
+            if pre_current_ratio is None:
+                pre_current_ratio = _safe(info.get('currentRatio'))
+
+            # Debt-to-EBITDA
+            pre_debt_to_ebitda = None
+            try:
+                td = _safe(info.get('totalDebt'))
+                eb = _safe(info.get('ebitda'))
+                if td is not None and eb is not None and eb > 0:
+                    pre_debt_to_ebitda = round(td / eb, 2)
+                elif td == 0 and eb is not None and eb > 0:
+                    pre_debt_to_ebitda = 0.0
+            except Exception:
+                pass
+
+            # Debt Servicing Ratio
+            pre_debt_service_ratio = None
+            try:
+                ie = None
+                if financials is not None and not financials.empty:
+                    col = financials.columns[0]
+                    IE_NAMES = [
+                        "Interest Expense", "InterestExpense",
+                        "Interest Expense Non Operating",
+                        "InterestExpenseNonOperating",
+                        "Net Interest Income", "NetInterestIncome",
+                        "Interest And Debt Expense", "InterestAndDebtExpense",
+                        "Net Non Operating Interest Income Expense",
+                        "Reconciled Interest Expense",
+                    ]
+                    for name in IE_NAMES:
+                        if name in financials.index:
+                            raw = _safe(float(financials.loc[name, col]))
+                            if raw is not None:
+                                ie = abs(raw); break
+                if ie is None:
+                    raw_info = _safe(info.get('interestExpense'))
+                    if raw_info is not None:
+                        ie = abs(raw_info)
+                op_cf_pre = _safe(info.get('operatingCashflow'))
+                if ie is not None and ie > 0 and op_cf_pre and op_cf_pre > 0:
+                    pre_debt_service_ratio = round(ie / op_cf_pre, 4)
+                elif ie == 0:
+                    pre_debt_service_ratio = 0.0
+            except Exception:
+                pass
+
+            # ── 10Y Cash vs Debt history from EDGAR ──────────────────────────
+            # Extracts the same data that powers the 10Y Cash & Total Debt
+            # chart — used by score_financial_strength for trend analysis.
+            cash_debt_history = {}
+            try:
+                edgar_cdf = get_edgar_financials(ticker)
+                if edgar_cdf["source"] == "edgar":
+                    for yr, bal_row in edgar_cdf["balance"].items():
+                        cash_v = bal_row.get("cashAndCashEquivalents")
+                        debt_v = bal_row.get("totalDebt")
+                        if cash_v is not None or debt_v is not None:
+                            # Convert to millions to match chart display
+                            cash_debt_history[str(yr)] = {
+                                "cash_balance": round(cash_v / 1e6, 2) if cash_v else None,
+                                "total_debt":   round(debt_v / 1e6, 2) if debt_v else None,
+                            }
+            except Exception:
+                pass
+
+            # ── Long-term revenue and NI series from EDGAR ───────────────────
+            # Extract the same 10-year chronological series that powers the
+            # 10Y Revenue & Net Income chart. Used by score_predictability
+            # for a longer and more meaningful trend analysis than the
+            # ~4 years available from stock.financials alone.
+            long_rev_series = []
+            long_ni_series  = []
+            try:
+                edgar_data = get_edgar_financials(ticker)
+                if edgar_data["source"] == "edgar":
+                    inc = edgar_data["income"]
+                    # Build chronological lists (oldest → newest)
+                    sorted_yrs = sorted(inc.keys())
+                    for yr in sorted_yrs:
+                        row = inc[yr]
+                        rv = row.get("revenue")
+                        ni = row.get("netIncome")
+                        if rv is not None: long_rev_series.append(float(rv))
+                        if ni is not None: long_ni_series.append(float(ni))
+            except Exception:
+                pass
+            # Fall back to stock.financials series if EDGAR unavailable
+            if not long_rev_series and financials is not None and not financials.empty:
+                long_rev_series = _get_annual_series(
+                    financials, ['Total Revenue', 'TotalRevenue'])
+            if not long_ni_series and financials is not None and not financials.empty:
+                long_ni_series = _get_annual_series(
+                    financials, ['Net Income', 'NetIncome'])
+
+            # ------------------------------------------------------------------
+            # STAGE 1b — Preliminary quality scores → determines tier
             # ------------------------------------------------------------------
             prelim_scores = {
                 "profitability":      score_profitability(info),
-                "financial_strength": score_financial_strength(info),
-                "growth":             score_growth(info, financials),
-                "predictability":     score_predictability(info, financials),
+                "financial_strength": score_financial_strength(
+                                          info,
+                                          current_ratio=pre_current_ratio,
+                                          debt_to_ebitda=pre_debt_to_ebitda,
+                                          debt_service_ratio=pre_debt_service_ratio,
+                                          cash_debt_history=cash_debt_history),
+                "growth":             score_growth(info, financials,
+                                          eps_next_5y=eps_next_5y,
+                                          roe=pre_roe,
+                                          roic=pre_roic),
+                "predictability":     score_predictability(info, financials,
+                                          long_rev_series=long_rev_series,
+                                          long_ni_series=long_ni_series),
                 "valuation":          0,
                 "moat":               None,
             }
@@ -1010,14 +1393,9 @@ def analyze_ticker(ticker, retries=3):
             terminal        = tier_data["terminal_growth"]
 
             # ------------------------------------------------------------------
-            # STAGE 2 — Forward growth rate (Finviz primary, yfinance fallback)
-            # rate     : floored at MIN_GROWTH_RATE — used in DCF methods
-            # peg_rate : un-floored — used in PEG and PSG (0.0 = skip method)
+            # STAGE 2 — Forward growth rate already computed in Stage 1a
+            # growth_s1, growth_s2, peg_rate, fwd_growth all set above
             # ------------------------------------------------------------------
-            fwd_growth = get_forward_growth(ticker, info)
-            growth_s1  = fwd_growth["rate"]
-            growth_s2  = max(MIN_GROWTH_RATE, fwd_growth["rate"] * 0.50)
-            peg_rate   = fwd_growth["peg_rate"]
 
             # ------------------------------------------------------------------
             # STAGE 3 — Historical multiples (P/E, P/S, P/B, EV/EBITDA)
@@ -1069,7 +1447,21 @@ def analyze_ticker(ticker, retries=3):
             intrinsic_value = aggregate.get("intrinsic_value")
             final_scores = {
                 **prelim_scores,
-                "valuation": score_valuation(info, intrinsic_value),
+                # Recalculate with same pre-computed values for consistency
+                "financial_strength": score_financial_strength(
+                                          info,
+                                          current_ratio=pre_current_ratio,
+                                          debt_to_ebitda=pre_debt_to_ebitda,
+                                          debt_service_ratio=pre_debt_service_ratio,
+                                          cash_debt_history=cash_debt_history),
+                "growth":             score_growth(info, financials,
+                                          eps_next_5y=eps_next_5y,
+                                          roe=pre_roe,
+                                          roic=pre_roic),
+                "predictability":     score_predictability(info, financials,
+                                          long_rev_series=long_rev_series,
+                                          long_ni_series=long_ni_series),
+                "valuation":          score_valuation(info, intrinsic_value),
             }
             python_subtotal     = sum(v for k, v in final_scores.items() if k != 'moat' and v is not None)
             python_subtotal_pct = round((python_subtotal / 50) * 100, 2)
@@ -1108,81 +1500,15 @@ def analyze_ticker(ticker, retries=3):
             # ------------------------------------------------------------------
             roe_roic = calc_roe_roic(info, financials, stock.balance_sheet)
 
-            # ── Fetch balance sheet once for ratio calculations ──────────────
-            try:
-                bal_sheet = stock.balance_sheet
-            except Exception:
-                bal_sheet = None
+            # ── Ratios — reuse values pre-computed in Stage 1a ──────────────
+            # These were already calculated before Stage 1 to feed the
+            # financial strength quality score. Reusing them here ensures
+            # the Ratios tab and the quality score always show identical values.
+            current_ratio  = pre_current_ratio
+            debt_to_ebitda = pre_debt_to_ebitda
 
-            # ── Current Ratio = Current Assets / Current Liabilities ─────────
-            # Read directly from balance sheet (most recent column) rather than
-            # info dict — balance sheet values are more reliable and consistent
-            # with what GuruFocus shows.
-            current_ratio = None
-            try:
-                if bal_sheet is not None and not bal_sheet.empty:
-                    col = bal_sheet.columns[0]
-                    ca, cl = None, None
-                    for name in ["Current Assets", "TotalCurrentAssets",
-                                 "CurrentAssets"]:
-                        if name in bal_sheet.index:
-                            ca = _safe(float(bal_sheet.loc[name, col])); break
-                    for name in ["Current Liabilities", "TotalCurrentLiabilities",
-                                 "CurrentLiabilities"]:
-                        if name in bal_sheet.index:
-                            cl = _safe(float(bal_sheet.loc[name, col])); break
-                    if ca and cl and cl > 0:
-                        current_ratio = round(ca / cl, 2)
-            except Exception:
-                pass
-            # Fallback to yfinance pre-calculated value
-            if current_ratio is None:
-                current_ratio = _safe(info.get('currentRatio'))
-
-            # ── Debt-to-EBITDA = Total Debt / EBITDA ─────────────────────────
-            # Use explicit None check — do NOT default totalDebt to 0, which
-            # would make debt-free companies show 0.00 instead of None.
-            # GuruFocus uses total interest-bearing debt (long + short term).
-            debt_to_ebitda = None
-            try:
-                td = _safe(info.get('totalDebt'))   # None if missing, not 0
-                eb = _safe(info.get('ebitda'))
-                if td is not None and eb is not None and eb > 0:
-                    debt_to_ebitda = round(td / eb, 2)
-                elif td == 0 and eb is not None and eb > 0:
-                    debt_to_ebitda = 0.0   # explicitly zero debt is valid
-            except Exception:
-                pass
-
-            # ── Debt Servicing Ratio = Interest Expense / Operating Cash Flow ─
-            # interestExpense is unreliable in yfinance info — fetch from the
-            # income statement (stock.financials) instead, which is the same
-            # source GuruFocus uses.
-            debt_service_ratio = None
-            try:
-                if financials is not None and not financials.empty:
-                    col = financials.columns[0]
-                    ie = None
-                    for name in ["Interest Expense", "InterestExpense",
-                                 "Net Interest Income", "NetInterestIncome",
-                                 "Interest Expense Non Operating",
-                                 "InterestExpenseNonOperating"]:
-                        if name in financials.index:
-                            raw = _safe(float(financials.loc[name, col]))
-                            if raw is not None:
-                                ie = abs(raw)   # stored as negative in some filings
-                            break
-                    op_cf = _safe(info.get('operatingCashflow'))
-                    if ie and ie > 0 and op_cf and op_cf > 0:
-                        debt_service_ratio = round(ie / op_cf, 4)
-                # Fallback to info if financials didn't have it
-                if debt_service_ratio is None:
-                    ie_info = _safe(info.get('interestExpense'))
-                    op_cf   = _safe(info.get('operatingCashflow'))
-                    if ie_info and ie_info > 0 and op_cf and op_cf > 0:
-                        debt_service_ratio = round(abs(ie_info) / op_cf, 4)
-            except Exception:
-                pass
+            # Debt service ratio also reused from Stage 1a
+            debt_service_ratio = pre_debt_service_ratio
 
             fundamentals = {
                 "roe":                 roe_roic["roe"],
@@ -1203,20 +1529,148 @@ def analyze_ticker(ticker, retries=3):
             financials_charts = get_financials_chart_data(stock, info, ticker)
 
             # ------------------------------------------------------------------
-            # STAGE 8 — History & forecast
+            # STAGE 8 — History, forecast and valuation band chart data
             # ------------------------------------------------------------------
             price_history = get_10yr_history(stock)
             current_year  = datetime.now().year
+
+            # Basic 5-year forecast (IV compounded at stage1 growth rate)
             forecast = {
                 str(current_year + i): round(intrinsic_value * (1 + growth_s1) ** i, 2)
                 for i in range(1, 6)
             } if intrinsic_value and intrinsic_value > 0 else {}
+
+            # ------------------------------------------------------------------
+            # Valuation band chart data
+            # Provides everything AI Studio needs to render the enhanced
+            # 10Y History + 5Y Forecast chart with:
+            #   - Historical and current market price line
+            #   - Mean intrinsic value line (historical back-projection + forecast)
+            #   - Upper band (optimistic scenario — highest valuation method)
+            #   - Lower band (pessimistic scenario — lowest valuation method)
+            #   - Green/red shading between price and IV
+            #
+            # Upper/lower bands use the spread of individual valuation methods:
+            #   upper_iv = highest valid individual method result
+            #   lower_iv = lowest valid individual method result
+            # Both are then grown/shrunk by the same growth rate for forecast years
+            # and back-projected for historical years using the inverse rate.
+            # ------------------------------------------------------------------
+            valuation_chart = {}
+            forecast_meta   = {}
+            try:
+                if intrinsic_value and intrinsic_value > 0:
+
+                    # ----------------------------------------------------------
+                    # FORECAST ADJUSTMENT FRAMEWORK
+                    #
+                    # Three forecast scenarios driven by:
+                    #   1. EPS Next 5Y (core quantitative input — Finviz/yfinance)
+                    #   2. Financial strength score (sustainability constraint)
+                    #   3. Bull/Bear multipliers (scenario range)
+                    #
+                    # Financial strength constrains optimism:
+                    #   A high EPS growth forecast for a company with weak cash
+                    #   generation or high leverage is not credible. The FS score
+                    #   reduces the effective growth rate proportionally so the
+                    #   base forecast reflects what the balance sheet can support.
+                    #
+                    # FS score → growth sustainability multiplier:
+                    #   8–10 → 1.00  (no constraint — strong balance sheet)
+                    #   6–7  → 0.90  (mild moderation)
+                    #   4–5  → 0.75  (moderate constraint — some financial risk)
+                    #   2–3  → 0.55  (significant constraint — leveraged/weak)
+                    #   0–1  → 0.35  (severe constraint — distressed)
+                    #
+                    # Bull rate = constrained_base × 1.30 (capped at 30%)
+                    # Bear rate = constrained_base × 0.55 (floored at 1%)
+                    # ----------------------------------------------------------
+                    fs_score = final_scores.get("financial_strength", 5) or 5
+                    if fs_score >= 8:   fs_multiplier = 1.00
+                    elif fs_score >= 6: fs_multiplier = 0.90
+                    elif fs_score >= 4: fs_multiplier = 0.75
+                    elif fs_score >= 2: fs_multiplier = 0.55
+                    else:               fs_multiplier = 0.35
+
+                    # Raw EPS forward rate (un-floored peg_rate from Finviz)
+                    raw_eps_rate = fwd_growth.get("raw", growth_s1)
+
+                    # Base rate — EPS growth constrained by financial strength
+                    base_rate  = max(MIN_GROWTH_RATE,
+                                     min(raw_eps_rate * fs_multiplier, MAX_GROWTH_RATE))
+                    # Bull rate — optimistic: 30% above base, hard cap 30%
+                    bull_rate  = max(MIN_GROWTH_RATE,
+                                     min(base_rate * 1.30, MAX_GROWTH_RATE))
+                    # Bear rate — pessimistic: 45% below base, hard floor 1%
+                    bear_rate  = max(0.01,
+                                     min(base_rate * 0.55, MAX_GROWTH_RATE))
+
+                    # Store forecast metadata so AI Studio can explain the logic
+                    was_constrained = fs_multiplier < 1.0
+                    forecast_meta = {
+                        "eps_next_5y_raw":       round(raw_eps_rate, 4),
+                        "fs_score":              fs_score,
+                        "fs_multiplier":         fs_multiplier,
+                        "base_growth_rate":      round(base_rate, 4),
+                        "bull_growth_rate":      round(bull_rate, 4),
+                        "bear_growth_rate":      round(bear_rate, 4),
+                        "growth_constrained":    was_constrained,
+                        "constraint_note": (
+                            f"EPS growth moderated from {round(raw_eps_rate*100,1)}% "
+                            f"to {round(base_rate*100,1)}% due to financial strength "
+                            f"score of {fs_score}/10"
+                        ) if was_constrained else None,
+                    }
+
+                    # Current price for shading
+                    current_price = (
+                        _safe(info.get('currentPrice')) or
+                        _safe(info.get('regularMarketPrice'))
+                    )
+
+                    # Historical back-projection using base rate
+                    if price_history:
+                        hist_years = sorted(price_history.keys())
+                        n_hist     = len(hist_years)
+                        for i, yr in enumerate(hist_years):
+                            years_back = n_hist - i
+                            b_factor   = (1 + base_rate) ** (-years_back)
+                            u_factor   = (1 + bull_rate) ** (-years_back)
+                            l_factor   = (1 + bear_rate) ** (-years_back)
+                            valuation_chart[yr] = {
+                                "market_price":    price_history[yr],
+                                "intrinsic_value": round(intrinsic_value * b_factor, 2),
+                                "bull_case":       round(intrinsic_value * u_factor, 2),
+                                "bear_case":       round(intrinsic_value * l_factor, 2),
+                            }
+
+                    # Current year
+                    valuation_chart[str(current_year)] = {
+                        "market_price":    round(current_price, 2) if current_price else None,
+                        "intrinsic_value": round(intrinsic_value, 2),
+                        "bull_case":       round(intrinsic_value * (1 + (bull_rate - base_rate)), 2),
+                        "bear_case":       round(intrinsic_value * (1 - (base_rate - bear_rate)), 2),
+                    }
+
+                    # Forecast years — three scenarios compound forward
+                    for i in range(1, 6):
+                        valuation_chart[str(current_year + i)] = {
+                            "market_price":    None,
+                            "intrinsic_value": round(intrinsic_value * (1 + base_rate) ** i, 2),
+                            "bull_case":       round(intrinsic_value * (1 + bull_rate) ** i, 2),
+                            "bear_case":       round(intrinsic_value * (1 + bear_rate) ** i, 2),
+                        }
+            except Exception:
+                valuation_chart = {}
+                forecast_meta   = {}
 
             return ticker, {
                 "valuations":         valuations,
                 "quality":            quality,
                 "fundamentals":       fundamentals,
                 "financials_charts":  financials_charts,
+                "valuation_chart":    valuation_chart,
+                "forecast_meta":      forecast_meta,
                 "10_Year_History":    price_history,
                 "5_Year_Forecast":    forecast,
                 "Last_Updated":       datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -1285,6 +1739,63 @@ def _edgar_get_cik(ticker):
     except Exception as e:
         print(f"  [EDGAR] CIK lookup failed: {e}")
         return None
+
+
+def _edgar_extract_earliest(facts, *concept_names):
+    """
+    Like _edgar_extract but keeps the EARLIEST filed value per period year
+    rather than the most recently filed.
+
+    Used specifically for shares outstanding so that post-split restatements
+    of prior year comparatives do not corrupt the original as-filed values.
+    After a stock split a company re-files prior years with adjusted share
+    counts. If we use the most recently filed value, the restated post-split
+    figure appears for the pre-split year, shifting the split discontinuity
+    by one year and breaking the split detection algorithm.
+    """
+    from datetime import datetime
+
+    def _days(start_str, end_str):
+        try:
+            s = datetime.strptime(start_str, "%Y-%m-%d")
+            e = datetime.strptime(end_str,   "%Y-%m-%d")
+            return (e - s).days
+        except Exception:
+            return None
+
+    us_gaap  = facts.get("facts", {}).get("us-gaap", {})
+    year_map = {}   # period_end_year → (filed_date, value)  ← earliest filed
+
+    for name in concept_names:
+        if name not in us_gaap:
+            continue
+        units = us_gaap[name].get("units", {})
+        usd   = units.get("USD") or units.get("shares") or []
+        for entry in usd:
+            if entry.get("form") != "10-K":
+                continue
+            if entry.get("fp") not in ("FY", "CY"):
+                continue
+            val   = entry.get("val")
+            filed = entry.get("filed", "")
+            end   = entry.get("end")
+            start = entry.get("start")
+            if val is None or not end:
+                continue
+            try:
+                period_year = int(end[:4])
+            except (ValueError, TypeError):
+                continue
+            # Balance sheet snapshots have no start date — skip duration check
+            if start and end:
+                days = _days(start, end)
+                if days is None or not (320 <= days <= 380):
+                    continue
+            # Keep EARLIEST filed entry per period year (opposite of _edgar_extract)
+            if period_year not in year_map or filed < year_map[period_year][0]:
+                year_map[period_year] = (filed, float(val))
+
+    return {yr: v for yr, (_, v) in year_map.items()} if year_map else {}
 
 
 def _edgar_extract_merge(facts, *concept_names):
@@ -1509,25 +2020,50 @@ def get_edgar_financials(ticker):
             "CommercialPaper",
             "ShortTermNotesPayable")
 
-        # WeightedAverageNumberOfSharesOutstandingBasic matches what
-        # GuruFocus and most financial sites display for "Shares Outstanding".
-        # Falls back to period-end CommonStockSharesOutstanding if unavailable.
-        shares = _edgar_extract_merge(facts,
+        # Shares outstanding — use EARLIEST filed value per year, not most recent.
+        # Reason: after a stock split, companies re-file prior year comparatives
+        # on a post-split adjusted basis. "Most recently filed wins" would then
+        # pick up the restated post-split figure for pre-split years, causing
+        # the discontinuity to appear one year too late and confusing the
+        # split detection algorithm.
+        # Using the earliest filed original value ensures split detection
+        # sees the true as-reported jump between the correct pair of years.
+        shares = _edgar_extract_earliest(facts,
             "WeightedAverageNumberOfSharesOutstandingBasic",
             "WeightedAverageNumberOfSharesOutstandingDiluted",
             "CommonStockSharesOutstanding")
 
-        # Cash and equivalents — needed for FCF vs Debt chart comparison
-        # Use CashCashEquivalentsAndShortTermInvestments first —
-        # this matches what GuruFocus shows as "Cash & Short-term Investments"
-        # and includes both cash and near-cash liquid assets.
-        # Falls back to cash-only if the combined concept is unavailable.
-        cash_and_equiv = _edgar_extract_merge(facts,
+        # Cash & Short-term Investments — matches what GuruFocus displays.
+        # Some companies (e.g. Apple) file cash and marketable securities
+        # as separate EDGAR concepts rather than a single combined one.
+        # Strategy: try combined concept first, then manually sum components.
+        cash_combined = _edgar_extract_merge(facts,
             "CashCashEquivalentsAndShortTermInvestments",
-            "CashAndCashEquivalentsAndShortTermInvestments",
+            "CashAndCashEquivalentsAndShortTermInvestments")
+
+        cash_only = _edgar_extract_merge(facts,
             "CashAndCashEquivalentsAtCarryingValue",
             "CashAndDueFromBanks",
             "Cash")
+
+        # Current marketable securities (short-term investments)
+        mkt_sec = _edgar_extract_merge(facts,
+            "MarketableSecuritiesCurrent",
+            "AvailableForSaleSecuritiesCurrent",
+            "ShortTermInvestments",
+            "OtherShortTermInvestments")
+
+        # Build cash_and_equiv: prefer combined; else cash + marketable secs
+        cash_and_equiv = {}
+        all_cash_years = set(cash_combined) | set(cash_only) | set(mkt_sec)
+        for yr in all_cash_years:
+            if yr in cash_combined:
+                cash_and_equiv[yr] = cash_combined[yr]
+            elif yr in cash_only:
+                # Add current marketable securities if available
+                c = cash_only[yr]
+                m = mkt_sec.get(yr, 0) or 0
+                cash_and_equiv[yr] = c + m
 
         # ── Cash flow concepts ────────────────────────────────────────────
         op_cf = _edgar_extract(facts,
