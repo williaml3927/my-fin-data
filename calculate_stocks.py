@@ -139,6 +139,40 @@ FMP_API_KEY = "p9L0gFU6BZv1UKrKn1GxA92CX3LQghKz"
 # =============================================================================
 # TICKER LOADER
 # =============================================================================
+# Suffixes that indicate non-operating, non-investable securities.
+# These cannot be valued with DCF or multiples and are excluded.
+#   W  = warrant          (e.g. AACBW, NVAWW)
+#   R  = rights           (e.g. AACBR)
+#   U  = unit             (e.g. AACBU — SPAC unit = share + warrant)
+#   WS = warrant series   (legacy suffix)
+#   WW = double warrant   (e.g. BGLWW)
+#   Z  = special series   (e.g. OUSTZ, HUBCZ)
+EXCLUDED_SUFFIXES = ("W", "R", "U", "WS", "WW")
+
+# Known non-DCF-compatible security types reported by yfinance quoteType.
+# ETFs, closed-end funds, index funds etc. have no earnings or cash flow.
+EXCLUDED_QUOTE_TYPES = {"ETF", "MUTUALFUND", "INDEX", "FUTURE", "OPTION",
+                         "CURRENCY", "CRYPTOCURRENCY"}
+
+def _is_junk_ticker(symbol: str) -> bool:
+    """
+    Returns True if the ticker should be excluded from valuation.
+    Catches warrants, rights, units, and other non-operating securities
+    by suffix pattern alone — no API call needed.
+    """
+    # Single-letter tickers are usually closed-end funds or preferred stock
+    if len(symbol) == 1:
+        return True
+    # Warrants, rights and units by suffix
+    for suffix in EXCLUDED_SUFFIXES:
+        if symbol.endswith(suffix) and len(symbol) > len(suffix) + 1:
+            return True
+    # SPAC-style patterns: 4-5 uppercase letters, no numbers
+    # SPACs are identified later if they have no revenue — not pre-filtered
+    # here to avoid accidentally excluding real tickers
+    return False
+
+
 def get_all_tickers():
     tickers = CORE_PRIORITY.copy()
     for url in [NYSE_URL, OTHER_URL]:
@@ -153,10 +187,11 @@ def get_all_tickers():
                 )
                 if symbol:
                     clean = symbol.strip().upper().replace('.', '-')
-                    if clean not in tickers:
+                    if clean not in tickers and not _is_junk_ticker(clean):
                         tickers.append(clean)
         except Exception as e:
             print(f"Could not read {url}: {e}")
+    print(f"  Loaded {len(tickers)} tickers after filtering warrants/rights/units")
     return tickers
 
 # =============================================================================
@@ -879,15 +914,25 @@ def calc_intrinsic_value(valuations: dict, tier: str = "Average") -> dict:
 # 10-YEAR PRICE HISTORY
 # =============================================================================
 def get_10yr_history(stock):
-    try:
-        hist = stock.history(period="10y")
-        if hist.empty: return {}
-        return {
-            str(y): round(hist[hist.index.year == y]['Close'].iloc[-1], 2)
-            for y in sorted(set(d.year for d in hist.index))
-        }
-    except Exception:
-        return {}
+    """
+    Fetch up to 10 years of annual closing prices.
+    Tries progressively shorter periods if the full 10y fetch fails or
+    returns empty — handles recently listed stocks and yfinance timeouts.
+    """
+    for period in ("10y", "5y", "3y", "2y", "1y"):
+        try:
+            hist = stock.history(period=period)
+            if hist is None or hist.empty:
+                continue
+            result = {
+                str(y): round(hist[hist.index.year == y]['Close'].iloc[-1], 2)
+                for y in sorted(set(d.year for d in hist.index))
+            }
+            if result:
+                return result
+        except Exception:
+            continue
+    return {}
 
 # =============================================================================
 # MAIN ANALYSIS FUNCTION
@@ -916,6 +961,23 @@ def analyze_ticker(ticker, retries=3):
                       f"(sharesOutstanding={info.get('sharesOutstanding')}, "
                       f"impliedSharesOutstanding={info.get('impliedSharesOutstanding')}, "
                       f"floatShares={info.get('floatShares')})")
+                return None
+
+            # Skip pure shells, SPACs and non-operating entities.
+            # These have no revenue, no earnings and no cash flow —
+            # all valuation methods will return null producing useless output.
+            quote_type = info.get('quoteType', '').upper()
+            if quote_type in {'ETF', 'MUTUALFUND', 'INDEX', 'FUTURE',
+                               'OPTION', 'CURRENCY', 'CRYPTOCURRENCY'}:
+                print(f"  [SKIP] {ticker}: non-equity security ({quote_type})")
+                return None
+
+            # Skip if no revenue AND no earnings — likely a SPAC or shell
+            has_revenue  = _safe(info.get('totalRevenue'))
+            has_earnings = _safe(info.get('netIncomeToCommon'))
+            has_assets   = _safe(info.get('totalAssets'))
+            if not has_revenue and not has_earnings and not has_assets:
+                print(f"  [SKIP] {ticker}: no financial data — likely SPAC or shell")
                 return None
 
             # Pull annual financials once — reused across all stages
