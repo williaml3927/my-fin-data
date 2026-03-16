@@ -916,22 +916,27 @@ def calc_intrinsic_value(valuations: dict, tier: str = "Average") -> dict:
 def get_10yr_history(stock):
     """
     Fetch up to 10 years of annual closing prices.
-    Tries progressively shorter periods if the full 10y fetch fails or
-    returns empty — handles recently listed stocks and yfinance timeouts.
+    Tries progressively shorter periods and retries with a delay if
+    yfinance returns empty — handles rate limits and recently listed stocks.
     """
     for period in ("10y", "5y", "3y", "2y", "1y"):
-        try:
-            hist = stock.history(period=period)
-            if hist is None or hist.empty:
+        for attempt in range(2):   # 2 attempts per period
+            try:
+                hist = stock.history(period=period)
+                if hist is None or hist.empty:
+                    if attempt == 0:
+                        time.sleep(2)   # wait 2s before retry on empty
+                    continue
+                result = {
+                    str(y): round(hist[hist.index.year == y]['Close'].iloc[-1], 2)
+                    for y in sorted(set(d.year for d in hist.index))
+                }
+                if result:
+                    return result
+            except Exception:
+                if attempt == 0:
+                    time.sleep(2)
                 continue
-            result = {
-                str(y): round(hist[hist.index.year == y]['Close'].iloc[-1], 2)
-                for y in sorted(set(d.year for d in hist.index))
-            }
-            if result:
-                return result
-        except Exception:
-            continue
     return {}
 
 # =============================================================================
@@ -940,7 +945,7 @@ def get_10yr_history(stock):
 def analyze_ticker(ticker, retries=3):
     for attempt in range(retries):
         try:
-            time.sleep(0.5)
+            time.sleep(1.0)   # 1s between requests — reduces yfinance rate limit hits
 
             stock = yf.Ticker(ticker)
             info  = stock.info
@@ -1103,31 +1108,81 @@ def analyze_ticker(ticker, retries=3):
             # ------------------------------------------------------------------
             roe_roic = calc_roe_roic(info, financials, stock.balance_sheet)
 
-            # Current Ratio
-            current_assets = _safe(info.get('totalCurrentAssets'))
-            current_liabs  = _safe(info.get('totalCurrentLiabilities'))
-            if current_assets and current_liabs and current_liabs > 0:
-                current_ratio = round(current_assets / current_liabs, 2)
-            else:
-                current_ratio = _safe(info.get('currentRatio'))  # fallback to yfinance pre-calc
+            # ── Fetch balance sheet once for ratio calculations ──────────────
+            try:
+                bal_sheet = stock.balance_sheet
+            except Exception:
+                bal_sheet = None
 
-            # Debt-to-EBITDA
-            total_debt  = _safe(info.get('totalDebt'), 0)
-            ebitda_val  = _safe(info.get('ebitda'))
-            if ebitda_val and ebitda_val > 0:
-                debt_to_ebitda = round(total_debt / ebitda_val, 2)
-            else:
-                debt_to_ebitda = None
+            # ── Current Ratio = Current Assets / Current Liabilities ─────────
+            # Read directly from balance sheet (most recent column) rather than
+            # info dict — balance sheet values are more reliable and consistent
+            # with what GuruFocus shows.
+            current_ratio = None
+            try:
+                if bal_sheet is not None and not bal_sheet.empty:
+                    col = bal_sheet.columns[0]
+                    ca, cl = None, None
+                    for name in ["Current Assets", "TotalCurrentAssets",
+                                 "CurrentAssets"]:
+                        if name in bal_sheet.index:
+                            ca = _safe(float(bal_sheet.loc[name, col])); break
+                    for name in ["Current Liabilities", "TotalCurrentLiabilities",
+                                 "CurrentLiabilities"]:
+                        if name in bal_sheet.index:
+                            cl = _safe(float(bal_sheet.loc[name, col])); break
+                    if ca and cl and cl > 0:
+                        current_ratio = round(ca / cl, 2)
+            except Exception:
+                pass
+            # Fallback to yfinance pre-calculated value
+            if current_ratio is None:
+                current_ratio = _safe(info.get('currentRatio'))
 
-            # Debt Servicing Ratio = Net Interest Expense / Operating Cash Flow
-            # yfinance exposes interestExpense as a positive number
-            # A lower ratio is better — below 0.2 is generally healthy
-            interest_exp = _safe(info.get('interestExpense'))
-            op_cashflow  = _safe(info.get('operatingCashflow'))
-            if interest_exp and interest_exp > 0 and op_cashflow and op_cashflow > 0:
-                debt_service_ratio = round(interest_exp / op_cashflow, 4)
-            else:
-                debt_service_ratio = None
+            # ── Debt-to-EBITDA = Total Debt / EBITDA ─────────────────────────
+            # Use explicit None check — do NOT default totalDebt to 0, which
+            # would make debt-free companies show 0.00 instead of None.
+            # GuruFocus uses total interest-bearing debt (long + short term).
+            debt_to_ebitda = None
+            try:
+                td = _safe(info.get('totalDebt'))   # None if missing, not 0
+                eb = _safe(info.get('ebitda'))
+                if td is not None and eb is not None and eb > 0:
+                    debt_to_ebitda = round(td / eb, 2)
+                elif td == 0 and eb is not None and eb > 0:
+                    debt_to_ebitda = 0.0   # explicitly zero debt is valid
+            except Exception:
+                pass
+
+            # ── Debt Servicing Ratio = Interest Expense / Operating Cash Flow ─
+            # interestExpense is unreliable in yfinance info — fetch from the
+            # income statement (stock.financials) instead, which is the same
+            # source GuruFocus uses.
+            debt_service_ratio = None
+            try:
+                if financials is not None and not financials.empty:
+                    col = financials.columns[0]
+                    ie = None
+                    for name in ["Interest Expense", "InterestExpense",
+                                 "Net Interest Income", "NetInterestIncome",
+                                 "Interest Expense Non Operating",
+                                 "InterestExpenseNonOperating"]:
+                        if name in financials.index:
+                            raw = _safe(float(financials.loc[name, col]))
+                            if raw is not None:
+                                ie = abs(raw)   # stored as negative in some filings
+                            break
+                    op_cf = _safe(info.get('operatingCashflow'))
+                    if ie and ie > 0 and op_cf and op_cf > 0:
+                        debt_service_ratio = round(ie / op_cf, 4)
+                # Fallback to info if financials didn't have it
+                if debt_service_ratio is None:
+                    ie_info = _safe(info.get('interestExpense'))
+                    op_cf   = _safe(info.get('operatingCashflow'))
+                    if ie_info and ie_info > 0 and op_cf and op_cf > 0:
+                        debt_service_ratio = round(abs(ie_info) / op_cf, 4)
+            except Exception:
+                pass
 
             fundamentals = {
                 "roe":                 roe_roic["roe"],
@@ -2119,9 +2174,10 @@ def save_partitioned_data(master_results):
 def main():
     tickers = get_all_tickers()
     master_results = {}
-    print(f"Starting analysis of {len(tickers)} tickers with 5 safe threads...")
+    print(f"Starting analysis of {len(tickers)} tickers with 3 safe threads...")
+    print(f"Using 3 threads with 1s sleep to avoid yfinance rate limiting...")
     skipped = []
-    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
         future_to_ticker = {executor.submit(analyze_ticker, t): t for t in tickers}
         for future in concurrent.futures.as_completed(future_to_ticker):
             t   = future_to_ticker[future]
