@@ -402,6 +402,30 @@ def score_predictability(info, financials):
 # QUALITY METRIC 5 — Valuation (0–10)
 # =============================================================================
 def score_valuation(info, intrinsic_value):
+    """
+    Valuation quality score 0-10.
+
+    MOS (Margin of Safety) bands — 6 pts max:
+      > 40% undervalued  → 6  (exceptional value)
+      > 20% undervalued  → 5  (clear margin of safety)
+      > 0%  undervalued  → 4  (fairly valued, slight discount)
+      0–10% overvalued   → 3  (marginally above fair value — common for
+                                quality compounders like AAPL, MSFT)
+      10–25% overvalued  → 2  (moderate premium)
+      25–40% overvalued  → 1  (significant premium)
+      > 40% overvalued   → 0  (severely overvalued)
+
+    The 0-10% and 10-25% bands are the key change vs the old scoring.
+    Previously a stock 23% overvalued scored the same as one 39% overvalued.
+    Now there is meaningful separation between "slight premium" and
+    "significant premium" — a great company like Apple at a modest premium
+    to our IV model still scores 2 rather than 1.
+
+    Supporting signals — 4 pts max:
+      P/E < 15  → 2 pts    P/E 15-40 → 1 pt
+      P/S < 2   → 1 pt
+      P/B < 1   → 1 pt     (removed P/B < 5 band — too easy to score)
+    """
     score = 0
     current_price = (
         _safe(info.get('currentPrice')) or
@@ -409,22 +433,30 @@ def score_valuation(info, intrinsic_value):
     )
     if current_price and current_price > 0 and intrinsic_value and intrinsic_value > 0:
         mos = (intrinsic_value - current_price) / intrinsic_value
-        if mos > 0.40:    score += 5
-        elif mos > 0.20:  score += 4
-        elif mos > 0:     score += 3
-        elif mos > -0.20: score += 2
-        elif mos > -0.40: score += 1
+        if mos > 0.40:    score += 6   # exceptional discount  e.g. 40%+ undervalued
+        elif mos > 0.20:  score += 5   # clear margin of safety e.g. 20-40% undervalued
+        elif mos > 0:     score += 4   # slight discount         e.g. 0-20% undervalued
+        elif mos > -0.30: score += 3   # modest premium          e.g. 0-30% overvalued
+        elif mos > -0.50: score += 2   # significant premium     e.g. 30-50% overvalued
+        elif mos > -0.70: score += 1   # heavily overvalued      e.g. 50-70% overvalued
+        # > 70% overvalued → 0
+
+    # P/E support (2 pts max)
     pe = _safe(info.get('trailingPE'))
     if pe is not None and pe > 0:
         if pe < 15:   score += 2
         elif pe < 40: score += 1
+
+    # P/S support (1 pt)
     ps = _safe(info.get('priceToSalesTrailing12Months'))
     if ps is not None and ps < 2:
         score += 1
+
+    # P/B support (1 pt — only for genuinely cheap book value)
     pb = _safe(info.get('priceToBook'))
-    if pb is not None and pb > 0:
-        if pb < 1:   score += 2
-        elif pb < 5: score += 1
+    if pb is not None and 0 < pb < 1:
+        score += 1
+
     return min(score, 10)
 
 # =============================================================================
@@ -999,15 +1031,51 @@ def analyze_ticker(ticker, retries=3):
             }
 
             # ------------------------------------------------------------------
-            # STAGE 6 — ROE and ROIC (pre-computed for AI Studio display)
+            # STAGE 6 — ROE, ROIC and Ratios tab metrics
+            # All pre-computed here so AI Studio reads from JSON at query
+            # time rather than recalculating live — eliminates tab load delay.
+            #
+            # Current Ratio       = Current Assets / Current Liabilities
+            # Debt-to-EBITDA      = Total Debt / EBITDA
+            # Debt Servicing Ratio = Net Interest Expense / Operating Cash Flow
             # ------------------------------------------------------------------
-            roe_roic     = calc_roe_roic(info, financials, stock.balance_sheet)
+            roe_roic = calc_roe_roic(info, financials, stock.balance_sheet)
+
+            # Current Ratio
+            current_assets = _safe(info.get('totalCurrentAssets'))
+            current_liabs  = _safe(info.get('totalCurrentLiabilities'))
+            if current_assets and current_liabs and current_liabs > 0:
+                current_ratio = round(current_assets / current_liabs, 2)
+            else:
+                current_ratio = _safe(info.get('currentRatio'))  # fallback to yfinance pre-calc
+
+            # Debt-to-EBITDA
+            total_debt  = _safe(info.get('totalDebt'), 0)
+            ebitda_val  = _safe(info.get('ebitda'))
+            if ebitda_val and ebitda_val > 0:
+                debt_to_ebitda = round(total_debt / ebitda_val, 2)
+            else:
+                debt_to_ebitda = None
+
+            # Debt Servicing Ratio = Net Interest Expense / Operating Cash Flow
+            # yfinance exposes interestExpense as a positive number
+            # A lower ratio is better — below 0.2 is generally healthy
+            interest_exp = _safe(info.get('interestExpense'))
+            op_cashflow  = _safe(info.get('operatingCashflow'))
+            if interest_exp and interest_exp > 0 and op_cashflow and op_cashflow > 0:
+                debt_service_ratio = round(interest_exp / op_cashflow, 4)
+            else:
+                debt_service_ratio = None
+
             fundamentals = {
-                "roe":         roe_roic["roe"],
-                "roic":        roe_roic["roic"],
-                "roe_pct":     roe_roic["roe_pct"],
-                "roic_pct":    roe_roic["roic_pct"],
-                "roic_source": roe_roic["roic_source"],
+                "roe":                 roe_roic["roe"],
+                "roic":                roe_roic["roic"],
+                "roe_pct":             roe_roic["roe_pct"],
+                "roic_pct":            roe_roic["roic_pct"],
+                "roic_source":         roe_roic["roic_source"],
+                "current_ratio":       current_ratio,
+                "debt_to_ebitda":      debt_to_ebitda,
+                "debt_service_ratio":  debt_service_ratio,
             }
 
             # ------------------------------------------------------------------
@@ -1100,6 +1168,58 @@ def _edgar_get_cik(ticker):
     except Exception as e:
         print(f"  [EDGAR] CIK lookup failed: {e}")
         return None
+
+
+def _edgar_extract_merge(facts, *concept_names):
+    """
+    Like _edgar_extract but merges results across ALL matching concepts
+    rather than stopping at the first match. Older filings often use
+    different concept names than newer ones (e.g. Apple used SalesRevenueNet
+    before ASC 606, then switched to RevenueFromContractWithCustomer).
+    Merging fills in years that any single concept would miss.
+    Most-recently-filed value wins per year across all concepts.
+    """
+    from datetime import datetime
+
+    def _days(start_str, end_str):
+        try:
+            s = datetime.strptime(start_str, "%Y-%m-%d")
+            e = datetime.strptime(end_str,   "%Y-%m-%d")
+            return (e - s).days
+        except Exception:
+            return None
+
+    us_gaap   = facts.get("facts", {}).get("us-gaap", {})
+    year_map  = {}   # period_end_year → (filed_date, value)
+
+    for name in concept_names:
+        if name not in us_gaap:
+            continue
+        units = us_gaap[name].get("units", {})
+        usd   = units.get("USD") or units.get("shares") or []
+        for entry in usd:
+            if entry.get("form") != "10-K":
+                continue
+            if entry.get("fp") not in ("FY", "CY"):
+                continue
+            val   = entry.get("val")
+            filed = entry.get("filed", "")
+            start = entry.get("start")
+            end   = entry.get("end")
+            if val is None or not end:
+                continue
+            try:
+                period_year = int(end[:4])
+            except (ValueError, TypeError):
+                continue
+            if start and end:
+                days = _days(start, end)
+                if days is None or not (320 <= days <= 380):
+                    continue
+            if period_year not in year_map or filed > year_map[period_year][0]:
+                year_map[period_year] = (filed, float(val))
+
+    return {yr: v for yr, (_, v) in year_map.items()} if year_map else {}
 
 
 def _edgar_extract(facts, *concept_names):
@@ -1205,7 +1325,10 @@ def get_edgar_financials(ticker):
         time.sleep(0.12)   # stay well within SEC's 10 req/s guideline
 
         # ── Income statement concepts ─────────────────────────────────────
-        revenue = _edgar_extract(facts,
+        # Merge across ALL revenue concepts — Apple switched from
+        # SalesRevenueNet (pre-ASC606) to RevenueFromContractWithCustomer
+        # in FY2018. Merging fills in years that any single concept misses.
+        revenue = _edgar_extract_merge(facts,
             "RevenueFromContractWithCustomerExcludingAssessedTax",
             "RevenueFromContractWithCustomerIncludingAssessedTax",
             "Revenues",
@@ -1213,7 +1336,6 @@ def get_edgar_financials(ticker):
             "SalesRevenueGoodsNet",
             "RevenuesNetOfInterestExpense",
             "SalesRevenueServicesNet",
-            "RevenueFromContractWithCustomerExcludingAssessedTaxAndDiscontinuedOperations",
             "NetRevenues",
             "TotalRevenues")
 
@@ -1251,32 +1373,43 @@ def get_edgar_financials(ticker):
             "CashCashEquivalentsAndShortTermInvestments",
             "Cash")
 
-        # Financial debt only — deliberately excludes operating lease
-        # liabilities (OperatingLeaseLiability) which EDGAR sometimes
-        # files under broad debt concepts. Using interest-bearing debt
-        # concepts only to match what GuruFocus reports as "Total Debt".
-        total_debt = _edgar_extract(facts,
+        # Financial debt — merge across concepts to fill per-company gaps.
+        # Apple uses LongTermDebtNoncurrent for 2015-2022 but LongTermDebt
+        # for 2013-2014 and 2023+. Merging both fills the complete history.
+        total_debt = _edgar_extract_merge(facts,
             "LongTermDebt",
             "LongTermDebtNoncurrent",
+            "LongTermNotesPayable",
             "SeniorNotes",
             "UnsecuredDebt",
             "SecuredDebt")
 
-        short_term_debt = _edgar_extract(facts,
+        short_term_debt = _edgar_extract_merge(facts,
             "ShortTermBorrowings",
             "DebtCurrent",
             "LongTermDebtCurrent",
             "NotesPayableCurrent",
-            "CommercialPaper")
+            "CommercialPaper",
+            "ShortTermNotesPayable")
 
-        shares = _edgar_extract(facts,
+        # WeightedAverageNumberOfSharesOutstandingBasic matches what
+        # GuruFocus and most financial sites display for "Shares Outstanding".
+        # Falls back to period-end CommonStockSharesOutstanding if unavailable.
+        shares = _edgar_extract_merge(facts,
+            "WeightedAverageNumberOfSharesOutstandingBasic",
+            "WeightedAverageNumberOfSharesOutstandingDiluted",
             "CommonStockSharesOutstanding")
 
         # Cash and equivalents — needed for FCF vs Debt chart comparison
-        cash_and_equiv = _edgar_extract(facts,
-            "CashAndCashEquivalentsAtCarryingValue",
+        # Use CashCashEquivalentsAndShortTermInvestments first —
+        # this matches what GuruFocus shows as "Cash & Short-term Investments"
+        # and includes both cash and near-cash liquid assets.
+        # Falls back to cash-only if the combined concept is unavailable.
+        cash_and_equiv = _edgar_extract_merge(facts,
             "CashCashEquivalentsAndShortTermInvestments",
             "CashAndCashEquivalentsAndShortTermInvestments",
+            "CashAndCashEquivalentsAtCarryingValue",
+            "CashAndDueFromBanks",
             "Cash")
 
         # ── Cash flow concepts ────────────────────────────────────────────
@@ -1424,6 +1557,26 @@ def get_fmp_financials(ticker):
 # All values are sanitized — None rather than NaN/Inf.
 # =============================================================================
 def get_financials_chart_data(stock, info, ticker=""):
+    """
+    Wraps all chart data fetching in a top-level try/except so that ANY
+    exception (EDGAR timeout, FMP error, split logic edge case etc.) returns
+    an empty result dict rather than propagating up to analyze_ticker and
+    causing the entire ticker to be dropped from the JSON.
+    """
+    result = {
+        "revenue_vs_net_income": {},
+        "fcf_vs_debt":           {},
+        "shares_vs_buybacks":    {},
+        "returns_trajectory":    {},
+    }
+    try:
+        return _get_financials_chart_data_inner(stock, info, ticker)
+    except Exception as e:
+        print(f"  [CHARTS] {ticker}: chart data failed ({str(e)[:80]}), returning empty")
+        return result
+
+
+def _get_financials_chart_data_inner(stock, info, ticker=""):
     result = {
         "revenue_vs_net_income": {},
         "fcf_vs_debt":           {},
@@ -1573,27 +1726,42 @@ def get_financials_chart_data(stock, info, ticker=""):
             sh_pairs = [(y, sb[y]["shares_outstanding_m"])
                         for y in sorted_yrs if sb[y].get("shares_outstanding_m")]
             if len(sh_pairs) >= 2:
-                # Detect cumulative split factor vs most recent year
-                # by walking backwards and looking for large jumps
-                latest_sh = sh_pairs[-1][1]
+                # Split detection — walk backwards from most recent year.
+                # For each consecutive pair, check if the ratio is close to
+                # a known split ratio (2, 3, 4, 5, 10).
+                # Uses 30% tolerance to handle cases where shares don't change
+                # by exactly the split ratio (e.g. GME 4:1 gives ratio 4.65
+                # because shares outstanding changed during the year).
+                SPLIT_RATIOS = [2, 3, 4, 5, 10]
                 cumulative = 1.0
                 adjusted   = {}
                 for i in range(len(sh_pairs) - 1, -1, -1):
                     yr_k, sh_val = sh_pairs[i]
-                    if i < len(sh_pairs) - 1:
+                    if i < len(sh_pairs) - 1 and sh_val and sh_val > 0:
                         next_sh = sh_pairs[i + 1][1]
-                        ratio   = next_sh / sh_val if sh_val else 1.0
-                        # Only treat as split if ratio is close to a round number
-                        # (2x, 3x, 4x, 0.5x etc.) to avoid adjusting normal buybacks
-                        rounded = round(ratio)
-                        if rounded >= 2 and abs(ratio - rounded) < 0.15:
-                            cumulative *= rounded   # forward split going back
-                        elif 0 < ratio < 0.7 and abs(ratio - round(ratio, 1)) < 0.05:
-                            cumulative /= round(1 / ratio)  # reverse split going back
-                    adjusted[yr_k] = round(sh_val * cumulative, 2)
+                        ratio   = next_sh / sh_val
+
+                        # Forward split (shares increased going forward in time)
+                        matched = False
+                        for sr in SPLIT_RATIOS:
+                            if abs(ratio - sr) / sr < 0.30:   # within 30% of split ratio
+                                cumulative *= sr
+                                matched = True
+                                break
+
+                        # Reverse split (shares decreased going forward in time)
+                        if not matched and 0 < ratio < 0.6:
+                            for sr in SPLIT_RATIOS:
+                                inv = 1.0 / sr
+                                if abs(ratio - inv) / inv < 0.30:
+                                    cumulative /= sr
+                                    break
+
+                    adjusted[yr_k] = round(sh_val * cumulative, 2) if sh_val else None
+
                 # Write adjusted values back
                 for yr_k in sorted_yrs:
-                    if yr_k in adjusted:
+                    if yr_k in adjusted and adjusted[yr_k] is not None:
                         sb[yr_k]["shares_outstanding_m"] = adjusted[yr_k]
                         sb[yr_k]["split_adjusted"] = True
 
