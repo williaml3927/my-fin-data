@@ -1284,35 +1284,93 @@ def analyze_ticker(ticker, retries=3):
             except Exception:
                 pass
 
-            # Debt Servicing Ratio
+            # Debt Servicing Ratio = Interest Expense / Operating Cash Flow
+            # Four-source fallback chain to maximise coverage:
+            #   1. stock.financials income statement (most reliable)
+            #   2. stock.cashflow statement (Apple, Microsoft file it here)
+            #   3. EDGAR interest expense from income facts
+            #   4. yfinance info.interestExpense (least reliable, last resort)
+            # If a company has zero financial debt, interest expense will be
+            # zero and the ratio is stored as 0.0 (not N/A).
             pre_debt_service_ratio = None
             try:
                 ie = None
+
+                # Source 1 — income statement
                 if financials is not None and not financials.empty:
                     col = financials.columns[0]
-                    IE_NAMES = [
-                        "Interest Expense", "InterestExpense",
+                    for name in [
+                        "Interest Expense",
+                        "InterestExpense",
                         "Interest Expense Non Operating",
                         "InterestExpenseNonOperating",
-                        "Net Interest Income", "NetInterestIncome",
-                        "Interest And Debt Expense", "InterestAndDebtExpense",
+                        "Net Interest Income",
+                        "NetInterestIncome",
+                        "Interest And Debt Expense",
+                        "InterestAndDebtExpense",
                         "Net Non Operating Interest Income Expense",
                         "Reconciled Interest Expense",
-                    ]
-                    for name in IE_NAMES:
+                        "Total Other Finance Cost",
+                    ]:
                         if name in financials.index:
                             raw = _safe(float(financials.loc[name, col]))
                             if raw is not None:
                                 ie = abs(raw); break
+
+                # Source 2 — cashflow statement
+                if ie is None:
+                    try:
+                        cf_stmt = stock.cashflow
+                        if cf_stmt is not None and not cf_stmt.empty:
+                            col_cf = cf_stmt.columns[0]
+                            for name in [
+                                "Interest Paid Supplemental Data",
+                                "InterestPaidSupplementalData",
+                                "Interest Paid",
+                                "InterestPaid",
+                                "Cash Interest Paid",
+                            ]:
+                                if name in cf_stmt.index:
+                                    raw = _safe(float(cf_stmt.loc[name, col_cf]))
+                                    if raw is not None:
+                                        ie = abs(raw); break
+                    except Exception:
+                        pass
+
+                # Source 3 — EDGAR income facts (already fetched for EDGAR charts)
+                # Now includes interestExpense directly — covers AAPL and others
+                # where yfinance income statement rows don't expose it
+                if ie is None:
+                    try:
+                        edgar_ie = get_edgar_financials(ticker)
+                        if edgar_ie["source"] == "edgar":
+                            inc_years = sorted(edgar_ie["income"].keys(), reverse=True)
+                            if inc_years:
+                                latest_inc = edgar_ie["income"][inc_years[0]]
+                                ie_edgar   = latest_inc.get("interestExpense")
+                                if ie_edgar is not None:
+                                    ie = abs(float(ie_edgar))
+                    except Exception:
+                        pass
+
+                # Source 4 — yfinance info dict (least reliable)
                 if ie is None:
                     raw_info = _safe(info.get('interestExpense'))
                     if raw_info is not None:
                         ie = abs(raw_info)
+
+                # If still None but company has no debt, set to 0.0
+                if ie is None:
+                    total_debt_check = _safe(info.get('totalDebt'))
+                    if total_debt_check is not None and total_debt_check == 0:
+                        ie = 0.0
+
                 op_cf_pre = _safe(info.get('operatingCashflow'))
                 if ie is not None and ie > 0 and op_cf_pre and op_cf_pre > 0:
                     pre_debt_service_ratio = round(ie / op_cf_pre, 4)
                 elif ie == 0:
                     pre_debt_service_ratio = 0.0
+
             except Exception:
                 pass
 
@@ -1680,6 +1738,21 @@ def analyze_ticker(ticker, retries=3):
                 valuation_chart = {}
                 forecast_meta   = {}
 
+            # ------------------------------------------------------------------
+            # STAGE 9 — Bull / Bear thesis
+            # Combines rule-based signals with Claude Haiku API call.
+            # Falls back to rule-based only if API key not set or call fails.
+            # ------------------------------------------------------------------
+            bull_bear = generate_bull_bear(
+                ticker        = ticker,
+                info          = info,
+                final_scores  = final_scores,
+                fundamentals  = fundamentals,
+                fwd_growth    = fwd_growth,
+                intrinsic_value = intrinsic_value,
+                forecast_meta = forecast_meta,
+            )
+
             return ticker, {
                 "valuations":         valuations,
                 "quality":            quality,
@@ -1687,6 +1760,7 @@ def analyze_ticker(ticker, retries=3):
                 "financials_charts":  financials_charts,
                 "valuation_chart":    valuation_chart,
                 "forecast_meta":      forecast_meta,
+                "bull_bear":          bull_bear,
                 "10_Year_History":    price_history,
                 "5_Year_Forecast":    forecast,
                 "Last_Updated":       datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -1998,6 +2072,16 @@ def get_edgar_financials(ticker):
         tax_exp = _edgar_extract(facts,
             "IncomeTaxExpenseBenefit")
 
+        # Interest expense — AAPL and many others file under InterestExpense
+        # or InterestPaidNet in EDGAR even when yfinance doesn't expose it
+        interest_exp_edgar = _edgar_extract_merge(facts,
+            "InterestExpense",
+            "InterestExpenseDebt",
+            "InterestCostsIncurred",
+            "InterestPaidNet",
+            "FinanceLeaseInterestExpense",
+            "InterestAndDebtExpense")
+
         # ── Balance sheet concepts ────────────────────────────────────────
         total_assets = _edgar_extract(facts,
             "Assets")
@@ -2108,6 +2192,7 @@ def get_edgar_financials(ticker):
                 "operatingIncome":   op_income.get(yr),
                 "incomeBeforeTax":   pretax.get(yr),
                 "incomeTaxExpense":  tax_exp.get(yr),
+                "interestExpense":   interest_exp_edgar.get(yr),
             }
             # Combine long-term + short-term financial debt
             lt  = total_debt.get(yr)
@@ -2687,6 +2772,220 @@ def _get_financials_chart_data_inner(stock, info, ticker=""):
         pass
 
     return result
+
+
+# =============================================================================
+# BULL / BEAR THESIS GENERATOR
+#
+# Combines rule-based signals with Anthropic API (Claude Haiku) to generate
+# a pre-computed bull/bear thesis for every ticker.
+#
+# Step 1 — Rule-based context building:
+#   Extracts the strongest bull and bear signals from already-computed data
+#   (quality scores, ratios, growth metrics, valuation) into a structured
+#   context dict. This ensures the API call is focused and consistent.
+#
+# Step 2 — Anthropic API call (Claude Haiku):
+#   Sends the structured context with a tight prompt asking for exactly
+#   3 bull points and 3 bear points in JSON format. Haiku is used for
+#   speed and cost (~$0.001 per ticker).
+#
+# Step 3 — Fallback:
+#   If the API call fails for any reason (rate limit, network, invalid
+#   response), falls back to the rule-based signals alone. The tab will
+#   still display meaningful content rather than nothing.
+#
+# Output structure:
+#   {
+#     "bull_points": ["point 1", "point 2", "point 3"],
+#     "bear_points": ["point 1", "point 2", "point 3"],
+#     "source": "api" | "rules",
+#     "generated_at": "2026-03-17 14:30"
+#   }
+# =============================================================================
+ANTHROPIC_API_KEY = ""   # ← paste your Anthropic API key here (optional)
+                          #   Leave empty to use rule-based fallback only
+
+def generate_bull_bear(ticker, info, final_scores, fundamentals,
+                       fwd_growth, intrinsic_value, forecast_meta):
+    """Generate bull and bear thesis points for a ticker."""
+
+    # ── Step 1: Build rule-based signals ─────────────────────────────────────
+    company_name = info.get("longName", ticker)
+    sector       = info.get("sector", "Unknown")
+    current_price = _safe(info.get("currentPrice") or info.get("regularMarketPrice"))
+
+    # Margin of safety
+    mos = None
+    if intrinsic_value and intrinsic_value > 0 and current_price and current_price > 0:
+        mos = round((intrinsic_value - current_price) / intrinsic_value * 100, 1)
+
+    # Key metrics
+    rev_growth    = _safe(info.get("revenueGrowth"))
+    profit_margin = None
+    rev           = _safe(info.get("totalRevenue"))
+    ni            = _safe(info.get("netIncomeToCommon"))
+    if rev and rev > 0 and ni is not None:
+        profit_margin = round(ni / rev * 100, 1)
+
+    context = {
+        "ticker":         ticker,
+        "company":        company_name,
+        "sector":         sector,
+        "current_price":  current_price,
+        "intrinsic_value": intrinsic_value,
+        "margin_of_safety_pct": mos,
+        "quality_scores": {
+            "profitability":      final_scores.get("profitability"),
+            "financial_strength": final_scores.get("financial_strength"),
+            "growth":             final_scores.get("growth"),
+            "predictability":     final_scores.get("predictability"),
+            "valuation":          final_scores.get("valuation"),
+        },
+        "eps_next_5y_pct":    round(fwd_growth.get("raw", 0) * 100, 1),
+        "growth_source":      fwd_growth.get("source"),
+        "roe_pct":            fundamentals.get("roe_pct"),
+        "roic_pct":           fundamentals.get("roic_pct"),
+        "current_ratio":      fundamentals.get("current_ratio"),
+        "debt_to_ebitda":     fundamentals.get("debt_to_ebitda"),
+        "debt_service_ratio": fundamentals.get("debt_service_ratio"),
+        "revenue_growth_pct": round(rev_growth * 100, 1) if rev_growth else None,
+        "profit_margin_pct":  profit_margin,
+        "base_growth_rate":   round(forecast_meta.get("base_growth_rate", 0) * 100, 1),
+        "growth_constrained": forecast_meta.get("growth_constrained", False),
+        "constraint_note":    forecast_meta.get("constraint_note"),
+    }
+
+    # ── Step 2: Rule-based fallback points ────────────────────────────────────
+    bull_rules = []
+    bear_rules = []
+
+    # Valuation
+    if mos and mos > 20:
+        bull_rules.append(f"Trading at a {mos}% discount to estimated intrinsic value of ${intrinsic_value}")
+    elif mos and mos < -20:
+        bear_rules.append(f"Trading at a {abs(mos)}% premium to estimated intrinsic value of ${intrinsic_value}")
+
+    # Growth
+    if context["eps_next_5y_pct"] > 10:
+        bull_rules.append(f"Analyst consensus forecasts {context['eps_next_5y_pct']}% EPS growth over the next 5 years")
+    elif context["eps_next_5y_pct"] < 3:
+        bear_rules.append(f"Analyst consensus forecasts only {context['eps_next_5y_pct']}% EPS growth over the next 5 years")
+
+    # Profitability
+    if final_scores.get("profitability", 0) >= 8:
+        bull_rules.append(f"High profitability score ({final_scores['profitability']}/10) — strong margins and returns")
+    elif final_scores.get("profitability", 0) <= 3:
+        bear_rules.append(f"Low profitability score ({final_scores['profitability']}/10) — weak margins or negative returns")
+
+    # Financial strength
+    if final_scores.get("financial_strength", 0) >= 8:
+        bull_rules.append(f"Strong balance sheet ({final_scores['financial_strength']}/10) — low leverage and healthy cash position")
+    elif final_scores.get("financial_strength", 0) <= 3:
+        bear_rules.append(f"Weak balance sheet ({final_scores['financial_strength']}/10) — high leverage or poor liquidity")
+
+    # ROIC
+    if fundamentals.get("roic_pct"):
+        roic_val = fundamentals.get("roic")
+        if roic_val and roic_val > 0.20:
+            bull_rules.append(f"Exceptional ROIC of {fundamentals['roic_pct']} — highly efficient capital allocation")
+        elif roic_val and roic_val < 0.05:
+            bear_rules.append(f"Low ROIC of {fundamentals['roic_pct']} — poor returns on invested capital")
+
+    # Predictability
+    if final_scores.get("predictability", 0) >= 8:
+        bull_rules.append(f"Highly predictable business ({final_scores['predictability']}/10) — consistent revenue and earnings trajectory")
+    elif final_scores.get("predictability", 0) <= 3:
+        bear_rules.append(f"Unpredictable business ({final_scores['predictability']}/10) — volatile earnings and revenue")
+
+    # Growth constraint warning
+    if context["growth_constrained"]:
+        bear_rules.append(f"Financial strength constrains growth outlook — {context['constraint_note']}")
+
+    # Revenue growth
+    if rev_growth and rev_growth > 0.15:
+        bull_rules.append(f"Strong revenue growth of {context['revenue_growth_pct']}% year-over-year")
+    elif rev_growth and rev_growth < -0.05:
+        bear_rules.append(f"Declining revenue of {context['revenue_growth_pct']}% year-over-year")
+
+    # ── Step 3: API call to Claude Haiku ──────────────────────────────────────
+    if ANTHROPIC_API_KEY and ANTHROPIC_API_KEY.strip():
+        try:
+            prompt = f"""You are a senior equity analyst. Based on the financial data below, 
+generate exactly 3 bull case arguments and 3 bear case arguments for {company_name} ({ticker}).
+
+Financial Data:
+{json.dumps(context, indent=2)}
+
+Rule-based signals already identified:
+Bull signals: {bull_rules}
+Bear signals: {bear_rules}
+
+Requirements:
+- Each point must be specific, factual and grounded in the data provided
+- Do not repeat the rule-based signals verbatim — expand on them or add new insights
+- Bull points should highlight genuine competitive strengths or opportunities
+- Bear points should highlight genuine risks or weaknesses
+- Keep each point to 1-2 sentences maximum
+- Respond ONLY with valid JSON in this exact format, no other text:
+{{
+  "bull_points": ["point 1", "point 2", "point 3"],
+  "bear_points": ["point 1", "point 2", "point 3"]
+}}"""
+
+            response = requests.post(
+                "https://api.anthropic.com/v1/messages",
+                headers={
+                    "x-api-key":         ANTHROPIC_API_KEY,
+                    "anthropic-version": "2023-06-01",
+                    "content-type":      "application/json",
+                },
+                json={
+                    "model":      "claude-haiku-4-5-20251001",
+                    "max_tokens": 500,
+                    "messages":   [{"role": "user", "content": prompt}],
+                },
+                timeout=30,
+            )
+
+            if response.status_code == 200:
+                raw = response.json()["content"][0]["text"].strip()
+                # Strip markdown fences if present
+                raw = raw.replace("```json", "").replace("```", "").strip()
+                parsed = json.loads(raw)
+                return {
+                    "bull_points":  parsed.get("bull_points", bull_rules[:3]),
+                    "bear_points":  parsed.get("bear_points", bear_rules[:3]),
+                    "source":       "api",
+                    "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
+                }
+        except Exception as e:
+            print(f"  [BULL/BEAR] {ticker}: API call failed ({str(e)[:60]}), using rules")
+
+    # ── Fallback: rule-based only ─────────────────────────────────────────────
+    # Pad to 3 points if needed
+    generic_bull = [
+        f"Operates in the {sector} sector with established market presence",
+        "Management has maintained operations through varying market conditions",
+        "Company continues to generate revenue and maintain market position",
+    ]
+    generic_bear = [
+        f"Subject to {sector} sector risks including competition and regulation",
+        "Macroeconomic headwinds could impact near-term performance",
+        "Valuation uncertainty given limited forward visibility",
+    ]
+
+    while len(bull_rules) < 3:
+        bull_rules.append(generic_bull[len(bull_rules) - len(bull_rules)])
+    while len(bear_rules) < 3:
+        bear_rules.append(generic_bear[len(bear_rules) - len(bear_rules)])
+
+    return {
+        "bull_points":  bull_rules[:3],
+        "bear_points":  bear_rules[:3],
+        "source":       "rules",
+        "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
+    }
 
 
 # =============================================================================
