@@ -1592,8 +1592,17 @@ def analyze_ticker(ticker, retries=3):
                     elif fs_score >= 2: fs_multiplier = 0.55
                     else:               fs_multiplier = 0.35
 
-                    # Raw EPS forward rate (un-floored peg_rate from Finviz)
-                    raw_eps_rate = fwd_growth.get("raw", growth_s1)
+                    # Raw EPS forward rate — sanitize immediately to prevent
+                    # NaN/Infinity from propagating into round() calls below.
+                    # fwd_growth["raw"] can be 0.0 (Finviz "-") or occasionally
+                    # NaN from yfinance edge cases.
+                    raw_eps_raw = fwd_growth.get("raw", growth_s1)
+                    try:
+                        raw_eps_rate = float(raw_eps_raw)
+                        if not (raw_eps_rate == raw_eps_rate) or abs(raw_eps_rate) == float('inf'):
+                            raw_eps_rate = growth_s1  # NaN/Inf fallback
+                    except (TypeError, ValueError):
+                        raw_eps_rate = growth_s1
 
                     # Base rate — EPS growth constrained by financial strength
                     base_rate  = max(MIN_GROWTH_RATE,
@@ -1637,11 +1646,18 @@ def analyze_ticker(ticker, retries=3):
                             b_factor   = (1 + base_rate) ** (-years_back)
                             u_factor   = (1 + bull_rate) ** (-years_back)
                             l_factor   = (1 + bear_rate) ** (-years_back)
+                            def _safe_round(v):
+                                try:
+                                    f = float(v)
+                                    return round(f, 2) if f == f and abs(f) != float('inf') else None
+                                except Exception:
+                                    return None
+
                             valuation_chart[yr] = {
                                 "market_price":    price_history[yr],
-                                "intrinsic_value": round(intrinsic_value * b_factor, 2),
-                                "bull_case":       round(intrinsic_value * u_factor, 2),
-                                "bear_case":       round(intrinsic_value * l_factor, 2),
+                                "intrinsic_value": _safe_round(intrinsic_value * b_factor),
+                                "bull_case":       _safe_round(intrinsic_value * u_factor),
+                                "bear_case":       _safe_round(intrinsic_value * l_factor),
                             }
 
                     # Current year
