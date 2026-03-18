@@ -1,29 +1,56 @@
 name: Update Financial Data
+
 on:
   schedule:
-    - cron: '0 0 * * *' # Runs daily at midnight
-  workflow_dispatch: # Allows you to run it manually
+    - cron: '0 0 * * *'   # Runs daily at midnight UTC
+  workflow_dispatch:        # Allows manual trigger from GitHub Actions tab
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # Full history needed for reliable rebase
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: Install Dependencies
-        run: pip install yfinance requests pandas numpy finvizfinance
-      - name: Run Analysis
         run: |
-          python calculate_stocks.py
-          python calculate_crypto.py
+          pip install \
+            yfinance \
+            requests \
+            pandas \
+            numpy \
+            finvizfinance
+
+      - name: Run Stock Analysis
+        run: python calculate_stocks.py
+
+      - name: Run Crypto Analysis
+        run: python calculate_crypto.py
+
       - name: Commit and Push
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-          git add data/*.json
-          git add data_crypto/*.json
-          git commit -m "Automated Data Update" || exit 0
+
+          # Stage all output JSON files
+          git add data/*.json        || true
+          git add data_crypto/*.json || true
+
+          # Only commit if there are staged changes
+          git diff --staged --quiet && echo "No changes to commit" && exit 0
+
+          git commit -m "Automated Data Update — $(date -u '+%Y-%m-%d %H:%M UTC')"
+
+          # Pull any remote changes (e.g. from a concurrent run or manual edit)
+          # then replay our commit on top — prevents the push rejection error
+          git pull --rebase origin main
+
           git push
