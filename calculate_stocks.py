@@ -114,6 +114,256 @@ TIER_WEIGHTS = {
     },
 }
 
+
+# =============================================================================
+# COMPANY TYPE DETECTION
+# Classifies companies into types that require different valuation approaches.
+# All methods still run — typing controls WEIGHTING not method execution.
+#
+# Types (mutually exclusive, priority-ordered):
+#   REIT         — Real estate investment trusts (SIC 65xx, quoteType REIT)
+#   BANK         — Banks and thrifts (SIC 60xx)
+#   INSURANCE    — Insurance companies (SIC 63xx)
+#   ASSET_MGR    — Asset managers, brokers (SIC 62xx)
+#   UTILITY      — Regulated utilities (SIC 49xx)
+#   SPECGROWTH   — Speculative growth: high EPS fwd, low profitability
+#   CYCLICAL     — Highly cyclical (materials, energy, basic industries)
+#   FCF_COMPOUNDER — Strong, consistent FCF generators
+#   STANDARD     — Everything else
+# =============================================================================
+def detect_company_type(info, prelim_scores, eps_next_5y):
+    """
+    Returns a string type code and a short rationale string.
+    Uses yfinance info fields: sector, industry, quoteType, SIC codes
+    proxied from industry names since yfinance doesn't expose raw SIC.
+    """
+    sector   = (info.get("sector")   or "").lower()
+    industry = (info.get("industry") or "").lower()
+    qtype    = (info.get("quoteType") or "").upper()
+
+    # ── REIT detection ────────────────────────────────────────────────────────
+    if qtype == "REIT" or "reit" in industry or "real estate investment trust" in industry:
+        return "REIT", "Real estate investment trust — P/NAV (P/B) prioritised"
+
+    # ── Bank detection ────────────────────────────────────────────────────────
+    bank_keywords = ["bank", "savings", "thrift", "credit union", "mortgage bank",
+                     "banking", "commercial bank", "regional bank"]
+    if any(k in industry for k in bank_keywords) or sector == "financial services":
+        if any(k in industry for k in bank_keywords):
+            return "BANK", "Bank or thrift — P/Tangible Book prioritised; DCF excluded"
+
+    # ── Insurance detection ───────────────────────────────────────────────────
+    insurance_keywords = ["insurance", "reinsurance", "surety", "title insurance"]
+    if any(k in industry for k in insurance_keywords):
+        return "INSURANCE", "Insurance company — DNI (Net Income DCF) prioritised; ROIC excluded"
+
+    # ── Asset manager detection ───────────────────────────────────────────────
+    assetmgr_keywords = ["asset management", "investment management", "broker",
+                          "capital markets", "financial advisory", "wealth management",
+                          "fund", "investment bank"]
+    if any(k in industry for k in assetmgr_keywords):
+        return "ASSET_MGR", "Asset manager/broker — DNI prioritised; standard CF metrics unreliable"
+
+    # ── Utility detection ─────────────────────────────────────────────────────
+    if sector == "utilities" or "utility" in industry or "utilities" in industry:
+        return "UTILITY", "Regulated utility — P/E and EV/EBITDA prioritised; high debt is structural"
+
+    # ── Speculative growth detection ──────────────────────────────────────────
+    # Trigger: EPS Next 5Y ≥ 15%, profitability ≤ 5, AND
+    #   (moat ≥ 7 OR growth ≥ 7) AND (growth ≥ 7 OR financial_strength ≥ 7)
+    prof_score   = prelim_scores.get("profitability", 10) or 10
+    growth_score = prelim_scores.get("growth", 0) or 0
+    fs_score     = prelim_scores.get("financial_strength", 0) or 0
+    eps_fwd      = eps_next_5y or 0
+
+    ni = _safe(info.get("netIncomeToCommon"))
+    has_neg_income = ni is not None and ni < 0
+
+    if (eps_fwd >= 0.15 and prof_score <= 5 and
+            (growth_score >= 7 or fs_score >= 7) and
+            (has_neg_income or prof_score <= 3)):
+        return "SPECGROWTH", (
+            f"Speculative growth — EPS fwd {round(eps_fwd*100,1)}%, "
+            f"profitability {prof_score}/10; P/S and PSG prioritised"
+        )
+
+    # ── Cyclical detection ────────────────────────────────────────────────────
+    cyclical_sectors = ["energy", "basic materials", "materials"]
+    cyclical_industries = ["steel", "aluminum", "copper", "mining", "oil", "gas",
+                           "chemical", "fertilizer", "paper", "lumber", "shipping",
+                           "airline", "cruise", "hotel", "casino", "semiconductor"]
+    if sector in cyclical_sectors or any(k in industry for k in cyclical_industries):
+        return "CYCLICAL", f"Cyclical business ({sector}) — EV/EBITDA and P/S prioritised over P/E"
+
+    # ── FCF Compounder detection ───────────────────────────────────────────────
+    # Strong FCF: FCF margin > 15% AND positive FCF for 3+ years (proxy: FCF > 0)
+    fcf  = _safe(info.get("freeCashflow"))
+    rev  = _safe(info.get("totalRevenue"))
+    ocf  = _safe(info.get("operatingCashflow"))
+    fcf_margin = (fcf / rev) if fcf and rev and rev > 0 else None
+    if (fcf and fcf > 0 and ocf and ocf > 0 and
+            fcf_margin and fcf_margin > 0.15 and
+            prof_score >= 7):
+        return "FCF_COMPOUNDER", (
+            f"FCF compounder — FCF margin {round(fcf_margin*100,1)}%; "
+            f"DCF methods prioritised"
+        )
+
+    return "STANDARD", "Standard company — balanced weighting across all methods"
+
+
+# =============================================================================
+# DYNAMIC WEIGHTING
+# Returns method weights tailored to company type AND quality tier.
+# All weights within a returned dict sum to 1.0 after normalisation.
+# Methods that are inappropriate for a type receive weight 0.0 and are
+# excluded from the intrinsic value calculation.
+# =============================================================================
+def get_dynamic_weights(company_type, tier):
+    """
+    Returns a weights dict {method_key: float} for the given company type
+    and quality tier. The tier still modulates weights within a type
+    (e.g. a Strong REIT still gets some DCF weight, a Weak REIT doesn't).
+    """
+    base = TIER_WEIGHTS.get(tier, TIER_WEIGHTS["Average"])
+
+    if company_type == "REIT":
+        # P/NAV (P/B) is primary. DCF on operating CF is secondary.
+        # P/E, PEG, PSG excluded — earnings are often negative or distorted.
+        # ROIC excluded — not meaningful for asset-heavy leveraged entities.
+        return {
+            "1_DCF_Operating_CF":   0.15,
+            "2_DCF_FCF":            0.10,
+            "3_DCF_Net_Income":     0.00,   # excluded
+            "4_DCF_Terminal_Value": 0.10,
+            "5_Mean_PS":            0.05,
+            "6_Mean_PE":            0.00,   # excluded — earnings distorted
+            "7_Mean_PB":            0.45,   # PRIMARY — P/NAV
+            "8_PSG":                0.00,   # excluded
+            "9_PEG":                0.00,   # excluded
+            "10_EV_EBITDA":         0.15,
+        }
+
+    if company_type == "BANK":
+        # P/B (tangible book) is primary.
+        # DCF excluded — bank cash flows are not comparable to industrial CF.
+        # P/E secondary when positive. EV/EBITDA meaningless for banks.
+        return {
+            "1_DCF_Operating_CF":   0.00,   # excluded — bank OCF != industrial OCF
+            "2_DCF_FCF":            0.00,   # excluded
+            "3_DCF_Net_Income":     0.15,   # DNI — net income is valid for banks
+            "4_DCF_Terminal_Value": 0.00,   # excluded
+            "5_Mean_PS":            0.10,
+            "6_Mean_PE":            0.25,   # meaningful when positive
+            "7_Mean_PB":            0.40,   # PRIMARY — P/Tangible Book
+            "8_PSG":                0.05,
+            "9_PEG":                0.05,
+            "10_EV_EBITDA":         0.00,   # excluded — EV/EBITDA not used for banks
+        }
+
+    if company_type == "INSURANCE":
+        # DNI (Net Income DCF) is primary — insurance earnings are the true metric.
+        # ROIC excluded (OCF/FCF unreliable due to float).
+        # P/B meaningful — book value is tangible for insurers.
+        return {
+            "1_DCF_Operating_CF":   0.00,   # excluded — float distorts OCF
+            "2_DCF_FCF":            0.00,   # excluded
+            "3_DCF_Net_Income":     0.40,   # PRIMARY — discounted net income
+            "4_DCF_Terminal_Value": 0.00,   # excluded
+            "5_Mean_PS":            0.10,
+            "6_Mean_PE":            0.25,   # secondary
+            "7_Mean_PB":            0.20,   # meaningful for insurers
+            "8_PSG":                0.05,
+            "9_PEG":                0.00,   # excluded
+            "10_EV_EBITDA":         0.00,   # excluded
+        }
+
+    if company_type == "ASSET_MGR":
+        # DNI primary. P/E strong secondary. EV/EBITDA useful.
+        # OCF/FCF unreliable — carried interest and fund distributions distort.
+        return {
+            "1_DCF_Operating_CF":   0.00,   # excluded
+            "2_DCF_FCF":            0.00,   # excluded
+            "3_DCF_Net_Income":     0.35,   # PRIMARY — fee income drives earnings
+            "4_DCF_Terminal_Value": 0.00,   # excluded
+            "5_Mean_PS":            0.15,
+            "6_Mean_PE":            0.25,   # strong secondary
+            "7_Mean_PB":            0.10,
+            "8_PSG":                0.10,
+            "9_PEG":                0.05,
+            "10_EV_EBITDA":         0.00,   # excluded
+        }
+
+    if company_type == "UTILITY":
+        # P/E and EV/EBITDA primary. DCF valid but uses regulated ROE.
+        # High debt is structural — financial strength scoring adjusted.
+        return {
+            "1_DCF_Operating_CF":   0.12,
+            "2_DCF_FCF":            0.08,   # lower — capex is always high
+            "3_DCF_Net_Income":     0.12,
+            "4_DCF_Terminal_Value": 0.10,
+            "5_Mean_PS":            0.08,
+            "6_Mean_PE":            0.25,   # PRIMARY — regulated earnings are stable
+            "7_Mean_PB":            0.10,
+            "8_PSG":                0.05,
+            "9_PEG":                0.05,
+            "10_EV_EBITDA":         0.05,
+        }
+
+    if company_type == "SPECGROWTH":
+        # P/S and PSG primary — revenue more reliable than earnings.
+        # DCF on NI excluded — negative/volatile earnings.
+        # DCF on OCF downweighted — cash burn is expected.
+        return {
+            "1_DCF_Operating_CF":   0.08,
+            "2_DCF_FCF":            0.05,   # downweighted — often negative
+            "3_DCF_Net_Income":     0.00,   # excluded — negative earnings
+            "4_DCF_Terminal_Value": 0.05,
+            "5_Mean_PS":            0.35,   # PRIMARY
+            "6_Mean_PE":            0.00,   # excluded — negative/unreliable
+            "7_Mean_PB":            0.07,
+            "8_PSG":                0.25,   # strong secondary
+            "9_PEG":                0.00,   # excluded — earnings negative
+            "10_EV_EBITDA":         0.15,
+        }
+
+    if company_type == "CYCLICAL":
+        # EV/EBITDA primary — normalised through-cycle earnings.
+        # P/E downweighted — earnings swing widely at cycle peaks/troughs.
+        # P/S secondary — revenue more stable than earnings.
+        return {
+            "1_DCF_Operating_CF":   0.12,
+            "2_DCF_FCF":            0.10,
+            "3_DCF_Net_Income":     0.05,   # downweighted — cyclical distortion
+            "4_DCF_Terminal_Value": 0.10,
+            "5_Mean_PS":            0.18,   # strong secondary
+            "6_Mean_PE":            0.05,   # downweighted — cycle peak/trough
+            "7_Mean_PB":            0.10,
+            "8_PSG":                0.10,
+            "9_PEG":                0.05,
+            "10_EV_EBITDA":         0.15,   # PRIMARY for cyclicals
+        }
+
+    if company_type == "FCF_COMPOUNDER":
+        # DCF methods primary — reliable FCF makes DCF most accurate.
+        # All methods used but DCF heavily weighted.
+        return {
+            "1_DCF_Operating_CF":   0.20,   # PRIMARY
+            "2_DCF_FCF":            0.20,   # PRIMARY
+            "3_DCF_Net_Income":     0.08,
+            "4_DCF_Terminal_Value": 0.18,   # PRIMARY
+            "5_Mean_PS":            0.07,
+            "6_Mean_PE":            0.08,
+            "7_Mean_PB":            0.05,
+            "8_PSG":                0.05,
+            "9_PEG":                0.05,
+            "10_EV_EBITDA":         0.04,
+        }
+
+    # STANDARD — use tier weights unchanged
+    return base
+
+
 # =============================================================================
 # SOURCES
 # =============================================================================
@@ -1123,27 +1373,71 @@ def calc_ev_ebitda(info, shares, mean_ev_ebitda):
 # =============================================================================
 # INTRINSIC VALUE AGGREGATOR — tier-weighted mean
 # =============================================================================
-def calc_intrinsic_value(valuations: dict, tier: str = "Average") -> dict:
+def calc_intrinsic_value(valuations: dict, tier: str = "Average",
+                          dynamic_weights: dict = None) -> dict:
+    """
+    Weighted intrinsic value aggregator.
+
+    dynamic_weights: if provided, overrides tier weights. Methods with
+    weight 0.0 are excluded entirely (appropriate for REITs, banks etc.)
+    even if they produced a value — this is intentional.
+
+    Confidence penalty:
+    If the spread between the highest and lowest valid method is > 100%
+    of the median value, confidence is downgraded one level. A very wide
+    spread signals genuine valuation uncertainty regardless of method count.
+    """
     keys = [
         "1_DCF_Operating_CF", "2_DCF_FCF", "3_DCF_Net_Income",
         "4_DCF_Terminal_Value", "5_Mean_PS", "6_Mean_PE",
         "7_Mean_PB", "8_PSG", "9_PEG", "10_EV_EBITDA",
     ]
-    weights = TIER_WEIGHTS.get(tier, TIER_WEIGHTS["Average"])
-    valid_vals, valid_weights = [], []
+    weights = dynamic_weights if dynamic_weights is not None else               TIER_WEIGHTS.get(tier, TIER_WEIGHTS["Average"])
+
+    valid_vals, valid_weights, active_methods = [], [], []
     for k in keys:
         v = valuations.get(k)
+        w = weights.get(k, 0.10)
+        if w == 0.0:
+            continue   # method excluded for this company type
         if v is not None and isinstance(v, (int, float)) and 0 < v < 1_000_000:
             valid_vals.append(v)
-            valid_weights.append(weights.get(k, 0.10))
+            valid_weights.append(w)
+            active_methods.append(k)
+
     count = len(valid_vals)
     if count == 0:
-        return {"intrinsic_value": None, "methods_used": 0, "confidence": "Insufficient Data"}
+        return {
+            "intrinsic_value": None,
+            "methods_used":    0,
+            "confidence":      "Insufficient Data",
+            "active_methods":  [],
+        }
+
     total_w   = sum(valid_weights)
     norm_w    = [w / total_w for w in valid_weights]
-    intrinsic  = round(float(np.dot(valid_vals, norm_w)), 2)
-    confidence = "High" if count >= 7 else "Medium" if count >= 4 else "Low"
-    return {"intrinsic_value": intrinsic, "methods_used": count, "confidence": confidence}
+    intrinsic = round(float(np.dot(valid_vals, norm_w)), 2)
+
+    # Base confidence by method count
+    if count >= 7:   confidence = "High"
+    elif count >= 4: confidence = "Medium"
+    else:            confidence = "Low"
+
+    # Confidence penalty for wide spread
+    if count >= 3:
+        sorted_v = sorted(valid_vals)
+        median_v = sorted_v[len(sorted_v) // 2]
+        spread   = (sorted_v[-1] - sorted_v[0]) / median_v if median_v > 0 else 0
+        if spread > 1.5:   # spread > 150% of median — very wide disagreement
+            if confidence == "High":   confidence = "Medium"
+            elif confidence == "Medium": confidence = "Low"
+
+    return {
+        "intrinsic_value": intrinsic,
+        "methods_used":    count,
+        "confidence":      confidence,
+        "active_methods":  active_methods,
+    }
 
 # =============================================================================
 # 10-YEAR PRICE HISTORY
@@ -1465,8 +1759,17 @@ def analyze_ticker(ticker, retries=3):
             mean_ev_ebitda  = hist_multiples.get("mean_ev_ebitda")
 
             # ------------------------------------------------------------------
-            # STAGE 4 — All 10 valuations
+            # STAGE 4 — Company type detection + dynamic weighting + valuations
             # ------------------------------------------------------------------
+
+            # Detect company type BEFORE computing valuations so weighting
+            # is available immediately. Uses prelim_scores which are already
+            # computed by this point.
+            company_type, type_rationale = detect_company_type(
+                info, prelim_scores, eps_next_5y
+            )
+            dynamic_weights = get_dynamic_weights(company_type, tier_data["tier"])
+
             dcf_fcf_val = calc_dcf_fcf(info, shares, growth_s1, growth_s2, discount)
 
             valuations = {
@@ -1481,8 +1784,19 @@ def analyze_ticker(ticker, retries=3):
                 "9_PEG":                calc_peg(info, peg_rate),
                 "10_EV_EBITDA":         calc_ev_ebitda(info, shares, mean_ev_ebitda),
             }
-            aggregate  = calc_intrinsic_value(valuations, tier=tier_data["tier"])
+
+            aggregate = calc_intrinsic_value(
+                valuations,
+                tier=tier_data["tier"],
+                dynamic_weights=dynamic_weights,
+            )
             valuations.update(aggregate)
+
+            # Methods excluded for this company type (weight = 0.0)
+            excluded_methods = [
+                k for k, w in dynamic_weights.items() if w == 0.0
+            ]
+
             valuations["_meta"] = {
                 "pe_source":        "historical_mean" if mean_pe else "current_trailing",
                 "ps_source":        "historical_mean" if mean_ps else "current_trailing",
@@ -1496,7 +1810,11 @@ def analyze_ticker(ticker, retries=3):
                 "growth_stage2":    growth_s2,
                 "terminal_growth":  terminal,
                 "tier":             tier_data["tier"],
-                "weights_applied":  TIER_WEIGHTS.get(tier_data["tier"], TIER_WEIGHTS["Average"]),
+                "company_type":     company_type,
+                "type_rationale":   type_rationale,
+                "weights_applied":  dynamic_weights,
+                "excluded_methods": excluded_methods,
+                "active_methods":   aggregate.get("active_methods", []),
             }
 
             # ------------------------------------------------------------------
@@ -2082,6 +2400,16 @@ def get_edgar_financials(ticker):
             "FinanceLeaseInterestExpense",
             "InterestAndDebtExpense")
 
+        # Accounts Receivable — used for Revenue vs AR chart
+        # AccountsReceivableNetCurrent is the standard GAAP concept.
+        # Some companies use broader receivables concepts — merge to fill gaps.
+        accounts_receivable = _edgar_extract_merge(facts,
+            "AccountsReceivableNetCurrent",
+            "AccountsReceivableNet",
+            "ReceivablesNetCurrent",
+            "TradeAndOtherReceivablesNetCurrent",
+            "NotesAndLoansReceivableNetCurrent")
+
         # ── Balance sheet concepts ────────────────────────────────────────
         total_assets = _edgar_extract(facts,
             "Assets")
@@ -2208,6 +2536,7 @@ def get_edgar_financials(ticker):
                 "cashAndCashEquivalents":        cash_and_equiv.get(yr),
                 "totalDebt":                    combined_debt,
                 "commonStockSharesOutstanding": shares.get(yr),
+                "accountsReceivable":           accounts_receivable.get(yr),
             }
             cashflow_out[yr] = {
                 "operatingCashFlow":         op_cf.get(yr),
@@ -2322,6 +2651,7 @@ def get_financials_chart_data(stock, info, ticker=""):
         "fcf_vs_debt":           {},
         "shares_vs_buybacks":    {},
         "returns_trajectory":    {},
+        "revenue_vs_ar":         {},
     }
     try:
         return _get_financials_chart_data_inner(stock, info, ticker)
@@ -2336,6 +2666,7 @@ def _get_financials_chart_data_inner(stock, info, ticker=""):
         "fcf_vs_debt":           {},
         "shares_vs_buybacks":    {},
         "returns_trajectory":    {},
+        "revenue_vs_ar":         {},
     }
 
     def to_m(val):
@@ -2388,7 +2719,7 @@ def _get_financials_chart_data_inner(stock, info, ticker=""):
         FMP stores raw full values in the same way.
         to_m() divides by 1,000,000 and rounds to 2dp for both.
         """
-        rv, fd, sb, rt = {}, {}, {}, {}
+        rv, fd, sb, rt, ra = {}, {}, {}, {}, {}
         for yr in years:
             inc = data["income"].get(yr, {})
             bal = data["balance"].get(yr, {})
@@ -2469,6 +2800,21 @@ def _get_financials_chart_data_inner(stock, info, ticker=""):
             if roe_val is not None or roic_val is not None:
                 rt[str(yr)] = {"roe_pct": roe_val, "roic_pct": roic_val}
 
+            # ----------------------------------------------------------
+            # Chart 5 — Revenue vs Accounts Receivable (both in $M)
+            # Compares growth rates of revenue and AR.
+            # Healthy: revenue growing >= AR growth
+            # Red flag: AR growing faster than revenue — may indicate
+            #   aggressive revenue recognition, collection problems,
+            #   or channel stuffing.
+            # ----------------------------------------------------------
+            rev_ar  = to_m(_fv(inc, "revenue"))
+            ar_val  = to_m(_fv(bal, "accountsReceivable",
+                                    "AccountsReceivableNetCurrent"))
+            if rev_ar is not None or ar_val is not None:
+                # YoY growth rates computed post-loop below
+                ra[str(yr)] = {"revenue": rev_ar, "accounts_receivable": ar_val}
+
         # ── Split-adjust historical share counts ─────────────────────
         # Detect forward splits (share count jumps up) and reverse splits
         # (share count drops). Normalise all years to the most recent
@@ -2519,7 +2865,39 @@ def _get_financials_chart_data_inner(stock, info, ticker=""):
                         sb[yr_k]["shares_outstanding_m"] = adjusted[yr_k]
                         sb[yr_k]["split_adjusted"] = True
 
-        return rv, fd, sb, rt
+        # ── Compute YoY growth rates for Revenue vs AR chart ─────────
+        # Growth rate flags: AR growing faster than revenue = red flag
+        if ra:
+            sorted_ra = sorted(ra.keys())
+            for i, yr_k in enumerate(sorted_ra):
+                if i == 0:
+                    ra[yr_k]["rev_growth_pct"] = None
+                    ra[yr_k]["ar_growth_pct"]  = None
+                    ra[yr_k]["ar_outpacing"]   = None
+                    continue
+                prev = ra[sorted_ra[i - 1]]
+                curr = ra[yr_k]
+                # Revenue YoY %
+                prev_rev = prev.get("revenue")
+                curr_rev = curr.get("revenue")
+                rev_g = None
+                if prev_rev and curr_rev is not None and prev_rev != 0:
+                    rev_g = round((curr_rev - prev_rev) / abs(prev_rev) * 100, 1)
+                # AR YoY %
+                prev_ar = prev.get("accounts_receivable")
+                curr_ar = curr.get("accounts_receivable")
+                ar_g = None
+                if prev_ar and curr_ar is not None and prev_ar != 0:
+                    ar_g = round((curr_ar - prev_ar) / abs(prev_ar) * 100, 1)
+                # Flag if AR outpacing revenue
+                ar_outpacing = None
+                if rev_g is not None and ar_g is not None:
+                    ar_outpacing = ar_g > rev_g + 5   # 5pt buffer to avoid noise
+                ra[yr_k]["rev_growth_pct"] = rev_g
+                ra[yr_k]["ar_growth_pct"]  = ar_g
+                ra[yr_k]["ar_outpacing"]   = ar_outpacing
+
+        return rv, fd, sb, rt, ra
 
     # --- Attempt 1: SEC EDGAR (free, 20yr) ---
     if ticker:
@@ -2530,11 +2908,12 @@ def _get_financials_chart_data_inner(stock, info, ticker=""):
                 set(edgar["income"]) | set(edgar["balance"]) | set(edgar["cashflow"]),
                 reverse=True
             )[:10]
-            rv, fd, sb, rt = _build_charts(edgar, years)
+            rv, fd, sb, rt, ra = _build_charts(edgar, years)
             result["revenue_vs_net_income"] = rv
             result["fcf_vs_debt"]           = fd
             result["shares_vs_buybacks"]    = sb
             result["returns_trajectory"]    = rt
+            result["revenue_vs_ar"]         = ra
             return result
 
     # --- Attempt 2: FMP (paid, 5-10yr) ---
@@ -2545,11 +2924,12 @@ def _get_financials_chart_data_inner(stock, info, ticker=""):
             set(fmp["income"]) | set(fmp["balance"]) | set(fmp["cashflow"]),
             reverse=True
         )[:10]
-        rv, fd, sb, rt = _build_charts(fmp, years)
+        rv, fd, sb, rt, ra = _build_charts(fmp, years)
         result["revenue_vs_net_income"] = rv
         result["fcf_vs_debt"]           = fd
         result["shares_vs_buybacks"]    = sb
         result["returns_trajectory"]    = rt
+        result["revenue_vs_ar"]         = ra
         return result
 
     # --- Attempt 3: yfinance (~4yr) ---
@@ -2767,6 +3147,56 @@ def _get_financials_chart_data_inner(stock, info, ticker=""):
                 returns[yr] = {"roe_pct": roe_val, "roic_pct": roic_val}
 
         result["returns_trajectory"] = returns
+
+        # ------------------------------------------------------------------
+        # Chart 5 — Revenue vs Accounts Receivable
+        # AR from balance sheet, revenue from income statement.
+        # Both in $M. YoY growth rates computed to flag AR outpacing revenue.
+        # ------------------------------------------------------------------
+        rev_ar_yf = {}
+        for col in cols:
+            year  = str(col.year)
+            rev_v = None
+            ar_v  = None
+            for name in ["Total Revenue", "TotalRevenue"]:
+                if name in financials.index:
+                    rev_v = to_m(financials.loc[name, col]); break
+            if balance is not None and not balance.empty and col in balance.columns:
+                for name in ["Accounts Receivable",
+                             "AccountsReceivable",
+                             "Net Receivables",
+                             "NetReceivables",
+                             "Receivables"]:
+                    if name in balance.index:
+                        ar_v = to_m(balance.loc[name, col]); break
+            if rev_v is not None or ar_v is not None:
+                rev_ar_yf[year] = {
+                    "revenue":             rev_v,
+                    "accounts_receivable": ar_v,
+                }
+
+        # Compute YoY growth rates and outpacing flag
+        sorted_ra_yf = sorted(rev_ar_yf.keys())
+        for i, yr_k in enumerate(sorted_ra_yf):
+            if i == 0:
+                rev_ar_yf[yr_k].update({
+                    "rev_growth_pct": None,
+                    "ar_growth_pct":  None,
+                    "ar_outpacing":   None,
+                })
+                continue
+            prev = rev_ar_yf[sorted_ra_yf[i - 1]]
+            curr = rev_ar_yf[yr_k]
+            prev_rev, curr_rev = prev.get("revenue"), curr.get("revenue")
+            prev_ar,  curr_ar  = prev.get("accounts_receivable"), curr.get("accounts_receivable")
+            rev_g = round((curr_rev - prev_rev) / abs(prev_rev) * 100, 1) if prev_rev and curr_rev is not None and prev_rev != 0 else None
+            ar_g  = round((curr_ar  - prev_ar)  / abs(prev_ar)  * 100, 1) if prev_ar  and curr_ar  is not None and prev_ar  != 0 else None
+            rev_ar_yf[yr_k].update({
+                "rev_growth_pct": rev_g,
+                "ar_growth_pct":  ar_g,
+                "ar_outpacing":   (ar_g > rev_g + 5) if (rev_g is not None and ar_g is not None) else None,
+            })
+        result["revenue_vs_ar"] = rev_ar_yf
 
     except Exception:
         pass
