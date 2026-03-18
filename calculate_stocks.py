@@ -146,23 +146,50 @@ def detect_company_type(info, prelim_scores, eps_next_5y):
         return "REIT", "Real estate investment trust — P/NAV (P/B) prioritised"
 
     # ── Bank detection ────────────────────────────────────────────────────────
-    bank_keywords = ["bank", "savings", "thrift", "credit union", "mortgage bank",
-                     "banking", "commercial bank", "regional bank"]
-    if any(k in industry for k in bank_keywords) or sector == "financial services":
-        if any(k in industry for k in bank_keywords):
-            return "BANK", "Bank or thrift — P/Tangible Book prioritised; DCF excluded"
+    bank_keywords = [
+        "bank", "savings", "thrift", "credit union", "mortgage bank",
+        "banking", "commercial bank", "regional bank", "diversified bank",
+    ]
+    if any(k in industry for k in bank_keywords):
+        return "BANK", "Bank or thrift — P/Tangible Book prioritised; DCF excluded"
 
     # ── Insurance detection ───────────────────────────────────────────────────
-    insurance_keywords = ["insurance", "reinsurance", "surety", "title insurance"]
+    insurance_keywords = [
+        "insurance", "reinsurance", "surety", "title insurance",
+    ]
     if any(k in industry for k in insurance_keywords):
         return "INSURANCE", "Insurance company — DNI (Net Income DCF) prioritised; ROIC excluded"
 
+    # ── Consumer finance / payments / credit services ─────────────────────────
+    # AXP = "Credit Services", Visa/MA = "Diversified Financial Services",
+    # Capital One/Discover = "Credit Services", Synchrony = "Financial Services"
+    # These are financial companies but NOT banks — they fund themselves via
+    # debt markets, have high leverage, and should use DNI + P/B for valuation.
+    consumer_fin_keywords = [
+        "credit services", "consumer finance", "credit card",
+        "diversified financial services", "specialty finance",
+        "payment processing", "payments", "transaction processing",
+        "personal finance", "mortgage finance", "student loan",
+        "auto loan", "consumer lending", "financial services",
+    ]
+    if any(k in industry for k in consumer_fin_keywords):
+        return "CONSUMER_FINANCE", (
+            "Consumer finance / payments — DNI and P/B prioritised; "
+            "standard debt ratios unsuitable due to balance sheet structure"
+        )
+
     # ── Asset manager detection ───────────────────────────────────────────────
-    assetmgr_keywords = ["asset management", "investment management", "broker",
-                          "capital markets", "financial advisory", "wealth management",
-                          "fund", "investment bank"]
+    assetmgr_keywords = [
+        "asset management", "investment management", "broker",
+        "capital markets", "financial advisory", "wealth management",
+        "fund", "investment bank", "brokerage", "securities",
+    ]
     if any(k in industry for k in assetmgr_keywords):
         return "ASSET_MGR", "Asset manager/broker — DNI prioritised; standard CF metrics unreliable"
+
+    # ── Catch-all for financial services sector ───────────────────────────────
+    if sector == "financial services":
+        return "CONSUMER_FINANCE", "Financial services — DNI and P/B prioritised"
 
     # ── Utility detection ─────────────────────────────────────────────────────
     if sector == "utilities" or "utility" in industry or "utilities" in industry:
@@ -344,6 +371,23 @@ def get_dynamic_weights(company_type, tier):
             "10_EV_EBITDA":         0.15,   # PRIMARY for cyclicals
         }
 
+    if company_type == "CONSUMER_FINANCE":
+        # DNI (Net Income DCF) and P/B primary.
+        # Standard FCF/OCF DCF excluded — high-leverage funding models distort.
+        # P/S meaningful — revenue is stable and recurring.
+        return {
+            "1_DCF_Operating_CF":   0.00,   # excluded — OCF distorted by receivables
+            "2_DCF_FCF":            0.00,   # excluded
+            "3_DCF_Net_Income":     0.40,   # PRIMARY — net income is the true metric
+            "4_DCF_Terminal_Value": 0.00,   # excluded
+            "5_Mean_PS":            0.15,   # secondary — revenue is stable
+            "6_Mean_PE":            0.20,   # strong secondary
+            "7_Mean_PB":            0.15,   # meaningful for financial companies
+            "8_PSG":                0.10,
+            "9_PEG":                0.00,   # excluded
+            "10_EV_EBITDA":         0.00,   # excluded — not standard for financials
+        }
+
     if company_type == "FCF_COMPOUNDER":
         # DCF methods primary — reliable FCF makes DCF most accurate.
         # All methods used but DCF heavily weighted.
@@ -370,8 +414,21 @@ def get_dynamic_weights(company_type, tier):
 NYSE_URL  = "https://raw.githubusercontent.com/williaml3927/NYSE-list/refs/heads/main/NYSE.json"
 OTHER_URL = "https://raw.githubusercontent.com/williaml3927/NYSE-list/refs/heads/main/Other%20list.json"
 CORE_PRIORITY = [
+    # Original top 10
     "AAPL", "TSLA", "MSFT", "NVDA", "GOOGL",
-    "AMZN", "META", "BRK-B", "LLY", "AVGO"
+    "AMZN", "META", "BRK-B", "LLY", "AVGO",
+    # S&P 500 large caps confirmed missing from compiled JSON
+    "V", "DHR", "LOW", "SCHW", "T", "ITW",
+    # Growth & Tech confirmed missing
+    "PLTR", "SNOW", "MSTR", "UBER",
+    # Energy confirmed missing
+    "BKR",
+    # Financials confirmed missing
+    "C", "PRU", "KKR",
+    # REITs confirmed missing
+    "O", "EXR", "EQR", "VTR",
+    # International ADRs confirmed missing
+    "PBR",
 ]
 
 # =============================================================================
@@ -655,6 +712,66 @@ def score_profitability(info):
     return min(score, 10)
 
 # =============================================================================
+# EARLY FINANCIAL TYPE DETECTION
+# Lightweight version using only info dict fields — no prelim_scores needed.
+# Called before Stage 1a so score_financial_strength can use correct signals.
+# The full detect_company_type() with prelim_scores still runs in Stage 4
+# for valuation weighting decisions.
+# =============================================================================
+def _detect_financial_type(info):
+    """
+    Returns one of: "BANK", "INSURANCE", "REIT", "ASSET_MGR", or None.
+    Used exclusively by score_financial_strength to select the right signals.
+    """
+    sector   = (info.get("sector")   or "").lower()
+    industry = (info.get("industry") or "").lower()
+    qtype    = (info.get("quoteType") or "").upper()
+
+    if qtype == "REIT" or "reit" in industry or "real estate investment trust" in industry:
+        return "REIT"
+
+    bank_kw = [
+        "bank", "savings", "thrift", "banking", "commercial bank",
+        "regional bank", "mortgage bank", "diversified bank",
+    ]
+    if any(k in industry for k in bank_kw):
+        return "BANK"
+
+    ins_kw = [
+        "insurance", "reinsurance", "surety", "title insurance",
+    ]
+    if any(k in industry for k in ins_kw):
+        return "INSURANCE"
+
+    # Consumer finance, credit services, payment networks, specialty finance
+    # AXP = "Credit Services", Visa/MA = "Diversified Financial Services"
+    # Capital One = "Credit Services", SLM = "Financial Services"
+    consumer_fin_kw = [
+        "credit services", "consumer finance", "credit card",
+        "diversified financial services", "specialty finance",
+        "financial services", "payment processing", "payments",
+        "transaction processing", "personal finance", "mortgage finance",
+        "student loan", "auto loan", "consumer lending",
+    ]
+    if any(k in industry for k in consumer_fin_kw):
+        return "CONSUMER_FINANCE"
+
+    mgr_kw = [
+        "asset management", "investment management", "capital markets",
+        "wealth management", "investment bank", "financial advisory",
+        "brokerage", "securities",
+    ]
+    if any(k in industry for k in mgr_kw):
+        return "ASSET_MGR"
+
+    # Catch-all: anything in financial services sector not already matched
+    if sector == "financial services":
+        return "CONSUMER_FINANCE"
+
+    return None
+
+
+# =============================================================================
 # QUALITY METRIC 2 — Financial Strength (0–10)
 #
 # Uses the same three pre-computed ratios displayed in the Ratios tab so
@@ -688,11 +805,281 @@ def score_financial_strength(info,
                               debt_service_ratio=None,
                               cash_debt_history=None):
     """
-    cash_debt_history: dict of { year_str: {"cash_balance": float,
-                                             "total_debt": float} }
-                       from financials_charts["fcf_vs_debt"] — the same data
-                       powering the 10Y Cash & Total Debt chart.
-                       Used to score long-term cash vs debt trajectory.
+    Routes to a company-type-appropriate scoring path.
+    Financial companies (banks, insurance, REITs, asset managers) use
+    completely different signals than industrial companies — applying
+    standard debt/cash metrics to them produces meaninglessly low scores.
+    """
+    fin_type = _detect_financial_type(info)
+
+    if fin_type == "BANK":
+        return _score_fs_bank(info)
+    elif fin_type == "INSURANCE":
+        return _score_fs_insurance(info)
+    elif fin_type == "REIT":
+        return _score_fs_reit(info, cash_debt_history)
+    elif fin_type == "ASSET_MGR":
+        return _score_fs_asset_mgr(info)
+    elif fin_type == "CONSUMER_FINANCE":
+        return _score_fs_consumer_finance(info)
+    else:
+        return _score_fs_standard(info, current_ratio, debt_to_ebitda,
+                                   debt_service_ratio, cash_debt_history)
+
+
+def _score_fs_bank(info):
+    """
+    Bank financial strength (0-10).
+    Standard debt metrics are meaningless for banks — deposits are
+    liabilities by design and interest expense is core revenue cost.
+
+    Bank-appropriate signals:
+      ROE (3 pts)          — profitability of equity capital
+        > 12% → 3   strong returns on shareholder equity
+        > 8%  → 2   adequate
+        > 4%  → 1   marginal
+      Net Interest Margin proxy (2 pts)
+        Proxied from net income / total assets (ROA)
+        > 1%  → 2   healthy ROA for a bank
+        > 0.5%→ 1
+      P/B ratio (2 pts)   — market view of book value quality
+        < 1.5 → 2   trading near or below book (conservative valuation)
+        < 2.5 → 1
+      Positive net income (2 pts)
+        NI > 0 AND growing → 2
+        NI > 0 only        → 1
+      Dividend coverage (1 pt)
+        Paying a dividend → 1 (banks that pay divs are typically profitable)
+    """
+    score = 0
+
+    # ROE
+    roe = _safe(info.get('returnOnEquity'))
+    if roe is not None:
+        if roe > 0.12:   score += 3
+        elif roe > 0.08: score += 2
+        elif roe > 0.04: score += 1
+
+    # ROA proxy for net interest margin
+    ni  = _safe(info.get('netIncomeToCommon'))
+    ta  = _safe(info.get('totalAssets'))
+    if ni and ta and ta > 0:
+        roa = ni / ta
+        if roa > 0.01:    score += 2
+        elif roa > 0.005: score += 1
+
+    # P/B ratio
+    pb = _safe(info.get('priceToBook'))
+    if pb is not None and pb > 0:
+        if pb < 1.5:   score += 2
+        elif pb < 2.5: score += 1
+
+    # Positive net income
+    if ni is not None:
+        if ni > 0:   score += 2
+        # Note: can't check NI growth here without historical data
+        # AI Studio's moat score will capture franchise strength
+
+    # Dividend (proxy for sustained profitability)
+    div = _safe(info.get('dividendYield'))
+    if div is not None and div > 0:
+        score += 1
+
+    return min(score, 10)
+
+
+def _score_fs_insurance(info):
+    """
+    Insurance company financial strength (0-10).
+    FCF and standard debt ratios are unreliable due to float and reserves.
+
+    Insurance-appropriate signals:
+      ROE (3 pts)          — returns on equity capital
+      Net income positive (2 pts) — underwriting profitability
+      P/B ratio (2 pts)   — below book suggests good reserve management
+      Revenue stability (2 pts) — premium revenue is stable by nature
+      Dividend coverage (1 pt)
+    """
+    score = 0
+
+    roe = _safe(info.get('returnOnEquity'))
+    if roe is not None:
+        if roe > 0.12:   score += 3
+        elif roe > 0.08: score += 2
+        elif roe > 0.04: score += 1
+
+    ni = _safe(info.get('netIncomeToCommon'))
+    if ni is not None:
+        if ni > 0:   score += 2
+        elif ni == 0: score += 0
+
+    pb = _safe(info.get('priceToBook'))
+    if pb is not None and pb > 0:
+        if pb < 1.5:   score += 2
+        elif pb < 2.5: score += 1
+
+    # Revenue — insurance premiums are stable and recurring
+    rev = _safe(info.get('totalRevenue'))
+    rev_growth = _safe(info.get('revenueGrowth'))
+    if rev and rev > 0:
+        if rev_growth is not None and rev_growth > 0:
+            score += 2
+        else:
+            score += 1
+
+    div = _safe(info.get('dividendYield'))
+    if div is not None and div > 0:
+        score += 1
+
+    return min(score, 10)
+
+
+def _score_fs_reit(info, cash_debt_history=None):
+    """
+    REIT financial strength (0-10).
+    High debt is structural for REITs — they are required to distribute
+    90%+ of taxable income, so they must use debt for growth.
+    Signals focus on debt serviceability and asset quality.
+
+      Dividend yield / payout sustainability (3 pts)
+        Yield > 3% → 2, yield > 1% → 1
+        FFO payout < 80% → +1 (conservative payout)
+      P/B (NAV proxy) (3 pts)
+        < 1.0 → 3  (trading below NAV — potential value)
+        < 1.5 → 2
+        < 2.0 → 1
+      Positive net income or FFO proxy (2 pts)
+      Revenue stability (2 pts)
+    """
+    score = 0
+
+    # Dividend yield — REITs must distribute income
+    div_yield = _safe(info.get('dividendYield'))
+    if div_yield is not None:
+        if div_yield > 0.04:   score += 2
+        elif div_yield > 0.01: score += 1
+
+    # P/B as NAV proxy
+    pb = _safe(info.get('priceToBook'))
+    if pb is not None and pb > 0:
+        if pb < 1.0:   score += 3
+        elif pb < 1.5: score += 2
+        elif pb < 2.0: score += 1
+
+    # Net income / FFO proxy
+    ni = _safe(info.get('netIncomeToCommon'))
+    ocf = _safe(info.get('operatingCashflow'))
+    if ocf and ocf > 0:
+        score += 2   # positive OCF is the REIT equivalent of FCF
+    elif ni and ni > 0:
+        score += 1
+
+    # Revenue growth
+    rev_growth = _safe(info.get('revenueGrowth'))
+    if rev_growth is not None:
+        if rev_growth > 0.05:  score += 2
+        elif rev_growth > 0:   score += 1
+
+    return min(score, 10)
+
+
+def _score_fs_asset_mgr(info):
+    """
+    Asset manager / broker financial strength (0-10).
+    Revenue is fee-based and recurring — focus on profitability and margins.
+    """
+    score = 0
+
+    roe = _safe(info.get('returnOnEquity'))
+    if roe is not None:
+        if roe > 0.15:   score += 3
+        elif roe > 0.08: score += 2
+        elif roe > 0.04: score += 1
+
+    # Profit margin
+    pm = _safe(info.get('profitMargins'))
+    if pm is not None:
+        if pm > 0.20:   score += 2
+        elif pm > 0.10: score += 1
+
+    ni = _safe(info.get('netIncomeToCommon'))
+    if ni and ni > 0:
+        score += 2
+
+    rev_growth = _safe(info.get('revenueGrowth'))
+    if rev_growth and rev_growth > 0.05:
+        score += 2
+    elif rev_growth and rev_growth > 0:
+        score += 1
+
+    div = _safe(info.get('dividendYield'))
+    if div and div > 0:
+        score += 1
+
+    return min(score, 10)
+
+
+def _score_fs_consumer_finance(info):
+    """
+    Consumer finance / credit services / payments financial strength (0-10).
+    Companies like AXP, Visa, Mastercard, Capital One, Discover.
+
+    High debt is structural — these businesses fund loan books and card
+    receivables with debt by design. Standard debt ratios produce
+    misleadingly low scores. Appropriate signals:
+
+      ROE (3 pts)          — core measure of profitability
+        > 20% → 3   exceptional (AXP, Visa typically 30%+)
+        > 12% → 2   strong
+        > 6%  → 1   adequate
+      Net income positive (2 pts)
+        NI > 0 and profit margin > 15% → 2
+        NI > 0 only → 1
+      Revenue growth (2 pts)
+        > 8%  → 2   strong top-line growth
+        > 0%  → 1   growing
+      P/B ratio (2 pts)
+        — high P/B is expected for these asset-light models
+        < 5   → 2   reasonable for payment networks/credit cos
+        < 10  → 1
+      Dividend (1 pt)
+    """
+    score = 0
+
+    roe = _safe(info.get('returnOnEquity'))
+    if roe is not None:
+        if roe > 0.20:   score += 3
+        elif roe > 0.12: score += 2
+        elif roe > 0.06: score += 1
+
+    ni  = _safe(info.get('netIncomeToCommon'))
+    pm  = _safe(info.get('profitMargins'))
+    if ni and ni > 0:
+        if pm and pm > 0.15: score += 2
+        else:                score += 1
+
+    rev_growth = _safe(info.get('revenueGrowth'))
+    if rev_growth is not None:
+        if rev_growth > 0.08:  score += 2
+        elif rev_growth > 0:   score += 1
+
+    pb = _safe(info.get('priceToBook'))
+    if pb is not None and pb > 0:
+        if pb < 5:    score += 2
+        elif pb < 10: score += 1
+
+    div = _safe(info.get('dividendYield'))
+    if div and div > 0:
+        score += 1
+
+    return min(score, 10)
+
+
+def _score_fs_standard(info, current_ratio=None, debt_to_ebitda=None,
+                        debt_service_ratio=None, cash_debt_history=None):
+    """
+    Standard (industrial / technology / consumer) financial strength (0-10).
+    Original scoring logic — appropriate for non-financial companies.
     """
     score = 0
 
@@ -704,7 +1091,7 @@ def score_financial_strength(info,
 
     # ── Debt-to-EBITDA (2 pts) ────────────────────────────────────────────────
     if debt_to_ebitda is not None:
-        if debt_to_ebitda == 0:    score += 2   # debt-free
+        if debt_to_ebitda == 0:    score += 2
         elif debt_to_ebitda < 1:   score += 2
         elif debt_to_ebitda < 3:   score += 1
     else:
@@ -729,37 +1116,39 @@ def score_financial_strength(info,
             if coverage > 10:  score += 2
             elif coverage > 5: score += 1
 
-    # ── 10Y Cash vs Debt trend (2 pts) ────────────────────────────────────────
-    # Uses the same data as the 10Y Cash & Total Debt chart.
-    # Rewards companies where cash exceeds debt and/or cash is growing
-    # relative to debt over the long term.
+    # ── Net Cash Position vs Debt trend (2 pts) ───────────────────────────────
+    cash_signal_scored = False
     if cash_debt_history and len(cash_debt_history) >= 3:
         try:
             sorted_yrs = sorted(cash_debt_history.keys())
             cash_vals  = [cash_debt_history[y].get("cash_balance") for y in sorted_yrs]
             debt_vals  = [cash_debt_history[y].get("total_debt")   for y in sorted_yrs]
-            # Filter to years where both values are present
             pairs = [(c, d) for c, d in zip(cash_vals, debt_vals)
                      if c is not None and d is not None]
             if pairs:
-                # Most recent year: does cash exceed debt?
                 latest_cash, latest_debt = pairs[-1]
                 cash_exceeds_debt = latest_cash >= latest_debt
-
-                # Trend: is cash growing or debt shrinking over time?
                 cash_improving = (
-                    pairs[-1][0] > pairs[0][0] or           # cash growing
-                    pairs[-1][1] < pairs[0][1] or           # debt shrinking
-                    (pairs[-1][0] - pairs[-1][1]) >         # net cash position improving
-                    (pairs[0][0]  - pairs[0][1])
+                    pairs[-1][0] > pairs[0][0] or
+                    pairs[-1][1] < pairs[0][1] or
+                    (pairs[-1][0] - pairs[-1][1]) > (pairs[0][0] - pairs[0][1])
                 )
-
                 if cash_exceeds_debt and cash_improving:
-                    score += 2   # cash > debt AND trajectory improving
+                    score += 2
                 elif cash_exceeds_debt or cash_improving:
-                    score += 1   # either cash > debt OR improving trend
+                    score += 1
+                cash_signal_scored = True
         except Exception:
             pass
+
+    if not cash_signal_scored:
+        cash_snap = _safe(info.get('totalCash')) or _safe(info.get('cashAndCashEquivalents'))
+        debt_snap = _safe(info.get('totalDebt'))
+        if cash_snap is not None and debt_snap is not None:
+            if cash_snap > debt_snap:
+                score += 2
+            elif cash_snap > debt_snap * 0.5:
+                score += 1
 
     # ── Positive FCF (2 pts) ──────────────────────────────────────────────────
     fcf = _safe(info.get('freeCashflow'))
@@ -982,7 +1371,32 @@ def score_valuation(info, intrinsic_value):
 # =============================================================================
 # QUALITY CLASSIFICATION
 # =============================================================================
-def classify_quality(scores: dict, subtotal_pct: float) -> dict:
+def classify_quality(scores: dict, subtotal_pct: float,
+                      roe: float = None, roic: float = None,
+                      eps_next_5y: float = None) -> dict:
+    """
+    Classify investment quality using 5 core metrics when moat is available
+    (profitability, financial_strength, growth, predictability, moat) or
+    4 metrics when moat is pending AI Studio scoring.
+
+    Valuation is excluded — business quality reflects fundamental strength,
+    not whether the stock is cheap today.
+
+    Thresholds:
+      ≥ 70%    → Safe
+      65–69%   → Grey zone: Safe if ROE ≥ 13% AND ROIC ≥ 13%, or
+                 any two of (ROE ≥ 13%, ROIC ≥ 13%, EPS ≥ 10%);
+                 else Speculative
+      55–64%   → Speculative
+      50–54%   → Borderline: Speculative if any two of (ROE ≥ 8%,
+                 ROIC ≥ 8%, EPS ≥ 8%); else Dangerous
+      ≤ 49%    → Dangerous
+
+    Moat overrides (when AI Studio has scored moat):
+      Safe override:      moat ≥ 7 AND (profitability ≥ 7 OR fs ≥ 7)
+                          AND subtotal_pct ≥ 55
+      Dangerous override: moat ≤ 3 AND fs ≤ 4 AND subtotal_pct < 45
+    """
     p   = scores.get('profitability', 0) or 0
     fs  = scores.get('financial_strength', 0) or 0
     g   = scores.get('growth', 0) or 0
@@ -991,33 +1405,53 @@ def classify_quality(scores: dict, subtotal_pct: float) -> dict:
 
     label = None
 
-    if m is not None and all(x >= 7 for x in [m, pre, p, fs]):
-        label = "Safe"
-    if label is None and m is not None and m <= 4 and fs <= 4:
-        label = "Dangerous"
-    if label is None and m is not None:
-        if (m >= 7 and fs >= 7) or (m + fs >= 15) or (m >= 7 and g >= 7):
-            label = "Speculative"
+    # Moat-based overrides
+    if m is not None:
+        if m >= 7 and (p >= 7 or fs >= 7) and subtotal_pct >= 55:
+            label = "Safe"
+        if label is None and m <= 3 and fs <= 4 and subtotal_pct < 45:
+            label = "Dangerous"
+
+    # Score-based classification
     if label is None:
         if subtotal_pct >= 70:
             label = "Safe"
-        elif subtotal_pct >= 66:
-            label = "Safe"
-        elif subtotal_pct >= 60:
+
+        elif subtotal_pct >= 65:
+            # Grey zone 65-69%: tilt Safe if any two of ROE ≥ 13%,
+            # ROIC ≥ 13%, EPS Next 5Y ≥ 10%
+            tb = 0
+            if roe       is not None and roe       >= 0.13: tb += 1
+            if roic      is not None and roic      >= 0.13: tb += 1
+            if eps_next_5y is not None and eps_next_5y >= 0.10: tb += 1
+            label = "Safe" if tb >= 2 else "Speculative"
+
+        elif subtotal_pct >= 55:
+            # Speculative band 55-64%
             label = "Speculative"
-        elif subtotal_pct >= 51:
-            label = "Speculative"
+
+        elif subtotal_pct >= 50:
+            # Borderline 50-54%: Speculative only if any two of
+            # ROE ≥ 8%, ROIC ≥ 8%, EPS Next 5Y ≥ 8%; else Dangerous
+            tb = 0
+            if roe       is not None and roe       >= 0.08: tb += 1
+            if roic      is not None and roic      >= 0.08: tb += 1
+            if eps_next_5y is not None and eps_next_5y >= 0.08: tb += 1
+            label = "Speculative" if tb >= 2 else "Dangerous"
+
         else:
+            # ≤ 49% → Dangerous
             label = "Dangerous"
 
     penalty = 0
-    if label == "Speculative": penalty = 5
-    elif label == "Dangerous": penalty = 10
+    if label == "Speculative": penalty = 3
+    elif label == "Dangerous": penalty = 8
 
     return {
         "label":           label,
         "penalty_pct":     penalty,
         "final_score_pct": max(0.0, round(subtotal_pct - penalty, 2)),
+        "tiebreaker_used": (50 <= subtotal_pct < 70 and m is None),
     }
 
 # =============================================================================
@@ -1737,8 +2171,11 @@ def analyze_ticker(ticker, retries=3):
                 "valuation":          0,
                 "moat":               None,
             }
-            prelim_subtotal = sum(v for k, v in prelim_scores.items() if k not in ('moat', 'valuation') and v is not None)
-            prelim_pct      = round((prelim_subtotal / 50) * 100, 2)
+            # Prelim subtotal — 4-metric denominator (moat pending)
+            prelim_subtotal = sum(v for k, v in prelim_scores.items()
+                                  if k in ('profitability','financial_strength',
+                                           'growth','predictability') and v is not None)
+            prelim_pct = round((prelim_subtotal / 40) * 100, 2)
             prelim_class    = classify_quality(prelim_scores, prelim_pct)
             tier_data       = resolve_tier(prelim_class["label"])
             discount        = tier_data["discount_rate"]
@@ -1839,9 +2276,23 @@ def analyze_ticker(ticker, retries=3):
                                           long_ni_series=long_ni_series),
                 "valuation":          score_valuation(info, intrinsic_value),
             }
-            python_subtotal     = sum(v for k, v in final_scores.items() if k != 'moat' and v is not None)
-            python_subtotal_pct = round((python_subtotal / 50) * 100, 2)
-            classification      = classify_quality(final_scores, python_subtotal_pct)
+            # Quality score uses 4 metrics when moat is pending (denominator 40)
+            # and 5 metrics when moat is scored (denominator 50).
+            # Valuation excluded — business quality ≠ current cheapness.
+            QUALITY_METRICS = ('profitability', 'financial_strength',
+                               'growth', 'predictability')
+            python_subtotal = sum(v for k, v in final_scores.items()
+                                  if k in QUALITY_METRICS and v is not None)
+            # AI Studio adds moat and recalculates out of 50 at query time.
+            # Python stores the 4-metric score so the chart renders before moat.
+            python_subtotal_pct = round((python_subtotal / 40) * 100, 2)
+            classification      = classify_quality(
+                final_scores,
+                python_subtotal_pct,
+                roe       = pre_roe,
+                roic      = pre_roic,
+                eps_next_5y = eps_next_5y,
+            )
 
             quality = {
                 "scores": {
@@ -1858,9 +2309,11 @@ def analyze_ticker(ticker, retries=3):
                 "penalty_pct":         classification["penalty_pct"],
                 "final_score_pct":     classification["final_score_pct"],
                 "note": (
-                    "Moat score is null. AI Studio adds moat score and "
-                    "recalculates Investment Quality Score and classification "
-                    "using all 6 metrics out of 60."
+                    "Moat score is null. AI Studio adds moat score (0-10) "
+                    "and recalculates: python_subtotal_pct = "
+                    "(profitability + financial_strength + growth + "
+                    "predictability + moat) / 50 × 100. "
+                    "Then re-run classify_quality with the 5-metric score."
                 ),
                 "last_calculated": datetime.now().strftime("%Y-%m-%d %H:%M"),
             }
