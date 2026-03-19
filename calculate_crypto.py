@@ -45,36 +45,78 @@ BUCKET_B_SYMBOLS = {
 # DeFiLlama protocol slug mapping — maps CoinGecko symbol → DeFiLlama slug
 # Only needed for Bucket A tokens that have fee data on DeFiLlama
 DEFILLAMA_SLUGS = {
+    # Layer 1 blockchains
     "ETH":   "ethereum",
     "SOL":   "solana",
     "BNB":   "binance-smart-chain",
     "AVAX":  "avalanche",
     "TRX":   "tron",
     "TON":   "the-open-network",
+    "ADA":   "cardano",
+    "DOT":   "polkadot",
+    "ATOM":  "cosmos",
+    "NEAR":  "near",
+    "FTM":   "fantom",
+    "SUI":   "sui",
+    "APT":   "aptos",
+    "INJ":   "injective",
+    "SEI":   "sei",
+    "HBAR":  "hedera",
+    "ALGO":  "algorand",
+    "ONE":   "harmony",
+    "ZIL":   "zilliqa",
+    # Layer 2 / scaling
+    "ARB":   "arbitrum",
+    "OP":    "optimism",
+    "MATIC": "polygon",
+    "IMX":   "immutable-x",
+    "METIS": "metis",
+    "MANTA": "manta",
+    "BLAST": "blast",
+    "SCROLL":"scroll",
+    "ZKSYNC":"zksync-era",
+    # DeFi protocols
     "UNI":   "uniswap",
     "AAVE":  "aave",
     "COMP":  "compound",
     "MKR":   "makerdao",
     "SNX":   "synthetix",
     "CRV":   "curve",
-    "LINK":  "chainlink",
-    "ADA":   "cardano",
-    "DOT":   "polkadot",
-    "ATOM":  "cosmos",
-    "NEAR":  "near",
-    "FTM":   "fantom",
-    "ARB":   "arbitrum",
-    "OP":    "optimism",
-    "MATIC": "polygon",
-    "SUI":   "sui",
-    "APT":   "aptos",
-    "INJ":   "injective",
+    "BAL":   "balancer",
+    "SUSHI": "sushiswap",
+    "1INCH": "1inch",
+    "CAKE":  "pancakeswap",
     "JUP":   "jupiter",
+    "RAY":   "raydium",
     "PENDLE":"pendle",
     "GMX":   "gmx",
     "DYDX":  "dydx",
+    "PERP":  "perpetual-protocol",
+    "GNS":   "gains-network",
+    # Liquid staking
     "LDO":   "lido",
     "RPL":   "rocket-pool",
+    "ANKR":  "ankr",
+    "SFRXETH":"frax-ether",
+    # Lending
+    "MORPHO":"morpho",
+    "EULER": "euler",
+    # Infrastructure
+    "LINK":  "chainlink",
+    "BAND":  "band-protocol",
+    "API3":  "api3",
+    "GRT":   "the-graph",
+    "FIL":   "filecoin",
+    "STORJ": "storj",
+    "AR":    "arweave",
+    "RNDR":  "render-token",
+    "AKT":   "akash-network",
+    # Oracles / data
+    "PYTH":  "pyth-network",
+    # Stablecoins / RWA
+    "FRAX":  "frax",
+    "CRVUSD":"crvusd",
+    "ONDO":  "ondo-finance",
 }
 
 # =============================================================================
@@ -530,173 +572,205 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
         return "Network Economics chart" if used_chart else "raw calculation"
 
     if bucket == "A":
-        # 1. Fee Growth — sourced from Chart 4 (Capital Efficiency) fee/TVL ratio
+        # All signals scored 0-10 for gradation — avoids binary pass/fail
+        # that caused high-quality tokens like SOL/LINK to score too low.
+
+        # 1. Fee Growth — fee/TVL ratio (0-10)
         s1 = 0
         if fee_tvl is not None:
-            if fee_tvl >= 5:    s1 = 2
-            elif fee_tvl >= 1:  s1 = 1
+            if fee_tvl >= 20:   s1 = 10
+            elif fee_tvl >= 10: s1 = 8
+            elif fee_tvl >= 5:  s1 = 6
+            elif fee_tvl >= 2:  s1 = 4
+            elif fee_tvl >= 1:  s1 = 2
         signals["fee_growth"] = {
-            "label":        "Fee Growth",
-            "score":        s1, "max": 2,
-            "value":        round(fee_tvl, 2) if fee_tvl else None,
-            "unit":         "fee/tvl %",
+            "label": "Fee Growth", "score": s1, "max": 10,
+            "value": round(fee_tvl, 2) if fee_tvl else None, "unit": "fee/tvl %",
             "chart_source": _src(fee_tvl_chart is not None),
-            "chart_ref":    "Network Economics → Capital Efficiency",
+            "chart_ref": "Network Economics → Capital Efficiency",
         }
 
-        # 2. Capital Efficiency — Chart 4 fee/TVL ratio (same source as signal 1,
-        #    but scored on MC/Fees ratio for a valuation angle)
+        # 2. Capital Efficiency — MC/Fees ratio (0-10, lower ratio = better)
         s2 = 0
         if mc_ps_ratio is not None:
-            if mc_ps_ratio < 10:    s2 = 2
-            elif mc_ps_ratio < 50:  s2 = 1
+            if mc_ps_ratio < 5:    s2 = 10
+            elif mc_ps_ratio < 10: s2 = 8
+            elif mc_ps_ratio < 20: s2 = 6
+            elif mc_ps_ratio < 50: s2 = 4
+            elif mc_ps_ratio < 100:s2 = 2
         signals["capital_efficiency"] = {
-            "label":        "Capital Efficiency",
-            "score":        s2, "max": 2,
-            "value":        mc_ps_ratio,
-            "unit":         "MC/fees ratio",
+            "label": "Capital Efficiency", "score": s2, "max": 10,
+            "value": mc_ps_ratio, "unit": "MC/fees ratio",
             "chart_source": "Protocol Metrics (MC/Fees)",
-            "chart_ref":    "Network Economics → Capital Efficiency",
+            "chart_ref": "Network Economics → Capital Efficiency",
         }
 
-        # 3. Holder Value Accrual — Chart 1 revenue_usd / fees_usd ratio
+        # 3. Holder Value Accrual — % of fees reaching holders (0-10)
         s3 = 0
         if holders_pct is not None:
-            if holders_pct >= 30:   s3 = 2
-            elif holders_pct >= 10: s3 = 1
+            if holders_pct >= 50:   s3 = 10
+            elif holders_pct >= 30: s3 = 8
+            elif holders_pct >= 20: s3 = 6
+            elif holders_pct >= 10: s3 = 4
+            elif holders_pct >= 5:  s3 = 2
         signals["holder_value_accrual"] = {
-            "label":        "Holder Value Accrual",
-            "score":        s3, "max": 2,
-            "value":        round(holders_pct, 1) if holders_pct else None,
-            "unit":         "% of fees to holders",
+            "label": "Holder Value Accrual", "score": s3, "max": 10,
+            "value": round(holders_pct, 1) if holders_pct else None,
+            "unit": "% of fees to holders",
             "chart_source": _src(holders_pct_chart is not None),
-            "chart_ref":    "Network Economics → Protocol Revenue & Fees",
+            "chart_ref": "Network Economics → Protocol Revenue & Fees",
         }
 
-        # 4. Network Demand — volume/MC (no chart equivalent, raw CoinGecko)
+        # 4. Network Demand — volume/MC % (0-10)
         s4 = 0
         if vol_mc_pct is not None:
-            if vol_mc_pct >= 5:    s4 = 2
-            elif vol_mc_pct >= 1:  s4 = 1
+            if vol_mc_pct >= 20:   s4 = 10
+            elif vol_mc_pct >= 10: s4 = 8
+            elif vol_mc_pct >= 5:  s4 = 6
+            elif vol_mc_pct >= 2:  s4 = 4
+            elif vol_mc_pct >= 1:  s4 = 2
         signals["network_demand"] = {
-            "label":        "Network Demand",
-            "score":        s4, "max": 2,
-            "value":        round(vol_mc_pct, 2) if vol_mc_pct else None,
-            "unit":         "volume/MC %",
+            "label": "Network Demand", "score": s4, "max": 10,
+            "value": round(vol_mc_pct, 2) if vol_mc_pct else None,
+            "unit": "volume/MC %",
             "chart_source": "raw calculation (CoinGecko volume)",
-            "chart_ref":    None,
+            "chart_ref": None,
         }
 
-        # 5. Dilution Control — Chart 3 supply_overhang_pct
-        s5 = 1 if circ_pct and circ_pct > 80 else 0
+        # 5. Dilution Control — circulating % of max supply (0-10)
+        s5 = 0
+        if circ_pct is not None:
+            if circ_pct >= 95:   s5 = 10
+            elif circ_pct >= 85: s5 = 8
+            elif circ_pct >= 70: s5 = 6
+            elif circ_pct >= 50: s5 = 4
+            elif circ_pct >= 30: s5 = 2
         signals["dilution_control"] = {
-            "label":        "Dilution Control",
-            "score":        s5, "max": 1,
-            "value":        circ_pct,
-            "unit":         "circulating %",
+            "label": "Dilution Control", "score": s5, "max": 10,
+            "value": circ_pct, "unit": "circulating %",
             "chart_source": _src(overhang_chart is not None),
-            "chart_ref":    "Network Economics → Token Supply: Issuance vs Burns",
+            "chart_ref": "Network Economics → Token Supply: Issuance vs Burns",
         }
 
-        # 6. Protocol Maturity — MC rank (no chart equivalent)
-        s6 = 1 if rank and rank <= 50 else 0
+        # 6. Protocol Maturity — MC rank (0-10)
+        s6 = 0
+        if rank is not None:
+            if rank <= 10:    s6 = 10
+            elif rank <= 25:  s6 = 8
+            elif rank <= 50:  s6 = 6
+            elif rank <= 100: s6 = 4
+            elif rank <= 200: s6 = 2
         signals["protocol_maturity"] = {
-            "label":        "Protocol Maturity",
-            "score":        s6, "max": 1,
-            "value":        rank,
-            "unit":         "MC rank",
+            "label": "Protocol Maturity", "score": s6, "max": 10,
+            "value": rank, "unit": "MC rank",
             "chart_source": "raw calculation (CoinGecko rank)",
-            "chart_ref":    None,
+            "chart_ref": None,
         }
 
     elif bucket == "B":
-        # 1. Scarcity — Chart 3 supply_overhang_pct
+        # 1. Scarcity — supply overhang % (0-10, lower overhang = better)
         s1 = 0
-        if overhang is not None:
-            if overhang <= 5:    s1 = 2
-            elif overhang <= 20: s1 = 1
+        ov = overhang or 100
+        if ov <= 2:    s1 = 10
+        elif ov <= 5:  s1 = 8
+        elif ov <= 10: s1 = 6
+        elif ov <= 20: s1 = 4
+        elif ov <= 40: s1 = 2
         signals["scarcity"] = {
-            "label":        "Scarcity",
-            "score":        s1, "max": 2,
-            "value":        overhang,
-            "unit":         "supply overhang %",
+            "label": "Scarcity", "score": s1, "max": 10,
+            "value": overhang, "unit": "supply overhang %",
             "chart_source": _src(overhang_chart is not None),
-            "chart_ref":    "Network Economics → Token Supply: Issuance vs Burns",
+            "chart_ref": "Network Economics → Token Supply: Issuance vs Burns",
         }
 
-        # 2. Adoption Momentum — Monetary Premium (SOV metrics)
+        # 2. Adoption Momentum — gold capture % (0-10)
         s2 = 0
         if gold_capture_pct is not None:
-            if gold_capture_pct > 10:   s2 = 2
-            elif gold_capture_pct > 1:  s2 = 1
+            if gold_capture_pct >= 50:    s2 = 10
+            elif gold_capture_pct >= 20:  s2 = 8
+            elif gold_capture_pct >= 10:  s2 = 6
+            elif gold_capture_pct >= 3:   s2 = 4
+            elif gold_capture_pct >= 0.5: s2 = 2
         signals["adoption_momentum"] = {
-            "label":        "Adoption Momentum",
-            "score":        s2, "max": 2,
-            "value":        round(gold_capture_pct, 4) if gold_capture_pct else None,
-            "unit":         "gold capture %",
+            "label": "Adoption Momentum", "score": s2, "max": 10,
+            "value": round(gold_capture_pct, 4) if gold_capture_pct else None,
+            "unit": "gold capture %",
             "chart_source": "SOV Metrics (monetary premium)",
-            "chart_ref":    None,
+            "chart_ref": None,
         }
 
-        # 3. Security Premium — SOV cost of production
+        # 3. Security Premium — price / production cost (0-10)
         s3 = 0
         if premium_to_cost is not None:
-            if 1.0 < premium_to_cost <= 5:    s3 = 2
-            elif 1.0 < premium_to_cost <= 20: s3 = 1
+            if 1.0 < premium_to_cost <= 2:    s3 = 10  # healthy
+            elif 1.0 < premium_to_cost <= 3:  s3 = 8
+            elif 1.0 < premium_to_cost <= 5:  s3 = 6
+            elif 1.0 < premium_to_cost <= 10: s3 = 4
+            elif premium_to_cost > 10:        s3 = 2   # excessive premium
+            elif premium_to_cost <= 1:        s3 = 1   # below cost
         signals["security_premium"] = {
-            "label":        "Security Premium",
-            "score":        s3, "max": 2,
-            "value":        premium_to_cost,
-            "unit":         "price / production cost",
+            "label": "Security Premium", "score": s3, "max": 10,
+            "value": premium_to_cost, "unit": "price / production cost",
             "chart_source": "SOV Metrics (cost of production)",
-            "chart_ref":    None,
+            "chart_ref": None,
         }
 
-        # 4. Monetary Premium Quality — Chart 3 fdv_to_mc
+        # 4. Monetary Premium Quality — FDV/MC ratio (0-10)
         s4 = 0
         if fdv_mc_use is not None:
-            if fdv_mc_use < 1.05:   s4 = 2
-            elif fdv_mc_use < 1.20: s4 = 1
+            if fdv_mc_use <= 1.02:  s4 = 10
+            elif fdv_mc_use <= 1.05:s4 = 8
+            elif fdv_mc_use <= 1.10:s4 = 6
+            elif fdv_mc_use <= 1.20:s4 = 4
+            elif fdv_mc_use <= 1.50:s4 = 2
         signals["monetary_premium_quality"] = {
-            "label":        "Monetary Premium Quality",
-            "score":        s4, "max": 2,
-            "value":        fdv_mc_use,
-            "unit":         "FDV/MC ratio",
+            "label": "Monetary Premium Quality", "score": s4, "max": 10,
+            "value": fdv_mc_use, "unit": "FDV/MC ratio",
             "chart_source": _src(fdv_mc_chart is not None),
-            "chart_ref":    "Network Economics → Token Supply: Issuance vs Burns",
+            "chart_ref": "Network Economics → Token Supply: Issuance vs Burns",
         }
 
-        # 5. Dilution Control — Chart 3 supply_overhang_pct
-        s5 = 1 if circ_pct and circ_pct > 80 else 0
+        # 5. Dilution Control (0-10)
+        s5 = 0
+        if circ_pct is not None:
+            if circ_pct >= 95:   s5 = 10
+            elif circ_pct >= 85: s5 = 8
+            elif circ_pct >= 70: s5 = 6
+            elif circ_pct >= 50: s5 = 4
+            elif circ_pct >= 30: s5 = 2
         signals["dilution_control"] = {
-            "label":        "Dilution Control",
-            "score":        s5, "max": 1,
-            "value":        circ_pct,
-            "unit":         "circulating %",
+            "label": "Dilution Control", "score": s5, "max": 10,
+            "value": circ_pct, "unit": "circulating %",
             "chart_source": _src(overhang_chart is not None),
-            "chart_ref":    "Network Economics → Token Supply: Issuance vs Burns",
+            "chart_ref": "Network Economics → Token Supply: Issuance vs Burns",
         }
 
-        # 6. Market Resilience — 30d price change (CoinGecko)
-        s6 = 1 if price_change_30d is not None and price_change_30d > -10 else 0
+        # 6. Market Resilience — 30d price vs broader market (0-10)
+        s6 = 0
+        chg = price_change_30d or 0
+        if chg >= 20:    s6 = 10
+        elif chg >= 10:  s6 = 8
+        elif chg >= 0:   s6 = 6
+        elif chg >= -10: s6 = 4
+        elif chg >= -25: s6 = 2
         signals["market_resilience"] = {
-            "label":        "Market Resilience",
-            "score":        s6, "max": 1,
-            "value":        round(price_change_30d, 1) if price_change_30d else None,
-            "unit":         "30d price change %",
+            "label": "Market Resilience", "score": s6, "max": 10,
+            "value": round(price_change_30d, 1) if price_change_30d else None,
+            "unit": "30d price change %",
             "chart_source": "raw calculation (CoinGecko price)",
-            "chart_ref":    None,
+            "chart_ref": None,
         }
 
     # ── Aggregate ─────────────────────────────────────────────────────────────
+    # All 6 signals now score 0-10, total max = 60
     total_score = sum(s["score"] for s in signals.values())
-    total_max   = sum(s["max"]   for s in signals.values())
+    total_max   = sum(s["max"]   for s in signals.values())   # should be 60
     final_pct   = round(total_score / total_max * 100, 1) if total_max > 0 else 0
     final_10    = round(total_score / total_max * 10, 1)  if total_max > 0 else 0
 
-    if final_pct >= 75:    classification = "Strong"
+    if final_pct >= 70:    classification = "Strong"
     elif final_pct >= 50:  classification = "Moderate"
-    elif final_pct >= 25:  classification = "Weak"
+    elif final_pct >= 30:  classification = "Weak"
     else:                  classification = "Poor"
 
     return {
@@ -809,76 +883,76 @@ def calc_fear_greed(price_change_7d, price_change_30d, volume, market_cap,
     """
     try:
         components = {}
+        chg30 = price_change_30d or 0
+        chg7  = price_change_7d  or 0
 
         # ── Component 1: Price Momentum 30d (30 pts max) ─────────────────────
-        chg30 = price_change_30d or 0
-        if chg30 >= 100:    pm = 30
-        elif chg30 >= 50:   pm = 27
-        elif chg30 >= 20:   pm = 23
-        elif chg30 >= 10:   pm = 20
-        elif chg30 >= 5:    pm = 17
-        elif chg30 >= 0:    pm = 15
-        elif chg30 >= -5:   pm = 12
-        elif chg30 >= -10:  pm = 9
-        elif chg30 >= -20:  pm = 6
-        elif chg30 >= -40:  pm = 3
-        else:               pm = 0
+        # Neutral baseline is 10 (not 15) — flat market should lean Fear,
+        # not Neutral, since crypto markets trend up in good times.
+        if chg30 >= 100:   pm = 30
+        elif chg30 >= 50:  pm = 26
+        elif chg30 >= 20:  pm = 22
+        elif chg30 >= 10:  pm = 18
+        elif chg30 >= 5:   pm = 14
+        elif chg30 >= 0:   pm = 10   # flat = mild fear baseline
+        elif chg30 >= -5:  pm = 7
+        elif chg30 >= -15: pm = 5
+        elif chg30 >= -30: pm = 3
+        elif chg30 >= -50: pm = 1
+        else:              pm = 0
         components["price_momentum"] = pm
 
         # ── Component 2: Volume Momentum (25 pts max) ────────────────────────
-        # vol/mc ratio: >10% means very high activity (greed territory)
         vol_ratio = (volume / market_cap * 100) if market_cap and market_cap > 0 else 0
         if vol_ratio >= 20:    vm = 25
         elif vol_ratio >= 10:  vm = 20
-        elif vol_ratio >= 5:   vm = 17
-        elif vol_ratio >= 2:   vm = 14
-        elif vol_ratio >= 1:   vm = 11
-        elif vol_ratio >= 0.5: vm = 8
-        else:                  vm = 5
-        # Adjust: high volume on falling price = fear not greed
-        if chg30 < -10 and vol_ratio >= 5:
-            vm = max(0, vm - 8)
+        elif vol_ratio >= 5:   vm = 16
+        elif vol_ratio >= 2:   vm = 12
+        elif vol_ratio >= 1:   vm = 8
+        elif vol_ratio >= 0.5: vm = 5
+        else:                  vm = 3
+        # Stronger penalty: high volume on falling price = selling panic
+        if chg30 < -5 and vol_ratio >= 5:
+            vm = max(0, vm - 10)
+        elif chg30 < -15 and vol_ratio >= 2:
+            vm = max(0, vm - 6)
         components["volume_momentum"] = vm
 
         # ── Component 3: Volatility (20 pts max) ─────────────────────────────
-        # Extreme volatility in either direction signals emotion
-        chg7  = price_change_7d or 0
-        vol_mag = abs(chg7)   # use 7d as shorter-term volatility proxy
-        if vol_mag >= 50:      vlt = 20 if chg7 > 0 else 2    # extreme = greed or fear
-        elif vol_mag >= 30:    vlt = 17 if chg7 > 0 else 5
-        elif vol_mag >= 15:    vlt = 14 if chg7 > 0 else 8
-        elif vol_mag >= 5:     vlt = 11 if chg7 > 0 else 9
-        else:                  vlt = 10   # low volatility = neutral
+        vol_mag = abs(chg7)
+        if vol_mag >= 50:      vlt = 19 if chg7 > 0 else 1
+        elif vol_mag >= 30:    vlt = 16 if chg7 > 0 else 3
+        elif vol_mag >= 15:    vlt = 13 if chg7 > 0 else 6
+        elif vol_mag >= 5:     vlt = 10 if chg7 > 0 else 7
+        else:                  vlt = 8    # low volatility = slight fear (stagnation)
         components["volatility"] = vlt
 
         # ── Component 4: Momentum Trend 7d vs 30d (15 pts max) ───────────────
-        # Is the short-term trend better or worse than the longer trend?
         if chg7 is not None and chg30 is not None:
-            if chg7 > chg30 * 0.5 and chg7 > 0:    mt = 15   # accelerating up
-            elif chg7 > 0:                           mt = 12   # up but slowing
-            elif chg7 > chg30 * 0.5:                mt = 9    # less bad short term
-            elif chg7 >= 0:                          mt = 7
-            else:                                    mt = 4    # worse short term
+            if chg7 > 0 and chg7 > abs(chg30) * 0.5:  mt = 15  # strong recovery
+            elif chg7 > 0 and chg30 > 0:               mt = 12  # both positive
+            elif chg7 > 0 and chg30 <= 0:              mt = 9   # short bounce in downtrend
+            elif chg7 <= 0 and chg30 > 0:              mt = 6   # recent weakness
+            elif chg7 <= 0 and chg30 <= 0:             mt = 3   # both negative
+            else:                                       mt = 5
         else:
-            mt = 7
+            mt = 5
         components["momentum_trend"] = mt
 
         # ── Component 5: Dilution Pressure (10 pts max) ───────────────────────
-        # High supply overhang = selling pressure = fear signal
         if dilution_data:
             overhang = dilution_data.get("supply_overhang", 50)
-            if overhang <= 5:     dp = 10   # almost fully circulating
+            if overhang <= 5:     dp = 10
             elif overhang <= 15:  dp = 8
             elif overhang <= 30:  dp = 6
-            elif overhang <= 50:  dp = 4
-            elif overhang <= 70:  dp = 2
-            else:                 dp = 1    # heavy overhang
+            elif overhang <= 50:  dp = 3
+            elif overhang <= 70:  dp = 1
+            else:                 dp = 0
         else:
-            dp = 5   # unknown = neutral
+            dp = 4   # unknown = slight fear
         components["dilution_pressure"] = dp
 
         total = pm + vm + vlt + mt + dp
-        # Scale to 0-100 (max possible is 100)
         score = min(100, max(0, total))
 
         return {
@@ -1131,20 +1205,30 @@ def analyze_coin(coin, defillama_data, gold_mc):
                 was_constrained = surv_mult < 1.0 or q_mult < 1.0
 
                 # ── Step 4: Fetch 10Y price history from CoinGecko ───────
+                # Uses daily interval with 3650 days — CoinGecko free tier
+                # returns daily data for ranges > 90 days automatically.
+                # Then we sample one price per year (year-end closing).
                 price_history = {}
                 try:
-                    time.sleep(1.0)   # respect rate limit
+                    time.sleep(1.2)   # respect rate limit
+                    # Daily interval gives full history on free tier
                     hist_resp = requests.get(
                         f"https://api.coingecko.com/api/v3/coins/{coin_id}"
-                        f"/market_chart?vs_currency=usd&days=3650&interval=yearly",
-                        headers=_headers(), timeout=15
+                        f"/market_chart?vs_currency=usd&days=3650",
+                        headers=_headers(), timeout=20
                     )
                     if hist_resp.status_code == 200:
-                        for ts_ms, p_val in hist_resp.json().get("prices", []):
+                        prices_raw = hist_resp.json().get("prices", [])
+                        # Sample: keep last price per calendar year
+                        year_prices = {}
+                        for ts_ms, p_val in prices_raw:
                             yr = str(datetime.fromtimestamp(ts_ms / 1000).year)
-                            price_history[yr] = round(p_val, 4)
-                except Exception:
-                    pass
+                            year_prices[yr] = round(p_val, 4)  # last entry per yr wins
+                        price_history = year_prices
+                    elif hist_resp.status_code == 429:
+                        time.sleep(30)   # rate limit — wait and skip
+                except Exception as e:
+                    print(f"  [CRYPTO HIST] {coin_id}: {str(e)[:50]}")
 
                 # ── Step 5: Build historical section ─────────────────────
                 # Bands are back-projected as flat multiples — no compounding.
@@ -1266,6 +1350,16 @@ def analyze_coin(coin, defillama_data, gold_mc):
             "network_economics": network_econ,
             "valuation_chart":   valuation_chart,
             "forecast_meta":     forecast_meta,
+            # Top-level intrinsic_value for AI Studio hero card display
+            # Same as forecast_meta["base_iv"] but accessible without
+            # nested lookup — prevents "N/A - Insufficient Data" display.
+            "intrinsic_value":   forecast_meta.get("base_iv") if forecast_meta else None,
+            "iv_method":         (
+                "DCF on protocol fees" if bucket == "A" and
+                (forecast_meta or {}).get("iv_sources", 0) > 0
+                else "Monetary premium / production cost" if bucket == "B"
+                else "Market price (no fee data available)"
+            ),
             "bull_bear":         generate_crypto_bull_bear(
                                      symbol       = symbol,
                                      name         = name,
