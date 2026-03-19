@@ -687,6 +687,107 @@ def get_forward_growth(ticker, info):
 # QUALITY METRIC 1 — Profitability (0–10)
 # =============================================================================
 def score_profitability(info):
+    """Routes to company-type-appropriate profitability scoring."""
+    fin_type = _detect_financial_type(info)
+    if fin_type == "BANK":
+        return _score_prof_bank(info)
+    elif fin_type in ("INSURANCE", "ASSET_MGR", "CONSUMER_FINANCE"):
+        return _score_prof_financial(info)
+    elif fin_type == "REIT":
+        return _score_prof_reit(info)
+    return _score_prof_standard(info)
+
+
+def _score_prof_bank(info):
+    """
+    Bank profitability (0-10).
+    ROE is the primary metric — it captures how efficiently the bank
+    uses shareholder equity to generate profit, which is the core
+    measure for banking businesses.
+    ROA measures overall asset efficiency (standard bank KPI).
+    NI consistency replaces FCF margin — banks don't report FCF.
+    """
+    score = 0
+    # ROE (4 pts) — primary profitability metric for banks
+    roe = _safe(info.get('returnOnEquity'))
+    if roe is not None:
+        if roe > 0.15:   score += 4
+        elif roe > 0.10: score += 3
+        elif roe > 0.07: score += 2
+        elif roe > 0.03: score += 1
+    # ROA (3 pts) — asset efficiency, standard bank benchmark
+    roa = _safe(info.get('returnOnAssets'))
+    if roa is not None:
+        if roa > 0.012:  score += 3   # top-tier bank (JPM ~1.2%)
+        elif roa > 0.008: score += 2  # solid bank
+        elif roa > 0.004: score += 1  # marginal
+    # Net income positive and margin on revenue (3 pts)
+    ni  = _safe(info.get('netIncomeToCommon'))
+    rev = _safe(info.get('totalRevenue'))
+    if ni and ni > 0 and rev and rev > 0:
+        margin = ni / rev
+        if margin > 0.20:   score += 3
+        elif margin > 0.12: score += 2
+        elif margin > 0:    score += 1
+    return min(score, 10)
+
+
+def _score_prof_financial(info):
+    """
+    Insurance / asset manager / consumer finance profitability (0-10).
+    ROE primary, profit margin secondary, NI consistency tertiary.
+    """
+    score = 0
+    roe = _safe(info.get('returnOnEquity'))
+    if roe is not None:
+        if roe > 0.15:   score += 4
+        elif roe > 0.10: score += 3
+        elif roe > 0.06: score += 2
+        elif roe > 0:    score += 1
+    pm = _safe(info.get('profitMargins'))
+    if pm is not None:
+        if pm > 0.20:   score += 3
+        elif pm > 0.10: score += 2
+        elif pm > 0:    score += 1
+    ni = _safe(info.get('netIncomeToCommon'))
+    if ni and ni > 0:   score += 3
+    elif ni == 0:       score += 1
+    return min(score, 10)
+
+
+def _score_prof_reit(info):
+    """
+    REIT profitability (0-10).
+    REITs must distribute 90%+ of income so retained earnings and
+    traditional margins are not meaningful. OCF (proxy for FFO) and
+    dividend sustainability are the appropriate metrics.
+    """
+    score = 0
+    # Operating cash flow as FFO proxy (4 pts)
+    ocf = _safe(info.get('operatingCashflow'))
+    rev = _safe(info.get('totalRevenue'))
+    if ocf and ocf > 0 and rev and rev > 0:
+        ocf_margin = ocf / rev
+        if ocf_margin > 0.35:   score += 4
+        elif ocf_margin > 0.20: score += 3
+        elif ocf_margin > 0.10: score += 2
+        elif ocf_margin > 0:    score += 1
+    # ROE (3 pts)
+    roe = _safe(info.get('returnOnEquity'))
+    if roe is not None:
+        if roe > 0.08:   score += 3
+        elif roe > 0.04: score += 2
+        elif roe > 0:    score += 1
+    # Dividend yield as distribution proxy (3 pts)
+    div = _safe(info.get('dividendYield'))
+    if div and div > 0.04:   score += 3
+    elif div and div > 0.02: score += 2
+    elif div and div > 0:    score += 1
+    return min(score, 10)
+
+
+def _score_prof_standard(info):
+    """Original industrial/technology profitability scoring."""
     score = 0
     rev = _safe(info.get('totalRevenue'))
     ni  = _safe(info.get('netIncomeToCommon'))
@@ -1265,10 +1366,60 @@ def score_predictability(info, financials,
                           long_rev_series=None,
                           long_ni_series=None):
     """
-    long_rev_series: chronological list of annual revenue values (oldest first)
-                     from EDGAR — up to 10 years. Falls back to stock.financials.
-    long_ni_series:  same for net income.
+    Routes financial companies to simpler stability-based scoring.
+    Banks and insurers have structurally volatile NI due to credit cycles
+    and reserve requirements — penalising them for this volatility is unfair.
     """
+    fin_type = _detect_financial_type(info)
+    if fin_type in ("BANK", "INSURANCE", "CONSUMER_FINANCE",
+                    "ASSET_MGR", "REIT"):
+        return _score_pred_financial(info)
+    return _score_pred_standard(info, financials,
+                                 long_rev_series, long_ni_series)
+
+
+def _score_pred_financial(info):
+    """
+    Financial company predictability (0-10).
+    Rather than penalising for NI volatility (which is structural in
+    credit cycles and insurance), scores on business model stability signals:
+      - Years in operation proxy (market cap rank stability)
+      - Dividend consistency (only reliable predictor of stable earnings)
+      - Revenue growth direction
+      - ROE consistency proxy
+    """
+    score = 0
+    # Dividend as earnings stability proxy (4 pts)
+    # Companies that have paid consistent dividends for years must have
+    # had stable enough earnings to support distributions
+    div = _safe(info.get('dividendYield'))
+    div_rate = _safe(info.get('dividendRate'))
+    if div and div > 0 and div_rate and div_rate > 0:
+        score += 4   # paying a dividend = evidence of earnings stability
+    elif div and div > 0:
+        score += 2
+    # ROE positive and reasonable (3 pts)
+    roe = _safe(info.get('returnOnEquity'))
+    if roe is not None:
+        if roe > 0.10:   score += 3
+        elif roe > 0.05: score += 2
+        elif roe > 0:    score += 1
+    # Revenue growth direction (2 pts)
+    rev_g = _safe(info.get('revenueGrowth'))
+    if rev_g is not None:
+        if rev_g > 0.05:  score += 2
+        elif rev_g >= 0:  score += 1
+    # Positive NI (1 pt) — just confirm it's profitable
+    ni = _safe(info.get('netIncomeToCommon'))
+    if ni and ni > 0:
+        score += 1
+    return min(score, 10)
+
+
+def _score_pred_standard(info, financials,
+                          long_rev_series=None,
+                          long_ni_series=None):
+    """Original EDGAR trend-based predictability for non-financial companies."""
     score = 0
 
     # Use long-term EDGAR series if available, fall back to stock.financials
@@ -1315,6 +1466,8 @@ def score_predictability(info, financials,
         score += 1
 
     return min(score, 10)
+
+# (score_predictability routes to _score_pred_financial or _score_pred_standard above)
 
 # =============================================================================
 # QUALITY METRIC 5 — Valuation (0–10)
