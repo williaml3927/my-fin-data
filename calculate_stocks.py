@@ -1142,9 +1142,18 @@ def _score_fs_standard(info, current_ratio=None, debt_to_ebitda=None,
             pass
 
     if not cash_signal_scored:
-        cash_snap = _safe(info.get('totalCash')) or _safe(info.get('cashAndCashEquivalents'))
+        # Apple and similar companies hold large short-term investment
+        # portfolios alongside cash. totalCash alone (~$29B for AAPL)
+        # understates liquidity — add shortTermInvestments to capture the
+        # full liquid position (~$135B for AAPL = $29B + $106B).
+        cash_raw = _safe(info.get('totalCash')) or 0
+        mkt_sec  = _safe(info.get('shortTermInvestments')) or 0
+        cash_snap = (cash_raw + mkt_sec) or None
+        if not cash_snap:
+            cash_snap = (_safe(info.get('cashAndCashEquivalents')) or
+                         _safe(info.get('cashAndShortTermInvestments')))
         debt_snap = _safe(info.get('totalDebt'))
-        if cash_snap is not None and debt_snap is not None:
+        if cash_snap and debt_snap is not None:
             if cash_snap > debt_snap:
                 score += 2
             elif cash_snap > debt_snap * 0.5:
