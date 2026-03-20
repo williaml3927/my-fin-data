@@ -2161,21 +2161,68 @@ def _sanitize(obj):
     return obj
 
 
-def save_partitions(results):
-    """Save A-Z partitioned JSON files to data_crypto/."""
-    os.makedirs("data_crypto", exist_ok=True)
-    buckets = {}
-    for sym, data in results.items():
-        letter = sym[0].upper()
-        if not letter.isalpha():
-            letter = "0-9"
-        buckets.setdefault(letter, {})[sym] = data
+# Max bytes per sub-partition file before starting a new chunk.
+# ~1.5MB keeps files well under GitHub's 2MB display limit.
+CRYPTO_MAX_PARTITION_BYTES = 1_500_000
 
-    for letter, content in buckets.items():
-        path = f"data_crypto/crypto_{letter}.json"
-        with open(path, "w") as f:
-            json.dump(_sanitize(content), f, indent=4)
-    print(f"✅ Saved {len(results)} coins to data_crypto/ ({len(buckets)} files)")
+def save_partitions(results):
+    """
+    Saves coin data into size-capped sub-partition files.
+
+    Files are named  data_crypto/crypto_{LETTER}{N}.json
+    e.g.  crypto_A1.json, crypto_A2.json, crypto_B1.json ...
+
+    A ticker index  data_crypto/ticker_map.json  maps every symbol to
+    its filename stem so the app fetches exactly the file it needs.
+      { "BTC": "crypto_B1", "ETH": "crypto_E1", ... }
+    """
+    os.makedirs("data_crypto", exist_ok=True)
+
+    # Group symbols by first letter
+    by_letter = {}
+    for sym, data in results.items():
+        letter = sym[0].upper() if sym[0].isalpha() else "0"
+        by_letter.setdefault(letter, {})[sym] = data
+
+    ticker_map = {}
+    files_written = 0
+
+    for letter in sorted(by_letter.keys()):
+        syms_in_letter = by_letter[letter]
+        chunk = {}
+        chunk_num = 1
+
+        for sym, data in syms_in_letter.items():
+            chunk[sym] = _sanitize(data)
+            approx_size = len(json.dumps(chunk))
+            if approx_size >= CRYPTO_MAX_PARTITION_BYTES:
+                # Flush without the symbol that tipped it
+                chunk.pop(sym)
+                if chunk:
+                    stem = f"crypto_{letter}{chunk_num}"
+                    with open(f"data_crypto/{stem}.json", "w") as f:
+                        json.dump(chunk, f, indent=2)
+                    for s in chunk:
+                        ticker_map[s] = stem
+                    files_written += 1
+                    chunk_num += 1
+                chunk = {sym: _sanitize(data)}
+
+        # Flush remaining
+        if chunk:
+            stem = f"crypto_{letter}{chunk_num}"
+            with open(f"data_crypto/{stem}.json", "w") as f:
+                json.dump(chunk, f, indent=2)
+            for s in chunk:
+                ticker_map[s] = stem
+            files_written += 1
+
+    # Save ticker → file mapping
+    with open("data_crypto/ticker_map.json", "w") as f:
+        json.dump(ticker_map, f, indent=2)
+
+    print(f"✅ Saved {len(results)} coins across {files_written} files")
+    print(f"✅ Saved data_crypto/ticker_map.json ({len(ticker_map)} entries)")
 
 
 # =============================================================================
