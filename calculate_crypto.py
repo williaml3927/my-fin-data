@@ -38,8 +38,10 @@ TOP_N_COINS = 1000   # 4 pages × 250 per page
 # All others default to Bucket A with limited data where DeFiLlama has no fees
 # =============================================================================
 BUCKET_B_SYMBOLS = {
+    # Proof-of-Work / Store of Value assets — valued on scarcity,
+    # not fee revenue. ETC added alongside BTC/LTC/DOGE family.
     "BTC", "LTC", "DOGE", "BCH", "XMR", "ZEC", "DASH", "BSV",
-    "KAS", "RVN", "ERG", "XMG",
+    "ETC", "KAS", "RVN", "ERG", "XMG",
 }
 
 # DeFiLlama protocol slug mapping — maps CoinGecko symbol → DeFiLlama slug
@@ -223,6 +225,77 @@ def fetch_defillama_fees():
         pass
 
     return result
+
+
+def fetch_defillama_chain_fees():
+    """
+    Fetch chain-level fee data from DeFiLlama.
+    L1 blockchains like Solana, Ethereum, Avalanche report fees
+    under the chains endpoint, not the protocols endpoint.
+    Returns dict: { chain_name_lower: { annual_fees, annual_revenue } }
+    """
+    result = {}
+    try:
+        resp = requests.get(
+            "https://api.llama.fi/overview/fees?excludeTotalDataChart=true"
+            "&excludeTotalDataChartBreakdown=true&dataType=dailyFees",
+            timeout=20
+        )
+        if resp.status_code == 200:
+            for chain in resp.json().get("allChains", []):
+                name  = str(chain).lower().replace(" ", "-")
+                result[name] = {"annual_fees": None, "annual_revenue": None}
+
+        # Get actual fee values per chain
+        resp2 = requests.get(
+            "https://api.llama.fi/overview/fees/chains"
+            "?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true",
+            timeout=20
+        )
+        if resp2.status_code == 200:
+            for p in resp2.json().get("protocols", []):
+                name = (p.get("name") or "").lower().replace(" ", "-")
+                result[name] = {
+                    "annual_fees":    (_safe(p.get("total24h")) or 0) * 365,
+                    "annual_revenue": (_safe(p.get("totalAllTime"))) or
+                                      ((_safe(p.get("total24h")) or 0) * 365 * 0.3),
+                    "tvl": _safe(p.get("tvl")),
+                }
+    except Exception as e:
+        print(f"  [DeFiLlama] chain fees fetch failed: {e}")
+    return result
+
+
+# Mapping from token symbol to DeFiLlama chain name for L1 fee lookup.
+# These tokens report fees at the chain level, not the protocol level.
+CHAIN_FEE_MAP = {
+    "SOL":   "solana",
+    "ETH":   "ethereum",
+    "BNB":   "bsc",
+    "AVAX":  "avalanche",
+    "MATIC": "polygon",
+    "TRX":   "tron",
+    "ADA":   "cardano",
+    "DOT":   "polkadot",
+    "NEAR":  "near",
+    "FTM":   "fantom",
+    "ARB":   "arbitrum",
+    "OP":    "optimism",
+    "ATOM":  "cosmos",
+    "SUI":   "sui",
+    "APT":   "aptos",
+    "INJ":   "injective",
+    "TON":   "ton",
+    "HBAR":  "hedera",
+    "ALGO":  "algorand",
+    "SEI":   "sei",
+    "XRP":   "ripple",
+    "XLM":   "stellar",
+    "VET":   "vechain",
+    "ONE":   "harmony",
+    "ZIL":   "zilliqa",
+    "IMX":   "immutable",
+}
 
 
 def fetch_bitcoin_hashrate():
@@ -499,7 +572,8 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
                           price_change_30d, annual_fees=None,
                           annual_holders_rev=None, tvl=None,
                           volume=None, mc=None, rank=None,
-                          fdv_mc_ratio=None, network_econ=None):
+                          fdv_mc_ratio=None, network_econ=None,
+                          symbol=None):
     """
     network_econ: the pre-computed network_economics dict from
                   fetch_network_economics(). When provided, quality signals
@@ -572,69 +646,121 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
         return "Network Economics chart" if used_chart else "raw calculation"
 
     if bucket == "A":
-        # All signals scored 0-10 for gradation — avoids binary pass/fail
-        # that caused high-quality tokens like SOL/LINK to score too low.
+        # All signals scored 0-10 for gradation.
+        # KEY RULE: missing data scores NEUTRAL (5), never 0.
+        # Absence of DeFiLlama coverage ≠ absence of protocol activity.
+        # L1 chains (SOL, ETH) and infrastructure tokens (LINK, GRT)
+        # generate real fees but through channels DeFiLlama doesn't
+        # always expose under a single protocol slug.
 
-        # 1. Fee Growth — fee/TVL ratio (0-10)
-        s1 = 0
-        if fee_tvl is not None:
+        fee_data_available  = fee_tvl is not None
+        mc_fee_available    = mc_ps_ratio is not None
+        holders_available   = holders_pct is not None
+
+        # Tokens in CHAIN_FEE_MAP or known infrastructure get staking proxy
+        _sym = symbol or ""
+        is_l1_or_infra = _sym in CHAIN_FEE_MAP or _sym in {
+            # Infrastructure / oracle / storage — distribute via node rewards
+            "LINK", "GRT", "RNDR", "FIL", "AR", "AKT", "PYTH",
+            "BAND", "API3", "STORJ",
+            # Metaverse / gaming — revenue from platform fees not DeFi
+            "SAND", "MANA", "BLUR", "IMX",
+            # Identity / social
+            "WLD",
+        }
+
+        # 1. Fee Growth — fee/TVL ratio when available, vol/MC proxy otherwise
+        if fee_data_available:
             if fee_tvl >= 20:   s1 = 10
             elif fee_tvl >= 10: s1 = 8
             elif fee_tvl >= 5:  s1 = 6
             elif fee_tvl >= 2:  s1 = 4
             elif fee_tvl >= 1:  s1 = 2
+            else:               s1 = 1
+        else:
+            # Volume proxy — high vol/MC shows genuine network activity
+            if vol_mc_pct and vol_mc_pct >= 10:   s1 = 6
+            elif vol_mc_pct and vol_mc_pct >= 5:  s1 = 5
+            elif vol_mc_pct and vol_mc_pct >= 2:  s1 = 4
+            else:                                  s1 = 5   # neutral
         signals["fee_growth"] = {
             "label": "Fee Growth", "score": s1, "max": 10,
-            "value": round(fee_tvl, 2) if fee_tvl else None, "unit": "fee/tvl %",
+            "value": round(fee_tvl, 2) if fee_tvl else None,
+            "unit": "fee/tvl %" if fee_data_available else "vol/MC proxy",
             "chart_source": _src(fee_tvl_chart is not None),
             "chart_ref": "Network Economics → Capital Efficiency",
+            "data_available": fee_data_available,
         }
 
-        # 2. Capital Efficiency — MC/Fees ratio (0-10, lower ratio = better)
-        s2 = 0
-        if mc_ps_ratio is not None:
+        # 2. Capital Efficiency — MC/Fees when available, rank proxy otherwise
+        if mc_fee_available:
             if mc_ps_ratio < 5:    s2 = 10
             elif mc_ps_ratio < 10: s2 = 8
             elif mc_ps_ratio < 20: s2 = 6
             elif mc_ps_ratio < 50: s2 = 4
             elif mc_ps_ratio < 100:s2 = 2
+            else:                  s2 = 1
+        else:
+            # MC rank proxy — top protocols earn their valuation through usage
+            if rank and rank <= 10:   s2 = 7
+            elif rank and rank <= 25: s2 = 6
+            elif rank and rank <= 50: s2 = 5
+            else:                     s2 = 5   # neutral
         signals["capital_efficiency"] = {
             "label": "Capital Efficiency", "score": s2, "max": 10,
-            "value": mc_ps_ratio, "unit": "MC/fees ratio",
-            "chart_source": "Protocol Metrics (MC/Fees)",
+            "value": mc_ps_ratio,
+            "unit": "MC/fees ratio" if mc_fee_available else "rank proxy",
+            "chart_source": "Protocol Metrics (MC/Fees)" if mc_fee_available
+                            else "rank proxy (fee data unavailable)",
             "chart_ref": "Network Economics → Capital Efficiency",
+            "data_available": mc_fee_available,
         }
 
-        # 3. Holder Value Accrual — % of fees reaching holders (0-10)
-        s3 = 0
-        if holders_pct is not None:
+        # 3. Holder Value Accrual — direct fee split when available
+        # L1 chains distribute value via staking/validator rewards — this
+        # is real holder value accrual but DeFiLlama labels it differently.
+        if holders_available:
             if holders_pct >= 50:   s3 = 10
             elif holders_pct >= 30: s3 = 8
             elif holders_pct >= 20: s3 = 6
             elif holders_pct >= 10: s3 = 4
             elif holders_pct >= 5:  s3 = 2
+            else:                   s3 = 1
+        elif is_l1_or_infra:
+            # L1/infra tokens distribute value through staking rewards
+            # Award partial credit based on network maturity (rank proxy)
+            if rank and rank <= 10:   s3 = 6
+            elif rank and rank <= 30: s3 = 5
+            else:                     s3 = 4
+        else:
+            s3 = 5   # truly unknown → neutral
         signals["holder_value_accrual"] = {
             "label": "Holder Value Accrual", "score": s3, "max": 10,
             "value": round(holders_pct, 1) if holders_pct else None,
-            "unit": "% of fees to holders",
+            "unit": "% of fees to holders" if holders_available
+                    else "staking/validator proxy",
             "chart_source": _src(holders_pct_chart is not None),
             "chart_ref": "Network Economics → Protocol Revenue & Fees",
+            "data_available": holders_available,
         }
 
-        # 4. Network Demand — volume/MC % (0-10)
-        s4 = 0
+        # 4. Network Demand — volume/MC % (0-10), neutral if unavailable
         if vol_mc_pct is not None:
             if vol_mc_pct >= 20:   s4 = 10
             elif vol_mc_pct >= 10: s4 = 8
             elif vol_mc_pct >= 5:  s4 = 6
             elif vol_mc_pct >= 2:  s4 = 4
             elif vol_mc_pct >= 1:  s4 = 2
+            else:                  s4 = 1
+        else:
+            s4 = 5   # neutral
         signals["network_demand"] = {
             "label": "Network Demand", "score": s4, "max": 10,
             "value": round(vol_mc_pct, 2) if vol_mc_pct else None,
             "unit": "volume/MC %",
             "chart_source": "raw calculation (CoinGecko volume)",
             "chart_ref": None,
+            "data_available": vol_mc_pct is not None,
         }
 
         # 5. Dilution Control — circulating % of max supply (0-10)
@@ -669,13 +795,16 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
 
     elif bucket == "B":
         # 1. Scarcity — supply overhang % (0-10, lower overhang = better)
-        s1 = 0
-        ov = overhang or 100
-        if ov <= 2:    s1 = 10
-        elif ov <= 5:  s1 = 8
-        elif ov <= 10: s1 = 6
-        elif ov <= 20: s1 = 4
-        elif ov <= 40: s1 = 2
+        # Neutral (5) if data unavailable
+        s1 = 5   # default neutral
+        if overhang is not None:
+            ov = overhang
+            if ov <= 2:    s1 = 10
+            elif ov <= 5:  s1 = 8
+            elif ov <= 10: s1 = 6
+            elif ov <= 20: s1 = 4
+            elif ov <= 40: s1 = 2
+            else:          s1 = 1
         signals["scarcity"] = {
             "label": "Scarcity", "score": s1, "max": 10,
             "value": overhang, "unit": "supply overhang %",
@@ -684,30 +813,43 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
         }
 
         # 2. Adoption Momentum — gold capture % (0-10)
+        # For small PoW coins (DOGE, RVN, ERG etc.) gold_capture_pct will
+        # be tiny (<0.1%) which scored 0 — unfair. Use MC rank as a
+        # relative adoption proxy alongside gold capture.
         s2 = 0
-        if gold_capture_pct is not None:
+        if gold_capture_pct is not None and gold_capture_pct >= 0.5:
             if gold_capture_pct >= 50:    s2 = 10
             elif gold_capture_pct >= 20:  s2 = 8
             elif gold_capture_pct >= 10:  s2 = 6
             elif gold_capture_pct >= 3:   s2 = 4
             elif gold_capture_pct >= 0.5: s2 = 2
+        else:
+            # Rank-based adoption proxy for small-cap PoW coins
+            if rank and rank <= 20:    s2 = 5
+            elif rank and rank <= 50:  s2 = 4
+            elif rank and rank <= 100: s2 = 3
+            elif rank and rank <= 200: s2 = 2
+            else:                      s2 = 1
         signals["adoption_momentum"] = {
             "label": "Adoption Momentum", "score": s2, "max": 10,
             "value": round(gold_capture_pct, 4) if gold_capture_pct else None,
-            "unit": "gold capture %",
+            "unit": "gold capture %" if (gold_capture_pct and gold_capture_pct >= 0.5)
+                    else "rank proxy",
             "chart_source": "SOV Metrics (monetary premium)",
             "chart_ref": None,
         }
 
         # 3. Security Premium — price / production cost (0-10)
-        s3 = 0
+        # Non-PoW coins in Bucket B (XMG) don't have production cost
+        # Award neutral (5) when unavailable — not penalised
+        s3 = 5   # default neutral
         if premium_to_cost is not None:
-            if 1.0 < premium_to_cost <= 2:    s3 = 10  # healthy
+            if 1.0 < premium_to_cost <= 2:    s3 = 10
             elif 1.0 < premium_to_cost <= 3:  s3 = 8
             elif 1.0 < premium_to_cost <= 5:  s3 = 6
             elif 1.0 < premium_to_cost <= 10: s3 = 4
-            elif premium_to_cost > 10:        s3 = 2   # excessive premium
-            elif premium_to_cost <= 1:        s3 = 1   # below cost
+            elif premium_to_cost > 10:        s3 = 2
+            elif premium_to_cost <= 1:        s3 = 1
         signals["security_premium"] = {
             "label": "Security Premium", "score": s3, "max": 10,
             "value": premium_to_cost, "unit": "price / production cost",
@@ -968,7 +1110,7 @@ def calc_fear_greed(price_change_7d, price_change_30d, volume, market_cap,
 # =============================================================================
 # MAIN COIN ANALYSER
 # =============================================================================
-def analyze_coin(coin, defillama_data, gold_mc):
+def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
     """Full valuation analysis for a single coin."""
     try:
         symbol   = coin["symbol"].upper()
@@ -999,10 +1141,17 @@ def analyze_coin(coin, defillama_data, gold_mc):
         if bucket == "A":
             slug        = DEFILLAMA_SLUGS.get(symbol)
             fee_data    = defillama_data.get(slug, {}) if slug else {}
-            annual_fees = fee_data.get("annual_fees")
-            annual_rev  = fee_data.get("annual_revenue")
+
+            # For L1 blockchains, DeFiLlama reports fees at the chain level
+            # not the protocol level — check chain endpoint as fallback
+            chain_slug  = CHAIN_FEE_MAP.get(symbol)
+            chain_data  = (defillama_chain_data or {}).get(chain_slug, {})                           if chain_slug else {}
+
+            # Prefer protocol-level data; fall back to chain-level
+            annual_fees = fee_data.get("annual_fees") or chain_data.get("annual_fees")
+            annual_rev  = fee_data.get("annual_revenue") or chain_data.get("annual_revenue")
             holders_rev = fee_data.get("annual_holders_revenue")
-            tvl         = fee_data.get("tvl")
+            tvl         = fee_data.get("tvl") or chain_data.get("tvl")
 
             # Method 1 — DCF on fees
             dcf_protocol_value = method_1_dcf_fees(annual_fees)
@@ -1051,16 +1200,66 @@ def analyze_coin(coin, defillama_data, gold_mc):
         # ── Network Economics charts ─────────────────────────────────────────
         # Computed BEFORE quality scoring so chart values feed into scores
         # ensuring the Quality tab and Network Economics charts always agree.
-        slug_for_charts = DEFILLAMA_SLUGS.get(symbol)
+        slug_for_charts  = DEFILLAMA_SLUGS.get(symbol)
+        chain_slug_charts = CHAIN_FEE_MAP.get(symbol)
+        # Merge protocol-level and chain-level fee summaries so that
+        # L1 chains (SOL, AVAX etc.) get their fee data into the charts
+        _proto_summary = defillama_data.get(slug_for_charts, {}) if slug_for_charts else {}
+        _chain_summary = (defillama_chain_data or {}).get(chain_slug_charts, {}) if chain_slug_charts else {}
+        _fee_summary   = {**_chain_summary, **_proto_summary}  # protocol wins on overlap
+
         network_econ    = fetch_network_economics(
-            slug         = slug_for_charts,
-            symbol       = symbol,
-            coin_data    = {
+            slug              = slug_for_charts or chain_slug_charts,
+            symbol            = symbol,
+            chain_slug        = chain_slug_charts,
+            coin_data         = {
                 "current_price": price,
                 "market_cap":    mc,
                 "dilution":      method_10_dilution(circ, total, max_sup, price, mc),
             },
-            defillama_summary = defillama_data.get(slug_for_charts, {}) if slug_for_charts else {},
+            defillama_summary = _fee_summary,
+        )
+
+        # ── Fear & Greed — token specific ────────────────────────────────────
+        fear_greed = calc_fear_greed(
+            price_change_7d  = chg_7d,
+            price_change_30d = chg_30d,
+            volume           = volume,
+            market_cap       = mc,
+            dilution_data    = dilution,
+            bucket           = bucket,
+        )
+
+        # ── Quality score ─────────────────────────────────────────────────────
+        # Reads from network_econ charts where possible — same values
+        # displayed in the Network Economics tab, ensuring full consistency.
+        _slug_data   = defillama_data.get(DEFILLAMA_SLUGS.get(symbol), {})
+        _ann_fees    = _slug_data.get("annual_fees")
+        _holders_rev = _slug_data.get("annual_holders_revenue")
+        _tvl         = _slug_data.get("tvl")
+        _gold_cap    = (bucket_b_data.get("monetary_premium") or {}).get("gold_capture_pct") if bucket == "B" else None
+        _prem_cost   = (bucket_b_data.get("cost_of_production") or {}).get("premium_to_production_cost") if bucket == "B" else None
+        _fdv_mc      = (dilution or {}).get("fdv_to_mc_ratio")
+
+        quality = score_crypto_quality(
+            bucket             = bucket,
+            mc_ps_ratio        = bucket_a_data.get("ps_ratio"),
+            mc_pe_ratio        = bucket_a_data.get("pe_ratio_fdv_to_holders_rev"),
+            dilution           = dilution,
+            metcalfe_ratio     = metcalfe_ratio,
+            gold_capture_pct   = _gold_cap,
+            premium_to_cost    = _prem_cost,
+            price_change_7d    = chg_7d,
+            price_change_30d   = chg_30d,
+            annual_fees        = _ann_fees,
+            annual_holders_rev = _holders_rev,
+            tvl                = _tvl,
+            volume             = volume,
+            mc                 = mc,
+            rank               = rank,
+            fdv_mc_ratio       = _fdv_mc,
+            network_econ       = network_econ,
+            symbol             = symbol,
         )
 
         # ── Valuation Chart — Forecast Adjustment Framework ──────────────────
@@ -1291,47 +1490,6 @@ def analyze_coin(coin, defillama_data, gold_mc):
             valuation_chart = {}
             forecast_meta   = {}
 
-        # ── Fear & Greed — token specific ────────────────────────────────────
-        fear_greed = calc_fear_greed(
-            price_change_7d  = chg_7d,
-            price_change_30d = chg_30d,
-            volume           = volume,
-            market_cap       = mc,
-            dilution_data    = dilution,
-            bucket           = bucket,
-        )
-
-        # ── Quality score ─────────────────────────────────────────────────────
-        # Reads from network_econ charts where possible — same values
-        # displayed in the Network Economics tab, ensuring full consistency.
-        _slug_data   = defillama_data.get(DEFILLAMA_SLUGS.get(symbol), {})
-        _ann_fees    = _slug_data.get("annual_fees")
-        _holders_rev = _slug_data.get("annual_holders_revenue")
-        _tvl         = _slug_data.get("tvl")
-        _gold_cap    = (bucket_b_data.get("monetary_premium") or {}).get("gold_capture_pct") if bucket == "B" else None
-        _prem_cost   = (bucket_b_data.get("cost_of_production") or {}).get("premium_to_production_cost") if bucket == "B" else None
-        _fdv_mc      = (dilution or {}).get("fdv_to_mc_ratio")
-
-        quality = score_crypto_quality(
-            bucket             = bucket,
-            mc_ps_ratio        = bucket_a_data.get("ps_ratio"),
-            mc_pe_ratio        = bucket_a_data.get("pe_ratio_fdv_to_holders_rev"),
-            dilution           = dilution,
-            metcalfe_ratio     = metcalfe_ratio,
-            gold_capture_pct   = _gold_cap,
-            premium_to_cost    = _prem_cost,
-            price_change_7d    = chg_7d,
-            price_change_30d   = chg_30d,
-            annual_fees        = _ann_fees,
-            annual_holders_rev = _holders_rev,
-            tvl                = _tvl,
-            volume             = volume,
-            mc                 = mc,
-            rank               = rank,
-            fdv_mc_ratio       = _fdv_mc,
-            network_econ       = network_econ,
-        )
-
         return symbol, {
             "name":              name,
             "coin_id":           coin_id,
@@ -1431,15 +1589,19 @@ def analyze_coin(coin, defillama_data, gold_mc):
 #   "current_only" — only current year estimate, no history
 #   "unavailable"  — no DeFiLlama data for this token
 # =============================================================================
-def fetch_network_economics(slug, symbol, coin_data, defillama_summary):
+def fetch_network_economics(slug, symbol, coin_data, defillama_summary,
+                             chain_slug=None):
     """
     Build the four Network Economics chart datasets for a single token.
 
-    Uses DeFiLlama /protocol/{slug} endpoint (free) which returns historical
-    TVL data and some fee data. Combines with current-year fee estimates
-    from the already-fetched summary data.
+    Data sources (in priority order):
+      1. DeFiLlama /protocol/{slug} — protocol-level TVL + fee history
+      2. DeFiLlama /v2/historicalChainTvl/{chain} — L1 chain TVL history
+      3. defillama_summary — current-year estimates from batch fetch
+      4. CoinGecko coin_data — supply, price, market cap (always available)
 
-    Returns the full network_economics block to attach to the coin's JSON.
+    Charts 3 (Issuance vs Burns) and partial Chart 4 are always populated
+    from CoinGecko data even when DeFiLlama coverage is unavailable.
     """
     current_year = datetime.now().year
     result = {
@@ -1472,6 +1634,7 @@ def fetch_network_economics(slug, symbol, coin_data, defillama_summary):
     historical_fees  = {}   # { year_str: fees_usd }
     years_of_history = 0
 
+    # ── Try protocol-level endpoint first ────────────────────────────────────
     if slug:
         try:
             resp = requests.get(
@@ -1480,31 +1643,45 @@ def fetch_network_economics(slug, symbol, coin_data, defillama_summary):
             )
             if resp.status_code == 200:
                 pdata = resp.json()
-
-                # TVL history — available free
-                tvl_hist = pdata.get("tvl", [])
-                for entry in tvl_hist:
+                # TVL history
+                for entry in pdata.get("tvl", []):
                     ts  = entry.get("date")
                     val = entry.get("totalLiquidityUSD")
                     if ts and val:
                         yr = str(datetime.fromtimestamp(ts).year)
-                        # Keep year-end value (last entry per year)
                         historical_tvl[yr] = round(float(val), 2)
-
-                # Fee history — may be in fees block (limited on free tier)
-                fees_hist = pdata.get("feesHistory", [])
-                for entry in fees_hist:
+                # Fee history (daily accumulate → yearly)
+                for entry in pdata.get("feesHistory", []):
                     ts  = entry.get("date")
                     val = entry.get("dailyFees")
                     if ts and val:
                         yr = str(datetime.fromtimestamp(ts).year)
-                        # Accumulate daily fees per year
                         historical_fees[yr] = historical_fees.get(yr, 0) + float(val)
-
-                years_of_history = len(set(historical_tvl.keys()) |
-                                       set(historical_fees.keys()))
         except Exception:
             pass
+
+    # ── Try chain-level TVL endpoint for L1 blockchains ──────────────────────
+    # DeFiLlama stores chain TVL separately from protocol TVL.
+    # e.g. Solana chain TVL is at /v2/historicalChainTvl/Solana
+    # This gives real historical TVL for chains like SOL, AVAX, MATIC.
+    if chain_slug and not historical_tvl:
+        try:
+            chain_name = chain_slug.capitalize()
+            resp2 = requests.get(
+                f"https://api.llama.fi/v2/historicalChainTvl/{chain_name}",
+                timeout=15
+            )
+            if resp2.status_code == 200:
+                for entry in resp2.json():
+                    ts  = entry.get("date")
+                    val = entry.get("tvl")
+                    if ts and val:
+                        yr = str(datetime.fromtimestamp(ts).year)
+                        historical_tvl[yr] = round(float(val), 2)
+        except Exception:
+            pass
+
+    years_of_history = len(set(historical_tvl.keys()) | set(historical_fees.keys()))
 
     # ── Determine data coverage label and user note ───────────────────────
     if years_of_history >= 3:
@@ -1523,14 +1700,10 @@ def fetch_network_economics(slug, symbol, coin_data, defillama_summary):
     else:
         coverage = "unavailable"
         note     = ("No protocol fee or TVL data found for this token on DeFiLlama. "
-                    "This is common for Store of Value tokens (BTC, LTC, DOGE), "
-                    "newly launched tokens, or tokens that do not generate protocol fees.")
-        result["meta"].update({
-            "data_coverage": coverage,
-            "years_available": 0,
-            "data_note": note,
-        })
-        return result
+                    "Charts 1 and 2 are unavailable. Charts 3 and 4 show "
+                    "current-year supply and dilution data from CoinGecko.")
+        # Do NOT return early — Charts 3 (issuance/burns) and 4 (capital
+        # efficiency) can still be partially populated from CoinGecko data.
 
     # ── Chart 1: Protocol Revenue & Fees ─────────────────────────────────
     # Historical years from DeFiLlama, current year from summary estimate
@@ -2018,7 +2191,8 @@ def main():
 
     # Step 2 — Fetch DeFiLlama protocol fees (Bucket A)
     print("\n[2] Fetching DeFiLlama protocol fee data...")
-    defillama_data = fetch_defillama_fees()
+    defillama_data       = fetch_defillama_fees()
+    defillama_chain_data = fetch_defillama_chain_fees()
     print(f"    Found fee data for {len(defillama_data)} protocols")
 
     # Step 3 — Fetch top 1000 coins from CoinGecko
@@ -2044,7 +2218,7 @@ def main():
     bucket_a_count = bucket_b_count = 0
 
     for coin in all_coins:
-        res = analyze_coin(coin, defillama_data, gold_mc)
+        res = analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data)
         if res:
             sym, data = res
             master_results[sym] = data
