@@ -4051,18 +4051,74 @@ def _sanitize(obj):
     return obj
 
 
+# Max bytes per sub-partition file before starting a new chunk.
+# ~1.5MB keeps files well under GitHub's "too large to display" threshold
+# (~2MB) and loads fast in the browser.
+MAX_PARTITION_BYTES = 1_500_000
+
 def save_partitioned_data(master_results):
-    partitions = {}
+    """
+    Saves ticker data into size-capped sub-partition files.
+
+    Files are named  data/stocks_{LETTER}{N}.json
+    e.g.  stocks_A1.json, stocks_A2.json, stocks_B1.json ...
+
+    When a file would exceed MAX_PARTITION_BYTES the current chunk is
+    flushed and a new one starts.  Typical result: ~30-80 tickers per
+    file, 2-4 files per letter, ~80-120 files total.
+
+    A ticker index  data/ticker_map.json  maps every symbol to its
+    filename so the app can fetch the right file without guessing.
+      { "AAPL": "stocks_A1", "MSFT": "stocks_M1", ... }
+    """
+    # Group tickers by first letter
+    by_letter = {}
     for ticker, data in master_results.items():
-        letter = ticker[0].upper()
-        if not letter.isalpha(): letter = "0-9"
-        if letter not in partitions: partitions[letter] = {}
-        partitions[letter][ticker] = _sanitize(data)   # strip NaN before writing
+        letter = ticker[0].upper() if ticker[0].isalpha() else "0"
+        by_letter.setdefault(letter, {})[ticker] = _sanitize(data)
+
     os.makedirs('data', exist_ok=True)
-    for letter, content in partitions.items():
-        with open(f'data/stocks_{letter}.json', 'w') as f:
-            json.dump(content, f, indent=4)
-    print("✅ Saved A–Z stock files.")
+    ticker_map = {}   # symbol → file stem (without .json)
+    files_written = 0
+
+    for letter in sorted(by_letter.keys()):
+        tickers_in_letter = by_letter[letter]
+        chunk = {}
+        chunk_num = 1
+
+        for ticker, data in tickers_in_letter.items():
+            chunk[ticker] = data
+            # Check size after adding — serialize to measure
+            approx_size = len(json.dumps(chunk))
+            if approx_size >= MAX_PARTITION_BYTES:
+                # Flush current chunk (without the ticker that tipped it)
+                chunk.pop(ticker)
+                if chunk:
+                    stem = f"stocks_{letter}{chunk_num}"
+                    with open(f'data/{stem}.json', 'w') as f:
+                        json.dump(chunk, f, indent=2)
+                    for t in chunk:
+                        ticker_map[t] = stem
+                    files_written += 1
+                    chunk_num += 1
+                # Start fresh chunk with the current ticker
+                chunk = {ticker: data}
+
+        # Flush remaining tickers in this letter
+        if chunk:
+            stem = f"stocks_{letter}{chunk_num}"
+            with open(f'data/{stem}.json', 'w') as f:
+                json.dump(chunk, f, indent=2)
+            for t in chunk:
+                ticker_map[t] = stem
+            files_written += 1
+
+    # Save ticker → file mapping so the app knows where to fetch
+    with open('data/ticker_map.json', 'w') as f:
+        json.dump(ticker_map, f, indent=2)
+
+    print(f"✅ Saved {len(master_results)} tickers across {files_written} files")
+    print(f"✅ Saved ticker_map.json ({len(ticker_map)} entries)")
 
 # =============================================================================
 # ENTRY POINT
