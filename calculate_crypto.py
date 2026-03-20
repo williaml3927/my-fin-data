@@ -1264,6 +1264,9 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
 
         # ── Valuation Chart — Forecast Adjustment Framework ──────────────────
         #
+        # current_year as int needed for chart year keys and arithmetic
+        current_year = datetime.now().year
+
         # Philosophy — no compounding growth lines for crypto:
         #   Unlike stocks, crypto has no EPS or analyst consensus growth rate.
         #   Projecting a compounding line gives false precision. Instead the
