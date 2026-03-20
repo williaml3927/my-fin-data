@@ -2,8 +2,8 @@ name: Update Financial Data
 
 on:
   schedule:
-    - cron: '0 0 * * *'   # Runs daily at midnight UTC
-  workflow_dispatch:        # Allows manual trigger from GitHub Actions tab
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -13,7 +13,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0    # Full history needed for reliable rebase
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -39,18 +39,9 @@ jobs:
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-
-          # Stage all output JSON files
-          git add data/*.json        || true
-          git add data_crypto/*.json || true
-
-          # Only commit if there are staged changes
-          git diff --staged --quiet && echo "No changes to commit" && exit 0
-
-          git commit -m "Automated Data Update — $(date -u '+%Y-%m-%d %H:%M UTC')"
-
-          # Pull any remote changes (e.g. from a concurrent run or manual edit)
-          # then replay our commit on top — prevents the push rejection error
+          git add data/stocks_*.json data/ticker_map.json         || true
+          git add data_crypto/crypto_*.json data_crypto/ticker_map.json || true
+          git diff --staged --quiet && echo "No changes" && exit 0
+          git commit -m "Automated Data Update $(date -u '+%Y-%m-%d %H:%M UTC')"
           git pull --rebase origin main
-
           git push
