@@ -4,56 +4,60 @@
         "coin_id": "ylds",
         "bucket": "A",
         "bucket_label": "Cash-Flow Protocol",
-        "current_price": 0.999911,
-        "market_cap": 570513983.0,
-        "fully_diluted_valuation": 570514235.27,
+        "current_price": 0.999908,
+        "market_cap": 570512571.0,
+        "fully_diluted_valuation": 570512523.58,
         "market_cap_rank": 93,
-        "price_change_7d_pct": -0.008944259711336234,
-        "price_change_30d_pct": -0.00668762546982892,
+        "price_change_7d_pct": -0.008848799765488602,
+        "price_change_30d_pct": -0.005090496453157193,
         "dilution": {
             "circulating_pct": 100.0,
             "supply_overhang": 0.0,
-            "fully_diluted_valuation": 570514235.27,
+            "fully_diluted_valuation": 570512523.58,
             "fdv_to_mc_ratio": 1.0
         },
-        "metcalfe_ratio": 67.42,
+        "metcalfe_ratio": 69.65,
         "quality": {
             "scores": {
                 "fee_growth": {
                     "label": "Fee Growth",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
-                    "unit": "fee/tvl %",
+                    "unit": "vol/MC proxy",
                     "chart_source": "raw calculation",
-                    "chart_ref": "Network Economics \u2192 Capital Efficiency"
+                    "chart_ref": "Network Economics \u2192 Capital Efficiency",
+                    "data_available": false
                 },
                 "capital_efficiency": {
                     "label": "Capital Efficiency",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
-                    "unit": "MC/fees ratio",
-                    "chart_source": "Protocol Metrics (MC/Fees)",
-                    "chart_ref": "Network Economics \u2192 Capital Efficiency"
+                    "unit": "rank proxy",
+                    "chart_source": "rank proxy (fee data unavailable)",
+                    "chart_ref": "Network Economics \u2192 Capital Efficiency",
+                    "data_available": false
                 },
                 "holder_value_accrual": {
                     "label": "Holder Value Accrual",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
-                    "unit": "% of fees to holders",
+                    "unit": "staking/validator proxy",
                     "chart_source": "raw calculation",
-                    "chart_ref": "Network Economics \u2192 Protocol Revenue & Fees"
+                    "chart_ref": "Network Economics \u2192 Protocol Revenue & Fees",
+                    "data_available": false
                 },
                 "network_demand": {
                     "label": "Network Demand",
                     "score": 2,
                     "max": 10,
-                    "value": 1.48,
+                    "value": 1.44,
                     "unit": "volume/MC %",
                     "chart_source": "raw calculation (CoinGecko volume)",
-                    "chart_ref": null
+                    "chart_ref": null,
+                    "data_available": true
                 },
                 "dilution_control": {
                     "label": "Dilution Control",
@@ -61,7 +65,7 @@
                     "max": 10,
                     "value": 100.0,
                     "unit": "circulating %",
-                    "chart_source": "raw calculation",
+                    "chart_source": "Network Economics chart",
                     "chart_ref": "Network Economics \u2192 Token Supply: Issuance vs Burns"
                 },
                 "protocol_maturity": {
@@ -74,9 +78,9 @@
                     "chart_ref": null
                 }
             },
-            "final_score": 2.7,
-            "final_score_pct": 26.7,
-            "classification": "Poor"
+            "final_score": 5.2,
+            "final_score_pct": 51.7,
+            "classification": "Moderate"
         },
         "fear_greed": {
             "score": 36,
@@ -92,13 +96,22 @@
         "network_economics": {
             "protocol_revenue_and_fees": {},
             "treasury_vs_emissions": {},
-            "issuance_vs_burns": {},
+            "issuance_vs_burns": {
+                "2026": {
+                    "circulating_supply_m": 570.57,
+                    "supply_overhang_pct": 0,
+                    "fdv_to_mc": 1.0,
+                    "burn_rate": null,
+                    "net_issuance_note": "Current snapshot only. Historical supply data requires on-chain indexing not available via free APIs.",
+                    "is_estimated": true
+                }
+            },
             "capital_efficiency": {},
             "meta": {
                 "data_coverage": "unavailable",
                 "years_available": 0,
-                "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. This is common for Store of Value tokens (BTC, LTC, DOGE), newly launched tokens, or tokens that do not generate protocol fees.",
-                "last_fetched": "2026-03-19 18:43"
+                "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
+                "last_fetched": "2026-03-20 04:53"
             }
         },
         "valuation_chart": {},
@@ -113,11 +126,11 @@
             ],
             "bear_points": [
                 "No historical fee data available on DeFiLlama \u2014 protocol may be too new or too small to have an established economic track record",
-                "Weak quality score of 2.7/10 (Poor) \u2014 most key metrics are below expectations",
-                "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets"
+                "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets",
+                "Regulatory uncertainty across major markets presents an ongoing risk"
             ],
             "source": "rules",
-            "generated_at": "2026-03-19 18:43"
+            "generated_at": "2026-03-20 04:54"
         },
         "protocol_metrics": {
             "annual_protocol_fees_usd": null,
@@ -130,11 +143,11 @@
             "pe_ratio_fdv_to_holders_rev": null,
             "data_source": "unavailable"
         },
-        "last_updated": "2026-03-19 18:43",
+        "last_updated": "2026-03-20 04:54",
         "market_fear_greed": {
-            "value": 23,
+            "value": 11,
             "classification": "Extreme Fear",
-            "timestamp": "1773878400"
+            "timestamp": "1773964800"
         }
     },
     "YFI": {
@@ -142,56 +155,60 @@
         "coin_id": "yearn-finance",
         "bucket": "A",
         "bucket_label": "Cash-Flow Protocol",
-        "current_price": 2706.26,
-        "market_cap": 96746681.0,
-        "fully_diluted_valuation": 99227729.16,
-        "market_cap_rank": 274,
-        "price_change_7d_pct": 6.316806403448597,
-        "price_change_30d_pct": -4.92568715529984,
+        "current_price": 2736.83,
+        "market_cap": 97955947.0,
+        "fully_diluted_valuation": 100348608.78,
+        "market_cap_rank": 272,
+        "price_change_7d_pct": 6.8746815786549,
+        "price_change_30d_pct": -5.021895020070594,
         "dilution": {
             "circulating_pct": 97.48,
             "supply_overhang": 2.52,
-            "fully_diluted_valuation": 99227729.16,
-            "fdv_to_mc_ratio": 1.03
+            "fully_diluted_valuation": 100348608.78,
+            "fdv_to_mc_ratio": 1.02
         },
-        "metcalfe_ratio": 10.68,
+        "metcalfe_ratio": 14.37,
         "quality": {
             "scores": {
                 "fee_growth": {
                     "label": "Fee Growth",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
-                    "unit": "fee/tvl %",
+                    "unit": "vol/MC proxy",
                     "chart_source": "raw calculation",
-                    "chart_ref": "Network Economics \u2192 Capital Efficiency"
+                    "chart_ref": "Network Economics \u2192 Capital Efficiency",
+                    "data_available": false
                 },
                 "capital_efficiency": {
                     "label": "Capital Efficiency",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
-                    "unit": "MC/fees ratio",
-                    "chart_source": "Protocol Metrics (MC/Fees)",
-                    "chart_ref": "Network Economics \u2192 Capital Efficiency"
+                    "unit": "rank proxy",
+                    "chart_source": "rank proxy (fee data unavailable)",
+                    "chart_ref": "Network Economics \u2192 Capital Efficiency",
+                    "data_available": false
                 },
                 "holder_value_accrual": {
                     "label": "Holder Value Accrual",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
-                    "unit": "% of fees to holders",
+                    "unit": "staking/validator proxy",
                     "chart_source": "raw calculation",
-                    "chart_ref": "Network Economics \u2192 Protocol Revenue & Fees"
+                    "chart_ref": "Network Economics \u2192 Protocol Revenue & Fees",
+                    "data_available": false
                 },
                 "network_demand": {
                     "label": "Network Demand",
                     "score": 6,
                     "max": 10,
-                    "value": 9.36,
+                    "value": 6.96,
                     "unit": "volume/MC %",
                     "chart_source": "raw calculation (CoinGecko volume)",
-                    "chart_ref": null
+                    "chart_ref": null,
+                    "data_available": true
                 },
                 "dilution_control": {
                     "label": "Dilution Control",
@@ -199,29 +216,29 @@
                     "max": 10,
                     "value": 97.48,
                     "unit": "circulating %",
-                    "chart_source": "raw calculation",
+                    "chart_source": "Network Economics chart",
                     "chart_ref": "Network Economics \u2192 Token Supply: Issuance vs Burns"
                 },
                 "protocol_maturity": {
                     "label": "Protocol Maturity",
                     "score": 0,
                     "max": 10,
-                    "value": 274,
+                    "value": 272,
                     "unit": "MC rank",
                     "chart_source": "raw calculation (CoinGecko rank)",
                     "chart_ref": null
                 }
             },
-            "final_score": 2.7,
-            "final_score_pct": 26.7,
-            "classification": "Poor"
+            "final_score": 5.2,
+            "final_score_pct": 51.7,
+            "classification": "Moderate"
         },
         "fear_greed": {
-            "score": 58,
+            "score": 46,
             "label": "Neutral",
             "components": {
-                "price_momentum": 7,
-                "volume_momentum": 16,
+                "price_momentum": 5,
+                "volume_momentum": 6,
                 "volatility": 10,
                 "momentum_trend": 15,
                 "dilution_pressure": 10
@@ -230,13 +247,22 @@
         "network_economics": {
             "protocol_revenue_and_fees": {},
             "treasury_vs_emissions": {},
-            "issuance_vs_burns": {},
+            "issuance_vs_burns": {
+                "2026": {
+                    "circulating_supply_m": 0.04,
+                    "supply_overhang_pct": 2.52,
+                    "fdv_to_mc": 1.02,
+                    "burn_rate": null,
+                    "net_issuance_note": "Current snapshot only. Historical supply data requires on-chain indexing not available via free APIs.",
+                    "is_estimated": true
+                }
+            },
             "capital_efficiency": {},
             "meta": {
                 "data_coverage": "unavailable",
                 "years_available": 0,
-                "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. This is common for Store of Value tokens (BTC, LTC, DOGE), newly launched tokens, or tokens that do not generate protocol fees.",
-                "last_fetched": "2026-03-19 18:44"
+                "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
+                "last_fetched": "2026-03-20 05:26"
             }
         },
         "valuation_chart": {},
@@ -245,17 +271,17 @@
         "iv_method": "Market price (no fee data available)",
         "bull_bear": {
             "bull_points": [
-                "yearn.finance maintains a top-274 market cap position with established liquidity",
+                "yearn.finance maintains a top-272 market cap position with established liquidity",
                 "Long-term adoption thesis remains intact for Cash-Flow Protocol assets",
                 "Broader crypto market development continues to benefit established protocols"
             ],
             "bear_points": [
                 "No historical fee data available on DeFiLlama \u2014 protocol may be too new or too small to have an established economic track record",
-                "Weak quality score of 2.7/10 (Poor) \u2014 most key metrics are below expectations",
-                "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets"
+                "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets",
+                "Regulatory uncertainty across major markets presents an ongoing risk"
             ],
             "source": "rules",
-            "generated_at": "2026-03-19 18:44"
+            "generated_at": "2026-03-20 05:27"
         },
         "protocol_metrics": {
             "annual_protocol_fees_usd": null,
@@ -268,11 +294,11 @@
             "pe_ratio_fdv_to_holders_rev": null,
             "data_source": "unavailable"
         },
-        "last_updated": "2026-03-19 18:44",
+        "last_updated": "2026-03-20 05:27",
         "market_fear_greed": {
-            "value": 23,
+            "value": 11,
             "classification": "Extreme Fear",
-            "timestamp": "1773878400"
+            "timestamp": "1773964800"
         }
     },
     "YZY": {
@@ -280,56 +306,60 @@
         "coin_id": "yzy",
         "bucket": "A",
         "bucket_label": "Cash-Flow Protocol",
-        "current_price": 0.326425,
-        "market_cap": 42450140.0,
-        "fully_diluted_valuation": 326425000.0,
-        "market_cap_rank": 501,
-        "price_change_7d_pct": 0.26190398823933636,
-        "price_change_30d_pct": -0.6500728074622544,
+        "current_price": 0.326476,
+        "market_cap": 42441901.0,
+        "fully_diluted_valuation": 326476000.0,
+        "market_cap_rank": 507,
+        "price_change_7d_pct": 0.1829262198207536,
+        "price_change_30d_pct": -0.7589298688451361,
         "dilution": {
             "circulating_pct": 13.0,
             "supply_overhang": 87.0,
-            "fully_diluted_valuation": 326425000.0,
+            "fully_diluted_valuation": 326476000.0,
             "fdv_to_mc_ratio": 7.69
         },
-        "metcalfe_ratio": 58.28,
+        "metcalfe_ratio": 60.1,
         "quality": {
             "scores": {
                 "fee_growth": {
                     "label": "Fee Growth",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
-                    "unit": "fee/tvl %",
+                    "unit": "vol/MC proxy",
                     "chart_source": "raw calculation",
-                    "chart_ref": "Network Economics \u2192 Capital Efficiency"
+                    "chart_ref": "Network Economics \u2192 Capital Efficiency",
+                    "data_available": false
                 },
                 "capital_efficiency": {
                     "label": "Capital Efficiency",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
-                    "unit": "MC/fees ratio",
-                    "chart_source": "Protocol Metrics (MC/Fees)",
-                    "chart_ref": "Network Economics \u2192 Capital Efficiency"
+                    "unit": "rank proxy",
+                    "chart_source": "rank proxy (fee data unavailable)",
+                    "chart_ref": "Network Economics \u2192 Capital Efficiency",
+                    "data_available": false
                 },
                 "holder_value_accrual": {
                     "label": "Holder Value Accrual",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
-                    "unit": "% of fees to holders",
+                    "unit": "staking/validator proxy",
                     "chart_source": "raw calculation",
-                    "chart_ref": "Network Economics \u2192 Protocol Revenue & Fees"
+                    "chart_ref": "Network Economics \u2192 Protocol Revenue & Fees",
+                    "data_available": false
                 },
                 "network_demand": {
                     "label": "Network Demand",
                     "score": 2,
                     "max": 10,
-                    "value": 1.72,
+                    "value": 1.66,
                     "unit": "volume/MC %",
                     "chart_source": "raw calculation (CoinGecko volume)",
-                    "chart_ref": null
+                    "chart_ref": null,
+                    "data_available": true
                 },
                 "dilution_control": {
                     "label": "Dilution Control",
@@ -337,21 +367,21 @@
                     "max": 10,
                     "value": 13.0,
                     "unit": "circulating %",
-                    "chart_source": "raw calculation",
+                    "chart_source": "Network Economics chart",
                     "chart_ref": "Network Economics \u2192 Token Supply: Issuance vs Burns"
                 },
                 "protocol_maturity": {
                     "label": "Protocol Maturity",
                     "score": 0,
                     "max": 10,
-                    "value": 501,
+                    "value": 507,
                     "unit": "MC rank",
                     "chart_source": "raw calculation (CoinGecko rank)",
                     "chart_ref": null
                 }
             },
-            "final_score": 0.3,
-            "final_score_pct": 3.3,
+            "final_score": 2.8,
+            "final_score_pct": 28.3,
             "classification": "Poor"
         },
         "fear_greed": {
@@ -368,13 +398,22 @@
         "network_economics": {
             "protocol_revenue_and_fees": {},
             "treasury_vs_emissions": {},
-            "issuance_vs_burns": {},
+            "issuance_vs_burns": {
+                "2026": {
+                    "circulating_supply_m": 130.0,
+                    "supply_overhang_pct": 87.0,
+                    "fdv_to_mc": 7.69,
+                    "burn_rate": null,
+                    "net_issuance_note": "Current snapshot only. Historical supply data requires on-chain indexing not available via free APIs.",
+                    "is_estimated": true
+                }
+            },
             "capital_efficiency": {},
             "meta": {
                 "data_coverage": "unavailable",
                 "years_available": 0,
-                "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. This is common for Store of Value tokens (BTC, LTC, DOGE), newly launched tokens, or tokens that do not generate protocol fees.",
-                "last_fetched": "2026-03-19 18:44"
+                "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
+                "last_fetched": "2026-03-20 06:10"
             }
         },
         "valuation_chart": {},
@@ -383,17 +422,17 @@
         "iv_method": "Market price (no fee data available)",
         "bull_bear": {
             "bull_points": [
-                "YZY maintains a top-501 market cap position with established liquidity",
+                "YZY maintains a top-507 market cap position with established liquidity",
                 "Long-term adoption thesis remains intact for Cash-Flow Protocol assets",
                 "Broader crypto market development continues to benefit established protocols"
             ],
             "bear_points": [
                 "No historical fee data available on DeFiLlama \u2014 protocol may be too new or too small to have an established economic track record",
-                "Weak quality score of 0.3/10 (Poor) \u2014 most key metrics are below expectations",
+                "Weak quality score of 2.8/10 (Poor) \u2014 most key metrics are below expectations",
                 "FDV is 7.7x market cap \u2014 large token unlocks ahead could create sustained sell pressure"
             ],
             "source": "rules",
-            "generated_at": "2026-03-19 18:44"
+            "generated_at": "2026-03-20 06:10"
         },
         "protocol_metrics": {
             "annual_protocol_fees_usd": null,
@@ -406,11 +445,11 @@
             "pe_ratio_fdv_to_holders_rev": null,
             "data_source": "unavailable"
         },
-        "last_updated": "2026-03-19 18:44",
+        "last_updated": "2026-03-20 06:10",
         "market_fear_greed": {
-            "value": 23,
+            "value": 11,
             "classification": "Extreme Fear",
-            "timestamp": "1773878400"
+            "timestamp": "1773964800"
         }
     },
     "YUSD": {
@@ -418,56 +457,60 @@
         "coin_id": "aegis-yusd",
         "bucket": "A",
         "bucket_label": "Cash-Flow Protocol",
-        "current_price": 0.998574,
-        "market_cap": 37978093.0,
-        "fully_diluted_valuation": 37978101.07,
-        "market_cap_rank": 547,
-        "price_change_7d_pct": -0.0009267239553526451,
-        "price_change_30d_pct": -0.007288613908795396,
+        "current_price": 0.998688,
+        "market_cap": 37982371.0,
+        "fully_diluted_valuation": 37982438.75,
+        "market_cap_rank": 551,
+        "price_change_7d_pct": 0.025369656237041415,
+        "price_change_30d_pct": -0.04527282638342886,
         "dilution": {
             "circulating_pct": 100.0,
             "supply_overhang": 0.0,
-            "fully_diluted_valuation": 37978101.07,
+            "fully_diluted_valuation": 37982438.75,
             "fdv_to_mc_ratio": 1.0
         },
-        "metcalfe_ratio": 13374.92,
+        "metcalfe_ratio": 11355.48,
         "quality": {
             "scores": {
                 "fee_growth": {
                     "label": "Fee Growth",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
-                    "unit": "fee/tvl %",
+                    "unit": "vol/MC proxy",
                     "chart_source": "raw calculation",
-                    "chart_ref": "Network Economics \u2192 Capital Efficiency"
+                    "chart_ref": "Network Economics \u2192 Capital Efficiency",
+                    "data_available": false
                 },
                 "capital_efficiency": {
                     "label": "Capital Efficiency",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
-                    "unit": "MC/fees ratio",
-                    "chart_source": "Protocol Metrics (MC/Fees)",
-                    "chart_ref": "Network Economics \u2192 Capital Efficiency"
+                    "unit": "rank proxy",
+                    "chart_source": "rank proxy (fee data unavailable)",
+                    "chart_ref": "Network Economics \u2192 Capital Efficiency",
+                    "data_available": false
                 },
                 "holder_value_accrual": {
                     "label": "Holder Value Accrual",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
-                    "unit": "% of fees to holders",
+                    "unit": "staking/validator proxy",
                     "chart_source": "raw calculation",
-                    "chart_ref": "Network Economics \u2192 Protocol Revenue & Fees"
+                    "chart_ref": "Network Economics \u2192 Protocol Revenue & Fees",
+                    "data_available": false
                 },
                 "network_demand": {
                     "label": "Network Demand",
-                    "score": 0,
+                    "score": 1,
                     "max": 10,
                     "value": 0.01,
                     "unit": "volume/MC %",
                     "chart_source": "raw calculation (CoinGecko volume)",
-                    "chart_ref": null
+                    "chart_ref": null,
+                    "data_available": true
                 },
                 "dilution_control": {
                     "label": "Dilution Control",
@@ -475,44 +518,53 @@
                     "max": 10,
                     "value": 100.0,
                     "unit": "circulating %",
-                    "chart_source": "raw calculation",
+                    "chart_source": "Network Economics chart",
                     "chart_ref": "Network Economics \u2192 Token Supply: Issuance vs Burns"
                 },
                 "protocol_maturity": {
                     "label": "Protocol Maturity",
                     "score": 0,
                     "max": 10,
-                    "value": 547,
+                    "value": 551,
                     "unit": "MC rank",
                     "chart_source": "raw calculation (CoinGecko rank)",
                     "chart_ref": null
                 }
             },
-            "final_score": 1.7,
-            "final_score_pct": 16.7,
-            "classification": "Poor"
+            "final_score": 4.3,
+            "final_score_pct": 43.3,
+            "classification": "Weak"
         },
         "fear_greed": {
-            "score": 31,
-            "label": "Fear",
+            "score": 43,
+            "label": "Neutral",
             "components": {
                 "price_momentum": 7,
                 "volume_momentum": 3,
                 "volatility": 8,
-                "momentum_trend": 3,
+                "momentum_trend": 15,
                 "dilution_pressure": 10
             }
         },
         "network_economics": {
             "protocol_revenue_and_fees": {},
             "treasury_vs_emissions": {},
-            "issuance_vs_burns": {},
+            "issuance_vs_burns": {
+                "2026": {
+                    "circulating_supply_m": 38.03,
+                    "supply_overhang_pct": 0,
+                    "fdv_to_mc": 1.0,
+                    "burn_rate": null,
+                    "net_issuance_note": "Current snapshot only. Historical supply data requires on-chain indexing not available via free APIs.",
+                    "is_estimated": true
+                }
+            },
             "capital_efficiency": {},
             "meta": {
                 "data_coverage": "unavailable",
                 "years_available": 0,
-                "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. This is common for Store of Value tokens (BTC, LTC, DOGE), newly launched tokens, or tokens that do not generate protocol fees.",
-                "last_fetched": "2026-03-19 18:44"
+                "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
+                "last_fetched": "2026-03-20 06:18"
             }
         },
         "valuation_chart": {},
@@ -521,17 +573,17 @@
         "iv_method": "Market price (no fee data available)",
         "bull_bear": {
             "bull_points": [
-                "Aegis YUSD maintains a top-547 market cap position with established liquidity",
+                "Aegis YUSD maintains a top-551 market cap position with established liquidity",
                 "Long-term adoption thesis remains intact for Cash-Flow Protocol assets",
                 "Broader crypto market development continues to benefit established protocols"
             ],
             "bear_points": [
                 "No historical fee data available on DeFiLlama \u2014 protocol may be too new or too small to have an established economic track record",
-                "Weak quality score of 1.7/10 (Poor) \u2014 most key metrics are below expectations",
-                "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets"
+                "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets",
+                "Regulatory uncertainty across major markets presents an ongoing risk"
             ],
             "source": "rules",
-            "generated_at": "2026-03-19 18:44"
+            "generated_at": "2026-03-20 06:18"
         },
         "protocol_metrics": {
             "annual_protocol_fees_usd": null,
@@ -544,11 +596,11 @@
             "pe_ratio_fdv_to_holders_rev": null,
             "data_source": "unavailable"
         },
-        "last_updated": "2026-03-19 18:44",
+        "last_updated": "2026-03-20 06:18",
         "market_fear_greed": {
-            "value": 23,
+            "value": 11,
             "classification": "Extreme Fear",
-            "timestamp": "1773878400"
+            "timestamp": "1773964800"
         }
     },
     "YOUSD": {
@@ -557,15 +609,15 @@
         "bucket": "A",
         "bucket_label": "Cash-Flow Protocol",
         "current_price": 1.072,
-        "market_cap": 32234408.0,
-        "fully_diluted_valuation": 32240212.17,
-        "market_cap_rank": 609,
-        "price_change_7d_pct": 0.08852706098561519,
-        "price_change_30d_pct": 0.45202177352237916,
+        "market_cap": 32047529.0,
+        "fully_diluted_valuation": 32050817.38,
+        "market_cap_rank": 620,
+        "price_change_7d_pct": 0.08721179955105442,
+        "price_change_30d_pct": 0.4288339034566293,
         "dilution": {
             "circulating_pct": 100.0,
             "supply_overhang": 0.0,
-            "fully_diluted_valuation": 32240212.17,
+            "fully_diluted_valuation": 32050817.38,
             "fdv_to_mc_ratio": 1.0
         },
         "metcalfe_ratio": null,
@@ -573,39 +625,43 @@
             "scores": {
                 "fee_growth": {
                     "label": "Fee Growth",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
-                    "unit": "fee/tvl %",
+                    "unit": "vol/MC proxy",
                     "chart_source": "raw calculation",
-                    "chart_ref": "Network Economics \u2192 Capital Efficiency"
+                    "chart_ref": "Network Economics \u2192 Capital Efficiency",
+                    "data_available": false
                 },
                 "capital_efficiency": {
                     "label": "Capital Efficiency",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
-                    "unit": "MC/fees ratio",
-                    "chart_source": "Protocol Metrics (MC/Fees)",
-                    "chart_ref": "Network Economics \u2192 Capital Efficiency"
+                    "unit": "rank proxy",
+                    "chart_source": "rank proxy (fee data unavailable)",
+                    "chart_ref": "Network Economics \u2192 Capital Efficiency",
+                    "data_available": false
                 },
                 "holder_value_accrual": {
                     "label": "Holder Value Accrual",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
-                    "unit": "% of fees to holders",
+                    "unit": "staking/validator proxy",
                     "chart_source": "raw calculation",
-                    "chart_ref": "Network Economics \u2192 Protocol Revenue & Fees"
+                    "chart_ref": "Network Economics \u2192 Protocol Revenue & Fees",
+                    "data_available": false
                 },
                 "network_demand": {
                     "label": "Network Demand",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
                     "unit": "volume/MC %",
                     "chart_source": "raw calculation (CoinGecko volume)",
-                    "chart_ref": null
+                    "chart_ref": null,
+                    "data_available": false
                 },
                 "dilution_control": {
                     "label": "Dilution Control",
@@ -613,22 +669,22 @@
                     "max": 10,
                     "value": 100.0,
                     "unit": "circulating %",
-                    "chart_source": "raw calculation",
+                    "chart_source": "Network Economics chart",
                     "chart_ref": "Network Economics \u2192 Token Supply: Issuance vs Burns"
                 },
                 "protocol_maturity": {
                     "label": "Protocol Maturity",
                     "score": 0,
                     "max": 10,
-                    "value": 609,
+                    "value": 620,
                     "unit": "MC rank",
                     "chart_source": "raw calculation (CoinGecko rank)",
                     "chart_ref": null
                 }
             },
-            "final_score": 1.7,
-            "final_score_pct": 16.7,
-            "classification": "Poor"
+            "final_score": 5.0,
+            "final_score_pct": 50.0,
+            "classification": "Moderate"
         },
         "fear_greed": {
             "score": 43,
@@ -644,13 +700,22 @@
         "network_economics": {
             "protocol_revenue_and_fees": {},
             "treasury_vs_emissions": {},
-            "issuance_vs_burns": {},
+            "issuance_vs_burns": {
+                "2026": {
+                    "circulating_supply_m": 29.9,
+                    "supply_overhang_pct": 0,
+                    "fdv_to_mc": 1.0,
+                    "burn_rate": null,
+                    "net_issuance_note": "Current snapshot only. Historical supply data requires on-chain indexing not available via free APIs.",
+                    "is_estimated": true
+                }
+            },
             "capital_efficiency": {},
             "meta": {
                 "data_coverage": "unavailable",
                 "years_available": 0,
-                "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. This is common for Store of Value tokens (BTC, LTC, DOGE), newly launched tokens, or tokens that do not generate protocol fees.",
-                "last_fetched": "2026-03-19 18:44"
+                "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
+                "last_fetched": "2026-03-20 06:32"
             }
         },
         "valuation_chart": {},
@@ -659,17 +724,17 @@
         "iv_method": "Market price (no fee data available)",
         "bull_bear": {
             "bull_points": [
-                "Yield Optimizer USD maintains a top-609 market cap position with established liquidity",
+                "Yield Optimizer USD maintains a top-620 market cap position with established liquidity",
                 "Long-term adoption thesis remains intact for Cash-Flow Protocol assets",
                 "Broader crypto market development continues to benefit established protocols"
             ],
             "bear_points": [
                 "No historical fee data available on DeFiLlama \u2014 protocol may be too new or too small to have an established economic track record",
-                "Weak quality score of 1.7/10 (Poor) \u2014 most key metrics are below expectations",
-                "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets"
+                "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets",
+                "Regulatory uncertainty across major markets presents an ongoing risk"
             ],
             "source": "rules",
-            "generated_at": "2026-03-19 18:44"
+            "generated_at": "2026-03-20 06:32"
         },
         "protocol_metrics": {
             "annual_protocol_fees_usd": null,
@@ -682,11 +747,11 @@
             "pe_ratio_fdv_to_holders_rev": null,
             "data_source": "unavailable"
         },
-        "last_updated": "2026-03-19 18:44",
+        "last_updated": "2026-03-20 06:32",
         "market_fear_greed": {
-            "value": 23,
+            "value": 11,
             "classification": "Extreme Fear",
-            "timestamp": "1773878400"
+            "timestamp": "1773964800"
         }
     },
     "YGG": {
@@ -694,56 +759,60 @@
         "coin_id": "yield-guild-games",
         "bucket": "A",
         "bucket_label": "Cash-Flow Protocol",
-        "current_price": 0.03939578,
-        "market_cap": 28218387.0,
-        "fully_diluted_valuation": 39395780.0,
+        "current_price": 0.03992988,
+        "market_cap": 28614381.0,
+        "fully_diluted_valuation": 39929880.0,
         "market_cap_rank": 667,
-        "price_change_7d_pct": -0.6743906823400733,
-        "price_change_30d_pct": -2.93573856910407,
+        "price_change_7d_pct": -0.672784177368969,
+        "price_change_30d_pct": -3.1899501837302684,
         "dilution": {
             "circulating_pct": 71.62,
             "supply_overhang": 28.38,
-            "fully_diluted_valuation": 39395780.0,
+            "fully_diluted_valuation": 39929880.0,
             "fdv_to_mc_ratio": 1.4
         },
-        "metcalfe_ratio": 3.93,
+        "metcalfe_ratio": 4.39,
         "quality": {
             "scores": {
                 "fee_growth": {
                     "label": "Fee Growth",
-                    "score": 0,
+                    "score": 6,
                     "max": 10,
                     "value": null,
-                    "unit": "fee/tvl %",
+                    "unit": "vol/MC proxy",
                     "chart_source": "raw calculation",
-                    "chart_ref": "Network Economics \u2192 Capital Efficiency"
+                    "chart_ref": "Network Economics \u2192 Capital Efficiency",
+                    "data_available": false
                 },
                 "capital_efficiency": {
                     "label": "Capital Efficiency",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
-                    "unit": "MC/fees ratio",
-                    "chart_source": "Protocol Metrics (MC/Fees)",
-                    "chart_ref": "Network Economics \u2192 Capital Efficiency"
+                    "unit": "rank proxy",
+                    "chart_source": "rank proxy (fee data unavailable)",
+                    "chart_ref": "Network Economics \u2192 Capital Efficiency",
+                    "data_available": false
                 },
                 "holder_value_accrual": {
                     "label": "Holder Value Accrual",
-                    "score": 0,
+                    "score": 5,
                     "max": 10,
                     "value": null,
-                    "unit": "% of fees to holders",
+                    "unit": "staking/validator proxy",
                     "chart_source": "raw calculation",
-                    "chart_ref": "Network Economics \u2192 Protocol Revenue & Fees"
+                    "chart_ref": "Network Economics \u2192 Protocol Revenue & Fees",
+                    "data_available": false
                 },
                 "network_demand": {
                     "label": "Network Demand",
                     "score": 10,
                     "max": 10,
-                    "value": 25.43,
+                    "value": 22.79,
                     "unit": "volume/MC %",
                     "chart_source": "raw calculation (CoinGecko volume)",
-                    "chart_ref": null
+                    "chart_ref": null,
+                    "data_available": true
                 },
                 "dilution_control": {
                     "label": "Dilution Control",
@@ -751,7 +820,7 @@
                     "max": 10,
                     "value": 71.62,
                     "unit": "circulating %",
-                    "chart_source": "raw calculation",
+                    "chart_source": "Network Economics chart",
                     "chart_ref": "Network Economics \u2192 Token Supply: Issuance vs Burns"
                 },
                 "protocol_maturity": {
@@ -764,9 +833,9 @@
                     "chart_ref": null
                 }
             },
-            "final_score": 2.7,
-            "final_score_pct": 26.7,
-            "classification": "Poor"
+            "final_score": 5.3,
+            "final_score_pct": 53.3,
+            "classification": "Moderate"
         },
         "fear_greed": {
             "score": 49,
@@ -782,13 +851,22 @@
         "network_economics": {
             "protocol_revenue_and_fees": {},
             "treasury_vs_emissions": {},
-            "issuance_vs_burns": {},
+            "issuance_vs_burns": {
+                "2026": {
+                    "circulating_supply_m": 716.62,
+                    "supply_overhang_pct": 28.38,
+                    "fdv_to_mc": 1.4,
+                    "burn_rate": null,
+                    "net_issuance_note": "Current snapshot only. Historical supply data requires on-chain indexing not available via free APIs.",
+                    "is_estimated": true
+                }
+            },
             "capital_efficiency": {},
             "meta": {
                 "data_coverage": "unavailable",
                 "years_available": 0,
-                "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. This is common for Store of Value tokens (BTC, LTC, DOGE), newly launched tokens, or tokens that do not generate protocol fees.",
-                "last_fetched": "2026-03-19 18:44"
+                "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
+                "last_fetched": "2026-03-20 06:40"
             }
         },
         "valuation_chart": {},
@@ -803,11 +881,11 @@
             ],
             "bear_points": [
                 "No historical fee data available on DeFiLlama \u2014 protocol may be too new or too small to have an established economic track record",
-                "Weak quality score of 2.7/10 (Poor) \u2014 most key metrics are below expectations",
-                "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets"
+                "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets",
+                "Regulatory uncertainty across major markets presents an ongoing risk"
             ],
             "source": "rules",
-            "generated_at": "2026-03-19 18:44"
+            "generated_at": "2026-03-20 06:40"
         },
         "protocol_metrics": {
             "annual_protocol_fees_usd": null,
@@ -820,11 +898,11 @@
             "pe_ratio_fdv_to_holders_rev": null,
             "data_source": "unavailable"
         },
-        "last_updated": "2026-03-19 18:44",
+        "last_updated": "2026-03-20 06:40",
         "market_fear_greed": {
-            "value": 23,
+            "value": 11,
             "classification": "Extreme Fear",
-            "timestamp": "1773878400"
+            "timestamp": "1773964800"
         }
     }
 }
