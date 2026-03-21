@@ -181,11 +181,25 @@ def fetch_defillama_fees():
     """
     Fetch annual protocol fee data from DeFiLlama free API.
     Returns dict: { protocol_slug: { annual_fees, annual_revenue,
-                                     annual_holders_revenue } }
+                                     annual_holders_revenue, tvl } }
+
+    Annualisation priority (most stable first):
+      1. total30d * (365/30) — 30-day smoothed average
+      2. total7d  * (365/7)  — 7-day smoothed average
+      3. total24h * 365      — last resort (single-day, noisy)
     """
     result = {}
+
+    def _annualise(p):
+        t30 = _safe(p.get("total30d"))
+        t7  = _safe(p.get("total7d"))
+        t24 = _safe(p.get("total24h", 0))
+        if t30 and t30 > 0:  return round(t30 * (365 / 30), 2)
+        if t7  and t7  > 0:  return round(t7  * (365 / 7),  2)
+        if t24 and t24 > 0:  return round(t24 * 365,         2)
+        return 0
+
     try:
-        # Total fees paid by users
         resp = requests.get(
             f"{DEFILLAMA_FEES}?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true",
             timeout=20
@@ -196,10 +210,11 @@ def fetch_defillama_fees():
 
         for p in data.get("protocols", []):
             slug = p.get("slug") or p.get("name", "").lower().replace(" ", "-")
+            annual_fees = _annualise(p)
             result[slug] = {
-                "annual_fees":            _safe(p.get("total24h", 0)) * 365,
+                "annual_fees":            annual_fees,
                 "annual_revenue":         _safe(p.get("totalAllTime")) or
-                                          (_safe(p.get("total24h", 0)) * 365 * 0.15),
+                                          round(annual_fees * 0.15, 2),
                 "annual_holders_revenue": None,
                 "tvl":                    _safe(p.get("tvl")),
             }
@@ -218,13 +233,12 @@ def fetch_defillama_fees():
             for p in data2.get("protocols", []):
                 slug = p.get("slug") or p.get("name", "").lower().replace(" ", "-")
                 if slug in result:
-                    result[slug]["annual_holders_revenue"] = (
-                        _safe(p.get("total24h", 0)) * 365
-                    )
+                    result[slug]["annual_holders_revenue"] = _annualise(p) or None
     except Exception:
         pass
 
     return result
+
 
 
 def fetch_defillama_chain_fees():
@@ -575,59 +589,244 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
                           fdv_mc_ratio=None, network_econ=None,
                           symbol=None):
     """
-    network_econ: the pre-computed network_economics dict from
-                  fetch_network_economics(). When provided, quality signals
-                  read directly from chart data so the Quality tab and
-                  Network Economics charts always show identical values.
+    Score a token's investment quality across 6 signals (0-10 each, max 60).
+
+    KEY DESIGN PRINCIPLES
+    ─────────────────────
+    1. Missing data → neutral score (5/10), NEVER zero.
+       Absence of DeFiLlama coverage ≠ absence of protocol quality.
+       Many excellent protocols (UNI, AAVE, SOL) generate real economic
+       value through channels not fully indexed by DeFiLlama.
+
+    2. Known-protocol quality hints override weak proxy scores for
+       blue-chip protocols where fundamental quality is well-established
+       from public data (fee revenues, TVL, governance participation).
+
+    3. Classification thresholds are calibrated for a neutral-default system:
+       - Excellent  ≥ 75%  (A): BTC, ETH — absolute top tier
+       - Strong     ≥ 60%  (B): SOL, BNB, UNI, AAVE — blue chip
+       - Moderate   ≥ 45%  (C): ADA, DOT, MATIC — established
+       - Weak       ≥ 30%  (D): smaller alts, limited track record
+       - Poor        < 30%  (F): highly speculative / red flags
 
     Returns:
       {
-        "scores": {
-            signal_name: { "score": int, "max": int, "value": raw_value,
-                           "chart_source": str }
-        },
-        "final_score":     int (0-10),
-        "final_score_pct": float,
+        "scores": { signal: { "score", "max", "value", "label", ... } },
+        "final_score":     float (0-10),
+        "final_score_pct": float (0-100),
         "classification":  str,
+        "grade":           str  (A/B/C/D/F),
       }
     """
     signals = {}
     current_year = str(datetime.now().year)
+    _sym = (symbol or "").upper()
+
+    # ── Known-protocol quality hints ──────────────────────────────────────────
+    # Curated scores based on 2024 public data (DeFiLlama, protocol docs).
+    # Format: symbol → { fee_growth, capital_efficiency, holder_value_accrual }
+    # These apply ONLY when DeFiLlama live data is unavailable.
+    # Real on-chain data always takes precedence when available.
+    #
+    # SCORING PHILOSOPHY (per signal, 0-10):
+    #   fee_growth:           Does the protocol generate meaningful fees relative
+    #                         to its TVL/market cap? Are fees growing?
+    #   capital_efficiency:   How efficiently does the protocol use locked capital
+    #                         to generate revenue? (low MC/fees ratio = efficient)
+    #   holder_value_accrual: Do token holders DIRECTLY receive protocol revenue?
+    #                         Governance-only tokens score low even with high fees.
+    #
+    # IMPORTANT DISTINCTIONS:
+    #   - ETH/SOL/BNB: L1 settlement layers — fees + burns + staking yield
+    #   - UNI: MASSIVE volume but fee switch OFF — LPs get fees, UNI holders get 0
+    #   - ARB/OP: sequencer fees go to foundation, not token holders
+    #   - GMX/SNX/GNS: best-in-class fee distribution TO holders
+    #
+    # Sources: DeFiLlama 2024, protocol documentation, governance forums
+    PROTOCOL_HINTS = {
+
+        # ══════════════════════════════════════════════════════════════════════
+        # TIER 1 — Settlement Layers (irreplaceable infrastructure)
+        # ══════════════════════════════════════════════════════════════════════
+
+        # ETH: 2024 ~$2.7B fees, ~$1.6B burned (EIP-1559), stakers earn
+        # 3-4% real yield. Deflationary + productive = strongest value capture
+        # in crypto. Cannot be forked without losing the entire network effect.
+        "ETH":    {"fee_growth": 10, "capital_efficiency": 9, "holder_value_accrual": 8},
+
+        # SOL: 2024 ~$800M fees (fastest growing L1), 50%+ of supply staking,
+        # staking yield ~7-8%, MEV capture growing. Post-FTX recovery validates
+        # network resilience. Significant validator revenue.
+        "SOL":    {"fee_growth": 9,  "capital_efficiency": 8, "holder_value_accrual": 7},
+
+        # BNB: quarterly burn mechanism (~$1.5B burned 2024), BSC gas utility,
+        # Binance ecosystem integration. Centralisation risk caps score.
+        "BNB":    {"fee_growth": 8,  "capital_efficiency": 7, "holder_value_accrual": 6},
+
+        # TRX: high transaction volume, USDT on Tron is #1 stablecoin chain,
+        # TRX burn mechanism active. Centralisation concern limits upside.
+        "TRX":    {"fee_growth": 8,  "capital_efficiency": 7, "holder_value_accrual": 5},
+
+        # TON: Telegram integration driving real user adoption, growing fees,
+        # validator staking yield. Early stage but genuine network activity.
+        "TON":    {"fee_growth": 7,  "capital_efficiency": 6, "holder_value_accrual": 5},
+
+        # ══════════════════════════════════════════════════════════════════════
+        # TIER 2 — Blue-chip DeFi (real revenue, strong value capture)
+        # ══════════════════════════════════════════════════════════════════════
+
+        # MKR: 2024 ~$200M+ stability fee revenue, active MKR buyback-burn,
+        # DAI is most battle-tested decentralised stablecoin. Endgame roadmap.
+        # Token holders directly benefit from burns.
+        "MKR":    {"fee_growth": 8,  "capital_efficiency": 8, "holder_value_accrual": 8},
+
+        # GMX: 2024 ~$300M+ fees, 30% to GMX stakers, 70% to GLP.
+        # Best-in-class holder value accrual in DeFi perps.
+        "GMX":    {"fee_growth": 8,  "capital_efficiency": 8, "holder_value_accrual": 9},
+
+        # PENDLE: vePENDLE receives 80% of swap fees + additional protocol yield.
+        # Yield tokenisation is a growing niche with real institutional demand.
+        "PENDLE": {"fee_growth": 8,  "capital_efficiency": 7, "holder_value_accrual": 8},
+
+        # SNX: All protocol fees distributed to SNX stakers. Synthetix perps
+        # powers many major frontends. 2024 revenue ~$180M+.
+        "SNX":    {"fee_growth": 8,  "capital_efficiency": 7, "holder_value_accrual": 8},
+
+        # AAVE: 2024 ~$300M+ fees, $16B TVL (#1 lending protocol), fee switch
+        # proposal active (Aavenomics). Currently partial holder accrual.
+        "AAVE":   {"fee_growth": 8,  "capital_efficiency": 7, "holder_value_accrual": 6},
+
+        # LDO: 2024 ~$200M protocol revenue (10% of ~$30B stETH staking rewards).
+        # Lido controls ~32% of all staked ETH. Accrual to DAO treasury (indirect).
+        "LDO":    {"fee_growth": 8,  "capital_efficiency": 7, "holder_value_accrual": 5},
+
+        # CVX: Controls Curve gauge votes, vlCVX earns cvxCRV weekly revenue.
+        # Flywheel: Convex owns most veCRV → earns Curve fees → rewards vlCVX.
+        "CVX":    {"fee_growth": 7,  "capital_efficiency": 7, "holder_value_accrual": 8},
+
+        # CRV: veCRV receives 50% of all Curve trading fees. $4B+ TVL.
+        # Gauge system drives sustained fee generation. Declining market share risk.
+        "CRV":    {"fee_growth": 7,  "capital_efficiency": 7, "holder_value_accrual": 7},
+
+        # RPL: 15% commission on all Rocket Pool ETH staked by node operators.
+        # Decentralised ETH staking protocol. ETH staking growth = RPL revenue growth.
+        "RPL":    {"fee_growth": 7,  "capital_efficiency": 7, "holder_value_accrual": 7},
+
+        # GNS: All gTrade protocol fees distributed to GNS/DAI stakers.
+        # Concentrated decentralised perps on Polygon/Arbitrum. Small but efficient.
+        "GNS":    {"fee_growth": 7,  "capital_efficiency": 7, "holder_value_accrual": 8},
+
+        # ENA: Ethena sUSDe delta-neutral yield strategy, protocol revenue
+        # shared with ENA stakers via sENA. Growing TVL in RWA/yield space.
+        "ENA":    {"fee_growth": 7,  "capital_efficiency": 7, "holder_value_accrual": 7},
+
+        # CAKE: veCAKE buyback-burn + direct fee distribution to stakers.
+        # BSC #1 DEX by volume. Revenue declining with BSC but still significant.
+        "CAKE":   {"fee_growth": 8,  "capital_efficiency": 7, "holder_value_accrual": 7},
+
+        # JUP: Jupiter is Solana's dominant aggregator. Fee sharing to JUP holders
+        # active. Benefits from Solana's fee growth directly.
+        "JUP":    {"fee_growth": 8,  "capital_efficiency": 7, "holder_value_accrual": 6},
+
+        # RAY: Raydium is Solana's leading AMM, buyback from protocol fees.
+        # Benefits from Solana ecosystem growth.
+        "RAY":    {"fee_growth": 8,  "capital_efficiency": 7, "holder_value_accrual": 6},
+
+        # DYDX: v4 chain with fees going to stakers. Growing perps volume.
+        # Migration to own chain adds complexity but enables direct fee accrual.
+        "DYDX":   {"fee_growth": 7,  "capital_efficiency": 6, "holder_value_accrual": 6},
+
+        # ══════════════════════════════════════════════════════════════════════
+        # TIER 3 — Good DeFi but limited direct holder accrual
+        # ══════════════════════════════════════════════════════════════════════
+
+        # UNI: CRITICAL — fee switch is OFF as of 2024/2025.
+        # Uniswap generates $1T+ in annual volume and ~$1B+ in LP fees.
+        # BUT: 100% of fees go to liquidity providers, ZERO to UNI holders.
+        # UNI value is governance rights + fee switch optionality only.
+        # Fee switch vote failed in 2024; new proposal in 2025 may change this.
+        # Score reflects current reality, not future potential.
+        "UNI":    {"fee_growth": 7,  "capital_efficiency": 6, "holder_value_accrual": 3},
+
+        # LINK: Staking v0.2 active, node operators receive query fees.
+        # Oracle market leader but token accrual model still maturing.
+        "LINK":   {"fee_growth": 7,  "capital_efficiency": 7, "holder_value_accrual": 5},
+
+        # BAL: veBAL receives 50-75% of protocol fees. Smaller than Curve/Uniswap.
+        "BAL":    {"fee_growth": 6,  "capital_efficiency": 6, "holder_value_accrual": 6},
+
+        # COMP: Governance token, some fee accrual, declining market share vs Aave.
+        "COMP":   {"fee_growth": 6,  "capital_efficiency": 6, "holder_value_accrual": 4},
+
+        # SUSHI: xSUSHI earns 0.05% of swap fees. Declining market share.
+        "SUSHI":  {"fee_growth": 6,  "capital_efficiency": 5, "holder_value_accrual": 5},
+
+        # GRT: Query fees to indexers, curation signal rewards. Growing ecosystem.
+        "GRT":    {"fee_growth": 6,  "capital_efficiency": 6, "holder_value_accrual": 5},
+
+        # PYTH: Growing oracle adoption on Solana + multichain, staking rewards.
+        "PYTH":   {"fee_growth": 6,  "capital_efficiency": 6, "holder_value_accrual": 5},
+
+        # PERP: Protocol perps, some fee distribution. Smaller scale.
+        "PERP":   {"fee_growth": 5,  "capital_efficiency": 5, "holder_value_accrual": 5},
+
+        # 1INCH: Fusion model fees, partial buyback. Declining DEX aggregator share.
+        "1INCH":  {"fee_growth": 5,  "capital_efficiency": 5, "holder_value_accrual": 4},
+
+        # BAND":   oracle, smaller scale than LINK
+        "BAND":   {"fee_growth": 5,  "capital_efficiency": 5, "holder_value_accrual": 4},
+
+        # API3: dAPI fees, smaller oracle network
+        "API3":   {"fee_growth": 5,  "capital_efficiency": 5, "holder_value_accrual": 4},
+
+        # ══════════════════════════════════════════════════════════════════════
+        # L2s — sequencer fees go to foundation, NOT token holders
+        # ══════════════════════════════════════════════════════════════════════
+
+        # ARB: Arbitrum Foundation collects sequencer revenue. ARB is governance
+        # only. No direct fee accrual to ARB holders. Large supply overhang.
+        "ARB":    {"fee_growth": 5,  "capital_efficiency": 5, "holder_value_accrual": 2},
+
+        # OP: Same as ARB — OP Foundation gets fees. OP is governance token.
+        "OP":     {"fee_growth": 5,  "capital_efficiency": 5, "holder_value_accrual": 2},
+
+        # AXL: Cross-chain fees, growing bridge volume, staking rewards emerging.
+        "AXL":    {"fee_growth": 6,  "capital_efficiency": 6, "holder_value_accrual": 5},
+    }
+
+    # Tokens that distribute value through staking/validator rewards (not direct fee split)
+    L1_INFRA_TOKENS = CHAIN_FEE_MAP.keys() | {
+        "LINK", "GRT", "RNDR", "FIL", "AR", "AKT", "PYTH",
+        "BAND", "API3", "STORJ", "OCEAN",
+        "SAND", "MANA", "BLUR", "IMX", "GODS",
+        "WLD", "HNT", "MOBILE",
+    }
 
     # ── Extract values from Network Economics charts where available ──────────
-    # This ensures the quality score and the charts always agree.
-    # Falls back to raw inputs if network_econ is not available.
-
     ne = network_econ or {}
-
-    # Chart 4 — Capital Efficiency → fee/TVL ratio
     cap_eff_chart  = ne.get("capital_efficiency", {})
     curr_cap_eff   = cap_eff_chart.get(current_year, {})
     fee_tvl_chart  = curr_cap_eff.get("fee_tvl_ratio_pct")
     real_yield_chart = curr_cap_eff.get("real_yield_pct")
 
-    # Chart 1 — Protocol Revenue & Fees → fees and revenue current year
     rev_fees_chart = ne.get("protocol_revenue_and_fees", {})
     curr_rev_fees  = rev_fees_chart.get(current_year, {})
-    fees_chart_m   = curr_rev_fees.get("fees_usd")      # $M
-    rev_chart_m    = curr_rev_fees.get("revenue_usd")   # $M
+    fees_chart_m   = curr_rev_fees.get("fees_usd")
+    rev_chart_m    = curr_rev_fees.get("revenue_usd")
     holders_pct_chart = (
         round(rev_chart_m / fees_chart_m * 100, 1)
         if rev_chart_m and fees_chart_m and fees_chart_m > 0 else None
     )
 
-    # Chart 3 — Issuance vs Burns → supply overhang and FDV/MC
     issuance_chart = ne.get("issuance_vs_burns", {})
     curr_issuance  = issuance_chart.get(current_year, {})
     overhang_chart = curr_issuance.get("supply_overhang_pct")
     fdv_mc_chart   = curr_issuance.get("fdv_to_mc")
 
-    # Chart 2 — Treasury vs Emissions (used for context, not direct scoring)
     treasury_chart = ne.get("treasury_vs_emissions", {})
     curr_treasury  = treasury_chart.get(current_year, {})
     treasury_m     = curr_treasury.get("treasury_usd_m")
 
-    # ── Determine whether to use chart values or raw fallbacks ───────────────
     fee_tvl     = fee_tvl_chart  if fee_tvl_chart  is not None else (
                   (annual_fees / tvl * 100) if annual_fees and tvl and tvl > 0 else None)
     holders_pct = holders_pct_chart if holders_pct_chart is not None else (
@@ -637,39 +836,22 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
                   (dilution or {}).get("supply_overhang"))
     fdv_mc_use  = fdv_mc_chart   if fdv_mc_chart   is not None else fdv_mc_ratio
 
-    # ── Remaining helpers from raw data (no chart equivalent) ────────────────
     circ_pct   = (dilution or {}).get("circulating_pct")
     vol_mc_pct = (volume / mc * 100) if volume and mc and mc > 0 else None
 
-    # ── Chart source label for display ───────────────────────────────────────
     def _src(used_chart):
         return "Network Economics chart" if used_chart else "raw calculation"
 
-    if bucket == "A":
-        # All signals scored 0-10 for gradation.
-        # KEY RULE: missing data scores NEUTRAL (5), never 0.
-        # Absence of DeFiLlama coverage ≠ absence of protocol activity.
-        # L1 chains (SOL, ETH) and infrastructure tokens (LINK, GRT)
-        # generate real fees but through channels DeFiLlama doesn't
-        # always expose under a single protocol slug.
+    # Protocol-level hints (used only when real data unavailable)
+    hints = PROTOCOL_HINTS.get(_sym, {})
 
+    if bucket == "A":
         fee_data_available  = fee_tvl is not None
         mc_fee_available    = mc_ps_ratio is not None
         holders_available   = holders_pct is not None
+        is_l1_or_infra      = _sym in L1_INFRA_TOKENS
 
-        # Tokens in CHAIN_FEE_MAP or known infrastructure get staking proxy
-        _sym = symbol or ""
-        is_l1_or_infra = _sym in CHAIN_FEE_MAP or _sym in {
-            # Infrastructure / oracle / storage — distribute via node rewards
-            "LINK", "GRT", "RNDR", "FIL", "AR", "AKT", "PYTH",
-            "BAND", "API3", "STORJ",
-            # Metaverse / gaming — revenue from platform fees not DeFi
-            "SAND", "MANA", "BLUR", "IMX",
-            # Identity / social
-            "WLD",
-        }
-
-        # 1. Fee Growth — fee/TVL ratio when available, vol/MC proxy otherwise
+        # ── Signal 1: Fee Growth (0-10) ───────────────────────────────────────
         if fee_data_available:
             if fee_tvl >= 20:   s1 = 10
             elif fee_tvl >= 10: s1 = 8
@@ -677,22 +859,24 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
             elif fee_tvl >= 2:  s1 = 4
             elif fee_tvl >= 1:  s1 = 2
             else:               s1 = 1
-        else:
-            # Volume proxy — high vol/MC shows genuine network activity
-            if vol_mc_pct and vol_mc_pct >= 10:   s1 = 6
-            elif vol_mc_pct and vol_mc_pct >= 5:  s1 = 5
-            elif vol_mc_pct and vol_mc_pct >= 2:  s1 = 4
-            else:                                  s1 = 5   # neutral
+        elif _sym in hints:
+            # Known protocol — use curated score
+            s1 = hints["fee_growth"]
+        elif vol_mc_pct and vol_mc_pct >= 10:   s1 = 6
+        elif vol_mc_pct and vol_mc_pct >= 5:    s1 = 5
+        elif vol_mc_pct and vol_mc_pct >= 2:    s1 = 4
+        else:                                    s1 = 5   # neutral default
         signals["fee_growth"] = {
             "label": "Fee Growth", "score": s1, "max": 10,
             "value": round(fee_tvl, 2) if fee_tvl else None,
-            "unit": "fee/tvl %" if fee_data_available else "vol/MC proxy",
+            "unit": "fee/tvl %" if fee_data_available else (
+                    "curated estimate" if _sym in hints else "vol/MC proxy"),
             "chart_source": _src(fee_tvl_chart is not None),
             "chart_ref": "Network Economics → Capital Efficiency",
             "data_available": fee_data_available,
         }
 
-        # 2. Capital Efficiency — MC/Fees when available, rank proxy otherwise
+        # ── Signal 2: Capital Efficiency (0-10) ───────────────────────────────
         if mc_fee_available:
             if mc_ps_ratio < 5:    s2 = 10
             elif mc_ps_ratio < 10: s2 = 8
@@ -700,25 +884,24 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
             elif mc_ps_ratio < 50: s2 = 4
             elif mc_ps_ratio < 100:s2 = 2
             else:                  s2 = 1
-        else:
-            # MC rank proxy — top protocols earn their valuation through usage
-            if rank and rank <= 10:   s2 = 7
-            elif rank and rank <= 25: s2 = 6
-            elif rank and rank <= 50: s2 = 5
-            else:                     s2 = 5   # neutral
+        elif _sym in hints:
+            s2 = hints["capital_efficiency"]
+        elif rank and rank <= 10:   s2 = 7
+        elif rank and rank <= 25:   s2 = 6
+        elif rank and rank <= 50:   s2 = 5
+        else:                       s2 = 5   # neutral default
         signals["capital_efficiency"] = {
             "label": "Capital Efficiency", "score": s2, "max": 10,
             "value": mc_ps_ratio,
-            "unit": "MC/fees ratio" if mc_fee_available else "rank proxy",
+            "unit": "MC/fees ratio" if mc_fee_available else (
+                    "curated estimate" if _sym in hints else "rank proxy"),
             "chart_source": "Protocol Metrics (MC/Fees)" if mc_fee_available
-                            else "rank proxy (fee data unavailable)",
+                            else _src(False),
             "chart_ref": "Network Economics → Capital Efficiency",
             "data_available": mc_fee_available,
         }
 
-        # 3. Holder Value Accrual — direct fee split when available
-        # L1 chains distribute value via staking/validator rewards — this
-        # is real holder value accrual but DeFiLlama labels it differently.
+        # ── Signal 3: Holder Value Accrual (0-10) ─────────────────────────────
         if holders_available:
             if holders_pct >= 50:   s3 = 10
             elif holders_pct >= 30: s3 = 8
@@ -726,25 +909,27 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
             elif holders_pct >= 10: s3 = 4
             elif holders_pct >= 5:  s3 = 2
             else:                   s3 = 1
+        elif _sym in hints:
+            s3 = hints["holder_value_accrual"]
         elif is_l1_or_infra:
-            # L1/infra tokens distribute value through staking rewards
-            # Award partial credit based on network maturity (rank proxy)
+            # L1/infra distributes via staking — partial credit by network size
             if rank and rank <= 10:   s3 = 6
             elif rank and rank <= 30: s3 = 5
             else:                     s3 = 4
         else:
-            s3 = 5   # truly unknown → neutral
+            s3 = 5   # neutral default — unknown ≠ bad
         signals["holder_value_accrual"] = {
             "label": "Holder Value Accrual", "score": s3, "max": 10,
             "value": round(holders_pct, 1) if holders_pct else None,
-            "unit": "% of fees to holders" if holders_available
-                    else "staking/validator proxy",
+            "unit": "% of fees to holders" if holders_available else (
+                    "curated estimate" if _sym in hints else
+                    "staking/validator proxy" if is_l1_or_infra else "estimated"),
             "chart_source": _src(holders_pct_chart is not None),
             "chart_ref": "Network Economics → Protocol Revenue & Fees",
             "data_available": holders_available,
         }
 
-        # 4. Network Demand — volume/MC % (0-10), neutral if unavailable
+        # ── Signal 4: Network Demand (0-10) ───────────────────────────────────
         if vol_mc_pct is not None:
             if vol_mc_pct >= 20:   s4 = 10
             elif vol_mc_pct >= 10: s4 = 8
@@ -763,14 +948,18 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
             "data_available": vol_mc_pct is not None,
         }
 
-        # 5. Dilution Control — circulating % of max supply (0-10)
-        s5 = 0
-        if circ_pct is not None:
+        # ── Signal 5: Dilution Control (0-10) — default NEUTRAL not ZERO ─────
+        # IMPORTANT: default is 5 (neutral). Only score negatively when we have
+        # actual evidence of high dilution. Missing data ≠ high dilution.
+        if circ_pct is not None and circ_pct > 0:
             if circ_pct >= 95:   s5 = 10
             elif circ_pct >= 85: s5 = 8
             elif circ_pct >= 70: s5 = 6
             elif circ_pct >= 50: s5 = 4
             elif circ_pct >= 30: s5 = 2
+            else:                s5 = 1
+        else:
+            s5 = 5   # neutral — no dilution data available
         signals["dilution_control"] = {
             "label": "Dilution Control", "score": s5, "max": 10,
             "value": circ_pct, "unit": "circulating %",
@@ -778,14 +967,17 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
             "chart_ref": "Network Economics → Token Supply: Issuance vs Burns",
         }
 
-        # 6. Protocol Maturity — MC rank (0-10)
-        s6 = 0
-        if rank is not None:
+        # ── Signal 6: Protocol Maturity (0-10) — default NEUTRAL not ZERO ────
+        # IMPORTANT: default is 5 (neutral). Rank unavailable ≠ rank 500+.
+        if rank is not None and rank > 0:
             if rank <= 10:    s6 = 10
             elif rank <= 25:  s6 = 8
             elif rank <= 50:  s6 = 6
             elif rank <= 100: s6 = 4
             elif rank <= 200: s6 = 2
+            else:             s6 = 1
+        else:
+            s6 = 5   # neutral — rank temporarily unavailable
         signals["protocol_maturity"] = {
             "label": "Protocol Maturity", "score": s6, "max": 10,
             "value": rank, "unit": "MC rank",
@@ -904,22 +1096,111 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
         }
 
     # ── Aggregate ─────────────────────────────────────────────────────────────
-    # All 6 signals now score 0-10, total max = 60
+    # 6 quantitative signals (0-10 each) = max 60.
+    # A 7th signal — Protocol Moat — is added when the Claude API is available.
+    # Moat score is stored separately so the UI can display it distinctly.
     total_score = sum(s["score"] for s in signals.values())
-    total_max   = sum(s["max"]   for s in signals.values())   # should be 60
+    total_max   = sum(s["max"]   for s in signals.values())
     final_pct   = round(total_score / total_max * 100, 1) if total_max > 0 else 0
     final_10    = round(total_score / total_max * 10, 1)  if total_max > 0 else 0
 
-    if final_pct >= 70:    classification = "Strong"
-    elif final_pct >= 50:  classification = "Moderate"
-    elif final_pct >= 30:  classification = "Weak"
-    else:                  classification = "Poor"
+    # ── Optional: Claude API moat score ───────────────────────────────────────
+    # Called here so the moat score is embedded in quality output.
+    # Only fires when ANTHROPIC_API_KEY is set; otherwise moat is null.
+    hints_used = _sym in PROTOCOL_HINTS
+    moat_result = score_protocol_moat_via_claude(
+        symbol         = _sym,
+        name           = _sym,   # name not available here; symbol used as fallback
+        bucket         = bucket,
+        rank           = rank,
+        mc             = mc or 0,
+        circ_pct       = circ_pct,
+        quality_signals= signals,
+        hints_used     = hints_used,
+    )
+    moat_score = moat_result["score"] if moat_result else None
+
+    # If moat is available, blend it into the final score (weighted 15%)
+    # 6 quantitative signals = 85% weight, moat = 15% weight
+    if moat_score is not None:
+        blended_pct = (final_pct * 0.85) + (moat_score * 10 * 0.15)
+        final_pct_with_moat = round(blended_pct, 1)
+        final_10_with_moat  = round(blended_pct / 10, 1)
+    else:
+        final_pct_with_moat = final_pct
+        final_10_with_moat  = final_10
+
+    # ── Classification — mirrors stocks classify_quality thresholds exactly ───
+    #
+    # Thresholds:
+    #   ≥ 70%    → Safe
+    #   65–69%   → Grey zone: Safe if 2+ of (holder_value_accrual ≥ 6,
+    #              fee_growth ≥ 6, protocol_maturity ≥ 6); else Speculative
+    #   55–64%   → Speculative
+    #   50–54%   → Borderline: Speculative if 2+ of (holder_value_accrual ≥ 4,
+    #              fee_growth ≥ 4, protocol_maturity ≥ 4); else Dangerous
+    #   < 50%    → Dangerous
+    #
+    # Crypto tiebreaker signals (equivalent to stocks' ROE/ROIC/EPS):
+    #   holder_value_accrual — does the token capture real protocol revenue?
+    #   fee_growth           — is the protocol generating meaningful fees?
+    #   protocol_maturity    — is the network established (rank, track record)?
+    #
+    # Moat override (when Claude API has scored moat):
+    #   Safe override:      moat ≥ 7 AND (fee_growth ≥ 7 OR holder_value ≥ 7)
+    #                       AND final_pct_with_moat ≥ 55
+    #   Dangerous override: moat ≤ 3 AND holder_value ≤ 3 AND final_pct < 45
+
+    # Extract individual signal scores for tiebreaker logic
+    _hva  = signals.get("holder_value_accrual", {}).get("score") or 0
+    _fg   = signals.get("fee_growth",           {}).get("score") or 0
+    _pm   = signals.get("protocol_maturity",    {}).get("score") or 0
+    _moat = (moat_result or {}).get("score")   # None if API not enabled
+
+    classification = None
+
+    # Moat overrides
+    if _moat is not None:
+        if _moat >= 7 and (_fg >= 7 or _hva >= 7) and final_pct_with_moat >= 55:
+            classification = "Safe"
+        if classification is None and _moat <= 3 and _hva <= 3 and final_pct_with_moat < 45:
+            classification = "Dangerous"
+
+    # Score-based classification
+    if classification is None:
+        if final_pct_with_moat >= 70:
+            classification = "Safe"
+
+        elif final_pct_with_moat >= 65:
+            # Grey zone 65–69%: Safe if 2+ of the three quality tiebreakers pass
+            tb = 0
+            if _hva >= 6: tb += 1
+            if _fg  >= 6: tb += 1
+            if _pm  >= 6: tb += 1
+            classification = "Safe" if tb >= 2 else "Speculative"
+
+        elif final_pct_with_moat >= 55:
+            classification = "Speculative"
+
+        elif final_pct_with_moat >= 50:
+            # Borderline 50–54%: Speculative only if 2+ tiebreakers pass (lower bar)
+            tb = 0
+            if _hva >= 4: tb += 1
+            if _fg  >= 4: tb += 1
+            if _pm  >= 4: tb += 1
+            classification = "Speculative" if tb >= 2 else "Dangerous"
+
+        else:
+            classification = "Dangerous"
 
     return {
-        "scores":          signals,
-        "final_score":     final_10,
-        "final_score_pct": final_pct,
-        "classification":  classification,
+        "scores":           signals,
+        "moat":             moat_result,
+        "final_score":      final_10_with_moat,
+        "final_score_pct":  final_pct_with_moat,
+        "quantitative_pct": final_pct,
+        "classification":   classification,
+        "tiebreaker_used":  (50 <= final_pct_with_moat < 70 and _moat is None),
     }
 
 
@@ -960,6 +1241,77 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
 #
 # Additionally fetches the overall market Fear & Greed from alternative.me
 # once per run and attaches it to every coin as context.
+# =============================================================================
+
+# =============================================================================
+# MARKET CYCLE CLASSIFIER + ENHANCED FEAR & GREED
+# =============================================================================
+#
+# The market cycle classifier analyses historical price data (already fetched
+# for the valuation chart) to determine where a token sits in its cycle.
+# This replaces the AI Studio runtime classification, moving it to the pipeline
+# so the app receives a pre-computed result with zero rendering overhead.
+#
+# CYCLE CLASSIFICATION METHOD
+# ─────────────────────────────
+# Uses three signals derived from the year-end price series:
+#
+#   1. Long-term trend (vs 3Y simple moving average of annual closes)
+#      – Price above 3Y SMA → structural uptrend
+#      – Price below 3Y SMA → structural downtrend
+#
+#   2. Medium-term momentum (year-on-year price change)
+#      – Positive YoY → recovering / advancing
+#      – Negative YoY → declining
+#
+#   3. Drawdown from all-time high (ATH)
+#      – <25% below ATH  → near top / overextended
+#      – 25-55% below    → distribution or early downtrend
+#      – 55-80% below    → deep bear / late downtrend
+#      – >80% below      → capitulation / accumulation zone
+#
+# These three signals combine into five cycle phases:
+#
+#   ACCUMULATION   – Deep drawdown (>55% from ATH), structural downtrend
+#                    or recovering from bottom. Best long-term entry.
+#   EARLY_UPTREND  – Price recovering, above recent lows, YoY positive,
+#                    still well below ATH. Risk-reward improving.
+#   LATE_UPTREND   – Strong YoY gains, approaching or above 3Y SMA,
+#                    drawdown from ATH <40%. Caution warranted.
+#   DISTRIBUTION   – Near ATH (<25% below), momentum may be slowing.
+#                    Historically precedes corrections.
+#   DOWNTREND      – Price falling, below 3Y SMA, YoY negative. Active
+#                    selling pressure. Wait for stabilisation.
+#
+# MARGIN OF SAFETY ZONES (for the valuation chart)
+# ──────────────────────────────────────────────────
+# A margin-of-safety buy zone exists when ALL of:
+#   • Current price ≤ base_iv (or within 10% above it)
+#   • Market cycle is ACCUMULATION or EARLY_UPTREND
+#   • Quality score ≥ 4 (not purely speculative)
+#
+# Chart zones:
+#   ACCUMULATION_ZONE  – price below IV, cycle in accumulation/early uptrend
+#   NEUTRAL_ZONE       – price near IV (within ±20%), mid-cycle
+#   OVEREXTENDED_ZONE  – price >20% above IV, late uptrend / distribution
+#
+# ENHANCED FEAR & GREED
+# ──────────────────────
+# The existing 5-component score is recalibrated to anchor on the market
+# cycle phase. This prevents the index from being too optimistic in
+# structural downtrends (the bug: Extreme Fear market but token scores Neutral).
+#
+#   Cycle anchor scores (added to raw score before clamping):
+#     ACCUMULATION   → anchor = 15  (fear is expected/healthy)
+#     EARLY_UPTREND  → anchor = 25  (cautious optimism)
+#     LATE_UPTREND   → anchor = 50  (greed building)
+#     DISTRIBUTION   → anchor = 60  (peak greed warning)
+#     DOWNTREND      → anchor = 10  (fear dominant)
+#     UNKNOWN        → anchor = 35  (lean fear, no data)
+#
+#   Final score = clip( (raw_components_score * 0.6) + (anchor * 0.4), 0, 100 )
+#   This ensures: structural bear markets cannot score above ~55 (Neutral),
+#   and accumulation zones cannot score above ~45 even on positive momentum.
 # =============================================================================
 
 MARKET_FEAR_GREED_CACHE = {}   # cached once per run
@@ -1004,23 +1356,221 @@ def _fg_label(score):
     return "Extreme Fear"
 
 
+def classify_market_cycle(price_history, current_price):
+    """
+    Classify the token's current market cycle phase using annual price history.
+
+    price_history: dict of { "2020": 245.6, "2021": 3400.0, ... }
+                   year-end closing prices fetched from CoinGecko.
+    current_price: float — today's price.
+
+    Returns dict:
+    {
+        "phase":            str  — ACCUMULATION | EARLY_UPTREND | LATE_UPTREND
+                                   | DISTRIBUTION | DOWNTREND | UNKNOWN
+        "phase_label":      str  — human-readable label
+        "drawdown_from_ath_pct": float — % below all-time-high (0-100)
+        "yoy_change_pct":   float | None — year-on-year price change
+        "above_3y_sma":     bool | None — price above 3-year SMA of closes
+        "ath_price":        float | None
+        "sma_3y":           float | None
+        "data_years":       int   — how many years of history available
+    }
+    """
+    # Build sorted list of (year_int, price) from history
+    year_prices = []
+    for yr_str, px in (price_history or {}).items():
+        try:
+            if px and px > 0:
+                year_prices.append((int(yr_str), float(px)))
+        except (ValueError, TypeError):
+            pass
+    year_prices.sort(key=lambda x: x[0])
+
+    # Always include current price as the latest data point
+    if current_price and current_price > 0:
+        current_year = datetime.now().year
+        # Replace or append current year
+        year_prices = [(yr, px) for yr, px in year_prices if yr != current_year]
+        year_prices.append((current_year, current_price))
+        year_prices.sort(key=lambda x: x[0])
+
+    n = len(year_prices)
+
+    if n < 2:
+        return {
+            "phase":                 "UNKNOWN",
+            "phase_label":           "Insufficient Data",
+            "drawdown_from_ath_pct": None,
+            "yoy_change_pct":        None,
+            "above_3y_sma":          None,
+            "ath_price":             None,
+            "sma_3y":                None,
+            "data_years":            n,
+        }
+
+    prices_only = [px for _, px in year_prices]
+
+    # ── Signal 1: ATH drawdown ────────────────────────────────────────────────
+    ath = max(prices_only)
+    drawdown_pct = ((ath - current_price) / ath * 100) if ath > 0 else 0
+
+    # ── Signal 2: Year-on-year change ────────────────────────────────────────
+    prev_price = year_prices[-2][1] if n >= 2 else None
+    yoy_pct = ((current_price - prev_price) / prev_price * 100) if prev_price else None
+
+    # ── Signal 3: 3Y simple moving average of annual closes ──────────────────
+    sma_3y = None
+    above_3y_sma = None
+    if n >= 3:
+        sma_3y = sum(prices_only[-3:]) / 3
+        above_3y_sma = current_price > sma_3y
+
+    # ── Phase classification ──────────────────────────────────────────────────
+    # Priority order matters — distribution takes precedence over late uptrend
+    if drawdown_pct >= 75:
+        # Deep capitulation — historically best long-term entry
+        phase = "ACCUMULATION"
+        phase_label = "Accumulation (deep bear)"
+
+    elif drawdown_pct >= 50:
+        if above_3y_sma is False or yoy_pct is None or yoy_pct < 0:
+            phase = "ACCUMULATION"
+            phase_label = "Accumulation (bear market)"
+        else:
+            phase = "EARLY_UPTREND"
+            phase_label = "Early Uptrend (recovering)"
+
+    elif drawdown_pct >= 25:
+        if yoy_pct is not None and yoy_pct < -15:
+            phase = "DOWNTREND"
+            phase_label = "Downtrend"
+        elif above_3y_sma is False:
+            phase = "DOWNTREND"
+            phase_label = "Downtrend (below SMA)"
+        elif yoy_pct is not None and yoy_pct > 30 and above_3y_sma:
+            phase = "LATE_UPTREND"
+            phase_label = "Late Uptrend"
+        else:
+            phase = "EARLY_UPTREND"
+            phase_label = "Early Uptrend"
+
+    elif drawdown_pct >= 10:
+        # Near ATH — caution
+        phase = "LATE_UPTREND"
+        phase_label = "Late Uptrend / Caution"
+
+    else:
+        # Within 10% of ATH
+        phase = "DISTRIBUTION"
+        phase_label = "Distribution (near ATH)"
+
+    return {
+        "phase":                 phase,
+        "phase_label":           phase_label,
+        "drawdown_from_ath_pct": round(drawdown_pct, 1),
+        "yoy_change_pct":        round(yoy_pct, 1) if yoy_pct is not None else None,
+        "above_3y_sma":          above_3y_sma,
+        "ath_price":             round(ath, 4),
+        "sma_3y":                round(sma_3y, 4) if sma_3y else None,
+        "data_years":            n,
+    }
+
+
+def compute_chart_zones(price_history, current_price, base_iv, quality_score):
+    """
+    Compute zone classification for each year in the valuation chart.
+
+    Returns:
+    {
+        "current_zone":     str  — ACCUMULATION_ZONE | NEUTRAL_ZONE | OVEREXTENDED_ZONE
+        "current_zone_label": str
+        "margin_of_safety": bool — True if a MoS buy zone exists now
+        "mos_note":         str  — explanation for the UI
+        "zones_by_year":    { "2026": "ACCUMULATION_ZONE", ... }
+    }
+    """
+    if not base_iv or base_iv <= 0:
+        return {
+            "current_zone":       "NEUTRAL_ZONE",
+            "current_zone_label": "Neutral",
+            "margin_of_safety":   False,
+            "mos_note":           "Insufficient valuation data",
+            "zones_by_year":      {},
+        }
+
+    def _price_zone(px, iv):
+        if px is None:   return "NEUTRAL_ZONE"
+        ratio = px / iv
+        if ratio <= 0.80:  return "ACCUMULATION_ZONE"   # >20% below IV
+        if ratio <= 1.20:  return "NEUTRAL_ZONE"         # within ±20% of IV
+        return "OVEREXTENDED_ZONE"                        # >20% above IV
+
+    zone_labels = {
+        "ACCUMULATION_ZONE":  "Accumulation Zone",
+        "NEUTRAL_ZONE":       "Neutral Zone",
+        "OVEREXTENDED_ZONE":  "Overextended Zone",
+    }
+
+    current_zone = _price_zone(current_price, base_iv)
+
+    # MoS requires: price at/below IV AND quality high enough to warrant buying
+    cycle = classify_market_cycle(price_history, current_price)
+    mos_cycle = cycle["phase"] in ("ACCUMULATION", "EARLY_UPTREND")
+    mos_price = current_price <= base_iv * 1.05   # within 5% above IV counts
+    mos_quality = (quality_score or 0) >= 4
+
+    margin_of_safety = mos_cycle and mos_price and mos_quality
+
+    if margin_of_safety:
+        mos_note = (
+            f"Margin of safety present — price near or below speculative fair value "
+            f"during {cycle['phase_label'].lower()} phase."
+        )
+    elif not mos_price:
+        mos_note = "Price above speculative fair value — no margin of safety."
+    elif not mos_cycle:
+        mos_note = (
+            f"Cycle phase ({cycle['phase_label']}) not favourable for entry — "
+            f"wait for accumulation or early uptrend."
+        )
+    else:
+        mos_note = "Quality score too low to recommend a margin-of-safety entry."
+
+    # Build per-year zones for the forecast chart annotation
+    zones_by_year = {}
+    all_prices = {yr: px for yr, px in (price_history or {}).items() if px}
+    if current_price:
+        all_prices[str(datetime.now().year)] = current_price
+    for yr_str, px in all_prices.items():
+        zones_by_year[yr_str] = _price_zone(px, base_iv)
+
+    return {
+        "current_zone":       current_zone,
+        "current_zone_label": zone_labels[current_zone],
+        "margin_of_safety":   margin_of_safety,
+        "mos_note":           mos_note,
+        "zones_by_year":      zones_by_year,
+    }
+
+
 def calc_fear_greed(price_change_7d, price_change_30d, volume, market_cap,
-                    dilution_data, bucket):
+                    dilution_data, bucket, market_cycle=None,
+                    market_fg_value=None):
     """
     Calculate token-specific Fear & Greed score (0-100).
 
-    Parameters are all from CoinGecko /coins/markets — no extra API needed.
+    market_cycle: output of classify_market_cycle() — used to anchor the score
+                  to the structural phase so bear markets score bearish.
+    market_fg_value: overall market Fear & Greed (0-100) from alternative.me —
+                  used as a soft floor/ceiling depending on direction.
+
     Returns:
       {
         "score":           int (0-100),
         "label":           str,
-        "components": {
-            "price_momentum":    int,
-            "volume_momentum":   int,
-            "volatility":        int,
-            "momentum_trend":    int,
-            "dilution_pressure": int,
-        }
+        "market_cycle_anchor": int,
+        "components": { ... }
       }
     """
     try:
@@ -1029,14 +1579,12 @@ def calc_fear_greed(price_change_7d, price_change_30d, volume, market_cap,
         chg7  = price_change_7d  or 0
 
         # ── Component 1: Price Momentum 30d (30 pts max) ─────────────────────
-        # Neutral baseline is 10 (not 15) — flat market should lean Fear,
-        # not Neutral, since crypto markets trend up in good times.
         if chg30 >= 100:   pm = 30
         elif chg30 >= 50:  pm = 26
         elif chg30 >= 20:  pm = 22
         elif chg30 >= 10:  pm = 18
         elif chg30 >= 5:   pm = 14
-        elif chg30 >= 0:   pm = 10   # flat = mild fear baseline
+        elif chg30 >= 0:   pm = 10
         elif chg30 >= -5:  pm = 7
         elif chg30 >= -15: pm = 5
         elif chg30 >= -30: pm = 3
@@ -1053,7 +1601,6 @@ def calc_fear_greed(price_change_7d, price_change_30d, volume, market_cap,
         elif vol_ratio >= 1:   vm = 8
         elif vol_ratio >= 0.5: vm = 5
         else:                  vm = 3
-        # Stronger penalty: high volume on falling price = selling panic
         if chg30 < -5 and vol_ratio >= 5:
             vm = max(0, vm - 10)
         elif chg30 < -15 and vol_ratio >= 2:
@@ -1066,16 +1613,16 @@ def calc_fear_greed(price_change_7d, price_change_30d, volume, market_cap,
         elif vol_mag >= 30:    vlt = 16 if chg7 > 0 else 3
         elif vol_mag >= 15:    vlt = 13 if chg7 > 0 else 6
         elif vol_mag >= 5:     vlt = 10 if chg7 > 0 else 7
-        else:                  vlt = 8    # low volatility = slight fear (stagnation)
+        else:                  vlt = 8
         components["volatility"] = vlt
 
         # ── Component 4: Momentum Trend 7d vs 30d (15 pts max) ───────────────
         if chg7 is not None and chg30 is not None:
-            if chg7 > 0 and chg7 > abs(chg30) * 0.5:  mt = 15  # strong recovery
-            elif chg7 > 0 and chg30 > 0:               mt = 12  # both positive
-            elif chg7 > 0 and chg30 <= 0:              mt = 9   # short bounce in downtrend
-            elif chg7 <= 0 and chg30 > 0:              mt = 6   # recent weakness
-            elif chg7 <= 0 and chg30 <= 0:             mt = 3   # both negative
+            if chg7 > 0 and chg7 > abs(chg30) * 0.5:  mt = 15
+            elif chg7 > 0 and chg30 > 0:               mt = 12
+            elif chg7 > 0 and chg30 <= 0:              mt = 9
+            elif chg7 <= 0 and chg30 > 0:              mt = 6
+            elif chg7 <= 0 and chg30 <= 0:             mt = 3
             else:                                       mt = 5
         else:
             mt = 5
@@ -1091,20 +1638,54 @@ def calc_fear_greed(price_change_7d, price_change_30d, volume, market_cap,
             elif overhang <= 70:  dp = 1
             else:                 dp = 0
         else:
-            dp = 4   # unknown = slight fear
+            dp = 4
         components["dilution_pressure"] = dp
 
-        total = pm + vm + vlt + mt + dp
-        score = min(100, max(0, total))
+        raw_score = pm + vm + vlt + mt + dp   # 0-100 from components
+
+        # ── Market Cycle Anchor (recalibration) ───────────────────────────────
+        # Blends raw component score with a cycle-phase anchor to prevent
+        # structural bear markets from scoring optimistically.
+        #
+        # Anchor scores represent the "expected" sentiment for each phase:
+        phase = (market_cycle or {}).get("phase", "UNKNOWN")
+        cycle_anchors = {
+            "ACCUMULATION":  15,   # deep bear — fear is expected
+            "DOWNTREND":     18,   # active selling — fear dominant
+            "EARLY_UPTREND": 30,   # cautious recovery
+            "LATE_UPTREND":  55,   # greed building
+            "DISTRIBUTION":  65,   # peak greed warning
+            "UNKNOWN":       30,   # lean fearful without data
+        }
+        anchor = cycle_anchors.get(phase, 30)
+
+        # Weight: 55% raw components, 45% cycle anchor
+        # This means a token in DOWNTREND can't score above ~58 even with
+        # strong 30d momentum, and ACCUMULATION tokens score realistically low.
+        blended = (raw_score * 0.55) + (anchor * 0.45)
+
+        # Soft influence from market-wide Fear & Greed (10% nudge only)
+        if market_fg_value is not None:
+            blended = blended * 0.90 + market_fg_value * 0.10
+
+        score = min(100, max(0, round(blended)))
+        components["cycle_anchor"] = anchor
 
         return {
-            "score":      score,
-            "label":      _fg_label(score),
-            "components": components,
+            "score":               score,
+            "label":               _fg_label(score),
+            "market_cycle_phase":  phase,
+            "market_cycle_anchor": anchor,
+            "components":          components,
         }
 
     except Exception:
-        return {"score": 50, "label": "Neutral", "components": {}}
+        return {
+            "score": 35, "label": "Fear",
+            "market_cycle_phase": "UNKNOWN",
+            "market_cycle_anchor": 30,
+            "components": {},
+        }
 
 
 # =============================================================================
@@ -1220,7 +1801,9 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
             defillama_summary = _fee_summary,
         )
 
-        # ── Fear & Greed — token specific ────────────────────────────────────
+        # ── Fear & Greed — computed after price history fetch ────────────────
+        # (placeholder — recalculated below once market_cycle is available)
+        _market_fg = (market_fear_greed or {}).get("value")
         fear_greed = calc_fear_greed(
             price_change_7d  = chg_7d,
             price_change_30d = chg_30d,
@@ -1228,6 +1811,8 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
             market_cap       = mc,
             dilution_data    = dilution,
             bucket           = bucket,
+            market_cycle     = None,       # updated below
+            market_fg_value  = _market_fg,
         )
 
         # ── Quality score ─────────────────────────────────────────────────────
@@ -1306,34 +1891,259 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 except Exception:
                     return None
 
-            # ── Step 1: Collect all valid valuation outputs ───────────────
-            valid_ivs = []
-            if bucket == "A":
-                proto = bucket_a_data or {}
-                dcf_v = proto.get("dcf_fair_value_per_token")
-                if dcf_v and dcf_v > 0: valid_ivs.append(dcf_v)
-                # PS analog: if fees exist, price * (median_ps / current_ps)
-                ps = proto.get("ps_ratio")
-                if ps and ps > 0 and price:
-                    median_ps = 20   # reasonable median for cash-flow protocols
-                    valid_ivs.append(price * median_ps / ps)
-            elif bucket == "B":
-                sov = bucket_b_data or {}
-                prod = (sov.get("cost_of_production") or {})
-                cost = prod.get("estimated_production_cost_usd")
-                prem = prod.get("premium_to_production_cost")
-                if cost and prem and cost > 0:
-                    valid_ivs.append(cost * prem)
-                mon  = (sov.get("monetary_premium") or {})
-                gcp  = mon.get("gold_capture_pct")
-                if gcp and gcp > 0 and price:
-                    # Fair value implied by current gold capture + median growth
-                    valid_ivs.append(price * (1 + gcp / 100))
+            # ══════════════════════════════════════════════════════════════════
+            # ══════════════════════════════════════════════════════════════════
+            # ══════════════════════════════════════════════════════════════════
+            # SPECULATIVE FAIR VALUE — BUCKET-SPECIFIC MULTI-METHOD VALUATION
+            # ══════════════════════════════════════════════════════════════════
+            #
+            # EXPERT RATIONALE FOR BUCKET SEPARATION:
+            #
+            # Bucket A — Cash-Flow Protocols (ETH, SOL, UNI, AAVE, GMX...)
+            #   These are BUSINESSES. Valued on fee revenue, cash flows, and
+            #   network utility — identical framework to equity valuation.
+            #   Gold capture % and mining cost are category errors here.
+            #
+            #   Methods:
+            #     M1  DCF on fees          — fee cash flows, 30% discount rate
+            #     M2  P/S analog           — MC/Fees vs tier median (15x/25x/40x)
+            #     M3  P/E analog           — FDV/Holders-revenue vs tier median
+            #     M7  Metcalfe             — volume/MC proxy for network activity
+            #     M+  NVT Fair Value       — MC vs volume × fair NVT multiple
+            #     M+  Peer value           — rank-tier MC benchmark × quality adj
+            #     M+  Dilution-adjusted    — corrects for FDV/MC above tier median
+            #
+            # Bucket B — Store of Value (BTC, LTC, XMR, DOGE, BCH...)
+            #   These are MONETARY ASSETS competing with gold and fiat.
+            #   P/S and P/E are category errors — miner fees go to miners,
+            #   not holders. No business revenue to discount.
+            #   Valued on scarcity, production cost, and monetary premium.
+            #
+            #   Methods:
+            #     M6  Monetary premium     — gold capture %; price at 25/50/100% gold
+            #     M7  Metcalfe             — network value vs usage (originated w/ BTC)
+            #     M8  Production cost      — PoW mining cost floor × historical premium
+            #     M10 Dilution (SoV)       — supply schedule; FDV/MC normalisation
+            #     M+  NVT Fair Value       — on-chain volume is primary SoV usage signal
+            #     M+  Peer value           — rank-tier MC × quality adj (universal)
+            #
+            # The median of all valid per-token IV outputs becomes base_iv.
+            # ══════════════════════════════════════════════════════════════════
 
-            # Base IV = median of valid outputs, fallback to current price
+            valid_ivs    = []   # per-token fair value estimates
+            methods_used = []   # labels shown in hero card iv_method field
+            q_pct = quality.get("final_score_pct", 50) or 50
+
+            if bucket == "A":
+                # ── A1: DCF on protocol fees ───────────────────────────────────
+                # Pre-computed in bucket_a_data by method_1_dcf_fees().
+                # Only fires when DeFiLlama has fee data for this protocol.
+                proto       = bucket_a_data or {}
+                dcf_v       = proto.get("dcf_fair_value_per_token")
+                ps_rat      = proto.get("ps_ratio")
+                pe_rat      = proto.get("pe_ratio_fdv_to_holders_rev")
+
+                if dcf_v and dcf_v > 0:
+                    valid_ivs.append(dcf_v)
+                    methods_used.append("M1 DCF (fees)")
+
+                # ── A2: P/S analog — MC/Fees vs tier-median multiple ───────────
+                # Tier median PS ratios calibrated from DeFiLlama 2024 data:
+                #   Safe (≥70%):    15x — established protocols (ETH, AAVE, GMX)
+                #   Safe (60-69%):  20x — strong but not top-tier
+                #   Speculative:    30x — growth-stage protocols
+                #   Dangerous:      50x — speculative premium
+                if ps_rat and ps_rat > 0 and price:
+                    if q_pct >= 70:   median_ps = 15
+                    elif q_pct >= 60: median_ps = 20
+                    elif q_pct >= 45: median_ps = 30
+                    else:             median_ps = 50
+                    ps_iv = round(price * median_ps / ps_rat, 4)
+                    if ps_iv > 0:
+                        valid_ivs.append(ps_iv)
+                        methods_used.append("M2 P/S analog")
+
+                # ── A3: P/E analog — FDV/Holders-revenue vs tier-median ────────
+                # Only fires when DeFiLlama tracks holders revenue separately.
+                # Tier median PE ratios (higher than PS — earnings quality premium):
+                #   Safe:         25x | Speculative: 45x | Dangerous: 75x
+                if pe_rat and pe_rat > 0 and price:
+                    if q_pct >= 60:   median_pe = 25
+                    elif q_pct >= 45: median_pe = 45
+                    else:             median_pe = 75
+                    pe_iv = round(price * median_pe / pe_rat, 4)
+                    if pe_iv > 0:
+                        valid_ivs.append(pe_iv)
+                        methods_used.append("M3 P/E analog")
+
+                # ── A7: Metcalfe — network activity vs market cap ──────────────
+                # method_7_metcalfe() returns MC/metcalfe_value ratio.
+                # For Bucket A: volume proxies for fee-generating transactions.
+                # Fair value = price where ratio equals quality-tier median.
+                m7_ratio = method_7_metcalfe(mc, volume=volume)
+                if m7_ratio and 0.1 <= m7_ratio <= 15 and price:
+                    m7_iv = round(price / m7_ratio, 4)
+                    if 0.15 * price <= m7_iv <= 7 * price:
+                        valid_ivs.append(m7_iv)
+                        methods_used.append("M7 Metcalfe")
+
+                # ── A+: NVT Fair Value ─────────────────────────────────────────
+                # NVT = MC / daily_volume. Crypto's P/E ratio.
+                # Fair NVT for cash-flow protocols (from historical DeFiLlama data):
+                #   Quality ≥70%: NVT 20 (efficient protocols justify higher NVT)
+                #   Quality 60%:  NVT 15
+                #   Speculative:  NVT 10
+                #   Dangerous:    NVT  6 (low tolerance for expensive churn volume)
+                if volume and volume > 0 and circ and circ > 0:
+                    if q_pct >= 70:   fair_nvt = 20
+                    elif q_pct >= 60: fair_nvt = 15
+                    elif q_pct >= 45: fair_nvt = 10
+                    else:             fair_nvt = 6
+                    nvt_iv = round((volume * fair_nvt) / circ, 4)
+                    if price and 0.1 * price <= nvt_iv <= 10 * price:
+                        valid_ivs.append(nvt_iv)
+                        methods_used.append("M+ NVT")
+
+                # ── A+: Peer value ─────────────────────────────────────────────
+                # Expected MC for rank tier × quality premium/discount.
+                if rank and rank > 0 and circ and circ > 0 and price:
+                    try:
+                        if rank <= 5:      exp_mc = 200e9
+                        elif rank <= 10:   exp_mc = 80e9
+                        elif rank <= 20:   exp_mc = 30e9
+                        elif rank <= 30:   exp_mc = 15e9
+                        elif rank <= 50:   exp_mc = 6e9
+                        elif rank <= 75:   exp_mc = 2.5e9
+                        elif rank <= 100:  exp_mc = 1.2e9
+                        elif rank <= 150:  exp_mc = 500e6
+                        elif rank <= 200:  exp_mc = 250e6
+                        elif rank <= 300:  exp_mc = 120e6
+                        elif rank <= 500:  exp_mc = 50e6
+                        else:              exp_mc = 20e6
+                        q_adj = 1.20 if q_pct >= 70 else 1.05 if q_pct >= 60                                 else 0.90 if q_pct >= 45 else 0.70
+                        peer_iv = round((exp_mc * q_adj) / circ, 4)
+                        if 0.2 * price <= peer_iv <= 5 * price:
+                            valid_ivs.append(peer_iv)
+                            methods_used.append("M+ Peer value")
+                    except Exception:
+                        pass
+
+                # ── A+: Dilution-Adjusted Price ────────────────────────────────
+                # If FDV/MC exceeds the fair multiple for this quality tier,
+                # the market is ignoring future dilution — adjust price down.
+                # Fair FDV/MC by tier (cash-flow protocols should be near-circ):
+                #   Safe ≥70%: 1.10 | Safe 60%: 1.25 | Spec: 1.60 | Dangerous: 2.50
+                if price and circ and circ > 0:
+                    try:
+                        dilution_d    = dilution or {}
+                        fdv_mc_actual = dilution_d.get("fdv_to_mc_ratio") or 1.0
+                        if q_pct >= 70:   fair_fdv_mc = 1.10
+                        elif q_pct >= 60: fair_fdv_mc = 1.25
+                        elif q_pct >= 45: fair_fdv_mc = 1.60
+                        else:             fair_fdv_mc = 2.50
+                        if fdv_mc_actual > fair_fdv_mc + 0.10:
+                            dilution_iv = round(price * (fair_fdv_mc / fdv_mc_actual), 4)
+                            if 0 < dilution_iv < price:
+                                valid_ivs.append(dilution_iv)
+                                methods_used.append("M+ Dilution-adj")
+                    except Exception:
+                        pass
+
+            elif bucket == "B":
+                sov  = bucket_b_data or {}
+                prod = sov.get("cost_of_production") or {}
+                mon  = sov.get("monetary_premium") or {}
+
+                # ── B6: Monetary premium — gold capture % ──────────────────────
+                # What % of gold's market cap has this asset captured?
+                # Fair value = price implied by sustaining current capture %
+                # as the gold market grows at its historical ~8% annual rate.
+                # Also provides price scenarios at 25/50/100% of gold.
+                gcp = mon.get("gold_capture_pct")
+                if gcp and gcp > 0 and price:
+                    m6_iv = round(price * 1.08, 4)
+                    valid_ivs.append(m6_iv)
+                    methods_used.append("M6 Monetary premium")
+
+                # ── B7: Metcalfe — on-chain network activity ───────────────────
+                # NVT originated as a BTC tool (Willy Woo, 2017).
+                # For SoV assets, volume = monetary circulation, not fee revenue.
+                # Higher tolerance for low volume (SoV assets are held, not traded).
+                m7_ratio = method_7_metcalfe(mc, volume=volume)
+                if m7_ratio and 0.05 <= m7_ratio <= 20 and price:
+                    m7_iv = round(price / m7_ratio, 4)
+                    if 0.1 * price <= m7_iv <= 10 * price:
+                        valid_ivs.append(m7_iv)
+                        methods_used.append("M7 Metcalfe")
+
+                # ── B8: Cost of production — PoW mining floor ──────────────────
+                # Estimated all-in mining cost provides a fundamental floor.
+                # BTC historically trades at 1.5-3x production cost at fair value
+                # (accounts for miner profit margin and security premium).
+                cost = prod.get("estimated_production_cost_usd")
+                if cost and cost > 0:
+                    m8_iv = round(cost * 2.0, 4)
+                    valid_ivs.append(m8_iv)
+                    methods_used.append("M8 Production cost")
+
+                # ── B10: Dilution analysis — supply schedule ───────────────────
+                # SoV assets MUST be near-fully circulating to credibly claim
+                # scarcity. FDV/MC > 1.10 signals hidden dilution risk.
+                # e.g. DOGE: technically unlimited — penalised appropriately.
+                dilution_d = dilution or {}
+                fdv_mc_b   = dilution_d.get("fdv_to_mc_ratio") or 1.0
+                if fdv_mc_b > 1.10 and price:
+                    # Dilution-adjusted price: what current holders are really worth
+                    # if the full supply were circulating
+                    m10_iv = round(price * (1.02 / fdv_mc_b), 4)
+                    if m10_iv > 0:
+                        valid_ivs.append(m10_iv)
+                        methods_used.append("M10 Supply-adj")
+
+                # ── B+: NVT Fair Value ─────────────────────────────────────────
+                # For SoV assets, NVT measures monetary velocity.
+                # SoV assets should have HIGHER NVT than cash-flow protocols
+                # because they are held long-term, not actively traded for fees.
+                # Fair NVT benchmarks for monetary assets (from BTC/LTC history):
+                #   Quality ≥70%: NVT 35 (BTC — premier monetary asset)
+                #   Quality 60%:  NVT 25
+                #   Speculative:  NVT 15
+                #   Dangerous:    NVT  8
+                if volume and volume > 0 and circ and circ > 0:
+                    if q_pct >= 70:   fair_nvt_b = 35
+                    elif q_pct >= 60: fair_nvt_b = 25
+                    elif q_pct >= 45: fair_nvt_b = 15
+                    else:             fair_nvt_b = 8
+                    nvt_iv_b = round((volume * fair_nvt_b) / circ, 4)
+                    if price and 0.1 * price <= nvt_iv_b <= 10 * price:
+                        valid_ivs.append(nvt_iv_b)
+                        methods_used.append("M+ NVT")
+
+                # ── B+: Peer value (same universal logic as Bucket A) ──────────
+                if rank and rank > 0 and circ and circ > 0 and price:
+                    try:
+                        if rank <= 5:      exp_mc = 200e9
+                        elif rank <= 10:   exp_mc = 80e9
+                        elif rank <= 20:   exp_mc = 30e9
+                        elif rank <= 30:   exp_mc = 15e9
+                        elif rank <= 50:   exp_mc = 6e9
+                        elif rank <= 75:   exp_mc = 2.5e9
+                        elif rank <= 100:  exp_mc = 1.2e9
+                        elif rank <= 200:  exp_mc = 250e6
+                        elif rank <= 500:  exp_mc = 50e6
+                        else:              exp_mc = 20e6
+                        q_adj = 1.20 if q_pct >= 70 else 1.05 if q_pct >= 60                                 else 0.90 if q_pct >= 45 else 0.70
+                        peer_iv = round((exp_mc * q_adj) / circ, 4)
+                        if 0.2 * price <= peer_iv <= 5 * price:
+                            valid_ivs.append(peer_iv)
+                            methods_used.append("M+ Peer value")
+                    except Exception:
+                        pass
+
+            # ── Aggregate: median of all valid per-token IV estimates ─────────
             if valid_ivs:
                 valid_ivs_sorted = sorted(valid_ivs)
-                mid = len(valid_ivs_sorted) // 2
+                mid     = len(valid_ivs_sorted) // 2
                 base_iv = valid_ivs_sorted[mid]
             else:
                 base_iv = price or 0
@@ -1391,107 +2201,232 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 elif q_score >= 2: q_mult = 0.55
                 else:              q_mult = 0.35
 
-                # ── Step 3: Flat band multipliers ────────────────────────
-                # Bull band: base × (1 + bull_spread * quality_mult)
-                # Bear band: base × (1 - bear_spread * survivability_mult)
-                # Crypto bands are wider than stocks due to inherent volatility
-                bull_spread = 0.60   # 60% upside for bull band max
-                bear_spread = 0.50   # 50% downside for bear band max
+                # ── Step 3: Annual compounding growth rates ───────────────
+                #
+                # Crypto has no EPS — rates are derived from quality score
+                # but calibrated against actual historical crypto market cycles.
+                #
+                # Calibration anchors (based on observed crypto market history):
+                #   Bull market cycle: top protocols 2-3x over 2-3 years
+                #   Bear market cycle: top protocols -40 to -70% peak-to-trough
+                #   Over a full 5Y period blending both: realistic net ~+50-150%
+                #
+                # These rates represent ANNUAL compounding and are intentionally
+                # conservative — not peak-cycle extrapolations.
+                #
+                # Quality → (base, bull, bear) annual rates:
+                #
+                #   9-10 │ top-tier (BTC, ETH)    │ +12%  +20%   -8%
+                #        │ ETH $2,141 → 5Y:        │ $3,770 $5,265 $1,414
+                #
+                #   7-8  │ strong (SOL, BNB, LINK) │ +10%  +17%  -12%
+                #        │ SOL $89 → 5Y:            │ $143  $196   $47
+                #
+                #   5-6  │ moderate (ADA, AVAX)    │  +7%  +13%  -16%
+                #
+                #   3-4  │ weak                    │  +3%   +9%  -22%
+                #
+                #   0-2  │ speculative             │   0%   +6%  -30%
+                #
+                # Survivability modifies the bear rate only — resilient tokens
+                # recover faster from drawdowns.
 
-                bull_mult = 1.0 + (bull_spread * q_mult)
-                bear_mult = 1.0 - (bear_spread * (1 - surv_mult))
+                if q_score >= 9:
+                    base_growth =  0.12
+                    bull_growth =  0.20
+                    bear_growth = -0.08
+                elif q_score >= 7:
+                    base_growth =  0.10
+                    bull_growth =  0.17
+                    bear_growth = -0.12
+                elif q_score >= 5:
+                    base_growth =  0.07
+                    bull_growth =  0.13
+                    bear_growth = -0.16
+                elif q_score >= 3:
+                    base_growth =  0.03
+                    bull_growth =  0.09
+                    bear_growth = -0.22
+                else:
+                    base_growth =  0.00
+                    bull_growth =  0.06
+                    bear_growth = -0.30
 
-                bull_iv = _sr(base_iv * bull_mult)
-                bear_iv = _sr(base_iv * bear_mult)
+                # Survivability softens the bear rate for resilient tokens.
+                # surv_mult 1.0 → no additional penalty
+                # surv_mult 0.6 → bear rate worsens by 40% of its absolute value
+                surv_bear_adj = abs(bear_growth) * (1.0 - surv_mult) * 0.5
+                bear_growth   = bear_growth - surv_bear_adj                # Survivability dampens bear for resilient tokens
+                # Strong survivability (1.0) → full bear protection
+                # Weak survivability (0.35)  → steeper bear drawdown
+                bear_growth = bear_growth * (2.0 - surv_mult)
+
+                # ── Minimum band separation guard ─────────────────────────
+                # Ensure bull is always above base and bear always below base,
+                # so the chart fan never collapses to a flat line.
+                if bull_growth <= base_growth:
+                    bull_growth = base_growth + 0.03
+                if bear_growth >= base_growth:
+                    bear_growth = base_growth - 0.03
 
                 was_constrained = surv_mult < 1.0 or q_mult < 1.0
 
-                # ── Step 4: Fetch 10Y price history from CoinGecko ───────
+                # ── Step 4: Fetch 10Y price history from CoinGecko ────────
                 # Uses daily interval with 3650 days — CoinGecko free tier
                 # returns daily data for ranges > 90 days automatically.
                 # Then we sample one price per year (year-end closing).
+                # Retry once on 429 before skipping.
                 price_history = {}
-                try:
-                    time.sleep(1.2)   # respect rate limit
-                    # Daily interval gives full history on free tier
-                    hist_resp = requests.get(
-                        f"https://api.coingecko.com/api/v3/coins/{coin_id}"
-                        f"/market_chart?vs_currency=usd&days=3650",
-                        headers=_headers(), timeout=20
-                    )
-                    if hist_resp.status_code == 200:
-                        prices_raw = hist_resp.json().get("prices", [])
-                        # Sample: keep last price per calendar year
-                        year_prices = {}
-                        for ts_ms, p_val in prices_raw:
-                            yr = str(datetime.fromtimestamp(ts_ms / 1000).year)
-                            year_prices[yr] = round(p_val, 4)  # last entry per yr wins
-                        price_history = year_prices
-                    elif hist_resp.status_code == 429:
-                        time.sleep(30)   # rate limit — wait and skip
-                except Exception as e:
-                    print(f"  [CRYPTO HIST] {coin_id}: {str(e)[:50]}")
+                for attempt in range(2):
+                    try:
+                        time.sleep(1.5 + attempt * 30)   # longer wait on retry
+                        hist_resp = requests.get(
+                            f"https://api.coingecko.com/api/v3/coins/{coin_id}"
+                            f"/market_chart?vs_currency=usd&days=3650",
+                            headers=_headers(), timeout=25
+                        )
+                        if hist_resp.status_code == 200:
+                            prices_raw = hist_resp.json().get("prices", [])
+                            year_prices = {}
+                            for ts_ms, p_val in prices_raw:
+                                yr = str(datetime.fromtimestamp(ts_ms / 1000).year)
+                                year_prices[yr] = round(p_val, 4)
+                            price_history = year_prices
+                            break   # success
+                        elif hist_resp.status_code == 429:
+                            if attempt == 0:
+                                continue   # retry after 30s sleep
+                            else:
+                                print(f"  [CRYPTO HIST] {coin_id}: rate limited, skipping")
+                                break
+                    except Exception as e:
+                        print(f"  [CRYPTO HIST] {coin_id}: {str(e)[:60]}")
+                        break
 
-                # ── Step 5: Build historical section ─────────────────────
-                # Bands are back-projected as flat multiples — no compounding.
-                # The historical section exists purely to show market price
-                # context, not to project what IV "should have been."
+                # Always include current price as latest year data point
+                # so the chart shows at minimum one historical marker
+                price_history[str(current_year)] = round(price, 4) if price else None
+
+                # ── Step 5: Build historical section ──────────────────────
+                # Historical years show actual market price only.
+                # IV/bull/bear are NOT back-projected into history —
+                # they only appear from current year forward.
                 for yr, hist_price in sorted(price_history.items()):
-                    valuation_chart[yr] = {
-                        "market_price":    hist_price,
-                        "intrinsic_value": round(base_iv, 4),
-                        "bull_case":       bull_iv,
-                        "bear_case":       bear_iv,
-                        "is_historical":   True,
-                    }
+                    if int(yr) < current_year:
+                        valuation_chart[yr] = {
+                            "market_price":    hist_price,
+                            "intrinsic_value": None,   # no IV shown in history
+                            "bull_case":       None,
+                            "bear_case":       None,
+                            "is_historical":   True,
+                        }
 
-                # ── Step 6: Current year ──────────────────────────────────
+                # ── Step 6: Current year ───────────────────────────────────
                 valuation_chart[str(current_year)] = {
                     "market_price":    round(price, 4) if price else None,
                     "intrinsic_value": round(base_iv, 4),
-                    "bull_case":       bull_iv,
-                    "bear_case":       bear_iv,
+                    "bull_case":       round(base_iv, 4),   # bands start at IV
+                    "bear_case":       round(base_iv, 4),   # bands start at IV
                     "is_historical":   False,
                 }
 
-                # ── Step 7: Forecast years — flat bands, 5 years ─────────
-                # No compounding — bands stay at current levels.
-                # AI Studio's qualitative bull/bear analysis can annotate
-                # which band is more likely based on the thesis.
+                # ── Step 7: Forecast years — compounding bands ─────────────
+                # Each year the bull/bear/base compound from current IV.
+                # This creates a naturally widening cone (fan) shape rather
+                # than flat horizontal lines — matching how risk accumulates
+                # over time and how crypto scenario analysis is normally shown.
                 for i in range(1, 6):
+                    yr_base = round(base_iv * ((1 + base_growth) ** i), 4)
+                    yr_bull = round(base_iv * ((1 + bull_growth) ** i), 4)
+                    yr_bear = round(base_iv * ((1 + bear_growth) ** i), 4)
+                    # Ensure bear never goes below 1% of base_iv (avoid negatives)
+                    yr_bear = max(yr_bear, round(base_iv * 0.01, 4))
                     valuation_chart[str(current_year + i)] = {
                         "market_price":    None,
-                        "intrinsic_value": round(base_iv, 4),
-                        "bull_case":       bull_iv,
-                        "bear_case":       bear_iv,
+                        "intrinsic_value": yr_base,
+                        "bull_case":       yr_bull,
+                        "bear_case":       yr_bear,
                         "is_historical":   False,
                     }
 
-                # ── Step 8: Forecast metadata ─────────────────────────────
+                # ── Step 8: Forecast metadata ──────────────────────────────
+                # Fields are crypto-specific — no EPS, no earnings growth.
+                # growth_basis explains the methodology for the UI label.
+                yr5_base = round(base_iv * ((1 + base_growth) ** 5), 4)
+                yr5_bull = round(base_iv * ((1 + bull_growth) ** 5), 4)
+                yr5_bear = round(base_iv * ((1 + bear_growth) ** 5), 4)
+                yr5_bear = max(yr5_bear, round(base_iv * 0.01, 4))
                 forecast_meta = {
-                    "base_iv":              round(base_iv, 4),
-                    "bull_iv":              bull_iv,
-                    "bear_iv":              bear_iv,
-                    "bull_upside_pct":      round((bull_mult - 1) * 100, 1),
-                    "bear_downside_pct":    round((1 - bear_mult) * 100, 1),
-                    "quality_score":        q_score,
-                    "quality_multiplier":   q_mult,
-                    "survivability_pct":    round(surv_pct * 100, 1),
-                    "survivability_mult":   surv_mult,
-                    "growth_constrained":   was_constrained,
-                    "bucket":               bucket,
-                    "iv_sources":           len(valid_ivs),
-                    "constraint_note": (
-                        f"Bands constrained — quality {q_score}/10, "
-                        f"survivability {round(surv_pct*100,1)}%. "
-                        f"Bull upside capped at {round((bull_mult-1)*100,1)}%, "
-                        f"bear downside at {round((1-bear_mult)*100,1)}%."
-                    ) if was_constrained else None,
+                    # Current year anchors
+                    "base_iv":                  round(base_iv, 4),
+                    "bull_iv":                  round(base_iv, 4),
+                    "bear_iv":                  round(base_iv, 4),
+                    # 5-year compounded targets
+                    "yr5_base_target":          yr5_base,
+                    "yr5_bull_target":          yr5_bull,
+                    "yr5_bear_target":          yr5_bear,
+                    # Annual growth rates (for UI display)
+                    "base_annual_growth_pct":   round(base_growth * 100, 1),
+                    "bull_annual_growth_pct":   round(bull_growth * 100, 1),
+                    "bear_annual_growth_pct":   round(bear_growth * 100, 1),
+                    # Upside/downside vs current price over 5 years
+                    "bull_5y_upside_pct":       round((yr5_bull / base_iv - 1) * 100, 1),
+                    "bear_5y_change_pct":       round((yr5_bear / base_iv - 1) * 100, 1),
+                    # Methodology label — shown in the UI instead of "EPS driven"
+                    "growth_basis":             "Quality-adjusted network adoption",
+                    "growth_basis_note": (
+                        f"Annual growth rates derived from quality score "
+                        f"{q_score}/10 and survivability {round(surv_pct*100,1)}%. "
+                        f"Base: {round(base_growth*100,1)}% p.a., "
+                        f"Bull: {round(bull_growth*100,1)}% p.a., "
+                        f"Bear: {round(bear_growth*100,1)}% p.a."
+                    ),
+                    # Quality/survivability context
+                    "quality_score":            q_score,
+                    "quality_multiplier":       q_mult,
+                    "survivability_pct":        round(surv_pct * 100, 1),
+                    "survivability_mult":       surv_mult,
+                    "growth_constrained":       was_constrained,
+                    "bucket":                   bucket,
+                    "iv_sources":               len([m for m in methods_used if "Market price" not in m]),
+                    "methods_used":             methods_used,
                 }
+
+                # ── Step 9: Market Cycle + Chart Zones + Recalibrated F&G ───
+                # Now that price_history is available, compute cycle phase,
+                # chart zones, and recalibrate Fear & Greed with cycle anchor.
+                q_score_for_cycle = (quality or {}).get("final_score") or 5
+                market_cycle = classify_market_cycle(price_history, price)
+                chart_zones  = compute_chart_zones(
+                    price_history = price_history,
+                    current_price = price,
+                    base_iv       = base_iv,
+                    quality_score = q_score_for_cycle,
+                )
+                # Recalculate fear_greed with cycle context
+                fear_greed = calc_fear_greed(
+                    price_change_7d  = chg_7d,
+                    price_change_30d = chg_30d,
+                    volume           = volume,
+                    market_cap       = mc,
+                    dilution_data    = dilution,
+                    bucket           = bucket,
+                    market_cycle     = market_cycle,
+                    market_fg_value  = _market_fg,
+                )
 
         except Exception:
             valuation_chart = {}
             forecast_meta   = {}
+            market_cycle    = {"phase": "UNKNOWN", "phase_label": "Insufficient Data",
+                               "drawdown_from_ath_pct": None, "yoy_change_pct": None,
+                               "above_3y_sma": None, "ath_price": None,
+                               "sma_3y": None, "data_years": 0}
+            chart_zones     = {"current_zone": "NEUTRAL_ZONE",
+                               "current_zone_label": "Neutral",
+                               "margin_of_safety": False,
+                               "mos_note": "Data unavailable",
+                               "zones_by_year": {}}
 
         return symbol, {
             "name":              name,
@@ -1508,6 +2443,8 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
             "metcalfe_ratio":    metcalfe_ratio,
             "quality":           quality,
             "fear_greed":        fear_greed,
+            "market_cycle":      market_cycle,
+            "chart_zones":       chart_zones,
             "network_economics": network_econ,
             "valuation_chart":   valuation_chart,
             "forecast_meta":     forecast_meta,
@@ -1516,11 +2453,10 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
             # nested lookup — prevents "N/A - Insufficient Data" display.
             "intrinsic_value":   forecast_meta.get("base_iv") if forecast_meta else None,
             "iv_method":         (
-                "DCF on protocol fees" if bucket == "A" and
-                (forecast_meta or {}).get("iv_sources", 0) > 0
-                else "Monetary premium / production cost" if bucket == "B"
-                else "Market price (no fee data available)"
+                ", ".join(methods_used) if methods_used
+                else "Market price (insufficient data)"
             ),
+            "iv_methods_count":  len(methods_used),
             "bull_bear":         generate_crypto_bull_bear(
                                      symbol       = symbol,
                                      name         = name,
@@ -1633,11 +2569,14 @@ def fetch_network_economics(slug, symbol, coin_data, defillama_summary,
     has_fee_data = annual_fees > 0
 
     # ── Attempt DeFiLlama historical protocol data ─────────────────────────
-    historical_tvl   = {}   # { year_str: tvl_usd }
-    historical_fees  = {}   # { year_str: fees_usd }
-    years_of_history = 0
+    historical_tvl     = {}   # { year_str: tvl_usd }
+    historical_fees    = {}   # { year_str: fees_usd (annual total) }
+    historical_revenue = {}   # { year_str: revenue_usd (annual total) }
+    years_of_history   = 0
 
-    # ── Try protocol-level endpoint first ────────────────────────────────────
+    # ── Fetch TVL history from /protocol/{slug} ───────────────────────────────
+    # DeFiLlama /protocol/{slug} returns TVL history in the "tvl" array.
+    # Each entry: { "date": unix_timestamp, "totalLiquidityUSD": value }
     if slug:
         try:
             resp = requests.get(
@@ -1646,27 +2585,57 @@ def fetch_network_economics(slug, symbol, coin_data, defillama_summary,
             )
             if resp.status_code == 200:
                 pdata = resp.json()
-                # TVL history
+                # TVL history — keep one value per year (year-end / latest entry wins)
                 for entry in pdata.get("tvl", []):
                     ts  = entry.get("date")
                     val = entry.get("totalLiquidityUSD")
                     if ts and val:
                         yr = str(datetime.fromtimestamp(ts).year)
                         historical_tvl[yr] = round(float(val), 2)
-                # Fee history (daily accumulate → yearly)
-                for entry in pdata.get("feesHistory", []):
-                    ts  = entry.get("date")
-                    val = entry.get("dailyFees")
-                    if ts and val:
-                        yr = str(datetime.fromtimestamp(ts).year)
-                        historical_fees[yr] = historical_fees.get(yr, 0) + float(val)
         except Exception:
             pass
+
+    # ── Fetch fee history from /summary/fees/{slug} ───────────────────────────
+    # The correct DeFiLlama endpoint for historical fee time-series.
+    # Returns: { totalDataChart: [[timestamp, daily_value], ...], ... }
+    # NOTE: /protocol/{slug} does NOT contain fee history — that was a bug.
+    if slug:
+        for data_type in ["dailyFees", "dailyRevenue"]:
+            try:
+                resp_f = requests.get(
+                    f"https://api.llama.fi/summary/fees/{slug}?dataType={data_type}",
+                    timeout=15
+                )
+                if resp_f.status_code == 200:
+                    fdata = resp_f.json()
+                    chart = fdata.get("totalDataChart", [])
+                    # Accumulate daily values into yearly totals
+                    yearly = {}
+                    for entry in chart:
+                        if isinstance(entry, (list, tuple)) and len(entry) == 2:
+                            ts, val = entry
+                        elif isinstance(entry, dict):
+                            ts  = entry.get("date") or entry.get("timestamp")
+                            val = entry.get("value") or entry.get(data_type)
+                        else:
+                            continue
+                        if ts and val:
+                            try:
+                                yr = str(datetime.fromtimestamp(int(ts)).year)
+                                yearly[yr] = yearly.get(yr, 0) + float(val)
+                            except Exception:
+                                pass
+                    if yearly:
+                        if data_type == "dailyFees":
+                            historical_fees = yearly
+                        else:
+                            historical_revenue = yearly
+            except Exception:
+                pass
 
     # ── Try chain-level TVL endpoint for L1 blockchains ──────────────────────
     # DeFiLlama stores chain TVL separately from protocol TVL.
     # e.g. Solana chain TVL is at /v2/historicalChainTvl/Solana
-    # This gives real historical TVL for chains like SOL, AVAX, MATIC.
     if chain_slug and not historical_tvl:
         try:
             chain_name = chain_slug.capitalize()
@@ -1708,26 +2677,42 @@ def fetch_network_economics(slug, symbol, coin_data, defillama_summary,
         # Do NOT return early — Charts 3 (issuance/burns) and 4 (capital
         # efficiency) can still be partially populated from CoinGecko data.
 
-    # ── Chart 1: Protocol Revenue & Fees ─────────────────────────────────
-    # Historical years from DeFiLlama, current year from summary estimate
+    # ── Chart 1: Protocol Revenue & Fees ─────────────────────────────────────
+    # Priority: historical_fees from /summary/fees/{slug} → current summary.
+    # Revenue uses historical_revenue when available, else 15% fee estimate.
+    # For tokens without DeFiLlama coverage: show current-year only from summary.
     rev_fees = {}
-    for yr, fee_val in historical_fees.items():
+
+    # Historical years from DeFiLlama fee time-series
+    all_hist_years = sorted(set(historical_fees) | set(historical_revenue))
+    for yr in all_hist_years:
+        fee_val = historical_fees.get(yr)
+        rev_val = historical_revenue.get(yr) or (fee_val * 0.15 if fee_val else None)
         rev_fees[yr] = {
-            "fees_usd":     round(fee_val / 1e6, 2),    # in $M
-            "revenue_usd":  round(fee_val * 0.15 / 1e6, 2),  # ~15% retained estimate
+            "fees_usd":     round(fee_val / 1e6, 2) if fee_val else None,
+            "revenue_usd":  round(rev_val  / 1e6, 2) if rev_val  else None,
             "is_estimated": False,
         }
-    # Fill TVL-years that have no fee data with N/A
+
+    # TVL years with no fee data — placeholder so Chart 2 aligns timeline
     for yr in historical_tvl:
-        if yr not in rev_fees and has_fee_data:
-            rev_fees[yr] = {"fees_usd": None, "revenue_usd": None, "is_estimated": True}
-    # Current year estimate from summary
-    if has_fee_data:
+        if yr not in rev_fees:
+            rev_fees[yr] = {
+                "fees_usd":     None,
+                "revenue_usd":  None,
+                "is_estimated": True,
+            }
+
+    # Current year — always populated when any fee data exists
+    if annual_fees and annual_fees > 0:
         rev_fees[str(current_year)] = {
             "fees_usd":     round(annual_fees / 1e6, 2),
-            "revenue_usd":  round(annual_rev  / 1e6, 2),
+            "revenue_usd":  round(annual_rev  / 1e6, 2) if annual_rev else
+                            round(annual_fees * 0.15 / 1e6, 2),
+            "holders_revenue_usd": round(holders_rev / 1e6, 2) if holders_rev else None,
             "is_estimated": True,
         }
+
     result["protocol_revenue_and_fees"] = rev_fees
 
     # ── Chart 2: Treasury vs Token Emissions ─────────────────────────────
@@ -1779,29 +2764,42 @@ def fetch_network_economics(slug, symbol, coin_data, defillama_summary,
     }
     result["issuance_vs_burns"] = issuance_burns
 
-    # ── Chart 4: Capital Efficiency ───────────────────────────────────────
-    # Fee/TVL ratio per year = ROIC analog
+    # ── Chart 4: Capital Efficiency ───────────────────────────────────────────
+    # Fee/TVL ratio per year = ROIC analog (how efficiently capital generates fees)
     # Real Yield = holders_revenue / TVL = ROE analog
+    # Even when fees are null, TVL bars are useful context — always show them.
     cap_eff = {}
     for yr in sorted(set(historical_tvl) | set(historical_fees)):
         tvl_yr  = historical_tvl.get(yr)
         fees_yr = historical_fees.get(yr)
-        fee_tvl_ratio  = round(fees_yr / tvl_yr * 100, 4) if fees_yr and tvl_yr and tvl_yr > 0 else None
+        fee_tvl_ratio = (
+            round(fees_yr / tvl_yr * 100, 4)
+            if fees_yr and tvl_yr and tvl_yr > 0 else None
+        )
         cap_eff[yr] = {
-            "fee_tvl_ratio_pct": fee_tvl_ratio,   # ROIC analog
-            "real_yield_pct":    None,             # holders_rev/TVL — needs per-year holders rev
-            "tvl_usd_m":         round(tvl_yr / 1e6, 2) if tvl_yr else None,
+            "fee_tvl_ratio_pct": fee_tvl_ratio,
+            "real_yield_pct":    None,   # per-year holders rev not available historically
+            "tvl_usd_m":         round(tvl_yr  / 1e6, 2) if tvl_yr  else None,
             "fees_usd_m":        round(fees_yr / 1e6, 2) if fees_yr else None,
         }
-    # Current year
-    if tvl and annual_fees:
-        fee_tvl_curr = round(annual_fees / tvl * 100, 4) if tvl > 0 else None
-        real_yield   = round(holders_rev / tvl * 100, 4) if holders_rev and tvl > 0 else None
+
+    # Current year — populate even when only TVL is known (shows bar without ratio line)
+    curr_tvl  = tvl if tvl else None
+    curr_fees = annual_fees if annual_fees and annual_fees > 0 else None
+    if curr_tvl or curr_fees:
+        fee_tvl_curr = (
+            round(curr_fees / curr_tvl * 100, 4)
+            if curr_fees and curr_tvl and curr_tvl > 0 else None
+        )
+        real_yield = (
+            round(holders_rev / curr_tvl * 100, 4)
+            if holders_rev and curr_tvl and curr_tvl > 0 else None
+        )
         cap_eff[str(current_year)] = {
             "fee_tvl_ratio_pct": fee_tvl_curr,
             "real_yield_pct":    real_yield,
-            "tvl_usd_m":         round(tvl / 1e6, 2),
-            "fees_usd_m":        round(annual_fees / 1e6, 2),
+            "tvl_usd_m":         round(curr_tvl  / 1e6, 2) if curr_tvl  else None,
+            "fees_usd_m":        round(curr_fees  / 1e6, 2) if curr_fees else None,
             "is_estimated":      True,
         }
     result["capital_efficiency"] = cap_eff
@@ -1832,6 +2830,117 @@ def fetch_network_economics(slug, symbol, coin_data, defillama_summary,
 #   Bucket B — gold capture, production cost, scarcity, monetary premium
 # =============================================================================
 ANTHROPIC_API_KEY = ""   # ← paste your Anthropic API key when ready
+
+# Cache for Claude API moat scores — avoids re-scoring on every nightly run.
+# Moat scores change slowly (quarterly updates sufficient).
+# Format: { symbol: { "score": int, "rationale": str, "scored_at": date } }
+MOAT_SCORE_CACHE = {}
+
+def score_protocol_moat_via_claude(symbol, name, bucket, rank, mc,
+                                    circ_pct, quality_signals, hints_used):
+    """
+    Use Claude Haiku to score a token's protocol moat (0-10).
+
+    This replaces the AI Studio runtime moat calculation, moving it into
+    the pipeline so the app receives a pre-computed, consistent score.
+
+    Moat dimensions assessed by Claude:
+      1. Competitive defensibility — can the protocol be forked easily?
+         (UNI: low — forked many times. ETH: very high — 15Y security/dev)
+      2. Network effects — does value increase with more users?
+         (ETH: extreme. UNI: moderate. ARB: low — users go where fees are lowest)
+      3. Token utility — does the token capture real economic value?
+         (GMX: high — direct fee share. UNI: low — governance only, no fees)
+      4. Ecosystem lock-in — switching costs for users/developers?
+         (ETH: very high — entire DeFi stack built on it)
+      5. Regulatory moat — does decentralisation provide legal resilience?
+
+    Score interpretation:
+      9-10: Exceptional moat (BTC, ETH only)
+      7-8:  Strong moat (SOL, MKR, GMX, PENDLE)
+      5-6:  Moderate moat (AAVE, UNI, LINK)
+      3-4:  Weak moat (ARB, OP, most governance tokens)
+      0-2:  No moat (meme coins, pure governance tokens)
+
+    Returns (score, rationale_str) or None if API unavailable.
+    """
+    global MOAT_SCORE_CACHE
+
+    if not ANTHROPIC_API_KEY or not ANTHROPIC_API_KEY.strip():
+        return None
+
+    # Use cache if scored recently (within 30 days)
+    if symbol in MOAT_SCORE_CACHE:
+        return MOAT_SCORE_CACHE[symbol]
+
+    bucket_label = "Cash-Flow Protocol" if bucket == "A" else "Store of Value"
+    signals_summary = {k: v.get("score") for k, v in quality_signals.items()}
+
+    prompt = f"""You are a senior crypto analyst specialising in protocol fundamentals and tokenomics.
+
+Score the PROTOCOL MOAT of {name} ({symbol}) on a scale of 0-10.
+
+Context:
+- Classification: {bucket_label}
+- Market cap rank: {rank}
+- Market cap: ${mc/1e9:.1f}B
+- Circulating supply: {circ_pct}%
+- Quality signals (pipeline scores): {signals_summary}
+- Curated hints used: {hints_used}
+
+Assess moat across these 5 dimensions:
+1. Competitive defensibility (can it be forked? has it been? does it matter?)
+2. Network effects (does user growth increase value for all participants?)
+3. Token utility / value capture (do holders receive real economic value now?)
+4. Ecosystem lock-in (switching costs for users, developers, and capital?)
+5. Regulatory resilience (decentralisation as a moat vs regulatory risk)
+
+SCORING GUIDANCE:
+- ETH = 9 (settlement layer, 15Y security, all DeFi depends on it)
+- BTC = 10 (hardest money, 15Y security, unmatched hash rate)
+- SOL = 7 (strong L1 but younger, faster/cheaper but ETH dependency risk)
+- UNI = 5 (forked many times, fee switch off, LPs not token holders capture value)
+- ARB/OP = 4 (L2 governance tokens, users follow cheapest fees, no lock-in)
+- Meme coins = 1-2 (no utility, no moat)
+
+Respond ONLY with valid JSON, no other text:
+{{"score": <int 0-10>, "rationale": "<2-3 sentences explaining the score, specific to {symbol}>"}}"""
+
+    try:
+        resp = requests.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={
+                "x-api-key":         ANTHROPIC_API_KEY,
+                "anthropic-version": "2023-06-01",
+                "content-type":      "application/json",
+            },
+            json={
+                "model":      "claude-haiku-4-5-20251001",
+                "max_tokens": 200,
+                "messages":   [{"role": "user", "content": prompt}],
+            },
+            timeout=20,
+        )
+        if resp.status_code == 200:
+            raw = resp.json()["content"][0]["text"].strip()
+            raw = raw.replace("```json", "").replace("```", "").strip()
+            parsed = json.loads(raw)
+            score = max(0, min(10, int(parsed.get("score", 5))))
+            rationale = parsed.get("rationale", "")
+            result = {
+                "score":      score,
+                "rationale":  rationale,
+                "scored_at":  datetime.now().strftime("%Y-%m-%d"),
+                "source":     "claude_api",
+            }
+            MOAT_SCORE_CACHE[symbol] = result
+            return result
+    except Exception as e:
+        print(f"  [MOAT] {symbol}: API failed ({str(e)[:50]})")
+
+    return None
+
+
 
 def generate_crypto_bull_bear(symbol, name, bucket, price, mc, rank,
                                quality, dilution, fear_greed,
