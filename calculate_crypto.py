@@ -132,6 +132,27 @@ def _safe(val, fallback=None):
     except (TypeError, ValueError):
         return fallback
 
+def _round_price(p, sig=6):
+    """
+    Round a price to a sensible number of significant figures.
+
+    Standard round(x, 4) destroys sub-cent token prices:
+      round(3.8796e-08, 4) → 0.0   ← kills valuation chart
+
+    This function preserves 6 significant figures regardless of magnitude:
+      3.8796e-08 → 3.8796e-08   ELON, ELEPHANT, etc.
+      0.103593   → 0.1036       ENA
+      2140.74    → 2140.74      ETH
+    """
+    import math
+    if not p or p == 0:
+        return 0.0
+    if p >= 0.01:
+        return round(p, 4)
+    # Sub-cent: keep sig significant figures
+    magnitude = math.floor(math.log10(abs(p)))
+    return round(p, -int(magnitude) + sig - 1)
+
 def _headers():
     h = {"accept": "application/json"}
     if COINGECKO_API_KEY:
@@ -2277,35 +2298,38 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 # Then we sample one price per year (year-end closing).
                 # Retry once on 429 before skipping.
                 price_history = {}
-                for attempt in range(2):
+                for attempt in range(3):
                     try:
-                        time.sleep(1.5 + attempt * 30)   # longer wait on retry
+                        wait = [2.0, 45.0, 90.0][attempt]
+                        time.sleep(wait)
                         hist_resp = requests.get(
                             f"https://api.coingecko.com/api/v3/coins/{coin_id}"
                             f"/market_chart?vs_currency=usd&days=3650",
-                            headers=_headers(), timeout=25
+                            headers=_headers(), timeout=30
                         )
                         if hist_resp.status_code == 200:
                             prices_raw = hist_resp.json().get("prices", [])
                             year_prices = {}
                             for ts_ms, p_val in prices_raw:
                                 yr = str(datetime.fromtimestamp(ts_ms / 1000).year)
-                                year_prices[yr] = round(p_val, 4)
+                                year_prices[yr] = _round_price(p_val)
                             price_history = year_prices
-                            break   # success
+                            break
                         elif hist_resp.status_code == 429:
-                            if attempt == 0:
-                                continue   # retry after 30s sleep
-                            else:
-                                print(f"  [CRYPTO HIST] {coin_id}: rate limited, skipping")
-                                break
+                            print(f"  [CRYPTO HIST] {coin_id}: 429 rate limit (attempt {attempt+1}/3)")
+                            if attempt == 2:
+                                print(f"  [CRYPTO HIST] {coin_id}: all retries exhausted, skipping")
+                            continue
+                        else:
+                            print(f"  [CRYPTO HIST] {coin_id}: HTTP {hist_resp.status_code}")
+                            break
                     except Exception as e:
                         print(f"  [CRYPTO HIST] {coin_id}: {str(e)[:60]}")
                         break
 
                 # Always include current price as latest year data point
                 # so the chart shows at minimum one historical marker
-                price_history[str(current_year)] = round(price, 4) if price else None
+                price_history[str(current_year)] = _round_price(price) if price else None
 
                 # ── Step 5: Build historical section ──────────────────────
                 # Historical years show actual market price only.
@@ -2323,10 +2347,10 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
 
                 # ── Step 6: Current year ───────────────────────────────────
                 valuation_chart[str(current_year)] = {
-                    "market_price":    round(price, 4) if price else None,
-                    "intrinsic_value": round(base_iv, 4),
-                    "bull_case":       round(base_iv, 4),   # bands start at IV
-                    "bear_case":       round(base_iv, 4),   # bands start at IV
+                    "market_price":    _round_price(price) if price else None,
+                    "intrinsic_value": _round_price(base_iv),
+                    "bull_case":       _round_price(base_iv),   # bands start at IV
+                    "bear_case":       _round_price(base_iv),   # bands start at IV
                     "is_historical":   False,
                 }
 
@@ -2336,11 +2360,10 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 # than flat horizontal lines — matching how risk accumulates
                 # over time and how crypto scenario analysis is normally shown.
                 for i in range(1, 6):
-                    yr_base = round(base_iv * ((1 + base_growth) ** i), 4)
-                    yr_bull = round(base_iv * ((1 + bull_growth) ** i), 4)
-                    yr_bear = round(base_iv * ((1 + bear_growth) ** i), 4)
-                    # Ensure bear never goes below 1% of base_iv (avoid negatives)
-                    yr_bear = max(yr_bear, round(base_iv * 0.01, 4))
+                    yr_base = _round_price(base_iv * ((1 + base_growth) ** i))
+                    yr_bull = _round_price(base_iv * ((1 + bull_growth) ** i))
+                    yr_bear = _round_price(base_iv * ((1 + bear_growth) ** i))
+                    yr_bear = max(yr_bear, _round_price(base_iv * 0.01))
                     valuation_chart[str(current_year + i)] = {
                         "market_price":    None,
                         "intrinsic_value": yr_base,
@@ -2352,15 +2375,15 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 # ── Step 8: Forecast metadata ──────────────────────────────
                 # Fields are crypto-specific — no EPS, no earnings growth.
                 # growth_basis explains the methodology for the UI label.
-                yr5_base = round(base_iv * ((1 + base_growth) ** 5), 4)
-                yr5_bull = round(base_iv * ((1 + bull_growth) ** 5), 4)
-                yr5_bear = round(base_iv * ((1 + bear_growth) ** 5), 4)
-                yr5_bear = max(yr5_bear, round(base_iv * 0.01, 4))
+                yr5_base = _round_price(base_iv * ((1 + base_growth) ** 5))
+                yr5_bull = _round_price(base_iv * ((1 + bull_growth) ** 5))
+                yr5_bear = _round_price(base_iv * ((1 + bear_growth) ** 5))
+                yr5_bear = max(yr5_bear, _round_price(base_iv * 0.01))
                 forecast_meta = {
                     # Current year anchors
-                    "base_iv":                  round(base_iv, 4),
-                    "bull_iv":                  round(base_iv, 4),
-                    "bear_iv":                  round(base_iv, 4),
+                    "base_iv":                  _round_price(base_iv),
+                    "bull_iv":                  _round_price(base_iv),
+                    "bear_iv":                  _round_price(base_iv),
                     # 5-year compounded targets
                     "yr5_base_target":          yr5_base,
                     "yr5_bull_target":          yr5_bull,
