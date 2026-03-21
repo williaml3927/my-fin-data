@@ -2648,15 +2648,39 @@ def analyze_ticker(ticker, retries=3):
                         _safe(info.get('regularMarketPrice'))
                     )
 
-                    # Historical back-projection using base rate
+                    # Historical back-projection using growth rates.
+                    # Logic: today's IV compounded BACK in time at each scenario rate
+                    # gives what the scenario IV would have been in that year.
+                    #
+                    # Bull case discounts LESS (higher rate → smaller past value):
+                    #   bull_factor = (1 + bull_rate) ** (-years_back)
+                    # Bear case discounts MORE (lower rate → larger past value):
+                    #   bear_factor = (1 + bear_rate) ** (-years_back)
+                    #
+                    # IMPORTANT — why bull < bear historically (and this is CORRECT):
+                    # The bull scenario assumes FASTER historical growth, so looking
+                    # backwards the implied past IV is LOWER (the company grew more
+                    # to reach today's IV). The bear scenario assumes SLOWER growth,
+                    # so the implied past IV is HIGHER.
+                    #
+                    # However this creates a confusing chart where the "bull" band
+                    # is below the "bear" band in history. To keep the chart intuitive
+                    # — bull always above bear — we swap the factors for historical years:
+                    #   historical bull_case  = IV * (1 + bear_rate) ** (-years_back)  ← HIGHER
+                    #   historical bear_case  = IV * (1 + bull_rate) ** (-years_back)  ← LOWER
+                    #
+                    # This preserves the visual: bull band always on top, bear always below.
                     if price_history:
                         hist_years = sorted(price_history.keys())
                         n_hist     = len(hist_years)
                         for i, yr in enumerate(hist_years):
                             years_back = n_hist - i
-                            b_factor   = (1 + base_rate) ** (-years_back)
-                            u_factor   = (1 + bull_rate) ** (-years_back)
-                            l_factor   = (1 + bear_rate) ** (-years_back)
+                            b_factor      = (1 + base_rate) ** (-years_back)
+                            # Swap: bear_rate gives higher back-projected value → assign to bull band
+                            bull_h_factor = (1 + bear_rate) ** (-years_back)
+                            # Swap: bull_rate gives lower back-projected value → assign to bear band
+                            bear_h_factor = (1 + bull_rate) ** (-years_back)
+
                             def _safe_round(v):
                                 try:
                                     f = float(v)
@@ -2667,8 +2691,8 @@ def analyze_ticker(ticker, retries=3):
                             valuation_chart[yr] = {
                                 "market_price":    price_history[yr],
                                 "intrinsic_value": _safe_round(intrinsic_value * b_factor),
-                                "bull_case":       _safe_round(intrinsic_value * u_factor),
-                                "bear_case":       _safe_round(intrinsic_value * l_factor),
+                                "bull_case":       _safe_round(intrinsic_value * bull_h_factor),
+                                "bear_case":       _safe_round(intrinsic_value * bear_h_factor),
                             }
 
                     # Current year
@@ -2706,7 +2730,33 @@ def analyze_ticker(ticker, retries=3):
                 forecast_meta = forecast_meta,
             )
 
+            # ── Margin of Safety — pre-computed for hero card ──────────────
+            # Positive = stock is cheaper than IV (discount) — good
+            # Negative = stock is more expensive than IV (premium)
+            # AI Studio reads this directly — never recomputes from scratch
+            _cp  = (_safe(info.get('currentPrice')) or
+                    _safe(info.get('regularMarketPrice')))
+            _iv  = intrinsic_value
+            if _cp and _cp > 0 and _iv and _iv > 0:
+                _mos_pct = round((_iv - _cp) / _iv * 100, 1)
+                # Label convention: positive = discount (below IV), negative = premium (above IV)
+                if _mos_pct > 40:    _mos_label = "Strong Discount (Margin of Safety)"
+                elif _mos_pct > 20:  _mos_label = "Moderate Discount"
+                elif _mos_pct > 5:   _mos_label = "Slight Discount"
+                elif _mos_pct > 0:   _mos_label = "Fairly Valued (Marginal Discount)"
+                elif _mos_pct > -5:  _mos_label = "Fairly Valued (Marginal Premium)"
+                elif _mos_pct > -20: _mos_label = "Slight Premium"
+                elif _mos_pct > -40: _mos_label = "Moderate Premium"
+                else:                _mos_label = "Significant Premium"
+            else:
+                _mos_pct  = None
+                _mos_label = "Unavailable"
+
             return ticker, {
+                "current_price":        round(_cp, 2) if _cp else None,
+                "intrinsic_value":      round(_iv, 2) if _iv else None,
+                "margin_of_safety_pct": _mos_pct,
+                "mos_label":            _mos_label,
                 "valuations":         valuations,
                 "quality":            quality,
                 "fundamentals":       fundamentals,
