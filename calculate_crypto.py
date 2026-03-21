@@ -1824,7 +1824,7 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
 
         # ── Fear & Greed — computed after price history fetch ────────────────
         # (placeholder — recalculated below once market_cycle is available)
-        _market_fg = (market_fear_greed or {}).get("value")
+        _market_fg = fetch_market_fear_greed().get("value")
         fear_greed = calc_fear_greed(
             price_change_7d  = chg_7d,
             price_change_30d = chg_30d,
