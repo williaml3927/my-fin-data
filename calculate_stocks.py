@@ -2338,7 +2338,10 @@ def analyze_ticker(ticker, retries=3):
                                   if k in ('profitability','financial_strength',
                                            'growth','predictability') and v is not None)
             prelim_pct = round((prelim_subtotal / 40) * 100, 2)
-            prelim_class    = classify_quality(prelim_scores, prelim_pct)
+            prelim_class    = classify_quality(prelim_scores, prelim_pct,
+                                               roe=pre_roe,
+                                               roic=pre_roic,
+                                               eps_next_5y=eps_next_5y)
             tier_data       = resolve_tier(prelim_class["label"])
             discount        = tier_data["discount_rate"]
             terminal        = tier_data["terminal_growth"]
@@ -2470,12 +2473,29 @@ def analyze_ticker(ticker, retries=3):
                 "classification":      classification["label"],
                 "penalty_pct":         classification["penalty_pct"],
                 "final_score_pct":     classification["final_score_pct"],
+                "tiebreaker_used":     classification["tiebreaker_used"],
+                # Stored so AI Studio can re-run classify_quality correctly
+                # after adding moat. Without these, grey-zone and borderline
+                # companies (65-69%, 50-54%) get wrong classification.
+                "tiebreaker_inputs": {
+                    "roe":         round(pre_roe, 4)    if pre_roe    is not None else None,
+                    "roic":        round(pre_roic, 4)   if pre_roic   is not None else None,
+                    "eps_next_5y": round(eps_next_5y, 4) if eps_next_5y is not None else None,
+                },
                 "note": (
-                    "Moat score is null. AI Studio adds moat score (0-10) "
-                    "and recalculates: python_subtotal_pct = "
-                    "(profitability + financial_strength + growth + "
-                    "predictability + moat) / 50 × 100. "
-                    "Then re-run classify_quality with the 5-metric score."
+                    "Moat score is null — AI Studio adds moat (0-10) and recalculates.\n"
+                    "With moat: final_pct = (profitability + financial_strength + growth "
+                    "+ predictability + moat) / 50 × 100.\n"
+                    "Then re-classify using tiebreaker_inputs:\n"
+                    "  ≥70%      → Safe (no penalty)\n"
+                    "  65–69%    → Safe if 2+ of (roe≥0.13, roic≥0.13, eps_next_5y≥0.10) "
+                    "else Speculative (−3pts)\n"
+                    "  55–64%    → Speculative (−3pts)\n"
+                    "  50–54%    → Speculative if 2+ of (roe≥0.08, roic≥0.08, "
+                    "eps_next_5y≥0.08) else Dangerous (−8pts)\n"
+                    "  <50%      → Dangerous (−8pts)\n"
+                    "Moat override: if moat≥7 AND (profitability≥7 OR fs≥7) AND pct≥55 → Safe.\n"
+                    "final_score_pct = max(0, final_pct − penalty)"
                 ),
                 "last_calculated": datetime.now().strftime("%Y-%m-%d %H:%M"),
             }
