@@ -1,5 +1,1314 @@
 {
+  "DTCK": {
+    "current_price": 1.35,
+    "intrinsic_value": 13.77,
+    "margin_of_safety_pct": 90.2,
+    "mos_label": "Strong Discount (Margin of Safety)",
+    "valuations": {
+      "1_DCF_Operating_CF": null,
+      "2_DCF_FCF": null,
+      "3_DCF_Net_Income": null,
+      "4_DCF_Terminal_Value": null,
+      "5_Mean_PS": 21.38,
+      "6_Mean_PE": null,
+      "7_Mean_PB": 7.68,
+      "8_PSG": null,
+      "9_PEG": null,
+      "10_EV_EBITDA": null,
+      "intrinsic_value": 13.77,
+      "methods_used": 2,
+      "confidence": "Low",
+      "active_methods": [
+        "5_Mean_PS",
+        "7_Mean_PB"
+      ],
+      "_meta": {
+        "pe_source": "historical_mean",
+        "ps_source": "historical_mean",
+        "pb_source": "historical_mean",
+        "ev_ebitda_source": "historical_mean",
+        "growth_source": "finviz_no_growth",
+        "growth_raw": 0.0,
+        "growth_peg_rate": 0.0,
+        "discount_rate": 0.12,
+        "growth_stage1": 0.02,
+        "growth_stage2": 0.02,
+        "terminal_growth": 0.02,
+        "tier": "Weak",
+        "company_type": "STANDARD",
+        "type_rationale": "Standard company \u2014 balanced weighting across all methods",
+        "weights_applied": {
+          "1_DCF_Operating_CF": 0.08,
+          "2_DCF_FCF": 0.08,
+          "3_DCF_Net_Income": 0.08,
+          "4_DCF_Terminal_Value": 0.08,
+          "5_Mean_PS": 0.12,
+          "6_Mean_PE": 0.08,
+          "7_Mean_PB": 0.15,
+          "8_PSG": 0.08,
+          "9_PEG": 0.08,
+          "10_EV_EBITDA": 0.17
+        },
+        "excluded_methods": [],
+        "active_methods": [
+          "5_Mean_PS",
+          "7_Mean_PB"
+        ]
+      }
+    },
+    "quality": {
+      "scores": {
+        "profitability": 0,
+        "financial_strength": 0,
+        "growth": 2,
+        "predictability": 2,
+        "valuation": 8,
+        "moat": null
+      },
+      "python_subtotal": 4,
+      "python_subtotal_pct": 10.0,
+      "classification": "Dangerous",
+      "penalty_pct": 8,
+      "final_score_pct": 2.0,
+      "tiebreaker_used": false,
+      "tiebreaker_inputs": {
+        "roe": -0.5255,
+        "roic": null,
+        "eps_next_5y": 0.0
+      },
+      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
+      "last_calculated": "2026-03-21 13:05"
+    },
+    "fundamentals": {
+      "roe": -0.5255,
+      "roic": null,
+      "roe_pct": "-52.55%",
+      "roic_pct": null,
+      "roic_source": "unavailable",
+      "current_ratio": 1.04,
+      "debt_to_ebitda": null,
+      "debt_service_ratio": null
+    },
+    "financials_charts": {
+      "revenue_vs_net_income": {},
+      "fcf_vs_debt": {},
+      "shares_vs_buybacks": {},
+      "returns_trajectory": {},
+      "revenue_vs_ar": {}
+    },
+    "valuation_chart": {
+      "2023": {
+        "market_price": 20.8,
+        "intrinsic_value": 12.72,
+        "bull_case": 13.18,
+        "bear_case": 12.43
+      },
+      "2024": {
+        "market_price": 20.84,
+        "intrinsic_value": 12.98,
+        "bull_case": 13.33,
+        "bear_case": 12.75
+      },
+      "2025": {
+        "market_price": 6.08,
+        "intrinsic_value": 13.24,
+        "bull_case": 13.47,
+        "bear_case": 13.08
+      },
+      "2026": {
+        "market_price": 1.35,
+        "intrinsic_value": 13.77,
+        "bull_case": 13.85,
+        "bear_case": 13.65
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 14.05,
+        "bull_case": 14.13,
+        "bear_case": 13.92
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 14.33,
+        "bull_case": 14.5,
+        "bear_case": 14.07
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 14.61,
+        "bull_case": 14.87,
+        "bear_case": 14.23
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 14.91,
+        "bull_case": 15.26,
+        "bear_case": 14.39
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 15.2,
+        "bull_case": 15.66,
+        "bear_case": 14.54
+      }
+    },
+    "forecast_meta": {
+      "eps_next_5y_raw": 0.0,
+      "fs_score": 5,
+      "fs_multiplier": 0.75,
+      "base_growth_rate": 0.02,
+      "bull_growth_rate": 0.026,
+      "bear_growth_rate": 0.011,
+      "growth_constrained": true,
+      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 5/10"
+    },
+    "bull_bear": {
+      "bull_points": [
+        "Trading at a 90.2% discount to estimated intrinsic value of $13.77",
+        "Strong revenue growth of 42.1% year-over-year",
+        "Operates in the Consumer Defensive sector with established market presence"
+      ],
+      "bear_points": [
+        "Analyst consensus forecasts only 0.0% EPS growth over the next 5 years",
+        "Low profitability score (0/10) \u2014 weak margins or negative returns",
+        "Weak balance sheet (0/10) \u2014 high leverage or poor liquidity"
+      ],
+      "source": "rules",
+      "generated_at": "2026-03-21 13:05"
+    },
+    "10_Year_History": {
+      "2023": 20.8,
+      "2024": 20.84,
+      "2025": 6.08,
+      "2026": 1.35
+    },
+    "5_Year_Forecast": {
+      "2027": 14.05,
+      "2028": 14.33,
+      "2029": 14.61,
+      "2030": 14.91,
+      "2031": 15.2
+    },
+    "Last_Updated": "2026-03-21 13:05"
+  },
+  "DTEGF": {
+    "current_price": 37.5,
+    "intrinsic_value": 29.81,
+    "margin_of_safety_pct": -25.8,
+    "mos_label": "Moderate Premium",
+    "valuations": {
+      "1_DCF_Operating_CF": 72.46,
+      "2_DCF_FCF": 26.73,
+      "3_DCF_Net_Income": 17.14,
+      "4_DCF_Terminal_Value": 31.6,
+      "5_Mean_PS": 27.13,
+      "6_Mean_PE": 26.1,
+      "7_Mean_PB": 31.58,
+      "8_PSG": null,
+      "9_PEG": null,
+      "10_EV_EBITDA": 18.38,
+      "intrinsic_value": 29.81,
+      "methods_used": 8,
+      "confidence": "Medium",
+      "active_methods": [
+        "1_DCF_Operating_CF",
+        "2_DCF_FCF",
+        "3_DCF_Net_Income",
+        "4_DCF_Terminal_Value",
+        "5_Mean_PS",
+        "6_Mean_PE",
+        "7_Mean_PB",
+        "10_EV_EBITDA"
+      ],
+      "_meta": {
+        "pe_source": "historical_mean",
+        "ps_source": "historical_mean",
+        "pb_source": "historical_mean",
+        "ev_ebitda_source": "historical_mean",
+        "growth_source": "default",
+        "growth_raw": 0.0,
+        "growth_peg_rate": 0.0,
+        "discount_rate": 0.12,
+        "growth_stage1": 0.02,
+        "growth_stage2": 0.02,
+        "terminal_growth": 0.02,
+        "tier": "Weak",
+        "company_type": "STANDARD",
+        "type_rationale": "Standard company \u2014 balanced weighting across all methods",
+        "weights_applied": {
+          "1_DCF_Operating_CF": 0.08,
+          "2_DCF_FCF": 0.08,
+          "3_DCF_Net_Income": 0.08,
+          "4_DCF_Terminal_Value": 0.08,
+          "5_Mean_PS": 0.12,
+          "6_Mean_PE": 0.08,
+          "7_Mean_PB": 0.15,
+          "8_PSG": 0.08,
+          "9_PEG": 0.08,
+          "10_EV_EBITDA": 0.17
+        },
+        "excluded_methods": [],
+        "active_methods": [
+          "1_DCF_Operating_CF",
+          "2_DCF_FCF",
+          "3_DCF_Net_Income",
+          "4_DCF_Terminal_Value",
+          "5_Mean_PS",
+          "6_Mean_PE",
+          "7_Mean_PB",
+          "10_EV_EBITDA"
+        ]
+      }
+    },
+    "quality": {
+      "scores": {
+        "profitability": 7,
+        "financial_strength": 3,
+        "growth": 3,
+        "predictability": 6,
+        "valuation": 5,
+        "moat": null
+      },
+      "python_subtotal": 19,
+      "python_subtotal_pct": 47.5,
+      "classification": "Dangerous",
+      "penalty_pct": 8,
+      "final_score_pct": 39.5,
+      "tiebreaker_used": false,
+      "tiebreaker_inputs": {
+        "roe": 0.1564,
+        "roic": 0.0791,
+        "eps_next_5y": 0.0
+      },
+      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
+      "last_calculated": "2026-03-21 13:05"
+    },
+    "fundamentals": {
+      "roe": 0.1564,
+      "roic": 0.0791,
+      "roe_pct": "15.64%",
+      "roic_pct": "7.91%",
+      "roic_source": "calculated",
+      "current_ratio": 1.12,
+      "debt_to_ebitda": 3.49,
+      "debt_service_ratio": 0.1611
+    },
+    "financials_charts": {
+      "revenue_vs_net_income": {
+        "2025": {
+          "revenue": 118343.0,
+          "net_income": 9609.0
+        },
+        "2024": {
+          "revenue": 115111.0,
+          "net_income": 11209.0
+        },
+        "2023": {
+          "revenue": 111308.0,
+          "net_income": 17788.0
+        },
+        "2022": {
+          "revenue": 113608.0,
+          "net_income": 8001.0
+        }
+      },
+      "fcf_vs_debt": {
+        "2025": {
+          "free_cash_flow": 21371.0,
+          "total_debt": 140462.0
+        },
+        "2024": {
+          "free_cash_flow": 20703.0,
+          "total_debt": 145146.0
+        },
+        "2023": {
+          "free_cash_flow": 19432.0,
+          "total_debt": 138755.0
+        },
+        "2022": {
+          "free_cash_flow": 11705.0,
+          "total_debt": 144242.0
+        }
+      },
+      "shares_vs_buybacks": {
+        "2025": {
+          "shares_outstanding_m": 4838.02,
+          "buybacks_m": 2000.0
+        },
+        "2024": {
+          "shares_outstanding_m": 4900.43,
+          "buybacks_m": 1974.0
+        },
+        "2023": {
+          "shares_outstanding_m": 4978.62,
+          "buybacks_m": 0.0
+        },
+        "2022": {
+          "shares_outstanding_m": 4972.7,
+          "buybacks_m": 0.0
+        }
+      },
+      "returns_trajectory": {
+        "2025": {
+          "roe_pct": 15.46,
+          "roic_pct": 7.91
+        },
+        "2024": {
+          "roe_pct": 17.71,
+          "roic_pct": 7.05
+        },
+        "2023": {
+          "roe_pct": 31.25,
+          "roic_pct": 5.88
+        },
+        "2022": {
+          "roe_pct": 16.48,
+          "roic_pct": 4.63
+        }
+      },
+      "revenue_vs_ar": {
+        "2025": {
+          "revenue": 118343.0,
+          "accounts_receivable": 16842.0,
+          "rev_growth_pct": 2.8,
+          "ar_growth_pct": 2.6,
+          "ar_outpacing": false
+        },
+        "2024": {
+          "revenue": 115111.0,
+          "accounts_receivable": 16411.0,
+          "rev_growth_pct": 3.4,
+          "ar_growth_pct": 1.6,
+          "ar_outpacing": false
+        },
+        "2023": {
+          "revenue": 111308.0,
+          "accounts_receivable": 16157.0,
+          "rev_growth_pct": -2.0,
+          "ar_growth_pct": -3.6,
+          "ar_outpacing": false
+        },
+        "2022": {
+          "revenue": 113608.0,
+          "accounts_receivable": 16766.0,
+          "rev_growth_pct": null,
+          "ar_growth_pct": null,
+          "ar_outpacing": null
+        }
+      }
+    },
+    "valuation_chart": {
+      "2016": {
+        "market_price": 12.67,
+        "intrinsic_value": 23.98,
+        "bull_case": 26.43,
+        "bear_case": 22.48
+      },
+      "2017": {
+        "market_price": 13.1,
+        "intrinsic_value": 24.45,
+        "bull_case": 26.72,
+        "bear_case": 23.06
+      },
+      "2018": {
+        "market_price": 13.16,
+        "intrinsic_value": 24.94,
+        "bull_case": 27.01,
+        "bear_case": 23.66
+      },
+      "2019": {
+        "market_price": 13.3,
+        "intrinsic_value": 25.44,
+        "bull_case": 27.31,
+        "bear_case": 24.28
+      },
+      "2020": {
+        "market_price": 15.25,
+        "intrinsic_value": 25.95,
+        "bull_case": 27.61,
+        "bear_case": 24.91
+      },
+      "2021": {
+        "market_price": 16.2,
+        "intrinsic_value": 26.47,
+        "bull_case": 27.92,
+        "bear_case": 25.56
+      },
+      "2022": {
+        "market_price": 18.21,
+        "intrinsic_value": 27.0,
+        "bull_case": 28.22,
+        "bear_case": 26.22
+      },
+      "2023": {
+        "market_price": 22.31,
+        "intrinsic_value": 27.54,
+        "bull_case": 28.53,
+        "bear_case": 26.9
+      },
+      "2024": {
+        "market_price": 28.71,
+        "intrinsic_value": 28.09,
+        "bull_case": 28.85,
+        "bear_case": 27.6
+      },
+      "2025": {
+        "market_price": 33.23,
+        "intrinsic_value": 28.65,
+        "bull_case": 29.16,
+        "bear_case": 28.32
+      },
+      "2026": {
+        "market_price": 37.5,
+        "intrinsic_value": 29.81,
+        "bull_case": 29.99,
+        "bear_case": 29.54
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 30.41,
+        "bull_case": 30.59,
+        "bear_case": 30.14
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 31.01,
+        "bull_case": 31.38,
+        "bear_case": 30.47
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 31.63,
+        "bull_case": 32.2,
+        "bear_case": 30.8
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 32.27,
+        "bull_case": 33.03,
+        "bear_case": 31.14
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 32.91,
+        "bull_case": 33.89,
+        "bear_case": 31.49
+      }
+    },
+    "forecast_meta": {
+      "eps_next_5y_raw": 0.0,
+      "fs_score": 3,
+      "fs_multiplier": 0.55,
+      "base_growth_rate": 0.02,
+      "bull_growth_rate": 0.026,
+      "bear_growth_rate": 0.011,
+      "growth_constrained": true,
+      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 3/10"
+    },
+    "bull_bear": {
+      "bull_points": [
+        "Operates in the Communication Services sector with established market presence",
+        "Operates in the Communication Services sector with established market presence",
+        "Operates in the Communication Services sector with established market presence"
+      ],
+      "bear_points": [
+        "Trading at a 25.8% premium to estimated intrinsic value of $29.81",
+        "Analyst consensus forecasts only 0.0% EPS growth over the next 5 years",
+        "Weak balance sheet (3/10) \u2014 high leverage or poor liquidity"
+      ],
+      "source": "rules",
+      "generated_at": "2026-03-21 13:05"
+    },
+    "10_Year_History": {
+      "2016": 12.67,
+      "2017": 13.1,
+      "2018": 13.16,
+      "2019": 13.3,
+      "2020": 15.25,
+      "2021": 16.2,
+      "2022": 18.21,
+      "2023": 22.31,
+      "2024": 28.71,
+      "2025": 33.23,
+      "2026": 37.5
+    },
+    "5_Year_Forecast": {
+      "2027": 30.41,
+      "2028": 31.01,
+      "2029": 31.63,
+      "2030": 32.27,
+      "2031": 32.91
+    },
+    "Last_Updated": "2026-03-21 13:05"
+  },
+  "DTEGY": {
+    "current_price": 36.45,
+    "intrinsic_value": 29.82,
+    "margin_of_safety_pct": -22.2,
+    "mos_label": "Moderate Premium",
+    "valuations": {
+      "1_DCF_Operating_CF": 72.46,
+      "2_DCF_FCF": 26.73,
+      "3_DCF_Net_Income": 17.14,
+      "4_DCF_Terminal_Value": 31.6,
+      "5_Mean_PS": 27.16,
+      "6_Mean_PE": 26.07,
+      "7_Mean_PB": 31.61,
+      "8_PSG": null,
+      "9_PEG": null,
+      "10_EV_EBITDA": 18.41,
+      "intrinsic_value": 29.82,
+      "methods_used": 8,
+      "confidence": "Medium",
+      "active_methods": [
+        "1_DCF_Operating_CF",
+        "2_DCF_FCF",
+        "3_DCF_Net_Income",
+        "4_DCF_Terminal_Value",
+        "5_Mean_PS",
+        "6_Mean_PE",
+        "7_Mean_PB",
+        "10_EV_EBITDA"
+      ],
+      "_meta": {
+        "pe_source": "historical_mean",
+        "ps_source": "historical_mean",
+        "pb_source": "historical_mean",
+        "ev_ebitda_source": "historical_mean",
+        "growth_source": "default",
+        "growth_raw": 0.0,
+        "growth_peg_rate": 0.0,
+        "discount_rate": 0.12,
+        "growth_stage1": 0.02,
+        "growth_stage2": 0.02,
+        "terminal_growth": 0.02,
+        "tier": "Weak",
+        "company_type": "STANDARD",
+        "type_rationale": "Standard company \u2014 balanced weighting across all methods",
+        "weights_applied": {
+          "1_DCF_Operating_CF": 0.08,
+          "2_DCF_FCF": 0.08,
+          "3_DCF_Net_Income": 0.08,
+          "4_DCF_Terminal_Value": 0.08,
+          "5_Mean_PS": 0.12,
+          "6_Mean_PE": 0.08,
+          "7_Mean_PB": 0.15,
+          "8_PSG": 0.08,
+          "9_PEG": 0.08,
+          "10_EV_EBITDA": 0.17
+        },
+        "excluded_methods": [],
+        "active_methods": [
+          "1_DCF_Operating_CF",
+          "2_DCF_FCF",
+          "3_DCF_Net_Income",
+          "4_DCF_Terminal_Value",
+          "5_Mean_PS",
+          "6_Mean_PE",
+          "7_Mean_PB",
+          "10_EV_EBITDA"
+        ]
+      }
+    },
+    "quality": {
+      "scores": {
+        "profitability": 7,
+        "financial_strength": 3,
+        "growth": 3,
+        "predictability": 6,
+        "valuation": 5,
+        "moat": null
+      },
+      "python_subtotal": 19,
+      "python_subtotal_pct": 47.5,
+      "classification": "Dangerous",
+      "penalty_pct": 8,
+      "final_score_pct": 39.5,
+      "tiebreaker_used": false,
+      "tiebreaker_inputs": {
+        "roe": 0.1564,
+        "roic": 0.0791,
+        "eps_next_5y": 0.0
+      },
+      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
+      "last_calculated": "2026-03-21 13:05"
+    },
+    "fundamentals": {
+      "roe": 0.1564,
+      "roic": 0.0791,
+      "roe_pct": "15.64%",
+      "roic_pct": "7.91%",
+      "roic_source": "calculated",
+      "current_ratio": 1.12,
+      "debt_to_ebitda": 3.49,
+      "debt_service_ratio": 0.1611
+    },
+    "financials_charts": {
+      "revenue_vs_net_income": {
+        "2025": {
+          "revenue": 118343.0,
+          "net_income": 9609.0
+        },
+        "2024": {
+          "revenue": 115111.0,
+          "net_income": 11209.0
+        },
+        "2023": {
+          "revenue": 111308.0,
+          "net_income": 17788.0
+        },
+        "2022": {
+          "revenue": 113608.0,
+          "net_income": 8001.0
+        }
+      },
+      "fcf_vs_debt": {
+        "2025": {
+          "free_cash_flow": 21371.0,
+          "total_debt": 140462.0
+        },
+        "2024": {
+          "free_cash_flow": 20703.0,
+          "total_debt": 145146.0
+        },
+        "2023": {
+          "free_cash_flow": 19432.0,
+          "total_debt": 138755.0
+        },
+        "2022": {
+          "free_cash_flow": 11705.0,
+          "total_debt": 144242.0
+        }
+      },
+      "shares_vs_buybacks": {
+        "2025": {
+          "shares_outstanding_m": 4838.02,
+          "buybacks_m": 2000.0
+        },
+        "2024": {
+          "shares_outstanding_m": 4900.43,
+          "buybacks_m": 1974.0
+        },
+        "2023": {
+          "shares_outstanding_m": 4978.62,
+          "buybacks_m": 0.0
+        },
+        "2022": {
+          "shares_outstanding_m": 4972.7,
+          "buybacks_m": 0.0
+        }
+      },
+      "returns_trajectory": {
+        "2025": {
+          "roe_pct": 15.46,
+          "roic_pct": 7.91
+        },
+        "2024": {
+          "roe_pct": 17.71,
+          "roic_pct": 7.05
+        },
+        "2023": {
+          "roe_pct": 31.25,
+          "roic_pct": 5.88
+        },
+        "2022": {
+          "roe_pct": 16.48,
+          "roic_pct": 4.63
+        }
+      },
+      "revenue_vs_ar": {
+        "2025": {
+          "revenue": 118343.0,
+          "accounts_receivable": 16842.0,
+          "rev_growth_pct": 2.8,
+          "ar_growth_pct": 2.6,
+          "ar_outpacing": false
+        },
+        "2024": {
+          "revenue": 115111.0,
+          "accounts_receivable": 16411.0,
+          "rev_growth_pct": 3.4,
+          "ar_growth_pct": 1.6,
+          "ar_outpacing": false
+        },
+        "2023": {
+          "revenue": 111308.0,
+          "accounts_receivable": 16157.0,
+          "rev_growth_pct": -2.0,
+          "ar_growth_pct": -3.6,
+          "ar_outpacing": false
+        },
+        "2022": {
+          "revenue": 113608.0,
+          "accounts_receivable": 16766.0,
+          "rev_growth_pct": null,
+          "ar_growth_pct": null,
+          "ar_outpacing": null
+        }
+      }
+    },
+    "valuation_chart": {
+      "2016": {
+        "market_price": 12.25,
+        "intrinsic_value": 23.98,
+        "bull_case": 26.44,
+        "bear_case": 22.48
+      },
+      "2017": {
+        "market_price": 13.09,
+        "intrinsic_value": 24.46,
+        "bull_case": 26.73,
+        "bear_case": 23.07
+      },
+      "2018": {
+        "market_price": 13.22,
+        "intrinsic_value": 24.95,
+        "bull_case": 27.02,
+        "bear_case": 23.67
+      },
+      "2019": {
+        "market_price": 13.28,
+        "intrinsic_value": 25.45,
+        "bull_case": 27.32,
+        "bear_case": 24.28
+      },
+      "2020": {
+        "market_price": 15.48,
+        "intrinsic_value": 25.96,
+        "bull_case": 27.62,
+        "bear_case": 24.92
+      },
+      "2021": {
+        "market_price": 16.24,
+        "intrinsic_value": 26.48,
+        "bull_case": 27.93,
+        "bear_case": 25.56
+      },
+      "2022": {
+        "market_price": 18.19,
+        "intrinsic_value": 27.01,
+        "bull_case": 28.23,
+        "bear_case": 26.23
+      },
+      "2023": {
+        "market_price": 22.63,
+        "intrinsic_value": 27.55,
+        "bull_case": 28.54,
+        "bear_case": 26.91
+      },
+      "2024": {
+        "market_price": 29.02,
+        "intrinsic_value": 28.1,
+        "bull_case": 28.86,
+        "bear_case": 27.61
+      },
+      "2025": {
+        "market_price": 32.7,
+        "intrinsic_value": 28.66,
+        "bull_case": 29.17,
+        "bear_case": 28.33
+      },
+      "2026": {
+        "market_price": 36.45,
+        "intrinsic_value": 29.82,
+        "bull_case": 30.0,
+        "bear_case": 29.55
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 30.42,
+        "bull_case": 30.6,
+        "bear_case": 30.15
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 31.02,
+        "bull_case": 31.39,
+        "bear_case": 30.48
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 31.65,
+        "bull_case": 32.21,
+        "bear_case": 30.81
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 32.28,
+        "bull_case": 33.04,
+        "bear_case": 31.15
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 32.92,
+        "bull_case": 33.9,
+        "bear_case": 31.5
+      }
+    },
+    "forecast_meta": {
+      "eps_next_5y_raw": 0.0,
+      "fs_score": 3,
+      "fs_multiplier": 0.55,
+      "base_growth_rate": 0.02,
+      "bull_growth_rate": 0.026,
+      "bear_growth_rate": 0.011,
+      "growth_constrained": true,
+      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 3/10"
+    },
+    "bull_bear": {
+      "bull_points": [
+        "Operates in the Communication Services sector with established market presence",
+        "Operates in the Communication Services sector with established market presence",
+        "Operates in the Communication Services sector with established market presence"
+      ],
+      "bear_points": [
+        "Trading at a 22.2% premium to estimated intrinsic value of $29.82",
+        "Analyst consensus forecasts only 0.0% EPS growth over the next 5 years",
+        "Weak balance sheet (3/10) \u2014 high leverage or poor liquidity"
+      ],
+      "source": "rules",
+      "generated_at": "2026-03-21 13:05"
+    },
+    "10_Year_History": {
+      "2016": 12.25,
+      "2017": 13.09,
+      "2018": 13.22,
+      "2019": 13.28,
+      "2020": 15.48,
+      "2021": 16.24,
+      "2022": 18.19,
+      "2023": 22.63,
+      "2024": 29.02,
+      "2025": 32.7,
+      "2026": 36.45
+    },
+    "5_Year_Forecast": {
+      "2027": 30.42,
+      "2028": 31.02,
+      "2029": 31.65,
+      "2030": 32.28,
+      "2031": 32.92
+    },
+    "Last_Updated": "2026-03-21 13:05"
+  },
+  "DTGI": {
+    "current_price": 0.01,
+    "intrinsic_value": 0.03,
+    "margin_of_safety_pct": 56.0,
+    "mos_label": "Strong Discount (Margin of Safety)",
+    "valuations": {
+      "1_DCF_Operating_CF": null,
+      "2_DCF_FCF": null,
+      "3_DCF_Net_Income": null,
+      "4_DCF_Terminal_Value": null,
+      "5_Mean_PS": 0.05,
+      "6_Mean_PE": 0.01,
+      "7_Mean_PB": null,
+      "8_PSG": null,
+      "9_PEG": null,
+      "10_EV_EBITDA": null,
+      "intrinsic_value": 0.03,
+      "methods_used": 2,
+      "confidence": "Low",
+      "active_methods": [
+        "5_Mean_PS",
+        "6_Mean_PE"
+      ],
+      "_meta": {
+        "pe_source": "current_trailing",
+        "ps_source": "historical_mean",
+        "pb_source": "current_trailing",
+        "ev_ebitda_source": "historical_mean",
+        "growth_source": "default",
+        "growth_raw": 0.0,
+        "growth_peg_rate": 0.0,
+        "discount_rate": 0.12,
+        "growth_stage1": 0.02,
+        "growth_stage2": 0.02,
+        "terminal_growth": 0.02,
+        "tier": "Weak",
+        "company_type": "STANDARD",
+        "type_rationale": "Standard company \u2014 balanced weighting across all methods",
+        "weights_applied": {
+          "1_DCF_Operating_CF": 0.08,
+          "2_DCF_FCF": 0.08,
+          "3_DCF_Net_Income": 0.08,
+          "4_DCF_Terminal_Value": 0.08,
+          "5_Mean_PS": 0.12,
+          "6_Mean_PE": 0.08,
+          "7_Mean_PB": 0.15,
+          "8_PSG": 0.08,
+          "9_PEG": 0.08,
+          "10_EV_EBITDA": 0.17
+        },
+        "excluded_methods": [],
+        "active_methods": [
+          "5_Mean_PS",
+          "6_Mean_PE"
+        ]
+      }
+    },
+    "quality": {
+      "scores": {
+        "profitability": 0,
+        "financial_strength": 1,
+        "growth": 0,
+        "predictability": 3,
+        "valuation": 9,
+        "moat": null
+      },
+      "python_subtotal": 4,
+      "python_subtotal_pct": 10.0,
+      "classification": "Dangerous",
+      "penalty_pct": 8,
+      "final_score_pct": 2.0,
+      "tiebreaker_used": false,
+      "tiebreaker_inputs": {
+        "roe": null,
+        "roic": null,
+        "eps_next_5y": 0.0
+      },
+      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
+      "last_calculated": "2026-03-21 13:05"
+    },
+    "fundamentals": {
+      "roe": null,
+      "roic": null,
+      "roe_pct": null,
+      "roic_pct": null,
+      "roic_source": "unavailable",
+      "current_ratio": 0.01,
+      "debt_to_ebitda": null,
+      "debt_service_ratio": null
+    },
+    "financials_charts": {
+      "revenue_vs_net_income": {
+        "2023": {
+          "revenue": 31.62,
+          "net_income": -8.29
+        },
+        "2022": {
+          "revenue": 24.15,
+          "net_income": -8.01
+        },
+        "2021": {
+          "revenue": 12.42,
+          "net_income": -16.68
+        },
+        "2020": {
+          "revenue": 6.28,
+          "net_income": -3.38
+        },
+        "2019": {
+          "revenue": 6.04,
+          "net_income": -4.52
+        },
+        "2018": {
+          "revenue": 2.0,
+          "net_income": -3.16
+        },
+        "2017": {
+          "revenue": 0.19,
+          "net_income": 0.44
+        },
+        "2016": {
+          "revenue": 0.23,
+          "net_income": -1.14
+        }
+      },
+      "fcf_vs_debt": {
+        "2023": {
+          "cash_balance": 0.92,
+          "free_cash_flow": -3.66,
+          "total_debt": 44.71
+        },
+        "2022": {
+          "cash_balance": 1.51,
+          "free_cash_flow": -2.23,
+          "total_debt": 1.37
+        },
+        "2021": {
+          "cash_balance": 1.49,
+          "free_cash_flow": -1.12,
+          "total_debt": 6.26
+        },
+        "2020": {
+          "cash_balance": 0.69,
+          "free_cash_flow": -0.03,
+          "total_debt": 0.04
+        },
+        "2019": {
+          "cash_balance": 0.41,
+          "free_cash_flow": -0.58,
+          "total_debt": 0.02
+        },
+        "2018": {
+          "cash_balance": 0.39,
+          "free_cash_flow": null,
+          "total_debt": 1.23
+        },
+        "2017": {
+          "cash_balance": 0.67,
+          "free_cash_flow": -1.02,
+          "total_debt": null
+        },
+        "2016": {
+          "cash_balance": 1.17,
+          "free_cash_flow": 1.37,
+          "total_debt": null
+        }
+      },
+      "shares_vs_buybacks": {
+        "2023": {
+          "shares_outstanding_m": 151.49,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2022": {
+          "shares_outstanding_m": 139.59,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2021": {
+          "shares_outstanding_m": 129.41,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2020": {
+          "shares_outstanding_m": 107.76,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2019": {
+          "shares_outstanding_m": 99.9,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2018": {
+          "shares_outstanding_m": 124.08,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2017": {
+          "shares_outstanding_m": 152.16,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2016": {
+          "shares_outstanding_m": 124.32,
+          "buybacks_m": null,
+          "split_adjusted": true
+        }
+      },
+      "returns_trajectory": {},
+      "revenue_vs_ar": {
+        "2023": {
+          "revenue": 31.62,
+          "accounts_receivable": 0.75,
+          "rev_growth_pct": 30.9,
+          "ar_growth_pct": 21.0,
+          "ar_outpacing": false
+        },
+        "2022": {
+          "revenue": 24.15,
+          "accounts_receivable": 0.62,
+          "rev_growth_pct": 94.4,
+          "ar_growth_pct": 0.0,
+          "ar_outpacing": false
+        },
+        "2021": {
+          "revenue": 12.42,
+          "accounts_receivable": 0.62,
+          "rev_growth_pct": 97.8,
+          "ar_growth_pct": 195.2,
+          "ar_outpacing": true
+        },
+        "2020": {
+          "revenue": 6.28,
+          "accounts_receivable": 0.21,
+          "rev_growth_pct": 4.0,
+          "ar_growth_pct": -19.2,
+          "ar_outpacing": false
+        },
+        "2019": {
+          "revenue": 6.04,
+          "accounts_receivable": 0.26,
+          "rev_growth_pct": 202.0,
+          "ar_growth_pct": 13.0,
+          "ar_outpacing": false
+        },
+        "2018": {
+          "revenue": 2.0,
+          "accounts_receivable": 0.23,
+          "rev_growth_pct": 952.6,
+          "ar_growth_pct": 2200.0,
+          "ar_outpacing": true
+        },
+        "2017": {
+          "revenue": 0.19,
+          "accounts_receivable": 0.01,
+          "rev_growth_pct": -17.4,
+          "ar_growth_pct": null,
+          "ar_outpacing": null
+        },
+        "2016": {
+          "revenue": 0.23,
+          "accounts_receivable": 0.0,
+          "rev_growth_pct": null,
+          "ar_growth_pct": null,
+          "ar_outpacing": null
+        }
+      }
+    },
+    "valuation_chart": {
+      "2016": {
+        "market_price": 0.27,
+        "intrinsic_value": 0.02,
+        "bull_case": 0.03,
+        "bear_case": 0.02
+      },
+      "2017": {
+        "market_price": 0.65,
+        "intrinsic_value": 0.02,
+        "bull_case": 0.03,
+        "bear_case": 0.02
+      },
+      "2018": {
+        "market_price": 0.15,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.02
+      },
+      "2019": {
+        "market_price": 0.03,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.02
+      },
+      "2020": {
+        "market_price": 0.06,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2021": {
+        "market_price": 0.09,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2022": {
+        "market_price": 0.1,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2023": {
+        "market_price": 0.06,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2024": {
+        "market_price": 0.01,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2025": {
+        "market_price": 0.02,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2026": {
+        "market_price": 0.01,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      }
+    },
+    "forecast_meta": {
+      "eps_next_5y_raw": 0.0,
+      "fs_score": 1,
+      "fs_multiplier": 0.35,
+      "base_growth_rate": 0.02,
+      "bull_growth_rate": 0.026,
+      "bear_growth_rate": 0.011,
+      "growth_constrained": true,
+      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 1/10"
+    },
+    "bull_bear": {
+      "bull_points": [
+        "Trading at a 56.0% discount to estimated intrinsic value of $0.03",
+        "Operates in the Communication Services sector with established market presence",
+        "Operates in the Communication Services sector with established market presence"
+      ],
+      "bear_points": [
+        "Analyst consensus forecasts only 0.0% EPS growth over the next 5 years",
+        "Low profitability score (0/10) \u2014 weak margins or negative returns",
+        "Weak balance sheet (1/10) \u2014 high leverage or poor liquidity"
+      ],
+      "source": "rules",
+      "generated_at": "2026-03-21 13:05"
+    },
+    "10_Year_History": {
+      "2016": 0.27,
+      "2017": 0.65,
+      "2018": 0.15,
+      "2019": 0.03,
+      "2020": 0.06,
+      "2021": 0.09,
+      "2022": 0.1,
+      "2023": 0.06,
+      "2024": 0.01,
+      "2025": 0.02,
+      "2026": 0.01
+    },
+    "5_Year_Forecast": {
+      "2027": 0.03,
+      "2028": 0.03,
+      "2029": 0.03,
+      "2030": 0.03,
+      "2031": 0.03
+    },
+    "Last_Updated": "2026-03-21 13:05"
+  },
   "DTI": {
+    "current_price": 3.76,
+    "intrinsic_value": 4.73,
+    "margin_of_safety_pct": 20.5,
+    "mos_label": "Moderate Discount",
     "valuations": {
       "1_DCF_Operating_CF": 4.89,
       "2_DCF_FCF": 2.51,
@@ -81,7 +1390,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:05"
     },
     "fundamentals": {
       "roe": -0.031,
@@ -226,32 +1535,32 @@
       "2021": {
         "market_price": 9.85,
         "intrinsic_value": 4.2,
-        "bull_case": 4.05,
-        "bear_case": 4.43
+        "bull_case": 4.43,
+        "bear_case": 4.05
       },
       "2022": {
         "market_price": 10.24,
         "intrinsic_value": 4.28,
-        "bull_case": 4.16,
-        "bear_case": 4.48
+        "bull_case": 4.48,
+        "bear_case": 4.16
       },
       "2023": {
         "market_price": 3.2,
         "intrinsic_value": 4.37,
-        "bull_case": 4.27,
-        "bear_case": 4.53
+        "bull_case": 4.53,
+        "bear_case": 4.27
       },
       "2024": {
         "market_price": 3.27,
         "intrinsic_value": 4.46,
-        "bull_case": 4.38,
-        "bear_case": 4.58
+        "bull_case": 4.58,
+        "bear_case": 4.38
       },
       "2025": {
         "market_price": 2.45,
         "intrinsic_value": 4.55,
-        "bull_case": 4.49,
-        "bear_case": 4.63
+        "bull_case": 4.63,
+        "bear_case": 4.49
       },
       "2026": {
         "market_price": 3.76,
@@ -312,7 +1621,7 @@
         "Low ROIC of 3.65% \u2014 poor returns on invested capital"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:05"
     },
     "10_Year_History": {
       "2021": 9.85,
@@ -329,9 +1638,13 @@
       "2030": 5.12,
       "2031": 5.22
     },
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:05"
   },
   "DTII": {
+    "current_price": 0.01,
+    "intrinsic_value": null,
+    "margin_of_safety_pct": null,
+    "mos_label": "Unavailable",
     "valuations": {
       "1_DCF_Operating_CF": null,
       "2_DCF_FCF": null,
@@ -399,7 +1712,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:05"
     },
     "fundamentals": {
       "roe": null,
@@ -625,7 +1938,7 @@
         "Weak balance sheet (1/10) \u2014 high leverage or poor liquidity"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:05"
     },
     "10_Year_History": {
       "2016": 89955.02,
@@ -641,9 +1954,13 @@
       "2026": 0.01
     },
     "5_Year_Forecast": {},
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:05"
   },
   "DTIL": {
+    "current_price": 6.52,
+    "intrinsic_value": 17.4,
+    "margin_of_safety_pct": 62.5,
+    "mos_label": "Strong Discount (Margin of Safety)",
     "valuations": {
       "1_DCF_Operating_CF": null,
       "2_DCF_FCF": null,
@@ -719,7 +2036,7 @@
         "eps_next_5y": 0.0883
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:05"
     },
     "fundamentals": {
       "roe": -0.6271,
@@ -947,44 +2264,44 @@
       "2019": {
         "market_price": 416.7,
         "intrinsic_value": 10.42,
-        "bull_case": 8.99,
-        "bear_case": 13.07
+        "bull_case": 13.07,
+        "bear_case": 8.99
       },
       "2020": {
         "market_price": 250.2,
         "intrinsic_value": 11.11,
-        "bull_case": 9.76,
-        "bear_case": 13.55
+        "bull_case": 13.55,
+        "bear_case": 9.76
       },
       "2021": {
         "market_price": 222.0,
         "intrinsic_value": 11.84,
-        "bull_case": 10.6,
-        "bear_case": 14.04
+        "bull_case": 14.04,
+        "bear_case": 10.6
       },
       "2022": {
         "market_price": 35.7,
         "intrinsic_value": 12.63,
-        "bull_case": 11.51,
-        "bear_case": 14.55
+        "bull_case": 14.55,
+        "bear_case": 11.51
       },
       "2023": {
         "market_price": 10.95,
         "intrinsic_value": 13.46,
-        "bull_case": 12.5,
-        "bear_case": 15.08
+        "bull_case": 15.08,
+        "bear_case": 12.5
       },
       "2024": {
         "market_price": 3.81,
         "intrinsic_value": 14.35,
-        "bull_case": 13.58,
-        "bear_case": 15.63
+        "bull_case": 15.63,
+        "bear_case": 13.58
       },
       "2025": {
         "market_price": 4.16,
         "intrinsic_value": 15.31,
-        "bull_case": 14.75,
-        "bear_case": 16.2
+        "bull_case": 16.2,
+        "bear_case": 14.75
       },
       "2026": {
         "market_price": 6.52,
@@ -1045,7 +2362,7 @@
         "Financial strength constrains growth outlook \u2014 EPS growth moderated from 8.8% to 6.6% due to financial strength score of 4/10"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:05"
     },
     "10_Year_History": {
       "2019": 416.7,
@@ -1064,9 +2381,13 @@
       "2030": 24.41,
       "2031": 26.56
     },
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:05"
   },
   "DTSS": {
+    "current_price": 0.84,
+    "intrinsic_value": 12.13,
+    "margin_of_safety_pct": 93.1,
+    "mos_label": "Strong Discount (Margin of Safety)",
     "valuations": {
       "1_DCF_Operating_CF": 0.62,
       "2_DCF_FCF": null,
@@ -1142,7 +2463,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:05"
     },
     "fundamentals": {
       "roe": -0.8145,
@@ -1383,50 +2704,50 @@
       "2018": {
         "market_price": 60.75,
         "intrinsic_value": 10.15,
-        "bull_case": 9.63,
-        "bear_case": 10.99
+        "bull_case": 10.99,
+        "bear_case": 9.63
       },
       "2019": {
         "market_price": 45.75,
         "intrinsic_value": 10.35,
-        "bull_case": 9.88,
-        "bear_case": 11.11
+        "bull_case": 11.11,
+        "bear_case": 9.88
       },
       "2020": {
         "market_price": 30.0,
         "intrinsic_value": 10.56,
-        "bull_case": 10.14,
-        "bear_case": 11.24
+        "bull_case": 11.24,
+        "bear_case": 10.14
       },
       "2021": {
         "market_price": 23.4,
         "intrinsic_value": 10.77,
-        "bull_case": 10.4,
-        "bear_case": 11.36
+        "bull_case": 11.36,
+        "bear_case": 10.4
       },
       "2022": {
         "market_price": 22.5,
         "intrinsic_value": 10.99,
-        "bull_case": 10.67,
-        "bear_case": 11.48
+        "bull_case": 11.48,
+        "bear_case": 10.67
       },
       "2023": {
         "market_price": 3.53,
         "intrinsic_value": 11.21,
-        "bull_case": 10.95,
-        "bear_case": 11.61
+        "bull_case": 11.61,
+        "bear_case": 10.95
       },
       "2024": {
         "market_price": 2.29,
         "intrinsic_value": 11.43,
-        "bull_case": 11.23,
-        "bear_case": 11.74
+        "bull_case": 11.74,
+        "bear_case": 11.23
       },
       "2025": {
         "market_price": 0.65,
         "intrinsic_value": 11.66,
-        "bull_case": 11.52,
-        "bear_case": 11.87
+        "bull_case": 11.87,
+        "bear_case": 11.52
       },
       "2026": {
         "market_price": 0.84,
@@ -1487,7 +2808,7 @@
         "Weak balance sheet (2/10) \u2014 high leverage or poor liquidity"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:05"
     },
     "10_Year_History": {
       "2018": 60.75,
@@ -1507,21 +2828,25 @@
       "2030": 13.13,
       "2031": 13.39
     },
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:05"
   },
   "DTST": {
+    "current_price": 3.71,
+    "intrinsic_value": 15.51,
+    "margin_of_safety_pct": 76.1,
+    "mos_label": "Strong Discount (Margin of Safety)",
     "valuations": {
       "1_DCF_Operating_CF": 2.9,
       "2_DCF_FCF": 33.59,
       "3_DCF_Net_Income": 5.55,
       "4_DCF_Terminal_Value": 44.58,
       "5_Mean_PS": 3.51,
-      "6_Mean_PE": 3.13,
+      "6_Mean_PE": 3.52,
       "7_Mean_PB": 1.59,
       "8_PSG": null,
       "9_PEG": null,
       "10_EV_EBITDA": 23.1,
-      "intrinsic_value": 15.46,
+      "intrinsic_value": 15.51,
       "methods_used": 8,
       "confidence": "Medium",
       "active_methods": [
@@ -1595,7 +2920,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:05"
     },
     "fundamentals": {
       "roe": 0.0406,
@@ -1864,99 +3189,99 @@
     "valuation_chart": {
       "2016": {
         "market_price": 0.06,
-        "intrinsic_value": 12.43,
-        "bull_case": 11.66,
-        "bear_case": 13.71
+        "intrinsic_value": 12.47,
+        "bull_case": 13.75,
+        "bear_case": 11.69
       },
       "2017": {
         "market_price": 0.07,
-        "intrinsic_value": 12.68,
-        "bull_case": 11.96,
-        "bear_case": 13.86
+        "intrinsic_value": 12.72,
+        "bull_case": 13.9,
+        "bear_case": 12.0
       },
       "2018": {
         "market_price": 0.14,
-        "intrinsic_value": 12.94,
-        "bull_case": 12.27,
-        "bear_case": 14.01
+        "intrinsic_value": 12.98,
+        "bull_case": 14.06,
+        "bear_case": 12.31
       },
       "2019": {
         "market_price": 0.12,
-        "intrinsic_value": 13.19,
-        "bull_case": 12.59,
-        "bear_case": 14.16
+        "intrinsic_value": 13.24,
+        "bull_case": 14.21,
+        "bear_case": 12.63
       },
       "2020": {
         "market_price": 0.14,
-        "intrinsic_value": 13.46,
-        "bull_case": 12.92,
-        "bear_case": 14.32
+        "intrinsic_value": 13.5,
+        "bull_case": 14.37,
+        "bear_case": 12.96
       },
       "2021": {
         "market_price": 3.06,
-        "intrinsic_value": 13.73,
-        "bull_case": 13.25,
-        "bear_case": 14.48
+        "intrinsic_value": 13.77,
+        "bull_case": 14.52,
+        "bear_case": 13.3
       },
       "2022": {
         "market_price": 1.48,
-        "intrinsic_value": 14.0,
-        "bull_case": 13.6,
-        "bear_case": 14.64
+        "intrinsic_value": 14.05,
+        "bull_case": 14.68,
+        "bear_case": 13.64
       },
       "2023": {
         "market_price": 2.88,
-        "intrinsic_value": 14.28,
-        "bull_case": 13.95,
-        "bear_case": 14.8
+        "intrinsic_value": 14.33,
+        "bull_case": 14.85,
+        "bear_case": 14.0
       },
       "2024": {
         "market_price": 4.23,
-        "intrinsic_value": 14.57,
-        "bull_case": 14.31,
-        "bear_case": 14.96
+        "intrinsic_value": 14.62,
+        "bull_case": 15.01,
+        "bear_case": 14.36
       },
       "2025": {
         "market_price": 5.12,
-        "intrinsic_value": 14.86,
-        "bull_case": 14.69,
-        "bear_case": 15.13
+        "intrinsic_value": 14.91,
+        "bull_case": 15.17,
+        "bear_case": 14.73
       },
       "2026": {
         "market_price": 3.71,
-        "intrinsic_value": 15.46,
-        "bull_case": 15.55,
-        "bear_case": 15.32
+        "intrinsic_value": 15.51,
+        "bull_case": 15.6,
+        "bear_case": 15.37
       },
       "2027": {
         "market_price": null,
-        "intrinsic_value": 15.77,
-        "bull_case": 15.86,
-        "bear_case": 15.63
+        "intrinsic_value": 15.82,
+        "bull_case": 15.91,
+        "bear_case": 15.68
       },
       "2028": {
         "market_price": null,
-        "intrinsic_value": 16.08,
-        "bull_case": 16.27,
-        "bear_case": 15.8
+        "intrinsic_value": 16.14,
+        "bull_case": 16.33,
+        "bear_case": 15.85
       },
       "2029": {
         "market_price": null,
-        "intrinsic_value": 16.41,
-        "bull_case": 16.7,
-        "bear_case": 15.98
+        "intrinsic_value": 16.46,
+        "bull_case": 16.75,
+        "bear_case": 16.03
       },
       "2030": {
         "market_price": null,
-        "intrinsic_value": 16.73,
-        "bull_case": 17.13,
-        "bear_case": 16.15
+        "intrinsic_value": 16.79,
+        "bull_case": 17.19,
+        "bear_case": 16.2
       },
       "2031": {
         "market_price": null,
-        "intrinsic_value": 17.07,
-        "bull_case": 17.58,
-        "bear_case": 16.33
+        "intrinsic_value": 17.12,
+        "bull_case": 17.63,
+        "bear_case": 16.38
       }
     },
     "forecast_meta": {
@@ -1971,7 +3296,7 @@
     },
     "bull_bear": {
       "bull_points": [
-        "Trading at a 76.0% discount to estimated intrinsic value of $15.46",
+        "Trading at a 76.1% discount to estimated intrinsic value of $15.51",
         "Strong balance sheet (9/10) \u2014 low leverage and healthy cash position",
         "Strong revenue growth of 28.2% year-over-year"
       ],
@@ -1981,7 +3306,7 @@
         "Subject to Technology sector risks including competition and regulation"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:05"
     },
     "10_Year_History": {
       "2016": 0.06,
@@ -1997,15 +3322,19 @@
       "2026": 3.71
     },
     "5_Year_Forecast": {
-      "2027": 15.77,
-      "2028": 16.08,
-      "2029": 16.41,
-      "2030": 16.73,
-      "2031": 17.07
+      "2027": 15.82,
+      "2028": 16.14,
+      "2029": 16.46,
+      "2030": 16.79,
+      "2031": 17.12
     },
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:05"
   },
   "DUKRD": {
+    "current_price": 7.89,
+    "intrinsic_value": 0.17,
+    "margin_of_safety_pct": -4544.1,
+    "mos_label": "Significant Premium",
     "valuations": {
       "1_DCF_Operating_CF": null,
       "2_DCF_FCF": null,
@@ -2079,7 +3408,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:05"
     },
     "fundamentals": {
       "roe": -2.6099,
@@ -2309,20 +3638,20 @@
       "2021": {
         "market_price": 0.22,
         "intrinsic_value": 0.15,
-        "bull_case": 0.15,
-        "bear_case": 0.16
+        "bull_case": 0.16,
+        "bear_case": 0.15
       },
       "2022": {
         "market_price": 0.12,
         "intrinsic_value": 0.15,
-        "bull_case": 0.15,
-        "bear_case": 0.16
+        "bull_case": 0.16,
+        "bear_case": 0.15
       },
       "2023": {
         "market_price": 0.1,
         "intrinsic_value": 0.16,
-        "bull_case": 0.15,
-        "bear_case": 0.16
+        "bull_case": 0.16,
+        "bear_case": 0.15
       },
       "2024": {
         "market_price": 0.15,
@@ -2333,8 +3662,8 @@
       "2025": {
         "market_price": 0.25,
         "intrinsic_value": 0.16,
-        "bull_case": 0.16,
-        "bear_case": 0.17
+        "bull_case": 0.17,
+        "bear_case": 0.16
       },
       "2026": {
         "market_price": 7.89,
@@ -2395,7 +3724,7 @@
         "Low profitability score (0/10) \u2014 weak margins or negative returns"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:06"
     },
     "10_Year_History": {
       "2021": 0.22,
@@ -2412,9 +3741,13 @@
       "2030": 0.18,
       "2031": 0.19
     },
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:06"
   },
   "DUO": {
+    "current_price": 1.04,
+    "intrinsic_value": 17.6,
+    "margin_of_safety_pct": 94.1,
+    "mos_label": "Strong Discount (Margin of Safety)",
     "valuations": {
       "1_DCF_Operating_CF": null,
       "2_DCF_FCF": null,
@@ -2488,7 +3821,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:06"
     },
     "fundamentals": {
       "roe": -0.0921,
@@ -2511,44 +3844,44 @@
       "2019": {
         "market_price": 55872.0,
         "intrinsic_value": 15.02,
-        "bull_case": 14.33,
-        "bear_case": 16.13
+        "bull_case": 16.13,
+        "bear_case": 14.33
       },
       "2020": {
         "market_price": 27144.0,
         "intrinsic_value": 15.32,
-        "bull_case": 14.71,
-        "bear_case": 16.3
+        "bull_case": 16.3,
+        "bear_case": 14.71
       },
       "2021": {
         "market_price": 1674.0,
         "intrinsic_value": 15.63,
-        "bull_case": 15.09,
-        "bear_case": 16.48
+        "bull_case": 16.48,
+        "bear_case": 15.09
       },
       "2022": {
         "market_price": 184.56,
         "intrinsic_value": 15.94,
-        "bull_case": 15.48,
-        "bear_case": 16.66
+        "bull_case": 16.66,
+        "bear_case": 15.48
       },
       "2023": {
         "market_price": 10.77,
         "intrinsic_value": 16.26,
-        "bull_case": 15.88,
-        "bear_case": 16.85
+        "bull_case": 16.85,
+        "bear_case": 15.88
       },
       "2024": {
         "market_price": 9.57,
         "intrinsic_value": 16.58,
-        "bull_case": 16.3,
-        "bear_case": 17.03
+        "bull_case": 17.03,
+        "bear_case": 16.3
       },
       "2025": {
         "market_price": 1.46,
         "intrinsic_value": 16.92,
-        "bull_case": 16.72,
-        "bear_case": 17.22
+        "bull_case": 17.22,
+        "bear_case": 16.72
       },
       "2026": {
         "market_price": 1.04,
@@ -2609,7 +3942,7 @@
         "Weak balance sheet (3/10) \u2014 high leverage or poor liquidity"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:06"
     },
     "10_Year_History": {
       "2019": 55872.0,
@@ -2628,21 +3961,25 @@
       "2030": 19.05,
       "2031": 19.43
     },
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:06"
   },
   "DUOL": {
+    "current_price": 98.05,
+    "intrinsic_value": 142.41,
+    "margin_of_safety_pct": 31.1,
+    "mos_label": "Moderate Discount",
     "valuations": {
       "1_DCF_Operating_CF": 115.2,
       "2_DCF_FCF": 78.66,
       "3_DCF_Net_Income": 122.99,
       "4_DCF_Terminal_Value": 146.46,
       "5_Mean_PS": 317.04,
-      "6_Mean_PE": 145.04,
+      "6_Mean_PE": 147.45,
       "7_Mean_PB": 293.41,
       "8_PSG": null,
       "9_PEG": null,
       "10_EV_EBITDA": 113.4,
-      "intrinsic_value": 142.2,
+      "intrinsic_value": 142.41,
       "methods_used": 8,
       "confidence": "Medium",
       "active_methods": [
@@ -2716,7 +4053,7 @@
         "eps_next_5y": -0.2449
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:06"
     },
     "fundamentals": {
       "roe": 0.3813,
@@ -2874,69 +4211,69 @@
     "valuation_chart": {
       "2021": {
         "market_price": 106.11,
-        "intrinsic_value": 126.27,
-        "bull_case": 121.9,
-        "bear_case": 133.17
+        "intrinsic_value": 126.46,
+        "bull_case": 133.36,
+        "bear_case": 122.08
       },
       "2022": {
         "market_price": 71.13,
-        "intrinsic_value": 128.79,
-        "bull_case": 125.07,
-        "bear_case": 134.63
+        "intrinsic_value": 128.99,
+        "bull_case": 134.83,
+        "bear_case": 125.26
       },
       "2023": {
         "market_price": 226.85,
-        "intrinsic_value": 131.37,
-        "bull_case": 128.32,
-        "bear_case": 136.11
+        "intrinsic_value": 131.56,
+        "bull_case": 136.31,
+        "bear_case": 128.51
       },
       "2024": {
         "market_price": 324.23,
-        "intrinsic_value": 134.0,
-        "bull_case": 131.66,
-        "bear_case": 137.61
+        "intrinsic_value": 134.2,
+        "bull_case": 137.81,
+        "bear_case": 131.86
       },
       "2025": {
         "market_price": 175.5,
-        "intrinsic_value": 136.68,
-        "bull_case": 135.08,
-        "bear_case": 139.12
+        "intrinsic_value": 136.88,
+        "bull_case": 139.33,
+        "bear_case": 135.28
       },
       "2026": {
         "market_price": 98.05,
-        "intrinsic_value": 142.2,
-        "bull_case": 143.05,
-        "bear_case": 140.92
+        "intrinsic_value": 142.41,
+        "bull_case": 143.26,
+        "bear_case": 141.13
       },
       "2027": {
         "market_price": null,
-        "intrinsic_value": 145.04,
-        "bull_case": 145.9,
-        "bear_case": 143.76
+        "intrinsic_value": 145.26,
+        "bull_case": 146.11,
+        "bear_case": 143.98
       },
       "2028": {
         "market_price": null,
-        "intrinsic_value": 147.94,
-        "bull_case": 149.69,
-        "bear_case": 145.35
+        "intrinsic_value": 148.16,
+        "bull_case": 149.91,
+        "bear_case": 145.56
       },
       "2029": {
         "market_price": null,
-        "intrinsic_value": 150.9,
-        "bull_case": 153.58,
-        "bear_case": 146.94
+        "intrinsic_value": 151.13,
+        "bull_case": 153.81,
+        "bear_case": 147.16
       },
       "2030": {
         "market_price": null,
-        "intrinsic_value": 153.92,
-        "bull_case": 157.58,
-        "bear_case": 148.56
+        "intrinsic_value": 154.15,
+        "bull_case": 157.81,
+        "bear_case": 148.78
       },
       "2031": {
         "market_price": null,
-        "intrinsic_value": 157.0,
-        "bull_case": 161.67,
-        "bear_case": 150.19
+        "intrinsic_value": 157.23,
+        "bull_case": 161.91,
+        "bear_case": 150.42
       }
     },
     "forecast_meta": {
@@ -2951,7 +4288,7 @@
     },
     "bull_bear": {
       "bull_points": [
-        "Trading at a 31.0% discount to estimated intrinsic value of $142.2",
+        "Trading at a 31.1% discount to estimated intrinsic value of $142.41",
         "High profitability score (9/10) \u2014 strong margins and returns",
         "Strong balance sheet (9/10) \u2014 low leverage and healthy cash position"
       ],
@@ -2961,7 +4298,7 @@
         "Subject to Technology sector risks including competition and regulation"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:06"
     },
     "10_Year_History": {
       "2021": 106.11,
@@ -2972,15 +4309,19 @@
       "2026": 98.05
     },
     "5_Year_Forecast": {
-      "2027": 145.04,
-      "2028": 147.94,
-      "2029": 150.9,
-      "2030": 153.92,
-      "2031": 157.0
+      "2027": 145.26,
+      "2028": 148.16,
+      "2029": 151.13,
+      "2030": 154.15,
+      "2031": 157.23
     },
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:06"
   },
   "DUOT": {
+    "current_price": 7.31,
+    "intrinsic_value": 23.89,
+    "margin_of_safety_pct": 69.4,
+    "mos_label": "Strong Discount (Margin of Safety)",
     "valuations": {
       "1_DCF_Operating_CF": null,
       "2_DCF_FCF": null,
@@ -3054,7 +4395,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:06"
     },
     "fundamentals": {
       "roe": -0.3862,
@@ -3316,56 +4657,56 @@
       "2017": {
         "market_price": 7.56,
         "intrinsic_value": 19.6,
-        "bull_case": 18.48,
-        "bear_case": 21.41
+        "bull_case": 21.41,
+        "bear_case": 18.48
       },
       "2018": {
         "market_price": 7.0,
         "intrinsic_value": 19.99,
-        "bull_case": 18.96,
-        "bear_case": 21.65
+        "bull_case": 21.65,
+        "bear_case": 18.96
       },
       "2019": {
         "market_price": 6.69,
         "intrinsic_value": 20.39,
-        "bull_case": 19.46,
-        "bear_case": 21.89
+        "bull_case": 21.89,
+        "bear_case": 19.46
       },
       "2020": {
         "market_price": 4.24,
         "intrinsic_value": 20.8,
-        "bull_case": 19.96,
-        "bear_case": 22.13
+        "bull_case": 22.13,
+        "bear_case": 19.96
       },
       "2021": {
         "market_price": 5.13,
         "intrinsic_value": 21.21,
-        "bull_case": 20.48,
-        "bear_case": 22.37
+        "bull_case": 22.37,
+        "bear_case": 20.48
       },
       "2022": {
         "market_price": 2.0,
         "intrinsic_value": 21.64,
-        "bull_case": 21.01,
-        "bear_case": 22.62
+        "bull_case": 22.62,
+        "bear_case": 21.01
       },
       "2023": {
         "market_price": 2.9,
         "intrinsic_value": 22.07,
-        "bull_case": 21.56,
-        "bear_case": 22.87
+        "bull_case": 22.87,
+        "bear_case": 21.56
       },
       "2024": {
         "market_price": 5.98,
         "intrinsic_value": 22.51,
-        "bull_case": 22.12,
-        "bear_case": 23.12
+        "bull_case": 23.12,
+        "bear_case": 22.12
       },
       "2025": {
         "market_price": 11.25,
         "intrinsic_value": 22.96,
-        "bull_case": 22.69,
-        "bear_case": 23.37
+        "bull_case": 23.37,
+        "bear_case": 22.69
       },
       "2026": {
         "market_price": 7.31,
@@ -3426,7 +4767,7 @@
         "Weak balance sheet (2/10) \u2014 high leverage or poor liquidity"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:06"
     },
     "10_Year_History": {
       "2017": 7.56,
@@ -3447,9 +4788,13 @@
       "2030": 25.86,
       "2031": 26.38
     },
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:06"
   },
   "DVAX": {
+    "current_price": 15.5,
+    "intrinsic_value": 38.06,
+    "margin_of_safety_pct": 59.3,
+    "mos_label": "Strong Discount (Margin of Safety)",
     "valuations": {
       "1_DCF_Operating_CF": 60.84,
       "2_DCF_FCF": 34.44,
@@ -3537,7 +4882,7 @@
         "eps_next_5y": 0.693
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:06"
     },
     "fundamentals": {
       "roe": -0.0714,
@@ -3657,62 +5002,62 @@
       "2016": {
         "market_price": 3.95,
         "intrinsic_value": 2.12,
-        "bull_case": 2.12,
-        "bear_case": 7.09
+        "bull_case": 7.09,
+        "bear_case": 2.12
       },
       "2017": {
         "market_price": 18.7,
         "intrinsic_value": 2.76,
-        "bull_case": 2.76,
-        "bear_case": 8.26
+        "bull_case": 8.26,
+        "bear_case": 2.76
       },
       "2018": {
         "market_price": 9.15,
         "intrinsic_value": 3.59,
-        "bull_case": 3.59,
-        "bear_case": 9.63
+        "bull_case": 9.63,
+        "bear_case": 3.59
       },
       "2019": {
         "market_price": 5.72,
         "intrinsic_value": 4.67,
-        "bull_case": 4.67,
-        "bear_case": 11.22
+        "bull_case": 11.22,
+        "bear_case": 4.67
       },
       "2020": {
         "market_price": 4.45,
         "intrinsic_value": 6.07,
-        "bull_case": 6.07,
-        "bear_case": 13.07
+        "bull_case": 13.07,
+        "bear_case": 6.07
       },
       "2021": {
         "market_price": 14.07,
         "intrinsic_value": 7.89,
-        "bull_case": 7.89,
-        "bear_case": 15.22
+        "bull_case": 15.22,
+        "bear_case": 7.89
       },
       "2022": {
         "market_price": 10.64,
         "intrinsic_value": 10.25,
-        "bull_case": 10.25,
-        "bear_case": 17.74
+        "bull_case": 17.74,
+        "bear_case": 10.25
       },
       "2023": {
         "market_price": 13.98,
         "intrinsic_value": 13.33,
-        "bull_case": 13.33,
-        "bear_case": 20.66
+        "bull_case": 20.66,
+        "bear_case": 13.33
       },
       "2024": {
         "market_price": 12.77,
         "intrinsic_value": 17.32,
-        "bull_case": 17.32,
-        "bear_case": 24.07
+        "bull_case": 24.07,
+        "bear_case": 17.32
       },
       "2025": {
         "market_price": 15.38,
         "intrinsic_value": 22.52,
-        "bull_case": 22.52,
-        "bear_case": 28.04
+        "bull_case": 28.04,
+        "bear_case": 22.52
       },
       "2026": {
         "market_price": 15.5,
@@ -3773,7 +5118,7 @@
         "Subject to Healthcare sector risks including competition and regulation"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:06"
     },
     "10_Year_History": {
       "2016": 3.95,
@@ -3795,9 +5140,13 @@
       "2030": 108.7,
       "2031": 141.31
     },
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:06"
   },
   "DVLT": {
+    "current_price": 0.68,
+    "intrinsic_value": 6.36,
+    "margin_of_safety_pct": 89.3,
+    "mos_label": "Strong Discount (Margin of Safety)",
     "valuations": {
       "1_DCF_Operating_CF": null,
       "2_DCF_FCF": null,
@@ -3869,7 +5218,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:06"
     },
     "fundamentals": {
       "roe": -1.6572,
@@ -4110,50 +5459,50 @@
       "2018": {
         "market_price": 1026000.0,
         "intrinsic_value": 5.32,
-        "bull_case": 5.05,
-        "bear_case": 5.76
+        "bull_case": 5.76,
+        "bear_case": 5.05
       },
       "2019": {
         "market_price": 183000.0,
         "intrinsic_value": 5.43,
-        "bull_case": 5.18,
-        "bear_case": 5.83
+        "bull_case": 5.83,
+        "bear_case": 5.18
       },
       "2020": {
         "market_price": 53100.0,
         "intrinsic_value": 5.54,
-        "bull_case": 5.31,
-        "bear_case": 5.89
+        "bull_case": 5.89,
+        "bear_case": 5.31
       },
       "2021": {
         "market_price": 20850.0,
         "intrinsic_value": 5.65,
-        "bull_case": 5.45,
-        "bear_case": 5.96
+        "bull_case": 5.96,
+        "bear_case": 5.45
       },
       "2022": {
         "market_price": 1650.0,
         "intrinsic_value": 5.76,
-        "bull_case": 5.59,
-        "bear_case": 6.02
+        "bull_case": 6.02,
+        "bear_case": 5.59
       },
       "2023": {
         "market_price": 18.0,
         "intrinsic_value": 5.88,
-        "bull_case": 5.74,
-        "bear_case": 6.09
+        "bull_case": 6.09,
+        "bear_case": 5.74
       },
       "2024": {
         "market_price": 2.05,
         "intrinsic_value": 5.99,
-        "bull_case": 5.89,
-        "bear_case": 6.15
+        "bull_case": 6.15,
+        "bear_case": 5.89
       },
       "2025": {
         "market_price": 0.65,
         "intrinsic_value": 6.11,
-        "bull_case": 6.04,
-        "bear_case": 6.22
+        "bull_case": 6.22,
+        "bear_case": 6.04
       },
       "2026": {
         "market_price": 0.68,
@@ -4214,7 +5563,7 @@
         "Weak balance sheet (2/10) \u2014 high leverage or poor liquidity"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:06"
     },
     "10_Year_History": {
       "2018": 1026000.0,
@@ -4234,9 +5583,13 @@
       "2030": 6.88,
       "2031": 7.02
     },
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:06"
   },
   "DWAY": {
+    "current_price": 0.06,
+    "intrinsic_value": 0.18,
+    "margin_of_safety_pct": 66.7,
+    "mos_label": "Strong Discount (Margin of Safety)",
     "valuations": {
       "1_DCF_Operating_CF": null,
       "2_DCF_FCF": 0.23,
@@ -4312,7 +5665,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:06"
     },
     "fundamentals": {
       "roe": null,
@@ -4570,14 +5923,14 @@
       "2022": {
         "market_price": 0.13,
         "intrinsic_value": 0.16,
-        "bull_case": 0.16,
-        "bear_case": 0.17
+        "bull_case": 0.17,
+        "bear_case": 0.16
       },
       "2023": {
         "market_price": 0.05,
         "intrinsic_value": 0.17,
-        "bull_case": 0.16,
-        "bear_case": 0.17
+        "bull_case": 0.17,
+        "bear_case": 0.16
       },
       "2024": {
         "market_price": 0.02,
@@ -4588,8 +5941,8 @@
       "2025": {
         "market_price": 0.04,
         "intrinsic_value": 0.17,
-        "bull_case": 0.17,
-        "bear_case": 0.18
+        "bull_case": 0.18,
+        "bear_case": 0.17
       },
       "2026": {
         "market_price": 0.06,
@@ -4650,7 +6003,7 @@
         "Weak balance sheet (1/10) \u2014 high leverage or poor liquidity"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:06"
     },
     "10_Year_History": {
       "2022": 0.13,
@@ -4666,9 +6019,13 @@
       "2030": 0.19,
       "2031": 0.2
     },
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:06"
   },
   "DWNX": {
+    "current_price": 20.95,
+    "intrinsic_value": 32.84,
+    "margin_of_safety_pct": 36.2,
+    "mos_label": "Moderate Discount",
     "valuations": {
       "1_DCF_Operating_CF": null,
       "2_DCF_FCF": null,
@@ -4755,7 +6112,7 @@
         "eps_next_5y": 0.498
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:06"
     },
     "fundamentals": {
       "roe": 0.0837,
@@ -4778,62 +6135,62 @@
       "2016": {
         "market_price": 11.54,
         "intrinsic_value": 1.83,
-        "bull_case": 1.83,
-        "bear_case": 6.12
+        "bull_case": 6.12,
+        "bear_case": 1.83
       },
       "2017": {
         "market_price": 12.0,
         "intrinsic_value": 2.38,
-        "bull_case": 2.38,
-        "bear_case": 7.13
+        "bull_case": 7.13,
+        "bear_case": 2.38
       },
       "2018": {
         "market_price": 13.7,
         "intrinsic_value": 3.1,
-        "bull_case": 3.1,
-        "bear_case": 8.31
+        "bull_case": 8.31,
+        "bear_case": 3.1
       },
       "2019": {
         "market_price": 14.79,
         "intrinsic_value": 4.03,
-        "bull_case": 4.03,
-        "bear_case": 9.68
+        "bull_case": 9.68,
+        "bear_case": 4.03
       },
       "2020": {
         "market_price": 15.84,
         "intrinsic_value": 5.23,
-        "bull_case": 5.23,
-        "bear_case": 11.28
+        "bull_case": 11.28,
+        "bear_case": 5.23
       },
       "2021": {
         "market_price": 17.64,
         "intrinsic_value": 6.8,
-        "bull_case": 6.8,
-        "bear_case": 13.14
+        "bull_case": 13.14,
+        "bear_case": 6.8
       },
       "2022": {
         "market_price": 19.14,
         "intrinsic_value": 8.84,
-        "bull_case": 8.84,
-        "bear_case": 15.3
+        "bull_case": 15.3,
+        "bear_case": 8.84
       },
       "2023": {
         "market_price": 19.75,
         "intrinsic_value": 11.5,
-        "bull_case": 11.5,
-        "bear_case": 17.83
+        "bull_case": 17.83,
+        "bear_case": 11.5
       },
       "2024": {
         "market_price": 20.22,
         "intrinsic_value": 14.95,
-        "bull_case": 14.95,
-        "bear_case": 20.77
+        "bull_case": 20.77,
+        "bear_case": 14.95
       },
       "2025": {
         "market_price": 20.85,
         "intrinsic_value": 19.43,
-        "bull_case": 19.43,
-        "bear_case": 24.2
+        "bull_case": 24.2,
+        "bear_case": 19.43
       },
       "2026": {
         "market_price": 20.95,
@@ -4894,7 +6251,7 @@
         "Subject to Financial Services sector risks including competition and regulation"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:06"
     },
     "10_Year_History": {
       "2016": 11.54,
@@ -4916,9 +6273,13 @@
       "2030": 93.79,
       "2031": 121.93
     },
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:06"
   },
   "DWSN": {
+    "current_price": 2.41,
+    "intrinsic_value": 1.74,
+    "margin_of_safety_pct": -38.5,
+    "mos_label": "Moderate Premium",
     "valuations": {
       "1_DCF_Operating_CF": 1.8,
       "2_DCF_FCF": null,
@@ -4996,7 +6357,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:06"
     },
     "fundamentals": {
       "roe": -0.1981,
@@ -5274,62 +6635,62 @@
       "2016": {
         "market_price": 6.54,
         "intrinsic_value": 1.4,
-        "bull_case": 1.31,
-        "bear_case": 1.54
+        "bull_case": 1.54,
+        "bear_case": 1.31
       },
       "2017": {
         "market_price": 4.04,
         "intrinsic_value": 1.43,
-        "bull_case": 1.35,
-        "bear_case": 1.56
+        "bull_case": 1.56,
+        "bear_case": 1.35
       },
       "2018": {
         "market_price": 2.89,
         "intrinsic_value": 1.46,
-        "bull_case": 1.38,
-        "bear_case": 1.58
+        "bull_case": 1.58,
+        "bear_case": 1.38
       },
       "2019": {
         "market_price": 2.05,
         "intrinsic_value": 1.49,
-        "bull_case": 1.42,
-        "bear_case": 1.59
+        "bull_case": 1.59,
+        "bear_case": 1.42
       },
       "2020": {
         "market_price": 1.81,
         "intrinsic_value": 1.51,
-        "bull_case": 1.45,
-        "bear_case": 1.61
+        "bull_case": 1.61,
+        "bear_case": 1.45
       },
       "2021": {
         "market_price": 1.98,
         "intrinsic_value": 1.55,
-        "bull_case": 1.49,
-        "bear_case": 1.63
+        "bull_case": 1.63,
+        "bear_case": 1.49
       },
       "2022": {
         "market_price": 1.67,
         "intrinsic_value": 1.58,
-        "bull_case": 1.53,
-        "bear_case": 1.65
+        "bull_case": 1.65,
+        "bear_case": 1.53
       },
       "2023": {
         "market_price": 1.56,
         "intrinsic_value": 1.61,
-        "bull_case": 1.57,
-        "bear_case": 1.67
+        "bull_case": 1.67,
+        "bear_case": 1.57
       },
       "2024": {
         "market_price": 1.34,
         "intrinsic_value": 1.64,
-        "bull_case": 1.61,
-        "bear_case": 1.68
+        "bull_case": 1.68,
+        "bear_case": 1.61
       },
       "2025": {
         "market_price": 1.56,
         "intrinsic_value": 1.67,
-        "bull_case": 1.65,
-        "bear_case": 1.7
+        "bull_case": 1.7,
+        "bear_case": 1.65
       },
       "2026": {
         "market_price": 2.41,
@@ -5390,7 +6751,7 @@
         "Low profitability score (0/10) \u2014 weak margins or negative returns"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:06"
     },
     "10_Year_History": {
       "2016": 6.54,
@@ -5412,9 +6773,13 @@
       "2030": 1.88,
       "2031": 1.92
     },
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:06"
   },
   "DWTX": {
+    "current_price": 3.0,
+    "intrinsic_value": null,
+    "margin_of_safety_pct": null,
+    "mos_label": "Unavailable",
     "valuations": {
       "1_DCF_Operating_CF": null,
       "2_DCF_FCF": null,
@@ -5464,17 +6829,17 @@
     "quality": {
       "scores": {
         "profitability": 0,
-        "financial_strength": 2,
+        "financial_strength": 4,
         "growth": 2,
         "predictability": 0,
         "valuation": 0,
         "moat": null
       },
-      "python_subtotal": 4,
-      "python_subtotal_pct": 10.0,
+      "python_subtotal": 6,
+      "python_subtotal_pct": 15.0,
       "classification": "Dangerous",
       "penalty_pct": 8,
-      "final_score_pct": 2.0,
+      "final_score_pct": 7.0,
       "tiebreaker_used": false,
       "tiebreaker_inputs": {
         "roe": -0.9577,
@@ -5482,7 +6847,7 @@
         "eps_next_5y": 0.4337
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:06"
     },
     "fundamentals": {
       "roe": -0.9577,
@@ -5619,11 +6984,11 @@
       ],
       "bear_points": [
         "Low profitability score (0/10) \u2014 weak margins or negative returns",
-        "Weak balance sheet (2/10) \u2014 high leverage or poor liquidity",
-        "Unpredictable business (0/10) \u2014 volatile earnings and revenue"
+        "Unpredictable business (0/10) \u2014 volatile earnings and revenue",
+        "Subject to Healthcare sector risks including competition and regulation"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:06"
     },
     "10_Year_History": {
       "2020": 187.75,
@@ -5635,21 +7000,25 @@
       "2026": 3.0
     },
     "5_Year_Forecast": {},
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:06"
   },
   "DXCM": {
+    "current_price": 66.95,
+    "intrinsic_value": 153.48,
+    "margin_of_safety_pct": 56.4,
+    "mos_label": "Strong Discount (Margin of Safety)",
     "valuations": {
       "1_DCF_Operating_CF": 192.07,
       "2_DCF_FCF": 95.93,
       "3_DCF_Net_Income": 111.5,
       "4_DCF_Terminal_Value": 287.79,
       "5_Mean_PS": 124.35,
-      "6_Mean_PE": 63.53,
+      "6_Mean_PE": 63.84,
       "7_Mean_PB": 83.98,
       "8_PSG": 236.82,
-      "9_PEG": 40.66,
+      "9_PEG": 40.86,
       "10_EV_EBITDA": 81.53,
-      "intrinsic_value": 153.44,
+      "intrinsic_value": 153.48,
       "methods_used": 10,
       "confidence": "Medium",
       "active_methods": [
@@ -5727,7 +7096,7 @@
         "eps_next_5y": 0.1955
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:06"
     },
     "fundamentals": {
       "roe": 0.345,
@@ -5996,99 +7365,99 @@
     "valuation_chart": {
       "2016": {
         "market_price": 14.93,
-        "intrinsic_value": 21.52,
-        "bull_case": 12.71,
-        "bear_case": 49.89
+        "intrinsic_value": 21.53,
+        "bull_case": 49.91,
+        "bear_case": 12.71
       },
       "2017": {
         "market_price": 14.35,
-        "intrinsic_value": 25.73,
-        "bull_case": 15.94,
-        "bear_case": 55.26
+        "intrinsic_value": 25.74,
+        "bull_case": 55.27,
+        "bear_case": 15.94
       },
       "2018": {
         "market_price": 29.95,
-        "intrinsic_value": 30.76,
-        "bull_case": 19.99,
-        "bear_case": 61.2
+        "intrinsic_value": 30.77,
+        "bull_case": 61.22,
+        "bear_case": 19.99
       },
       "2019": {
         "market_price": 54.69,
-        "intrinsic_value": 36.77,
-        "bull_case": 25.07,
-        "bear_case": 67.78
+        "intrinsic_value": 36.78,
+        "bull_case": 67.8,
+        "bear_case": 25.08
       },
       "2020": {
         "market_price": 92.43,
-        "intrinsic_value": 43.96,
-        "bull_case": 31.44,
-        "bear_case": 75.07
+        "intrinsic_value": 43.97,
+        "bull_case": 75.09,
+        "bear_case": 31.45
       },
       "2021": {
         "market_price": 134.24,
-        "intrinsic_value": 52.56,
-        "bull_case": 39.43,
-        "bear_case": 83.14
+        "intrinsic_value": 52.57,
+        "bull_case": 83.16,
+        "bear_case": 39.44
       },
       "2022": {
         "market_price": 113.24,
-        "intrinsic_value": 62.83,
-        "bull_case": 49.45,
-        "bear_case": 92.08
+        "intrinsic_value": 62.85,
+        "bull_case": 92.11,
+        "bear_case": 49.47
       },
       "2023": {
         "market_price": 124.09,
-        "intrinsic_value": 75.12,
-        "bull_case": 62.02,
-        "bear_case": 101.98
+        "intrinsic_value": 75.14,
+        "bull_case": 102.01,
+        "bear_case": 62.04
       },
       "2024": {
         "market_price": 77.77,
-        "intrinsic_value": 89.8,
-        "bull_case": 77.78,
-        "bear_case": 112.95
+        "intrinsic_value": 89.83,
+        "bull_case": 112.98,
+        "bear_case": 77.8
       },
       "2025": {
         "market_price": 66.37,
-        "intrinsic_value": 107.36,
-        "bull_case": 97.55,
-        "bear_case": 125.09
+        "intrinsic_value": 107.39,
+        "bull_case": 125.13,
+        "bear_case": 97.58
       },
       "2026": {
         "market_price": 66.95,
-        "intrinsic_value": 153.44,
-        "bull_case": 162.44,
-        "bear_case": 139.94
+        "intrinsic_value": 153.48,
+        "bull_case": 162.48,
+        "bear_case": 139.98
       },
       "2027": {
         "market_price": null,
-        "intrinsic_value": 183.44,
-        "bull_case": 192.44,
-        "bear_case": 169.94
+        "intrinsic_value": 183.49,
+        "bull_case": 192.49,
+        "bear_case": 169.98
       },
       "2028": {
         "market_price": null,
-        "intrinsic_value": 219.3,
-        "bull_case": 241.34,
-        "bear_case": 188.21
+        "intrinsic_value": 219.36,
+        "bull_case": 241.41,
+        "bear_case": 188.26
       },
       "2029": {
         "market_price": null,
-        "intrinsic_value": 262.17,
-        "bull_case": 302.68,
-        "bear_case": 208.45
+        "intrinsic_value": 262.24,
+        "bull_case": 302.76,
+        "bear_case": 208.5
       },
       "2030": {
         "market_price": null,
-        "intrinsic_value": 313.43,
-        "bull_case": 379.61,
-        "bear_case": 230.86
+        "intrinsic_value": 313.51,
+        "bull_case": 379.71,
+        "bear_case": 230.92
       },
       "2031": {
         "market_price": null,
-        "intrinsic_value": 374.7,
-        "bull_case": 476.09,
-        "bear_case": 255.69
+        "intrinsic_value": 374.8,
+        "bull_case": 476.21,
+        "bear_case": 255.75
       }
     },
     "forecast_meta": {
@@ -6103,7 +7472,7 @@
     },
     "bull_bear": {
       "bull_points": [
-        "Trading at a 56.4% discount to estimated intrinsic value of $153.44",
+        "Trading at a 56.4% discount to estimated intrinsic value of $153.48",
         "Analyst consensus forecasts 19.6% EPS growth over the next 5 years",
         "High profitability score (10/10) \u2014 strong margins and returns"
       ],
@@ -6113,7 +7482,7 @@
         "Subject to Healthcare sector risks including competition and regulation"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:06"
     },
     "10_Year_History": {
       "2016": 14.93,
@@ -6129,15 +7498,19 @@
       "2026": 66.95
     },
     "5_Year_Forecast": {
-      "2027": 183.44,
-      "2028": 219.3,
-      "2029": 262.17,
-      "2030": 313.43,
-      "2031": 374.7
+      "2027": 183.49,
+      "2028": 219.36,
+      "2029": 262.24,
+      "2030": 313.51,
+      "2031": 374.8
     },
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:06"
   },
   "DXLG": {
+    "current_price": 0.51,
+    "intrinsic_value": 51.71,
+    "margin_of_safety_pct": 99.0,
+    "mos_label": "Strong Discount (Margin of Safety)",
     "valuations": {
       "1_DCF_Operating_CF": 19.43,
       "2_DCF_FCF": null,
@@ -6215,7 +7588,7 @@
         "eps_next_5y": 0.4246
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:06"
     },
     "fundamentals": {
       "roe": -0.0541,
@@ -6489,62 +7862,62 @@
       "2016": {
         "market_price": 4.25,
         "intrinsic_value": 2.89,
-        "bull_case": 2.89,
-        "bear_case": 9.64
+        "bull_case": 9.64,
+        "bear_case": 2.89
       },
       "2017": {
         "market_price": 2.2,
         "intrinsic_value": 3.75,
-        "bull_case": 3.75,
-        "bear_case": 11.23
+        "bull_case": 11.23,
+        "bear_case": 3.75
       },
       "2018": {
         "market_price": 2.17,
         "intrinsic_value": 4.88,
-        "bull_case": 4.88,
-        "bear_case": 13.08
+        "bull_case": 13.08,
+        "bear_case": 4.88
       },
       "2019": {
         "market_price": 1.28,
         "intrinsic_value": 6.34,
-        "bull_case": 6.34,
-        "bear_case": 15.24
+        "bull_case": 15.24,
+        "bear_case": 6.34
       },
       "2020": {
         "market_price": 0.27,
         "intrinsic_value": 8.24,
-        "bull_case": 8.24,
-        "bear_case": 17.75
+        "bull_case": 17.75,
+        "bear_case": 8.24
       },
       "2021": {
         "market_price": 5.68,
         "intrinsic_value": 10.71,
-        "bull_case": 10.71,
-        "bear_case": 20.68
+        "bull_case": 20.68,
+        "bear_case": 10.71
       },
       "2022": {
         "market_price": 6.75,
         "intrinsic_value": 13.93,
-        "bull_case": 13.93,
-        "bear_case": 24.1
+        "bull_case": 24.1,
+        "bear_case": 13.93
       },
       "2023": {
         "market_price": 4.4,
         "intrinsic_value": 18.11,
-        "bull_case": 18.11,
-        "bear_case": 28.07
+        "bull_case": 28.07,
+        "bear_case": 18.11
       },
       "2024": {
         "market_price": 2.69,
         "intrinsic_value": 23.54,
-        "bull_case": 23.54,
-        "bear_case": 32.7
+        "bull_case": 32.7,
+        "bear_case": 23.54
       },
       "2025": {
         "market_price": 0.92,
         "intrinsic_value": 30.6,
-        "bull_case": 30.6,
-        "bear_case": 38.1
+        "bull_case": 38.1,
+        "bear_case": 30.6
       },
       "2026": {
         "market_price": 0.51,
@@ -6605,7 +7978,7 @@
         "Unpredictable business (2/10) \u2014 volatile earnings and revenue"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:06"
     },
     "10_Year_History": {
       "2016": 4.25,
@@ -6627,21 +8000,25 @@
       "2030": 147.69,
       "2031": 192.0
     },
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:06"
   },
   "DXPE": {
+    "current_price": 128.58,
+    "intrinsic_value": 50.05,
+    "margin_of_safety_pct": -156.9,
+    "mos_label": "Significant Premium",
     "valuations": {
       "1_DCF_Operating_CF": 60.33,
       "2_DCF_FCF": 5.9,
       "3_DCF_Net_Income": 56.69,
       "4_DCF_Terminal_Value": 7.83,
       "5_Mean_PS": 70.06,
-      "6_Mean_PE": 71.27,
+      "6_Mean_PE": 72.49,
       "7_Mean_PB": 72.26,
       "8_PSG": null,
       "9_PEG": null,
       "10_EV_EBITDA": 74.99,
-      "intrinsic_value": 49.87,
+      "intrinsic_value": 50.05,
       "methods_used": 8,
       "confidence": "High",
       "active_methods": [
@@ -6715,7 +8092,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:26"
+      "last_calculated": "2026-03-21 13:06"
     },
     "fundamentals": {
       "roe": 0.1925,
@@ -6992,99 +8369,99 @@
     "valuation_chart": {
       "2016": {
         "market_price": 34.74,
-        "intrinsic_value": 40.11,
-        "bull_case": 37.6,
-        "bear_case": 44.22
+        "intrinsic_value": 40.25,
+        "bull_case": 44.38,
+        "bear_case": 37.74
       },
       "2017": {
         "market_price": 29.57,
-        "intrinsic_value": 40.91,
-        "bull_case": 38.58,
-        "bear_case": 44.7
+        "intrinsic_value": 41.06,
+        "bull_case": 44.86,
+        "bear_case": 38.72
       },
       "2018": {
         "market_price": 27.84,
-        "intrinsic_value": 41.73,
-        "bull_case": 39.58,
-        "bear_case": 45.19
+        "intrinsic_value": 41.88,
+        "bull_case": 45.36,
+        "bear_case": 39.73
       },
       "2019": {
         "market_price": 39.81,
-        "intrinsic_value": 42.56,
-        "bull_case": 40.61,
-        "bear_case": 45.69
+        "intrinsic_value": 42.72,
+        "bull_case": 45.86,
+        "bear_case": 40.76
       },
       "2020": {
         "market_price": 22.23,
-        "intrinsic_value": 43.41,
-        "bull_case": 41.67,
-        "bear_case": 46.19
+        "intrinsic_value": 43.57,
+        "bull_case": 46.36,
+        "bear_case": 41.82
       },
       "2021": {
         "market_price": 25.67,
-        "intrinsic_value": 44.28,
-        "bull_case": 42.75,
-        "bear_case": 46.7
+        "intrinsic_value": 44.44,
+        "bull_case": 46.87,
+        "bear_case": 42.91
       },
       "2022": {
         "market_price": 27.55,
-        "intrinsic_value": 45.17,
-        "bull_case": 43.86,
-        "bear_case": 47.22
+        "intrinsic_value": 45.33,
+        "bull_case": 47.39,
+        "bear_case": 44.02
       },
       "2023": {
         "market_price": 33.7,
-        "intrinsic_value": 46.07,
-        "bull_case": 45.0,
-        "bear_case": 47.73
+        "intrinsic_value": 46.24,
+        "bull_case": 47.91,
+        "bear_case": 45.17
       },
       "2024": {
         "market_price": 82.62,
-        "intrinsic_value": 46.99,
-        "bull_case": 46.17,
-        "bear_case": 48.26
+        "intrinsic_value": 47.16,
+        "bull_case": 48.43,
+        "bear_case": 46.34
       },
       "2025": {
         "market_price": 109.79,
-        "intrinsic_value": 47.93,
-        "bull_case": 47.37,
-        "bear_case": 48.79
+        "intrinsic_value": 48.11,
+        "bull_case": 48.97,
+        "bear_case": 47.55
       },
       "2026": {
         "market_price": 128.58,
-        "intrinsic_value": 49.87,
-        "bull_case": 50.17,
-        "bear_case": 49.42
+        "intrinsic_value": 50.05,
+        "bull_case": 50.35,
+        "bear_case": 49.6
       },
       "2027": {
         "market_price": null,
-        "intrinsic_value": 50.87,
-        "bull_case": 51.17,
-        "bear_case": 50.42
+        "intrinsic_value": 51.05,
+        "bull_case": 51.35,
+        "bear_case": 50.6
       },
       "2028": {
         "market_price": null,
-        "intrinsic_value": 51.88,
-        "bull_case": 52.5,
-        "bear_case": 50.97
+        "intrinsic_value": 52.07,
+        "bull_case": 52.69,
+        "bear_case": 51.16
       },
       "2029": {
         "market_price": null,
-        "intrinsic_value": 52.92,
-        "bull_case": 53.86,
-        "bear_case": 51.53
+        "intrinsic_value": 53.11,
+        "bull_case": 54.06,
+        "bear_case": 51.72
       },
       "2030": {
         "market_price": null,
-        "intrinsic_value": 53.98,
-        "bull_case": 55.26,
-        "bear_case": 52.1
+        "intrinsic_value": 54.18,
+        "bull_case": 55.46,
+        "bear_case": 52.29
       },
       "2031": {
         "market_price": null,
-        "intrinsic_value": 55.06,
-        "bull_case": 56.7,
-        "bear_case": 52.67
+        "intrinsic_value": 55.26,
+        "bull_case": 56.9,
+        "bear_case": 52.86
       }
     },
     "forecast_meta": {
@@ -7104,12 +8481,12 @@
         "Operates in the Industrials sector with established market presence"
       ],
       "bear_points": [
-        "Trading at a 157.8% premium to estimated intrinsic value of $49.87",
+        "Trading at a 156.9% premium to estimated intrinsic value of $50.05",
         "Analyst consensus forecasts only 0.0% EPS growth over the next 5 years",
         "Financial strength constrains growth outlook \u2014 EPS growth moderated from 0.0% to 2.0% due to financial strength score of 5/10"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:26"
+      "generated_at": "2026-03-21 13:06"
     },
     "10_Year_History": {
       "2016": 34.74,
@@ -7125,15 +8502,19 @@
       "2026": 128.58
     },
     "5_Year_Forecast": {
-      "2027": 50.87,
-      "2028": 51.88,
-      "2029": 52.92,
-      "2030": 53.98,
-      "2031": 55.06
+      "2027": 51.05,
+      "2028": 52.07,
+      "2029": 53.11,
+      "2030": 54.18,
+      "2031": 55.26
     },
-    "Last_Updated": "2026-03-21 03:26"
+    "Last_Updated": "2026-03-21 13:06"
   },
   "DXST": {
+    "current_price": 3.21,
+    "intrinsic_value": 3.22,
+    "margin_of_safety_pct": 0.3,
+    "mos_label": "Fairly Valued (Marginal Discount)",
     "valuations": {
       "1_DCF_Operating_CF": null,
       "2_DCF_FCF": null,
@@ -7207,7 +8588,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:27"
+      "last_calculated": "2026-03-21 13:06"
     },
     "fundamentals": {
       "roe": -0.0506,
@@ -7230,8 +8611,8 @@
       "2025": {
         "market_price": 34.75,
         "intrinsic_value": 3.09,
-        "bull_case": 3.06,
-        "bear_case": 3.15
+        "bull_case": 3.15,
+        "bear_case": 3.06
       },
       "2026": {
         "market_price": 3.21,
@@ -7292,7 +8673,7 @@
         "Financial strength constrains growth outlook \u2014 EPS growth moderated from 0.0% to 2.0% due to financial strength score of 5/10"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:27"
+      "generated_at": "2026-03-21 13:06"
     },
     "10_Year_History": {
       "2025": 34.75,
@@ -7305,9 +8686,461 @@
       "2030": 3.49,
       "2031": 3.56
     },
-    "Last_Updated": "2026-03-21 03:27"
+    "Last_Updated": "2026-03-21 13:06"
+  },
+  "DYAI": {
+    "current_price": 0.94,
+    "intrinsic_value": 1.39,
+    "margin_of_safety_pct": 32.4,
+    "mos_label": "Moderate Discount",
+    "valuations": {
+      "1_DCF_Operating_CF": null,
+      "2_DCF_FCF": null,
+      "3_DCF_Net_Income": null,
+      "4_DCF_Terminal_Value": null,
+      "5_Mean_PS": 1.54,
+      "6_Mean_PE": null,
+      "7_Mean_PB": 0.55,
+      "8_PSG": 2.73,
+      "9_PEG": null,
+      "10_EV_EBITDA": null,
+      "intrinsic_value": 1.39,
+      "methods_used": 3,
+      "confidence": "Low",
+      "active_methods": [
+        "5_Mean_PS",
+        "7_Mean_PB",
+        "8_PSG"
+      ],
+      "_meta": {
+        "pe_source": "current_trailing",
+        "ps_source": "historical_mean",
+        "pb_source": "historical_mean",
+        "ev_ebitda_source": "trailing_or_unavailable",
+        "growth_source": "finviz",
+        "growth_raw": 0.2953,
+        "growth_peg_rate": 0.2953,
+        "discount_rate": 0.12,
+        "growth_stage1": 0.2953,
+        "growth_stage2": 0.14765,
+        "terminal_growth": 0.02,
+        "tier": "Weak",
+        "company_type": "STANDARD",
+        "type_rationale": "Standard company \u2014 balanced weighting across all methods",
+        "weights_applied": {
+          "1_DCF_Operating_CF": 0.08,
+          "2_DCF_FCF": 0.08,
+          "3_DCF_Net_Income": 0.08,
+          "4_DCF_Terminal_Value": 0.08,
+          "5_Mean_PS": 0.12,
+          "6_Mean_PE": 0.08,
+          "7_Mean_PB": 0.15,
+          "8_PSG": 0.08,
+          "9_PEG": 0.08,
+          "10_EV_EBITDA": 0.17
+        },
+        "excluded_methods": [],
+        "active_methods": [
+          "5_Mean_PS",
+          "7_Mean_PB",
+          "8_PSG"
+        ]
+      }
+    },
+    "quality": {
+      "scores": {
+        "profitability": 0,
+        "financial_strength": 4,
+        "growth": 3,
+        "predictability": 2,
+        "valuation": 5,
+        "moat": null
+      },
+      "python_subtotal": 9,
+      "python_subtotal_pct": 22.5,
+      "classification": "Dangerous",
+      "penalty_pct": 8,
+      "final_score_pct": 14.5,
+      "tiebreaker_used": false,
+      "tiebreaker_inputs": {
+        "roe": -2.4415,
+        "roic": null,
+        "eps_next_5y": 0.2953
+      },
+      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
+      "last_calculated": "2026-03-21 13:06"
+    },
+    "fundamentals": {
+      "roe": -2.4415,
+      "roic": null,
+      "roe_pct": "-244.15%",
+      "roic_pct": null,
+      "roic_source": "unavailable",
+      "current_ratio": 4.01,
+      "debt_to_ebitda": null,
+      "debt_service_ratio": null
+    },
+    "financials_charts": {
+      "revenue_vs_net_income": {
+        "2024": {
+          "revenue": 3.5,
+          "net_income": -5.81
+        },
+        "2023": {
+          "revenue": 2.9,
+          "net_income": -6.8
+        },
+        "2022": {
+          "revenue": 2.93,
+          "net_income": -9.74
+        },
+        "2021": {
+          "revenue": 2.4,
+          "net_income": -13.07
+        },
+        "2020": {
+          "revenue": 1.6,
+          "net_income": -9.33
+        },
+        "2019": {
+          "revenue": 1.68,
+          "net_income": -8.31
+        },
+        "2018": {
+          "revenue": 1.3,
+          "net_income": -5.69
+        },
+        "2017": {
+          "revenue": 0.76,
+          "net_income": -2.14
+        }
+      },
+      "fcf_vs_debt": {
+        "2024": {
+          "cash_balance": 9.29,
+          "free_cash_flow": null,
+          "total_debt": null
+        },
+        "2023": {
+          "cash_balance": 7.3,
+          "free_cash_flow": null,
+          "total_debt": null
+        },
+        "2022": {
+          "cash_balance": 5.79,
+          "free_cash_flow": null,
+          "total_debt": null
+        },
+        "2021": {
+          "cash_balance": 15.75,
+          "free_cash_flow": null,
+          "total_debt": null
+        },
+        "2020": {
+          "cash_balance": 20.64,
+          "free_cash_flow": null,
+          "total_debt": null
+        },
+        "2019": {
+          "cash_balance": 4.82,
+          "free_cash_flow": null,
+          "total_debt": null
+        },
+        "2018": {
+          "cash_balance": 2.39,
+          "free_cash_flow": null,
+          "total_debt": null
+        },
+        "2017": {
+          "cash_balance": 5.79,
+          "free_cash_flow": null,
+          "total_debt": null
+        }
+      },
+      "shares_vs_buybacks": {
+        "2024": {
+          "shares_outstanding_m": 29.84,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2023": {
+          "shares_outstanding_m": 28.8,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2022": {
+          "shares_outstanding_m": 28.56,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2021": {
+          "shares_outstanding_m": 28.23,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2020": {
+          "shares_outstanding_m": 27.49,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2019": {
+          "shares_outstanding_m": 27.36,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2018": {
+          "shares_outstanding_m": 26.71,
+          "buybacks_m": 2.3,
+          "split_adjusted": true
+        },
+        "2017": {
+          "shares_outstanding_m": 28.33,
+          "buybacks_m": 6.22,
+          "split_adjusted": true
+        }
+      },
+      "returns_trajectory": {
+        "2024": {
+          "roe_pct": -235.16,
+          "roic_pct": null
+        },
+        "2023": {
+          "roe_pct": -115.6,
+          "roic_pct": null
+        },
+        "2022": {
+          "roe_pct": -87.8,
+          "roic_pct": null
+        },
+        "2021": {
+          "roe_pct": -71.07,
+          "roic_pct": null
+        },
+        "2020": {
+          "roe_pct": -32.78,
+          "roic_pct": null
+        },
+        "2019": {
+          "roe_pct": -23.16,
+          "roic_pct": null
+        },
+        "2018": {
+          "roe_pct": -13.41,
+          "roic_pct": null
+        },
+        "2017": {
+          "roe_pct": -4.27,
+          "roic_pct": null
+        }
+      },
+      "revenue_vs_ar": {
+        "2024": {
+          "revenue": 3.5,
+          "accounts_receivable": 0.24,
+          "rev_growth_pct": 20.7,
+          "ar_growth_pct": -48.9,
+          "ar_outpacing": false
+        },
+        "2023": {
+          "revenue": 2.9,
+          "accounts_receivable": 0.47,
+          "rev_growth_pct": -1.0,
+          "ar_growth_pct": 42.4,
+          "ar_outpacing": true
+        },
+        "2022": {
+          "revenue": 2.93,
+          "accounts_receivable": 0.33,
+          "rev_growth_pct": 22.1,
+          "ar_growth_pct": 17.9,
+          "ar_outpacing": false
+        },
+        "2021": {
+          "revenue": 2.4,
+          "accounts_receivable": 0.28,
+          "rev_growth_pct": 50.0,
+          "ar_growth_pct": -3.4,
+          "ar_outpacing": false
+        },
+        "2020": {
+          "revenue": 1.6,
+          "accounts_receivable": 0.29,
+          "rev_growth_pct": -4.8,
+          "ar_growth_pct": -48.2,
+          "ar_outpacing": false
+        },
+        "2019": {
+          "revenue": 1.68,
+          "accounts_receivable": 0.56,
+          "rev_growth_pct": 29.2,
+          "ar_growth_pct": 75.0,
+          "ar_outpacing": true
+        },
+        "2018": {
+          "revenue": 1.3,
+          "accounts_receivable": 0.32,
+          "rev_growth_pct": 71.1,
+          "ar_growth_pct": 18.5,
+          "ar_outpacing": false
+        },
+        "2017": {
+          "revenue": 0.76,
+          "accounts_receivable": 0.27,
+          "rev_growth_pct": null,
+          "ar_growth_pct": null,
+          "ar_outpacing": null
+        }
+      }
+    },
+    "valuation_chart": {
+      "2016": {
+        "market_price": 1.66,
+        "intrinsic_value": 0.15,
+        "bull_case": 0.39,
+        "bear_case": 0.09
+      },
+      "2017": {
+        "market_price": 1.39,
+        "intrinsic_value": 0.19,
+        "bull_case": 0.44,
+        "bear_case": 0.11
+      },
+      "2018": {
+        "market_price": 1.89,
+        "intrinsic_value": 0.23,
+        "bull_case": 0.49,
+        "bear_case": 0.14
+      },
+      "2019": {
+        "market_price": 5.18,
+        "intrinsic_value": 0.28,
+        "bull_case": 0.55,
+        "bear_case": 0.18
+      },
+      "2020": {
+        "market_price": 5.38,
+        "intrinsic_value": 0.34,
+        "bull_case": 0.62,
+        "bear_case": 0.24
+      },
+      "2021": {
+        "market_price": 4.52,
+        "intrinsic_value": 0.42,
+        "bull_case": 0.7,
+        "bear_case": 0.3
+      },
+      "2022": {
+        "market_price": 1.23,
+        "intrinsic_value": 0.51,
+        "bull_case": 0.78,
+        "bear_case": 0.39
+      },
+      "2023": {
+        "market_price": 1.61,
+        "intrinsic_value": 0.62,
+        "bull_case": 0.88,
+        "bear_case": 0.51
+      },
+      "2024": {
+        "market_price": 1.75,
+        "intrinsic_value": 0.76,
+        "bull_case": 0.98,
+        "bear_case": 0.65
+      },
+      "2025": {
+        "market_price": 0.94,
+        "intrinsic_value": 0.93,
+        "bull_case": 1.1,
+        "bear_case": 0.84
+      },
+      "2026": {
+        "market_price": 0.94,
+        "intrinsic_value": 1.39,
+        "bull_case": 1.48,
+        "bear_case": 1.25
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 1.7,
+        "bull_case": 1.79,
+        "bear_case": 1.56
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 2.07,
+        "bull_case": 2.31,
+        "bear_case": 1.75
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 2.53,
+        "bull_case": 2.97,
+        "bear_case": 1.96
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 3.09,
+        "bull_case": 3.82,
+        "bear_case": 2.2
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 3.78,
+        "bull_case": 4.93,
+        "bear_case": 2.47
+      }
+    },
+    "forecast_meta": {
+      "eps_next_5y_raw": 0.2953,
+      "fs_score": 4,
+      "fs_multiplier": 0.75,
+      "base_growth_rate": 0.2215,
+      "bull_growth_rate": 0.2879,
+      "bear_growth_rate": 0.1218,
+      "growth_constrained": true,
+      "constraint_note": "EPS growth moderated from 29.5% to 22.1% due to financial strength score of 4/10"
+    },
+    "bull_bear": {
+      "bull_points": [
+        "Trading at a 32.4% discount to estimated intrinsic value of $1.39",
+        "Analyst consensus forecasts 29.5% EPS growth over the next 5 years",
+        "Operates in the Healthcare sector with established market presence"
+      ],
+      "bear_points": [
+        "Low profitability score (0/10) \u2014 weak margins or negative returns",
+        "Unpredictable business (2/10) \u2014 volatile earnings and revenue",
+        "Financial strength constrains growth outlook \u2014 EPS growth moderated from 29.5% to 22.1% due to financial strength score of 4/10"
+      ],
+      "source": "rules",
+      "generated_at": "2026-03-21 13:06"
+    },
+    "10_Year_History": {
+      "2016": 1.66,
+      "2017": 1.39,
+      "2018": 1.89,
+      "2019": 5.18,
+      "2020": 5.38,
+      "2021": 4.52,
+      "2022": 1.23,
+      "2023": 1.61,
+      "2024": 1.75,
+      "2025": 0.94,
+      "2026": 0.94
+    },
+    "5_Year_Forecast": {
+      "2027": 1.8,
+      "2028": 2.33,
+      "2029": 3.02,
+      "2030": 3.91,
+      "2031": 5.07
+    },
+    "Last_Updated": "2026-03-21 13:06"
   },
   "DXYN": {
+    "current_price": 0.43,
+    "intrinsic_value": 5.43,
+    "margin_of_safety_pct": 92.1,
+    "mos_label": "Strong Discount (Margin of Safety)",
     "valuations": {
       "1_DCF_Operating_CF": 8.37,
       "2_DCF_FCF": 10.5,
@@ -7387,7 +9220,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:27"
+      "last_calculated": "2026-03-21 13:06"
     },
     "fundamentals": {
       "roe": -0.6316,
@@ -7665,62 +9498,62 @@
       "2016": {
         "market_price": 3.6,
         "intrinsic_value": 4.37,
-        "bull_case": 4.09,
-        "bear_case": 4.81
+        "bull_case": 4.81,
+        "bear_case": 4.09
       },
       "2017": {
         "market_price": 3.85,
         "intrinsic_value": 4.45,
-        "bull_case": 4.2,
-        "bear_case": 4.87
+        "bull_case": 4.87,
+        "bear_case": 4.2
       },
       "2018": {
         "market_price": 0.71,
         "intrinsic_value": 4.54,
-        "bull_case": 4.31,
-        "bear_case": 4.92
+        "bull_case": 4.92,
+        "bear_case": 4.31
       },
       "2019": {
         "market_price": 1.14,
         "intrinsic_value": 4.63,
-        "bull_case": 4.42,
-        "bear_case": 4.97
+        "bull_case": 4.97,
+        "bear_case": 4.42
       },
       "2020": {
         "market_price": 2.55,
         "intrinsic_value": 4.73,
-        "bull_case": 4.54,
-        "bear_case": 5.03
+        "bull_case": 5.03,
+        "bear_case": 4.54
       },
       "2021": {
         "market_price": 5.73,
         "intrinsic_value": 4.82,
-        "bull_case": 4.65,
-        "bear_case": 5.09
+        "bull_case": 5.09,
+        "bear_case": 4.65
       },
       "2022": {
         "market_price": 0.78,
         "intrinsic_value": 4.92,
-        "bull_case": 4.78,
-        "bear_case": 5.14
+        "bull_case": 5.14,
+        "bear_case": 4.78
       },
       "2023": {
         "market_price": 0.74,
         "intrinsic_value": 5.02,
-        "bull_case": 4.9,
-        "bear_case": 5.2
+        "bull_case": 5.2,
+        "bear_case": 4.9
       },
       "2024": {
         "market_price": 0.65,
         "intrinsic_value": 5.12,
-        "bull_case": 5.03,
-        "bear_case": 5.25
+        "bull_case": 5.25,
+        "bear_case": 5.03
       },
       "2025": {
         "market_price": 0.45,
         "intrinsic_value": 5.22,
-        "bull_case": 5.16,
-        "bear_case": 5.31
+        "bull_case": 5.31,
+        "bear_case": 5.16
       },
       "2026": {
         "market_price": 0.43,
@@ -7781,7 +9614,7 @@
         "Weak balance sheet (3/10) \u2014 high leverage or poor liquidity"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:27"
+      "generated_at": "2026-03-21 13:06"
     },
     "10_Year_History": {
       "2016": 3.6,
@@ -7803,453 +9636,13 @@
       "2030": 5.88,
       "2031": 6.0
     },
-    "Last_Updated": "2026-03-21 03:27"
-  },
-  "DYAI": {
-    "valuations": {
-      "1_DCF_Operating_CF": null,
-      "2_DCF_FCF": null,
-      "3_DCF_Net_Income": null,
-      "4_DCF_Terminal_Value": null,
-      "5_Mean_PS": 1.54,
-      "6_Mean_PE": null,
-      "7_Mean_PB": 0.55,
-      "8_PSG": 2.73,
-      "9_PEG": null,
-      "10_EV_EBITDA": null,
-      "intrinsic_value": 1.39,
-      "methods_used": 3,
-      "confidence": "Low",
-      "active_methods": [
-        "5_Mean_PS",
-        "7_Mean_PB",
-        "8_PSG"
-      ],
-      "_meta": {
-        "pe_source": "current_trailing",
-        "ps_source": "historical_mean",
-        "pb_source": "historical_mean",
-        "ev_ebitda_source": "trailing_or_unavailable",
-        "growth_source": "finviz",
-        "growth_raw": 0.2953,
-        "growth_peg_rate": 0.2953,
-        "discount_rate": 0.12,
-        "growth_stage1": 0.2953,
-        "growth_stage2": 0.14765,
-        "terminal_growth": 0.02,
-        "tier": "Weak",
-        "company_type": "STANDARD",
-        "type_rationale": "Standard company \u2014 balanced weighting across all methods",
-        "weights_applied": {
-          "1_DCF_Operating_CF": 0.08,
-          "2_DCF_FCF": 0.08,
-          "3_DCF_Net_Income": 0.08,
-          "4_DCF_Terminal_Value": 0.08,
-          "5_Mean_PS": 0.12,
-          "6_Mean_PE": 0.08,
-          "7_Mean_PB": 0.15,
-          "8_PSG": 0.08,
-          "9_PEG": 0.08,
-          "10_EV_EBITDA": 0.17
-        },
-        "excluded_methods": [],
-        "active_methods": [
-          "5_Mean_PS",
-          "7_Mean_PB",
-          "8_PSG"
-        ]
-      }
-    },
-    "quality": {
-      "scores": {
-        "profitability": 0,
-        "financial_strength": 4,
-        "growth": 3,
-        "predictability": 2,
-        "valuation": 5,
-        "moat": null
-      },
-      "python_subtotal": 9,
-      "python_subtotal_pct": 22.5,
-      "classification": "Dangerous",
-      "penalty_pct": 8,
-      "final_score_pct": 14.5,
-      "tiebreaker_used": false,
-      "tiebreaker_inputs": {
-        "roe": -2.4415,
-        "roic": null,
-        "eps_next_5y": 0.2953
-      },
-      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:27"
-    },
-    "fundamentals": {
-      "roe": -2.4415,
-      "roic": null,
-      "roe_pct": "-244.15%",
-      "roic_pct": null,
-      "roic_source": "unavailable",
-      "current_ratio": 4.01,
-      "debt_to_ebitda": null,
-      "debt_service_ratio": null
-    },
-    "financials_charts": {
-      "revenue_vs_net_income": {
-        "2024": {
-          "revenue": 3.5,
-          "net_income": -5.81
-        },
-        "2023": {
-          "revenue": 2.9,
-          "net_income": -6.8
-        },
-        "2022": {
-          "revenue": 2.93,
-          "net_income": -9.74
-        },
-        "2021": {
-          "revenue": 2.4,
-          "net_income": -13.07
-        },
-        "2020": {
-          "revenue": 1.6,
-          "net_income": -9.33
-        },
-        "2019": {
-          "revenue": 1.68,
-          "net_income": -8.31
-        },
-        "2018": {
-          "revenue": 1.3,
-          "net_income": -5.69
-        },
-        "2017": {
-          "revenue": 0.76,
-          "net_income": -2.14
-        }
-      },
-      "fcf_vs_debt": {
-        "2024": {
-          "cash_balance": 9.29,
-          "free_cash_flow": null,
-          "total_debt": null
-        },
-        "2023": {
-          "cash_balance": 7.3,
-          "free_cash_flow": null,
-          "total_debt": null
-        },
-        "2022": {
-          "cash_balance": 5.79,
-          "free_cash_flow": null,
-          "total_debt": null
-        },
-        "2021": {
-          "cash_balance": 15.75,
-          "free_cash_flow": null,
-          "total_debt": null
-        },
-        "2020": {
-          "cash_balance": 20.64,
-          "free_cash_flow": null,
-          "total_debt": null
-        },
-        "2019": {
-          "cash_balance": 4.82,
-          "free_cash_flow": null,
-          "total_debt": null
-        },
-        "2018": {
-          "cash_balance": 2.39,
-          "free_cash_flow": null,
-          "total_debt": null
-        },
-        "2017": {
-          "cash_balance": 5.79,
-          "free_cash_flow": null,
-          "total_debt": null
-        }
-      },
-      "shares_vs_buybacks": {
-        "2024": {
-          "shares_outstanding_m": 29.84,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2023": {
-          "shares_outstanding_m": 28.8,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2022": {
-          "shares_outstanding_m": 28.56,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2021": {
-          "shares_outstanding_m": 28.23,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2020": {
-          "shares_outstanding_m": 27.49,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2019": {
-          "shares_outstanding_m": 27.36,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2018": {
-          "shares_outstanding_m": 26.71,
-          "buybacks_m": 2.3,
-          "split_adjusted": true
-        },
-        "2017": {
-          "shares_outstanding_m": 28.33,
-          "buybacks_m": 6.22,
-          "split_adjusted": true
-        }
-      },
-      "returns_trajectory": {
-        "2024": {
-          "roe_pct": -235.16,
-          "roic_pct": null
-        },
-        "2023": {
-          "roe_pct": -115.6,
-          "roic_pct": null
-        },
-        "2022": {
-          "roe_pct": -87.8,
-          "roic_pct": null
-        },
-        "2021": {
-          "roe_pct": -71.07,
-          "roic_pct": null
-        },
-        "2020": {
-          "roe_pct": -32.78,
-          "roic_pct": null
-        },
-        "2019": {
-          "roe_pct": -23.16,
-          "roic_pct": null
-        },
-        "2018": {
-          "roe_pct": -13.41,
-          "roic_pct": null
-        },
-        "2017": {
-          "roe_pct": -4.27,
-          "roic_pct": null
-        }
-      },
-      "revenue_vs_ar": {
-        "2024": {
-          "revenue": 3.5,
-          "accounts_receivable": 0.24,
-          "rev_growth_pct": 20.7,
-          "ar_growth_pct": -48.9,
-          "ar_outpacing": false
-        },
-        "2023": {
-          "revenue": 2.9,
-          "accounts_receivable": 0.47,
-          "rev_growth_pct": -1.0,
-          "ar_growth_pct": 42.4,
-          "ar_outpacing": true
-        },
-        "2022": {
-          "revenue": 2.93,
-          "accounts_receivable": 0.33,
-          "rev_growth_pct": 22.1,
-          "ar_growth_pct": 17.9,
-          "ar_outpacing": false
-        },
-        "2021": {
-          "revenue": 2.4,
-          "accounts_receivable": 0.28,
-          "rev_growth_pct": 50.0,
-          "ar_growth_pct": -3.4,
-          "ar_outpacing": false
-        },
-        "2020": {
-          "revenue": 1.6,
-          "accounts_receivable": 0.29,
-          "rev_growth_pct": -4.8,
-          "ar_growth_pct": -48.2,
-          "ar_outpacing": false
-        },
-        "2019": {
-          "revenue": 1.68,
-          "accounts_receivable": 0.56,
-          "rev_growth_pct": 29.2,
-          "ar_growth_pct": 75.0,
-          "ar_outpacing": true
-        },
-        "2018": {
-          "revenue": 1.3,
-          "accounts_receivable": 0.32,
-          "rev_growth_pct": 71.1,
-          "ar_growth_pct": 18.5,
-          "ar_outpacing": false
-        },
-        "2017": {
-          "revenue": 0.76,
-          "accounts_receivable": 0.27,
-          "rev_growth_pct": null,
-          "ar_growth_pct": null,
-          "ar_outpacing": null
-        }
-      }
-    },
-    "valuation_chart": {
-      "2016": {
-        "market_price": 1.66,
-        "intrinsic_value": 0.15,
-        "bull_case": 0.09,
-        "bear_case": 0.39
-      },
-      "2017": {
-        "market_price": 1.39,
-        "intrinsic_value": 0.19,
-        "bull_case": 0.11,
-        "bear_case": 0.44
-      },
-      "2018": {
-        "market_price": 1.89,
-        "intrinsic_value": 0.23,
-        "bull_case": 0.14,
-        "bear_case": 0.49
-      },
-      "2019": {
-        "market_price": 5.18,
-        "intrinsic_value": 0.28,
-        "bull_case": 0.18,
-        "bear_case": 0.55
-      },
-      "2020": {
-        "market_price": 5.38,
-        "intrinsic_value": 0.34,
-        "bull_case": 0.24,
-        "bear_case": 0.62
-      },
-      "2021": {
-        "market_price": 4.52,
-        "intrinsic_value": 0.42,
-        "bull_case": 0.3,
-        "bear_case": 0.7
-      },
-      "2022": {
-        "market_price": 1.23,
-        "intrinsic_value": 0.51,
-        "bull_case": 0.39,
-        "bear_case": 0.78
-      },
-      "2023": {
-        "market_price": 1.61,
-        "intrinsic_value": 0.62,
-        "bull_case": 0.51,
-        "bear_case": 0.88
-      },
-      "2024": {
-        "market_price": 1.75,
-        "intrinsic_value": 0.76,
-        "bull_case": 0.65,
-        "bear_case": 0.98
-      },
-      "2025": {
-        "market_price": 0.94,
-        "intrinsic_value": 0.93,
-        "bull_case": 0.84,
-        "bear_case": 1.1
-      },
-      "2026": {
-        "market_price": 0.94,
-        "intrinsic_value": 1.39,
-        "bull_case": 1.48,
-        "bear_case": 1.25
-      },
-      "2027": {
-        "market_price": null,
-        "intrinsic_value": 1.7,
-        "bull_case": 1.79,
-        "bear_case": 1.56
-      },
-      "2028": {
-        "market_price": null,
-        "intrinsic_value": 2.07,
-        "bull_case": 2.31,
-        "bear_case": 1.75
-      },
-      "2029": {
-        "market_price": null,
-        "intrinsic_value": 2.53,
-        "bull_case": 2.97,
-        "bear_case": 1.96
-      },
-      "2030": {
-        "market_price": null,
-        "intrinsic_value": 3.09,
-        "bull_case": 3.82,
-        "bear_case": 2.2
-      },
-      "2031": {
-        "market_price": null,
-        "intrinsic_value": 3.78,
-        "bull_case": 4.93,
-        "bear_case": 2.47
-      }
-    },
-    "forecast_meta": {
-      "eps_next_5y_raw": 0.2953,
-      "fs_score": 4,
-      "fs_multiplier": 0.75,
-      "base_growth_rate": 0.2215,
-      "bull_growth_rate": 0.2879,
-      "bear_growth_rate": 0.1218,
-      "growth_constrained": true,
-      "constraint_note": "EPS growth moderated from 29.5% to 22.1% due to financial strength score of 4/10"
-    },
-    "bull_bear": {
-      "bull_points": [
-        "Trading at a 32.4% discount to estimated intrinsic value of $1.39",
-        "Analyst consensus forecasts 29.5% EPS growth over the next 5 years",
-        "Operates in the Healthcare sector with established market presence"
-      ],
-      "bear_points": [
-        "Low profitability score (0/10) \u2014 weak margins or negative returns",
-        "Unpredictable business (2/10) \u2014 volatile earnings and revenue",
-        "Financial strength constrains growth outlook \u2014 EPS growth moderated from 29.5% to 22.1% due to financial strength score of 4/10"
-      ],
-      "source": "rules",
-      "generated_at": "2026-03-21 03:27"
-    },
-    "10_Year_History": {
-      "2016": 1.66,
-      "2017": 1.39,
-      "2018": 1.89,
-      "2019": 5.18,
-      "2020": 5.38,
-      "2021": 4.52,
-      "2022": 1.23,
-      "2023": 1.61,
-      "2024": 1.75,
-      "2025": 0.94,
-      "2026": 0.94
-    },
-    "5_Year_Forecast": {
-      "2027": 1.8,
-      "2028": 2.33,
-      "2029": 3.02,
-      "2030": 3.91,
-      "2031": 5.07
-    },
-    "Last_Updated": "2026-03-21 03:27"
+    "Last_Updated": "2026-03-21 13:06"
   },
   "DYN": {
+    "current_price": 17.56,
+    "intrinsic_value": 33.54,
+    "margin_of_safety_pct": 47.6,
+    "mos_label": "Strong Discount (Margin of Safety)",
     "valuations": {
       "1_DCF_Operating_CF": null,
       "2_DCF_FCF": null,
@@ -8321,7 +9714,7 @@
         "eps_next_5y": 0.132
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-21 03:27"
+      "last_calculated": "2026-03-21 13:06"
     },
     "fundamentals": {
       "roe": -0.5571,
@@ -8474,38 +9867,38 @@
       "2020": {
         "market_price": 21.0,
         "intrinsic_value": 20.54,
-        "bull_case": 17.84,
-        "bear_case": 25.5
+        "bull_case": 25.5,
+        "bear_case": 17.84
       },
       "2021": {
         "market_price": 11.89,
         "intrinsic_value": 22.03,
-        "bull_case": 19.52,
-        "bear_case": 26.52
+        "bull_case": 26.52,
+        "bear_case": 19.52
       },
       "2022": {
         "market_price": 11.59,
         "intrinsic_value": 23.63,
-        "bull_case": 21.37,
-        "bear_case": 27.58
+        "bull_case": 27.58,
+        "bear_case": 21.37
       },
       "2023": {
         "market_price": 13.3,
         "intrinsic_value": 25.34,
-        "bull_case": 23.38,
-        "bear_case": 28.68
+        "bull_case": 28.68,
+        "bear_case": 23.38
       },
       "2024": {
         "market_price": 23.56,
         "intrinsic_value": 27.18,
-        "bull_case": 25.59,
-        "bear_case": 29.82
+        "bull_case": 29.82,
+        "bear_case": 25.59
       },
       "2025": {
         "market_price": 19.56,
         "intrinsic_value": 29.15,
-        "bull_case": 28.0,
-        "bear_case": 31.01
+        "bull_case": 31.01,
+        "bear_case": 28.0
       },
       "2026": {
         "market_price": 17.56,
@@ -8566,7 +9959,7 @@
         "Unpredictable business (0/10) \u2014 volatile earnings and revenue"
       ],
       "source": "rules",
-      "generated_at": "2026-03-21 03:27"
+      "generated_at": "2026-03-21 13:06"
     },
     "10_Year_History": {
       "2020": 21.0,
@@ -8584,6 +9977,6 @@
       "2030": 55.07,
       "2031": 62.34
     },
-    "Last_Updated": "2026-03-21 03:27"
+    "Last_Updated": "2026-03-21 13:06"
   }
 }
