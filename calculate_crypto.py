@@ -966,6 +966,9 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
         is_l1_or_infra      = _sym in L1_INFRA_TOKENS
 
         # ── Signal 1: Fee Growth (0-10) ───────────────────────────────────────
+        # Primary: fee/TVL ratio from DeFiLlama capital_efficiency chart
+        # Secondary: YoY fee growth trend from historical fee series
+        # Tertiary: vol/MC proxy (rough demand signal)
         if fee_data_available:
             if fee_tvl >= 20:   s1 = 10
             elif fee_tvl >= 10: s1 = 8
@@ -973,13 +976,40 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
             elif fee_tvl >= 2:  s1 = 4
             elif fee_tvl >= 1:  s1 = 2
             else:               s1 = 1
-        elif _sym in hints:
-            # Known protocol — use curated score
-            s1 = hints["fee_growth"]
-        elif vol_mc_pct and vol_mc_pct >= 10:   s1 = 6
-        elif vol_mc_pct and vol_mc_pct >= 5:    s1 = 5
-        elif vol_mc_pct and vol_mc_pct >= 2:    s1 = 4
-        else:                                    s1 = 5   # neutral default
+        else:
+            # Try to compute YoY fee growth trend from historical fee data
+            # Uses network_economics.protocol_revenue_and_fees already fetched
+            _yoy_score = None
+            try:
+                _hist = (network_econ or {}).get("protocol_revenue_and_fees", {})
+                _curr_yr = datetime.now().year
+                _fee_yrs = sorted(
+                    [(int(y), (e.get("fees_usd") or 0))
+                     for y, e in _hist.items()
+                     if int(y) < _curr_yr and not e.get("is_estimated", False)
+                     and (e.get("fees_usd") or 0) > 0],
+                    reverse=True
+                )
+                if len(_fee_yrs) >= 2:
+                    _recent, _prior = _fee_yrs[0][1], _fee_yrs[1][1]
+                    if _prior > 0:
+                        _yoy_pct = (_recent - _prior) / _prior * 100
+                        if _yoy_pct >= 50:   _yoy_score = 10
+                        elif _yoy_pct >= 20: _yoy_score = 8
+                        elif _yoy_pct >= 0:  _yoy_score = 6
+                        elif _yoy_pct >= -20:_yoy_score = 4
+                        else:                _yoy_score = 2
+            except Exception:
+                pass
+
+            if _yoy_score is not None:
+                s1 = _yoy_score
+            elif _sym in hints:
+                s1 = hints["fee_growth"]
+            elif vol_mc_pct and vol_mc_pct >= 10:   s1 = 6
+            elif vol_mc_pct and vol_mc_pct >= 5:    s1 = 5
+            elif vol_mc_pct and vol_mc_pct >= 2:    s1 = 4
+            else:                                    s1 = 5   # neutral default
         signals["fee_growth"] = {
             "label": "Fee Growth", "score": s1, "max": 10,
             "value": round(fee_tvl, 2) if fee_tvl else None,
@@ -991,13 +1021,28 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
         }
 
         # ── Signal 2: Capital Efficiency (0-10) ───────────────────────────────
+        # MC/Fees ratio — lower is more efficient (protocol earns more vs its valuation).
+        # Thresholds calibrated against real DeFi protocol data:
+        #   <5x    → 10  (GMX, SNX — exceptional fee generation)
+        #   5-15x  → 8   (top DeFi protocols)
+        #   15-30x → 6   (strong — e.g. ETH at median fees ~100x still earns 4)
+        #   30-75x → 5   (adequate)
+        #   75-150x→ 4   (moderate — ETH in bear market at 100x)
+        #   150-400→ 3   (weak — large premium to current fee generation)
+        #   400-800→ 2   (very weak)
+        #   >800x  → 1   (extreme — current fees negligible vs market cap)
+        # NOTE: scores use normalised (median 3Y) fees where available,
+        # preventing bear-market fee troughs from permanently punishing
+        # established protocols like ETH.
         if mc_fee_available:
-            if mc_ps_ratio < 5:    s2 = 10
-            elif mc_ps_ratio < 10: s2 = 8
-            elif mc_ps_ratio < 20: s2 = 6
-            elif mc_ps_ratio < 50: s2 = 4
-            elif mc_ps_ratio < 100:s2 = 2
-            else:                  s2 = 1
+            if mc_ps_ratio < 5:     s2 = 10
+            elif mc_ps_ratio < 15:  s2 = 8
+            elif mc_ps_ratio < 30:  s2 = 6
+            elif mc_ps_ratio < 75:  s2 = 5
+            elif mc_ps_ratio < 150: s2 = 4
+            elif mc_ps_ratio < 400: s2 = 3
+            elif mc_ps_ratio < 800: s2 = 2
+            else:                   s2 = 1
         elif _sym in hints:
             s2 = hints["capital_efficiency"]
         elif rank and rank <= 10:   s2 = 7
@@ -1016,6 +1061,16 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
         }
 
         # ── Signal 3: Holder Value Accrual (0-10) ─────────────────────────────
+        # For L1 chains (ETH, SOL, BNB), value accrual happens through:
+        #   1. Direct fee share (holders_pct from DeFiLlama)
+        #   2. Token burns (EIP-1559 on ETH — deflationary mechanism)
+        #   3. Staking yield (validator rewards from priority fees + MEV)
+        # DeFiLlama's "holders revenue" only captures (1), missing burns and
+        # staking yield which are equally real forms of value accrual.
+        # For known L1s with burn mechanisms, we give a minimum credit of 6
+        # even when the raw holders_pct appears low.
+        BURN_MECHANISM_TOKENS = {"ETH", "BNB", "TRX", "AVAX", "SOL"}
+
         if holders_available:
             if holders_pct >= 50:   s3 = 10
             elif holders_pct >= 30: s3 = 8
@@ -1023,6 +1078,10 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
             elif holders_pct >= 10: s3 = 4
             elif holders_pct >= 5:  s3 = 2
             else:                   s3 = 1
+            # Uplift for tokens with burn mechanisms — burns are real holder value
+            # even if not captured in DeFiLlama's holders_revenue field
+            if _sym in BURN_MECHANISM_TOKENS and s3 < 6:
+                s3 = 6
         elif _sym in hints:
             s3 = hints["holder_value_accrual"]
         elif is_l1_or_infra:
@@ -1044,13 +1103,25 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
         }
 
         # ── Signal 4: Network Demand (0-10) ───────────────────────────────────
-        if vol_mc_pct is not None:
-            if vol_mc_pct >= 20:   s4 = 10
-            elif vol_mc_pct >= 10: s4 = 8
-            elif vol_mc_pct >= 5:  s4 = 6
-            elif vol_mc_pct >= 2:  s4 = 4
-            elif vol_mc_pct >= 1:  s4 = 2
-            else:                  s4 = 1
+        # vol/MC % = how actively the token is traded relative to its market cap.
+        # STABLECOIN CAP: USDT/USDC/EURC etc. have 100%+ vol/MC because they are
+        # mediums of exchange, not protocols generating fees. Their vol/MC reflects
+        # transaction volume not protocol adoption. We cap at 15% for stablecoins
+        # (identifiable by price ~$1 and name containing 'USD', 'EUR', 'stable').
+        _is_stable = (price and 0.95 <= price <= 1.10) or any(
+            kw in (_sym or "").upper()
+            for kw in ("USD", "USDC", "USDT", "DAI", "EUR", "FRAX", "TUSD", "BUSD",
+                       "USDD", "CUSD", "GUSD", "USDP", "SUSD", "LUSD")
+        )
+        _vol_mc_adj = min(vol_mc_pct, 15.0) if (_is_stable and vol_mc_pct) else vol_mc_pct
+
+        if _vol_mc_adj is not None:
+            if _vol_mc_adj >= 20:   s4 = 10
+            elif _vol_mc_adj >= 10: s4 = 8
+            elif _vol_mc_adj >= 5:  s4 = 6
+            elif _vol_mc_adj >= 2:  s4 = 4
+            elif _vol_mc_adj >= 1:  s4 = 2
+            else:                   s4 = 1
         else:
             s4 = 5   # neutral
         signals["network_demand"] = {
@@ -1164,13 +1235,17 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
         }
 
         # 4. Monetary Premium Quality — FDV/MC ratio (0-10)
-        s4 = 0
+        # How close to fully circulating — lower FDV/MC = better quality SoV.
+        # Default is NEUTRAL (5) when data unavailable, not 0.
+        # FDV/MC > 1.50 gets score 1 (not 0) — penalised but not zeroed.
+        s4 = 5   # neutral default
         if fdv_mc_use is not None:
-            if fdv_mc_use <= 1.02:  s4 = 10
-            elif fdv_mc_use <= 1.05:s4 = 8
-            elif fdv_mc_use <= 1.10:s4 = 6
-            elif fdv_mc_use <= 1.20:s4 = 4
-            elif fdv_mc_use <= 1.50:s4 = 2
+            if fdv_mc_use <= 1.02:   s4 = 10
+            elif fdv_mc_use <= 1.05: s4 = 8
+            elif fdv_mc_use <= 1.10: s4 = 6
+            elif fdv_mc_use <= 1.20: s4 = 4
+            elif fdv_mc_use <= 1.50: s4 = 2
+            else:                    s4 = 1   # large supply overhang — penalised not zeroed
         signals["monetary_premium_quality"] = {
             "label": "Monetary Premium Quality", "score": s4, "max": 10,
             "value": fdv_mc_use, "unit": "FDV/MC ratio",
@@ -1179,13 +1254,15 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
         }
 
         # 5. Dilution Control (0-10)
-        s5 = 0
+        # Default NEUTRAL (5) when circ_pct unavailable, not 0.
+        s5 = 5   # neutral default
         if circ_pct is not None:
             if circ_pct >= 95:   s5 = 10
             elif circ_pct >= 85: s5 = 8
             elif circ_pct >= 70: s5 = 6
             elif circ_pct >= 50: s5 = 4
             elif circ_pct >= 30: s5 = 2
+            else:                s5 = 1
         signals["dilution_control"] = {
             "label": "Dilution Control", "score": s5, "max": 10,
             "value": circ_pct, "unit": "circulating %",
@@ -1193,18 +1270,27 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
             "chart_ref": "Network Economics → Token Supply: Issuance vs Burns",
         }
 
-        # 6. Market Resilience — 30d price vs broader market (0-10)
-        s6 = 0
-        chg = price_change_30d or 0
-        if chg >= 20:    s6 = 10
-        elif chg >= 10:  s6 = 8
-        elif chg >= 0:   s6 = 6
-        elif chg >= -10: s6 = 4
-        elif chg >= -25: s6 = 2
+        # 6. Market Resilience — blended 7d and 30d price performance (0-10)
+        # Uses a 60/40 blend of 30d and 7d change to reduce single-week noise.
+        # Default NEUTRAL (5) when both unavailable, not 0.
+        s6 = 5   # neutral default
+        chg_30 = price_change_30d or 0
+        chg_7  = price_change_7d  or 0
+        if price_change_30d is not None or price_change_7d is not None:
+            # Weighted blend: 30d carries more weight (trend) than 7d (noise)
+            chg = chg_30 * 0.6 + chg_7 * 0.4
+            if chg >= 20:    s6 = 10
+            elif chg >= 10:  s6 = 8
+            elif chg >= 2:   s6 = 6
+            elif chg >= -10: s6 = 4
+            elif chg >= -25: s6 = 2
+            else:            s6 = 1
         signals["market_resilience"] = {
             "label": "Market Resilience", "score": s6, "max": 10,
-            "value": round(price_change_30d, 1) if price_change_30d else None,
-            "unit": "30d price change %",
+            "value": round(chg_30 * 0.6 + chg_7 * 0.4, 1)
+                     if (price_change_30d is not None or price_change_7d is not None)
+                     else None,
+            "unit": "blended 30d/7d price change %",
             "chart_source": "raw calculation (CoinGecko price)",
             "chart_ref": None,
         }
@@ -1840,18 +1926,59 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
             # For L1 blockchains, DeFiLlama reports fees at the chain level
             # not the protocol level — check chain endpoint as fallback
             chain_slug  = CHAIN_FEE_MAP.get(symbol)
-            chain_data  = (defillama_chain_data or {}).get(chain_slug, {})                           if chain_slug else {}
+            chain_data  = (defillama_chain_data or {}).get(chain_slug, {}) \
+                          if chain_slug else {}
 
-            # Prefer protocol-level data; fall back to chain-level
-            annual_fees = fee_data.get("annual_fees") or chain_data.get("annual_fees")
-            annual_rev  = fee_data.get("annual_revenue") or chain_data.get("annual_revenue")
-            holders_rev = fee_data.get("annual_holders_revenue")
-            tvl         = fee_data.get("tvl") or chain_data.get("tvl")
+            # Current annualised fees from 30d average
+            annual_fees_current = fee_data.get("annual_fees") or chain_data.get("annual_fees")
+            annual_rev          = fee_data.get("annual_revenue") or chain_data.get("annual_revenue")
+            holders_rev         = fee_data.get("annual_holders_revenue")
+            tvl                 = fee_data.get("tvl") or chain_data.get("tvl")
 
-            # Method 1 — DCF on fees
+            # ── Normalised fees — use median of last 3 full years ─────────────
+            # Using only the current 30d-annualised snapshot causes severe
+            # undervaluation during bear markets (ETH: $120M current vs
+            # $2.5B in 2024). The normalised figure gives a more stable
+            # base for DCF and PS ratio without over-indexing on peak years.
+            #
+            # Strategy: collect last 3 full calendar years from the historical
+            # fee series already fetched in fetch_network_economics (via the
+            # /summary/fees/{slug} endpoint), take the median.
+            # Falls back to current annual if no history available.
+            annual_fees = annual_fees_current   # default
+            try:
+                hist_rev_fees = (network_econ or {}).get(
+                    "protocol_revenue_and_fees", {}
+                )
+                current_yr = datetime.now().year
+                # Collect full historical years (not current year estimate)
+                hist_years = sorted(
+                    [
+                        (int(yr), entry.get("fees_usd", 0) or 0)
+                        for yr, entry in hist_rev_fees.items()
+                        if int(yr) < current_yr
+                        and not entry.get("is_estimated", False)
+                        and (entry.get("fees_usd") or 0) > 0
+                    ],
+                    reverse=True
+                )
+                if len(hist_years) >= 2:
+                    # Median of last 3 full years (or 2 if only 2 available)
+                    last_n   = hist_years[:3]
+                    fee_vals = sorted([v * 1e6 for _, v in last_n])  # $M → $
+                    mid      = len(fee_vals) // 2
+                    normalised = fee_vals[mid]
+                    # Only use if meaningfully higher than current (avoids
+                    # using stale history when current is legitimately higher)
+                    if normalised > (annual_fees_current or 0):
+                        annual_fees = normalised
+            except Exception:
+                pass   # silently fall back to current
+
+            # Method 1 — DCF on fees (uses normalised figure)
             dcf_protocol_value = method_1_dcf_fees(annual_fees)
 
-            # Method 2 — P/S analog
+            # Method 2 — P/S analog (uses normalised figure)
             ps_ratio = method_2_ps_analog(mc, annual_fees)
 
             # Method 3 — P/E analog
@@ -1864,6 +1991,8 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
 
             bucket_a_data = {
                 "annual_protocol_fees_usd":    round(annual_fees, 2) if annual_fees else None,
+                "annual_fees_current_usd":     round(annual_fees_current, 2) if annual_fees_current else None,
+                "annual_fees_normalised":      annual_fees != annual_fees_current,
                 "annual_revenue_usd":          round(annual_rev, 2)  if annual_rev  else None,
                 "annual_holders_revenue_usd":  round(holders_rev, 2) if holders_rev else None,
                 "tvl_usd":                     round(tvl, 2)         if tvl         else None,
@@ -1891,6 +2020,52 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 "monetary_premium": mon_prem,
                 "cost_of_production": prod_cost,
             }
+
+        # ── Price History — fetch EARLY before DeFiLlama calls use API budget ──
+        # This is the single most rate-limit-sensitive call in the pipeline.
+        # By fetching it here (before the 3+ DeFiLlama calls in fetch_network_economics),
+        # we have a fresh CoinGecko rate-limit budget and maximise success rate.
+        # ETH was failing (price_history_years=0) because by the time the fetch
+        # ran (inside the base_iv block), the budget was exhausted by prior calls.
+        #
+        # Stored as top-level 'price_history' dict (same shape as stocks
+        # '10_Year_History') — AI Studio reads it directly for the chart.
+        # Also used to build valuation_chart historical rows later.
+        price_history       = {}
+        price_history_years = 0
+        for attempt in range(3):
+            try:
+                wait = [3.5, 25.0, 60.0][attempt]  # longer waits vs before (2/20/45)
+                time.sleep(wait)
+                hist_resp = requests.get(
+                    f"https://api.coingecko.com/api/v3/coins/{coin_id}"
+                    f"/market_chart?vs_currency=usd&days=3650",
+                    headers=_headers(), timeout=30
+                )
+                if hist_resp.status_code == 200:
+                    prices_raw = hist_resp.json().get("prices", [])
+                    year_prices = {}
+                    for ts_ms, p_val in prices_raw:
+                        yr = str(datetime.fromtimestamp(ts_ms / 1000).year)
+                        year_prices[yr] = _round_price(p_val)
+                    price_history       = year_prices
+                    price_history_years = len(year_prices)
+                    print(f"  [HIST] {symbol}: {price_history_years} years of price history")
+                    break
+                elif hist_resp.status_code == 429:
+                    print(f"  [HIST] {symbol}: 429 rate limit (attempt {attempt+1}/3)")
+                    if attempt == 2:
+                        print(f"  [HIST] {symbol}: all retries exhausted")
+                    continue
+                else:
+                    print(f"  [HIST] {symbol}: HTTP {hist_resp.status_code}")
+                    break
+            except Exception as e:
+                print(f"  [HIST] {symbol}: {str(e)[:60]}")
+                break
+
+        # Always include current year price so chart has at least one anchor
+        price_history[str(current_year)] = _round_price(price) if price else None
 
         # ── Network Economics charts ─────────────────────────────────────────
         # Computed BEFORE quality scoring so chart values feed into scores
@@ -2385,50 +2560,10 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
 
                 was_constrained = surv_mult < 1.0 or q_mult < 1.0
 
-                # ── Step 4: Fetch 10Y price history from CoinGecko ────────
-                # Uses daily interval with 3650 days — CoinGecko free tier
-                # returns daily data for ranges > 90 days automatically.
-                # Then we sample one price per year (year-end closing).
-                # Retry once on 429 before skipping.
-                # ── Step 4: Fetch 10Y price history from CoinGecko ────────
-                # Attempted for all coins. Newer or smaller tokens may have
-                # limited history — this is stored in price_history_meta so
-                # AI Studio can display a note rather than an empty chart.
-                price_history = {}
-                price_history_years = 0
-                for attempt in range(3):
-                    try:
-                        wait = [2.0, 20.0, 45.0][attempt]
-                        time.sleep(wait)
-                        hist_resp = requests.get(
-                            f"https://api.coingecko.com/api/v3/coins/{coin_id}"
-                            f"/market_chart?vs_currency=usd&days=3650",
-                            headers=_headers(), timeout=30
-                        )
-                        if hist_resp.status_code == 200:
-                            prices_raw = hist_resp.json().get("prices", [])
-                            year_prices = {}
-                            for ts_ms, p_val in prices_raw:
-                                yr = str(datetime.fromtimestamp(ts_ms / 1000).year)
-                                year_prices[yr] = _round_price(p_val)
-                            price_history = year_prices
-                            price_history_years = len(year_prices)
-                            break
-                        elif hist_resp.status_code == 429:
-                            print(f"  [CRYPTO HIST] {coin_id}: 429 rate limit (attempt {attempt+1}/3)")
-                            if attempt == 2:
-                                print(f"  [CRYPTO HIST] {coin_id}: all retries exhausted, skipping")
-                            continue
-                        else:
-                            print(f"  [CRYPTO HIST] {coin_id}: HTTP {hist_resp.status_code}")
-                            break
-                    except Exception as e:
-                        print(f"  [CRYPTO HIST] {coin_id}: {str(e)[:60]}")
-                        break
-
-                # Always include current price as latest year data point
-                # so the chart shows at minimum one historical marker
-                price_history[str(current_year)] = _round_price(price) if price else None
+                # ── Step 4: Price history already fetched early ────────────
+                # price_history and price_history_years were populated before
+                # the DeFiLlama calls to maximise CoinGecko rate-limit budget.
+                # Current year is already set in price_history.
 
                 # ── Step 5: Build historical section ──────────────────────
                 # Historical years show actual market price only.
@@ -2651,6 +2786,11 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
             **({"protocol_metrics": bucket_a_data} if bucket == "A" else {}),
             **({"sov_metrics":      bucket_b_data} if bucket == "B" else {}),
             "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            # Top-level price history — AI Studio reads this for the historical
+            # price line in the Speculative Fair Value Forecast chart.
+            # Shape: { "2016": 8.17, "2017": 756.01, ..., "2026": 2081.65 }
+            # Same structure as stocks '10_Year_History'.
+            "price_history": price_history,
         }
 
     except Exception as e:
