@@ -27,8 +27,7 @@ GOLD_MARKET_CAP_USD = 21_000_000_000_000
 BTC_MINING_COST_USD = 35_000
 
 # Number of top coins to process
-TOP_N_COINS = 500         # 2 pages × 250 — tokens 500-1000 are micro-caps adding noise
-PRICE_HISTORY_TOP_N = 250 # only fetch 10Y history for top 250 by rank (saves ~30-40 mins)
+TOP_N_COINS = 1000        # 4 pages × 250 per page
 
 # =============================================================================
 # BUCKET CLASSIFICATION
@@ -254,6 +253,10 @@ def fetch_defillama_fees():
       1. total30d * (365/30) — 30-day smoothed average
       2. total7d  * (365/7)  — 7-day smoothed average
       3. total24h * 365      — last resort (single-day, noisy)
+
+    IMPORTANT: totalAllTime is CUMULATIVE all-time revenue (e.g. ETH = $20B
+    since 2015). It must NEVER be used as annual_revenue — that was the root
+    cause of ETH showing intrinsic_value = $14 instead of ~$2,000.
     """
     result = {}
 
@@ -266,6 +269,7 @@ def fetch_defillama_fees():
         if t24 and t24 > 0:  return round(t24 * 365,         2)
         return 0
 
+    # ── Pass 1: fees ─────────────────────────────────────────────────────────
     try:
         resp = requests.get(
             f"{DEFILLAMA_FEES}?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true",
@@ -280,15 +284,41 @@ def fetch_defillama_fees():
             annual_fees = _annualise(p)
             result[slug] = {
                 "annual_fees":            annual_fees,
-                "annual_revenue":         _safe(p.get("totalAllTime")) or
-                                          round(annual_fees * 0.15, 2),
-                "annual_holders_revenue": None,
+                "annual_revenue":         None,   # filled in pass 2
+                "annual_holders_revenue": None,   # filled in pass 3
                 "tvl":                    _safe(p.get("tvl")),
             }
     except Exception as e:
         print(f"  [DeFiLlama] fees fetch failed: {e}")
 
-    # Fetch revenue to holders separately
+    # ── Pass 2: revenue (annualised — NOT totalAllTime) ───────────────────────
+    try:
+        resp_rev = requests.get(
+            f"{DEFILLAMA_FEES}?excludeTotalDataChart=true"
+            f"&excludeTotalDataChartBreakdown=true&dataType=dailyRevenue",
+            timeout=20
+        )
+        if resp_rev.status_code == 200:
+            for p in resp_rev.json().get("protocols", []):
+                slug = p.get("slug") or p.get("name", "").lower().replace(" ", "-")
+                if slug in result:
+                    annual_rev = _annualise(p) or None
+                    annual_fees = result[slug]["annual_fees"] or 0
+                    # Sanity guard: revenue can never exceed fees
+                    # (revenue = fees retained by protocol, always ≤ total fees)
+                    if annual_rev and annual_fees and annual_rev > annual_fees:
+                        annual_rev = round(annual_fees * 0.15, 2)
+                    result[slug]["annual_revenue"] = annual_rev
+    except Exception as e:
+        print(f"  [DeFiLlama] revenue fetch failed: {e}")
+
+    # Fill missing revenue with 15% fee estimate
+    for slug in result:
+        if result[slug]["annual_revenue"] is None:
+            fees = result[slug]["annual_fees"] or 0
+            result[slug]["annual_revenue"] = round(fees * 0.15, 2) if fees else None
+
+    # ── Pass 3: holders revenue ───────────────────────────────────────────────
     try:
         resp2 = requests.get(
             f"{DEFILLAMA_FEES}?excludeTotalDataChart=true"
@@ -296,11 +326,15 @@ def fetch_defillama_fees():
             timeout=20
         )
         if resp2.status_code == 200:
-            data2 = resp2.json()
-            for p in data2.get("protocols", []):
+            for p in resp2.json().get("protocols", []):
                 slug = p.get("slug") or p.get("name", "").lower().replace(" ", "-")
                 if slug in result:
-                    result[slug]["annual_holders_revenue"] = _annualise(p) or None
+                    holders_rev = _annualise(p) or None
+                    annual_fees = result[slug]["annual_fees"] or 0
+                    # Sanity guard: holders revenue can never exceed total fees
+                    if holders_rev and annual_fees and holders_rev > annual_fees:
+                        holders_rev = None
+                    result[slug]["annual_holders_revenue"] = holders_rev
     except Exception:
         pass
 
@@ -336,10 +370,16 @@ def fetch_defillama_chain_fees():
         if resp2.status_code == 200:
             for p in resp2.json().get("protocols", []):
                 name = (p.get("name") or "").lower().replace(" ", "-")
+                # Use same annualisation as protocol fees — never totalAllTime
+                t30 = (_safe(p.get("total30d")) or 0)
+                t7  = (_safe(p.get("total7d"))  or 0)
+                t24 = (_safe(p.get("total24h"))  or 0)
+                if t30 > 0:   ann_fees = t30 * (365 / 30)
+                elif t7 > 0:  ann_fees = t7  * (365 / 7)
+                else:         ann_fees = t24 * 365
                 result[name] = {
-                    "annual_fees":    (_safe(p.get("total24h")) or 0) * 365,
-                    "annual_revenue": (_safe(p.get("totalAllTime"))) or
-                                      ((_safe(p.get("total24h")) or 0) * 365 * 0.3),
+                    "annual_fees":    round(ann_fees, 2),
+                    "annual_revenue": round(ann_fees * 0.30, 2),   # 30% retention estimate for chains
                     "tvl": _safe(p.get("tvl")),
                 }
     except Exception as e:
@@ -881,8 +921,12 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
     fees_chart_m   = curr_rev_fees.get("fees_usd")
     rev_chart_m    = curr_rev_fees.get("revenue_usd")
     holders_pct_chart = (
-        round(rev_chart_m / fees_chart_m * 100, 1)
-        if rev_chart_m and fees_chart_m and fees_chart_m > 0 else None
+        # Sanity cap: revenue can never exceed 100% of fees
+        # If > 100% it means cumulative totalAllTime leaked in — discard it
+        min(round(rev_chart_m / fees_chart_m * 100, 1), 100.0)
+        if rev_chart_m and fees_chart_m and fees_chart_m > 0
+           and rev_chart_m <= fees_chart_m  # revenue must not exceed fees
+        else None
     )
 
     issuance_chart = ne.get("issuance_vs_burns", {})
@@ -897,8 +941,11 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
     fee_tvl     = fee_tvl_chart  if fee_tvl_chart  is not None else (
                   (annual_fees / tvl * 100) if annual_fees and tvl and tvl > 0 else None)
     holders_pct = holders_pct_chart if holders_pct_chart is not None else (
-                  (annual_holders_rev / annual_fees * 100)
-                  if annual_holders_rev and annual_fees and annual_fees > 0 else None)
+                  # Sanity: holders revenue cannot exceed total fees
+                  min(annual_holders_rev / annual_fees * 100, 100.0)
+                  if annual_holders_rev and annual_fees and annual_fees > 0
+                     and annual_holders_rev <= annual_fees
+                  else None)
     overhang    = overhang_chart if overhang_chart is not None else (
                   (dilution or {}).get("supply_overhang"))
     fdv_mc_use  = fdv_mc_chart   if fdv_mc_chart   is not None else fdv_mc_ratio
@@ -2344,39 +2391,40 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 # Then we sample one price per year (year-end closing).
                 # Retry once on 429 before skipping.
                 # ── Step 4: Fetch 10Y price history from CoinGecko ────────
-                # Only fetched for top PRICE_HISTORY_TOP_N coins by rank.
-                # Coins ranked 250+ rarely have meaningful 10Y data and the
-                # API calls are the single biggest time cost in the pipeline.
+                # Attempted for all coins. Newer or smaller tokens may have
+                # limited history — this is stored in price_history_meta so
+                # AI Studio can display a note rather than an empty chart.
                 price_history = {}
-                if rank and rank <= PRICE_HISTORY_TOP_N:
-                    for attempt in range(3):
-                        try:
-                            wait = [2.0, 20.0, 45.0][attempt]   # shorter waits
-                            time.sleep(wait)
-                            hist_resp = requests.get(
-                                f"https://api.coingecko.com/api/v3/coins/{coin_id}"
-                                f"/market_chart?vs_currency=usd&days=3650",
-                                headers=_headers(), timeout=30
-                            )
-                            if hist_resp.status_code == 200:
-                                prices_raw = hist_resp.json().get("prices", [])
-                                year_prices = {}
-                                for ts_ms, p_val in prices_raw:
-                                    yr = str(datetime.fromtimestamp(ts_ms / 1000).year)
-                                    year_prices[yr] = _round_price(p_val)
-                                price_history = year_prices
-                                break
-                            elif hist_resp.status_code == 429:
-                                print(f"  [CRYPTO HIST] {coin_id}: 429 rate limit (attempt {attempt+1}/3)")
-                                if attempt == 2:
-                                    print(f"  [CRYPTO HIST] {coin_id}: all retries exhausted, skipping")
-                                continue
-                            else:
-                                print(f"  [CRYPTO HIST] {coin_id}: HTTP {hist_resp.status_code}")
-                                break
-                        except Exception as e:
-                            print(f"  [CRYPTO HIST] {coin_id}: {str(e)[:60]}")
+                price_history_years = 0
+                for attempt in range(3):
+                    try:
+                        wait = [2.0, 20.0, 45.0][attempt]
+                        time.sleep(wait)
+                        hist_resp = requests.get(
+                            f"https://api.coingecko.com/api/v3/coins/{coin_id}"
+                            f"/market_chart?vs_currency=usd&days=3650",
+                            headers=_headers(), timeout=30
+                        )
+                        if hist_resp.status_code == 200:
+                            prices_raw = hist_resp.json().get("prices", [])
+                            year_prices = {}
+                            for ts_ms, p_val in prices_raw:
+                                yr = str(datetime.fromtimestamp(ts_ms / 1000).year)
+                                year_prices[yr] = _round_price(p_val)
+                            price_history = year_prices
+                            price_history_years = len(year_prices)
                             break
+                        elif hist_resp.status_code == 429:
+                            print(f"  [CRYPTO HIST] {coin_id}: 429 rate limit (attempt {attempt+1}/3)")
+                            if attempt == 2:
+                                print(f"  [CRYPTO HIST] {coin_id}: all retries exhausted, skipping")
+                            continue
+                        else:
+                            print(f"  [CRYPTO HIST] {coin_id}: HTTP {hist_resp.status_code}")
+                            break
+                    except Exception as e:
+                        print(f"  [CRYPTO HIST] {coin_id}: {str(e)[:60]}")
+                        break
 
                 # Always include current price as latest year data point
                 # so the chart shows at minimum one historical marker
@@ -2464,6 +2512,17 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     "bucket":                   bucket,
                     "iv_sources":               len([m for m in methods_used if "Market price" not in m]),
                     "methods_used":             methods_used,
+                    # Price history availability — AI Studio uses this to show
+                    # a note when historical chart data is limited or unavailable.
+                    "price_history_years":      price_history_years,
+                    "price_history_note":       (
+                        None if price_history_years >= 3
+                        else f"Limited price history available ({price_history_years} year(s)). "
+                             f"This token may be recently listed or have insufficient on-chain data."
+                        if price_history_years > 0
+                        else "Historical price data unavailable for this token. "
+                             "Forecast chart shows projected values only."
+                    ),
                 }
 
                 # ── Step 9: Market Cycle + Chart Zones + Recalibrated F&G ───
