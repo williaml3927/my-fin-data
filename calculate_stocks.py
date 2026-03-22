@@ -2752,7 +2752,38 @@ def analyze_ticker(ticker, retries=3):
                 _mos_pct  = None
                 _mos_label = "Unavailable"
 
+            # ── Company Profile — pre-computed so AI Studio never fetches live ──
+            # All fields sourced from yfinance info dict (zero extra API calls).
+            # AI Studio reads these directly for the header and company tab
+            # instead of making a live lookup, eliminating the main source of
+            # per-query latency.
+            company_profile = {
+                "name":              info.get("longName") or info.get("shortName") or ticker,
+                "ticker":            ticker,
+                "sector":            info.get("sector"),
+                "industry":          info.get("industry"),
+                "company_type":      company_type,
+                "type_rationale":    type_rationale,
+                "description":       info.get("longBusinessSummary"),
+                "website":           info.get("website"),
+                "employees":         info.get("fullTimeEmployees"),
+                "country":           info.get("country"),
+                "city":              info.get("city"),
+                "exchange":          info.get("exchange"),
+                "currency":          info.get("currency"),
+                "quote_type":        info.get("quoteType"),
+                "market_cap":        info.get("marketCap"),
+                "52w_high":          info.get("fiftyTwoWeekHigh"),
+                "52w_low":           info.get("fiftyTwoWeekLow"),
+                "avg_volume":        info.get("averageVolume"),
+                "pe_trailing":       info.get("trailingPE"),
+                "pe_forward":        info.get("forwardPE"),
+                "dividend_yield":    info.get("dividendYield"),
+                "beta":              info.get("beta"),
+            }
+
             return ticker, {
+                "company_profile":      company_profile,
                 "current_price":        round(_cp, 2) if _cp else None,
                 "intrinsic_value":      round(_iv, 2) if _iv else None,
                 "margin_of_safety_pct": _mos_pct,
