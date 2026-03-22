@@ -27,7 +27,8 @@ GOLD_MARKET_CAP_USD = 21_000_000_000_000
 BTC_MINING_COST_USD = 35_000
 
 # Number of top coins to process
-TOP_N_COINS = 1000   # 4 pages × 250 per page
+TOP_N_COINS = 500         # 2 pages × 250 — tokens 500-1000 are micro-caps adding noise
+PRICE_HISTORY_TOP_N = 250 # only fetch 10Y history for top 250 by rank (saves ~30-40 mins)
 
 # =============================================================================
 # BUCKET CLASSIFICATION
@@ -2342,35 +2343,40 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 # returns daily data for ranges > 90 days automatically.
                 # Then we sample one price per year (year-end closing).
                 # Retry once on 429 before skipping.
+                # ── Step 4: Fetch 10Y price history from CoinGecko ────────
+                # Only fetched for top PRICE_HISTORY_TOP_N coins by rank.
+                # Coins ranked 250+ rarely have meaningful 10Y data and the
+                # API calls are the single biggest time cost in the pipeline.
                 price_history = {}
-                for attempt in range(3):
-                    try:
-                        wait = [2.0, 45.0, 90.0][attempt]
-                        time.sleep(wait)
-                        hist_resp = requests.get(
-                            f"https://api.coingecko.com/api/v3/coins/{coin_id}"
-                            f"/market_chart?vs_currency=usd&days=3650",
-                            headers=_headers(), timeout=30
-                        )
-                        if hist_resp.status_code == 200:
-                            prices_raw = hist_resp.json().get("prices", [])
-                            year_prices = {}
-                            for ts_ms, p_val in prices_raw:
-                                yr = str(datetime.fromtimestamp(ts_ms / 1000).year)
-                                year_prices[yr] = _round_price(p_val)
-                            price_history = year_prices
+                if rank and rank <= PRICE_HISTORY_TOP_N:
+                    for attempt in range(3):
+                        try:
+                            wait = [2.0, 20.0, 45.0][attempt]   # shorter waits
+                            time.sleep(wait)
+                            hist_resp = requests.get(
+                                f"https://api.coingecko.com/api/v3/coins/{coin_id}"
+                                f"/market_chart?vs_currency=usd&days=3650",
+                                headers=_headers(), timeout=30
+                            )
+                            if hist_resp.status_code == 200:
+                                prices_raw = hist_resp.json().get("prices", [])
+                                year_prices = {}
+                                for ts_ms, p_val in prices_raw:
+                                    yr = str(datetime.fromtimestamp(ts_ms / 1000).year)
+                                    year_prices[yr] = _round_price(p_val)
+                                price_history = year_prices
+                                break
+                            elif hist_resp.status_code == 429:
+                                print(f"  [CRYPTO HIST] {coin_id}: 429 rate limit (attempt {attempt+1}/3)")
+                                if attempt == 2:
+                                    print(f"  [CRYPTO HIST] {coin_id}: all retries exhausted, skipping")
+                                continue
+                            else:
+                                print(f"  [CRYPTO HIST] {coin_id}: HTTP {hist_resp.status_code}")
+                                break
+                        except Exception as e:
+                            print(f"  [CRYPTO HIST] {coin_id}: {str(e)[:60]}")
                             break
-                        elif hist_resp.status_code == 429:
-                            print(f"  [CRYPTO HIST] {coin_id}: 429 rate limit (attempt {attempt+1}/3)")
-                            if attempt == 2:
-                                print(f"  [CRYPTO HIST] {coin_id}: all retries exhausted, skipping")
-                            continue
-                        else:
-                            print(f"  [CRYPTO HIST] {coin_id}: HTTP {hist_resp.status_code}")
-                            break
-                    except Exception as e:
-                        print(f"  [CRYPTO HIST] {coin_id}: {str(e)[:60]}")
-                        break
 
                 # Always include current price as latest year data point
                 # so the chart shows at minimum one historical marker
