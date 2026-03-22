@@ -686,6 +686,32 @@ def get_forward_growth(ticker, info):
 # =============================================================================
 # QUALITY METRIC 1 — Profitability (0–10)
 # =============================================================================
+def _score_label(score: int) -> str:
+    """
+    Convert a 0-10 quality score to a consistent written label.
+
+    Used to pre-compute assessment text in the pipeline so AI Studio
+    always reads the correct label rather than inferring it from the
+    raw number (which caused mismatches like score 6 = "Average" when
+    it should be "Good").
+
+    Labels are calibrated against the actual scoring rubrics:
+      10    → Excellent  — top-tier, near-perfect signals
+      8–9   → Strong     — clearly above average, no major weaknesses
+      6–7   → Good       — solid, meets or exceeds most benchmarks
+      4–5   → Adequate   — meets minimum thresholds, some concerns
+      2–3   → Weak       — below par, multiple weak signals
+      0–1   → Poor       — significant deficiencies
+    """
+    if score is None:    return "Not scored"
+    if score >= 10:      return "Excellent"
+    if score >= 8:       return "Strong"
+    if score >= 6:       return "Good"
+    if score >= 4:       return "Adequate"
+    if score >= 2:       return "Weak"
+    return "Poor"
+
+
 def score_profitability(info):
     """Routes to company-type-appropriate profitability scoring."""
     fin_type = _detect_financial_type(info)
@@ -2468,18 +2494,35 @@ def analyze_ticker(ticker, retries=3):
                     "valuation":          final_scores["valuation"],
                     "moat":               None,
                 },
+                # Pre-computed labels — AI Studio must use these exact strings
+                # for written assessments. Never derive labels from raw score
+                # numbers alone (score 6 ≠ "60% = Average").
+                "score_labels": {
+                    "profitability":      _score_label(final_scores["profitability"]),
+                    "financial_strength": _score_label(final_scores["financial_strength"]),
+                    "growth":             _score_label(final_scores["growth"]),
+                    "predictability":     _score_label(final_scores["predictability"]),
+                    "valuation":          _score_label(final_scores["valuation"]),
+                    "moat":               "Not scored",   # AI Studio adds moat at query time
+                },
+                # Company-type context so AI Studio knows when high debt is structural
+                "company_type":        company_type,
+                "company_type_note":   (
+                    "Banks and REITs carry structural leverage — do not describe "
+                    "financial_strength scores of 7+ as 'moderate concern' for these types."
+                    if company_type in ("BANK", "REIT", "INSURANCE", "ASSET_MGR",
+                                        "CONSUMER_FINANCE", "UTILITY")
+                    else None
+                ),
                 "python_subtotal":     python_subtotal,
                 "python_subtotal_pct": python_subtotal_pct,
                 "classification":      classification["label"],
                 "penalty_pct":         classification["penalty_pct"],
                 "final_score_pct":     classification["final_score_pct"],
                 "tiebreaker_used":     classification["tiebreaker_used"],
-                # Stored so AI Studio can re-run classify_quality correctly
-                # after adding moat. Without these, grey-zone and borderline
-                # companies (65-69%, 50-54%) get wrong classification.
                 "tiebreaker_inputs": {
-                    "roe":         round(pre_roe, 4)    if pre_roe    is not None else None,
-                    "roic":        round(pre_roic, 4)   if pre_roic   is not None else None,
+                    "roe":         round(pre_roe, 4)     if pre_roe     is not None else None,
+                    "roic":        round(pre_roic, 4)    if pre_roic    is not None else None,
                     "eps_next_5y": round(eps_next_5y, 4) if eps_next_5y is not None else None,
                 },
                 "note": (
@@ -2730,6 +2773,25 @@ def analyze_ticker(ticker, retries=3):
                 forecast_meta = forecast_meta,
             )
 
+            # ── Quality Narrative — pre-computed so AI Studio reads from JSON ──
+            # Eliminates the main source of per-query latency: AI Studio was
+            # generating quality_conclusion, risk_profile, and investment_summary
+            # at runtime for every search. All three are now pre-computed here
+            # in a single Haiku call (or rule-based fallback if no API key).
+            quality_narrative = generate_quality_narrative(
+                ticker              = ticker,
+                info                = info,
+                final_scores        = final_scores,
+                score_labels        = quality["score_labels"],
+                classification      = classification["label"],
+                python_subtotal_pct = python_subtotal_pct,
+                fundamentals        = fundamentals,
+                fwd_growth          = fwd_growth,
+                forecast_meta       = forecast_meta,
+                intrinsic_value     = intrinsic_value,
+                company_type        = company_type,
+            )
+
             # ── Margin of Safety — pre-computed for hero card ──────────────
             # Positive = stock is cheaper than IV (discount) — good
             # Negative = stock is more expensive than IV (premium)
@@ -2790,6 +2852,7 @@ def analyze_ticker(ticker, retries=3):
                 "mos_label":            _mos_label,
                 "valuations":         valuations,
                 "quality":            quality,
+                "quality_narrative":  quality_narrative,
                 "fundamentals":       fundamentals,
                 "financials_charts":  financials_charts,
                 "valuation_chart":    valuation_chart,
@@ -3695,19 +3758,36 @@ def _get_financials_chart_data_inner(stock, info, ticker=""):
                 if fcf is None:
                     ocf, capex = None, None
                     for name in ["Operating Cash Flow", "OperatingCashFlow",
-                                 "Cash Flow From Continuing Operating Activities"]:
+                                 "Cash Flow From Continuing Operating Activities",
+                                 "Cash Flows From Used In Operating Activities",
+                                 "Net Cash Provided By Operating Activities"]:
                         if name in cashflow.index:
                             ocf = to_m(cashflow.loc[name, col]); break
                     for name in ["Capital Expenditure", "CapitalExpenditure",
-                                 "Purchase Of PPE"]:
+                                 "Purchase Of PPE",
+                                 "Purchases Of Property Plant And Equipment",
+                                 "Purchase Of Property Plant And Equipment"]:
                         if name in cashflow.index:
                             capex = to_m(cashflow.loc[name, col]); break
                     if ocf is not None and capex is not None:
                         fcf = round(ocf - abs(capex), 2)
 
-            # Debt: from balance sheet for that year
+            # Cash balance from balance sheet — expanded name list
             if balance is not None and not balance.empty and col in balance.columns:
-                for name in ["Total Debt", "TotalDebt", "Long Term Debt", "LongTermDebt"]:
+                for name in ["Cash And Cash Equivalents", "CashAndCashEquivalents",
+                             "Cash Cash Equivalents And Short Term Investments",
+                             "CashCashEquivalentsAndShortTermInvestments",
+                             "Cash And Short Term Investments", "Cash"]:
+                    if name in balance.index:
+                        cash_bal = to_m(balance.loc[name, col]); break
+
+            # Debt — expanded name list, prefer total debt
+            if balance is not None and not balance.empty and col in balance.columns:
+                for name in ["Total Debt", "TotalDebt",
+                             "Long Term Debt And Capital Lease Obligation",
+                             "LongTermDebtAndCapitalLeaseObligation",
+                             "Long Term Debt", "LongTermDebt",
+                             "Short Long Term Debt", "ShortLongTermDebt"]:
                     if name in balance.index:
                         debt = to_m(balance.loc[name, col]); break
 
@@ -3723,33 +3803,47 @@ def _get_financials_chart_data_inner(stock, info, ticker=""):
             year  = str(col.year)
             sh, buyback = None, None
 
-            # Shares: balance sheet preferred, fallback to info
+            # Shares: try balance sheet first with expanded name list,
+            # then fall back to info dict which always has sharesOutstanding
             if balance is not None and not balance.empty and col in balance.columns:
                 for name in ["Ordinary Shares Number", "OrdinarySharesNumber",
                              "Share Issued", "ShareIssued",
-                             "Common Stock Shares Outstanding"]:
+                             "Common Stock Shares Outstanding",
+                             "CommonStockSharesOutstanding",
+                             "Shares Outstanding", "SharesOutstanding",
+                             "Common Stock", "CommonStock"]:
                     if name in balance.index:
                         try:
                             v = float(balance.loc[name, col])
-                            if np.isfinite(v):
-                                sh = round(v / 1_000_000, 2)  # in millions of shares
+                            if np.isfinite(v) and v > 1000:  # sanity: > 1000 actual shares
+                                sh = round(v / 1_000_000, 2)
                         except (TypeError, ValueError): pass
-                        break
+                        if sh is not None: break
+
+            # Fallback: sharesOutstanding from info (current only — same for all years
+            # but better than nothing when balance sheet lookup fails)
+            if sh is None:
+                raw_sh = _safe(info.get("sharesOutstanding") or info.get("impliedSharesOutstanding"))
+                if raw_sh and raw_sh > 0:
+                    sh = round(raw_sh / 1_000_000, 2)
 
             # Buybacks: repurchase of capital stock (stored as negative in cashflow)
             if cashflow is not None and not cashflow.empty and col in cashflow.columns:
                 for name in ["Repurchase Of Capital Stock", "RepurchaseOfCapitalStock",
-                             "Common Stock Repurchased", "Purchase Of Business"]:
+                             "Common Stock Repurchased", "CommonStockRepurchased",
+                             "Purchase Of Business", "RepurchaseOfCommonStock",
+                             "Repurchase Of Common Stock",
+                             "Payments For Repurchase Of Common Stock"]:
                     if name in cashflow.index:
                         try:
                             v = float(cashflow.loc[name, col])
                             if np.isfinite(v):
-                                # Buybacks are negative outflows — store as positive
                                 buyback = round(abs(v) / 1_000_000, 2)
                         except (TypeError, ValueError): pass
-                        break
+                        if buyback is not None: break
 
-            if sh is not None or buyback is not None:
+            # Always write the year if we have shares (buybacks can legitimately be null)
+            if sh is not None:
                 shares_buybacks[year] = {
                     "shares_outstanding_m": sh,
                     "buybacks_m":           buyback,
@@ -3821,10 +3915,15 @@ def _get_financials_chart_data_inner(stock, info, ticker=""):
             # ROE = Net Income / Stockholders Equity
             try:
                 ni_val = _get_row(fin_sources,
-                                  ["Net Income", "NetIncome"], col)
+                                  ["Net Income", "NetIncome",
+                                   "Net Income Common Stockholders",
+                                   "Net Income Including Noncontrolling Interests"], col)
                 eq_val = _get_row(bal_sources,
                                   ["Stockholders Equity", "StockholdersEquity",
-                                   "Total Stockholder Equity", "TotalStockholderEquity"], col)
+                                   "Total Stockholder Equity", "TotalStockholderEquity",
+                                   "Common Stock Equity", "CommonStockEquity",
+                                   "Total Equity Gross Minority Interest",
+                                   "Stockholders Equity Attributable To Parent"], col)
                 if ni_val is not None and eq_val and eq_val > 0:
                     roe_val = pct(ni_val / eq_val)
             except Exception: pass
@@ -3833,24 +3932,32 @@ def _get_financials_chart_data_inner(stock, info, ticker=""):
             try:
                 op_inc = _get_row(fin_sources,
                                   ["Operating Income", "OperatingIncome",
-                                   "Total Operating Income As Reported"], col)
+                                   "Total Operating Income As Reported",
+                                   "EBIT", "Ebit",
+                                   "Operating Income Loss"], col)
                 if op_inc and op_inc > 0:
                     tax_rate = 0.21
                     try:
-                        pretax  = _get_row(fin_sources, ["Pretax Income", "PretaxIncome"], col)
-                        tax_exp = _get_row(fin_sources, ["Tax Provision", "TaxProvision"], col)
+                        pretax  = _get_row(fin_sources,
+                                           ["Pretax Income", "PretaxIncome",
+                                            "Income Before Tax", "IncomeBeforeTax"], col)
+                        tax_exp = _get_row(fin_sources,
+                                           ["Tax Provision", "TaxProvision",
+                                            "Income Tax Expense", "IncomeTaxExpense"], col)
                         if pretax and pretax > 0 and tax_exp and tax_exp > 0:
                             tax_rate = max(0.0, min(tax_exp / pretax, 0.50))
                     except Exception: pass
 
                     nopat    = op_inc * (1 - tax_rate)
-                    ta       = _get_row(bal_sources, ["Total Assets", "TotalAssets"], col)
+                    ta       = _get_row(bal_sources,
+                                        ["Total Assets", "TotalAssets"], col)
                     cl       = _get_row(bal_sources,
                                         ["Current Liabilities", "CurrentLiabilities",
-                                         "Total Current Liabilities"], col)
+                                         "Total Current Liabilities", "TotalCurrentLiabilities"], col)
                     cash_val = _get_row(bal_sources,
-                                        ["Cash And Cash Equivalents",
-                                         "CashAndCashEquivalents"], col) or 0
+                                        ["Cash And Cash Equivalents", "CashAndCashEquivalents",
+                                         "Cash Cash Equivalents And Short Term Investments",
+                                         "Cash"], col) or 0
                     if ta and cl:
                         rev_val = _safe(info.get("totalRevenue"), 0)
                         excess  = max(0, cash_val - 0.02 * (rev_val or 0))
@@ -4134,9 +4241,232 @@ Requirements:
     }
 
 
-# =============================================================================
-# A–Z PARTITIONED JSON SAVER
-# =============================================================================
+def generate_quality_narrative(ticker, info, final_scores, score_labels,
+                                classification, python_subtotal_pct,
+                                fundamentals, fwd_growth, forecast_meta,
+                                intrinsic_value, company_type):
+    """
+    Pre-compute the three Quality tab narrative blocks so AI Studio
+    reads them from the JSON rather than generating them at query time.
+
+    Blocks:
+      quality_conclusion  — 2-3 sentence overall assessment of business quality
+      risk_profile        — 2-3 sentence risk summary covering key vulnerabilities
+      investment_summary  — 2-3 sentence summary of the investment case
+
+    Each block has a rule-based fallback that fires when the API key is
+    absent, ensuring the app always has something to display.
+
+    All three are generated in a single Haiku API call to minimise
+    pipeline runtime (one call per ticker vs three).
+    """
+    company_name   = info.get("longName") or info.get("shortName") or ticker
+    sector         = info.get("sector", "Unknown")
+    current_price  = _safe(info.get("currentPrice") or info.get("regularMarketPrice"))
+    mos            = None
+    if intrinsic_value and intrinsic_value > 0 and current_price and current_price > 0:
+        mos = round((intrinsic_value - current_price) / intrinsic_value * 100, 1)
+
+    rev_growth    = _safe(info.get("revenueGrowth"))
+    profit_margin = None
+    rev_total     = _safe(info.get("totalRevenue"))
+    ni_total      = _safe(info.get("netIncomeToCommon"))
+    if rev_total and rev_total > 0 and ni_total is not None:
+        profit_margin = round(ni_total / rev_total * 100, 1)
+
+    p   = final_scores.get("profitability", 0)   or 0
+    fs  = final_scores.get("financial_strength", 0) or 0
+    g   = final_scores.get("growth", 0)           or 0
+    pre = final_scores.get("predictability", 0)   or 0
+    v   = final_scores.get("valuation", 0)        or 0
+
+    p_lbl   = score_labels.get("profitability",      "")
+    fs_lbl  = score_labels.get("financial_strength", "")
+    g_lbl   = score_labels.get("growth",             "")
+    pre_lbl = score_labels.get("predictability",     "")
+    v_lbl   = score_labels.get("valuation",          "")
+
+    roe_pct  = fundamentals.get("roe_pct")
+    roic_pct = fundamentals.get("roic_pct")
+    d_ebitda = fundamentals.get("debt_to_ebitda")
+    cur_rat  = fundamentals.get("current_ratio")
+    eps5y    = round(fwd_growth.get("raw", 0) * 100, 1)
+
+    # ── Rule-based fallback texts ─────────────────────────────────────────────
+    # Quality conclusion
+    quality_words = {
+        "Safe":        "strong fundamental quality",
+        "Speculative": "mixed fundamental quality",
+        "Dangerous":   "weak fundamental quality",
+    }
+    q_word = quality_words.get(classification, "moderate quality")
+
+    if python_subtotal_pct >= 70:
+        qual_strength = "scores highly across profitability, financial strength, and predictability"
+    elif python_subtotal_pct >= 55:
+        qual_strength = f"shows particular strength in {p_lbl.lower()} profitability" \
+                        if p >= fs else f"benefits from {fs_lbl.lower()} financial strength"
+    else:
+        weak_dim = min(
+            [("profitability", p), ("financial strength", fs),
+             ("growth", g), ("predictability", pre)],
+            key=lambda x: x[1]
+        )[0]
+        qual_strength = f"is constrained by {weak_dim}"
+
+    roic_text = f", supported by a {roic_pct}% ROIC" if roic_pct and float(roic_pct.rstrip('%') if isinstance(roic_pct, str) else roic_pct) > 12 else ""
+    rule_quality_conclusion = (
+        f"{company_name} demonstrates {q_word}, scoring {round(python_subtotal_pct)}% across "
+        f"four fundamental dimensions. The business {qual_strength}{roic_text}. "
+        f"{'Moat assessment is pending and will adjust the final classification.' if classification == 'Speculative' else f'The current classification is {classification}.'}"
+    )
+
+    # Risk profile
+    risks = []
+    if d_ebitda and d_ebitda > 3.0:
+        risks.append(f"elevated leverage (Debt/EBITDA: {d_ebitda:.1f}x)")
+    if cur_rat and cur_rat < 1.0:
+        risks.append(f"tight liquidity (current ratio: {cur_rat:.2f})")
+    if g <= 3:
+        risks.append("weak near-term growth outlook")
+    if pre <= 3:
+        risks.append("inconsistent earnings trajectory")
+    if forecast_meta.get("growth_constrained"):
+        risks.append("financial strength constraining growth assumptions")
+    if mos and mos < -20:
+        risks.append(f"valuation premium ({abs(mos):.0f}% above estimated intrinsic value)")
+    if eps5y < 3:
+        risks.append(f"low consensus EPS growth forecast ({eps5y}% p.a.)")
+
+    if risks:
+        risk_list = "; ".join(risks[:3])
+        rule_risk_profile = (
+            f"Key risks for {company_name} include {risk_list}. "
+            f"{'The company operates in the ' + sector + ' sector, which carries its own cyclical and regulatory exposures.' if sector != 'Unknown' else 'Broader market and macroeconomic conditions present additional uncertainty.'} "
+            f"{'A financial strength score of ' + str(fs) + '/10 suggests the balance sheet provides limited buffer against downside scenarios.' if fs <= 4 else 'The balance sheet provides a reasonable buffer against near-term downside scenarios.'}"
+        )
+    else:
+        rule_risk_profile = (
+            f"{company_name} presents a relatively contained risk profile with no major "
+            f"red flags across leverage, liquidity, or earnings consistency. "
+            f"{'The primary risk is valuation — the stock trades above estimated intrinsic value.' if mos and mos < 0 else 'The primary risks are macroeconomic and sector-level rather than company-specific.'}"
+        )
+
+    # Investment summary
+    if mos and mos > 20:
+        val_text = f"trades at a {mos:.0f}% discount to estimated intrinsic value"
+    elif mos and mos < -10:
+        val_text = f"trades at a {abs(mos):.0f}% premium to estimated intrinsic value"
+    else:
+        val_text = "trades near estimated intrinsic value"
+
+    if classification == "Safe":
+        case_text = f"represents a {q_word} business that {val_text}"
+        action_text = "suitable for investors seeking quality-oriented exposure"
+    elif classification == "Speculative":
+        case_text = f"is a {q_word} business that {val_text}"
+        action_text = "appropriate for investors with higher risk tolerance and conviction in the growth outlook"
+    else:
+        case_text = f"carries {q_word} with elevated risk factors, and {val_text}"
+        action_text = "warrants caution — position sizing and ongoing monitoring are advisable"
+
+    rule_investment_summary = (
+        f"{company_name} {case_text}. "
+        f"{'With ' + str(eps5y) + '% consensus EPS growth forecast, the growth outlook ' + ('supports the investment case' if eps5y > 8 else 'adds uncertainty to the thesis') + '.' if eps5y else ''} "
+        f"Overall, the stock {action_text}."
+    ).strip()
+
+    # ── API call — all three in one request ───────────────────────────────────
+    if ANTHROPIC_API_KEY and ANTHROPIC_API_KEY.strip():
+        context = {
+            "ticker":             ticker,
+            "company":            company_name,
+            "sector":             sector,
+            "company_type":       company_type,
+            "classification":     classification,
+            "quality_score_pct":  round(python_subtotal_pct),
+            "scores": {
+                "profitability":      f"{p}/10 ({p_lbl})",
+                "financial_strength": f"{fs}/10 ({fs_lbl})",
+                "growth":             f"{g}/10 ({g_lbl})",
+                "predictability":     f"{pre}/10 ({pre_lbl})",
+                "valuation":          f"{v}/10 ({v_lbl})",
+            },
+            "roe_pct":            roe_pct,
+            "roic_pct":           roic_pct,
+            "debt_to_ebitda":     d_ebitda,
+            "current_ratio":      cur_rat,
+            "revenue_growth_pct": round(rev_growth * 100, 1) if rev_growth else None,
+            "profit_margin_pct":  profit_margin,
+            "eps_next_5y_pct":    eps5y,
+            "current_price":      current_price,
+            "intrinsic_value":    intrinsic_value,
+            "margin_of_safety_pct": mos,
+            "growth_constrained": forecast_meta.get("growth_constrained"),
+        }
+
+        prompt = f"""You are a senior equity analyst writing for a professional investing app.
+Generate three concise narrative blocks for {company_name} ({ticker}) based on the data below.
+
+Data:
+{json.dumps(context, indent=2)}
+
+Generate exactly:
+1. quality_conclusion: 2-3 sentences summarising the overall business quality. Mention the classification ({classification}), the strongest and weakest scoring dimensions, and what that means for the business.
+2. risk_profile: 2-3 sentences covering the key risks. Be specific to this company's data — reference actual metrics (debt ratios, growth rates, margins) rather than generic sector risks.
+3. investment_summary: 2-3 sentences summarising the investment case. Cover quality, valuation (margin of safety), and growth outlook. End with a clear one-line stance.
+
+Rules:
+- Use the score_label words exactly (e.g. "Good profitability", not "above average profitability")
+- For {company_type} companies, do not flag high leverage as a risk if financial_strength ≥ 7 (structural leverage is normal)
+- Be specific, factual, and grounded in the numbers
+- Respond ONLY with valid JSON, no other text:
+
+{{
+  "quality_conclusion": "...",
+  "risk_profile": "...",
+  "investment_summary": "..."
+}}"""
+
+        try:
+            response = requests.post(
+                "https://api.anthropic.com/v1/messages",
+                headers={
+                    "x-api-key":         ANTHROPIC_API_KEY,
+                    "anthropic-version": "2023-06-01",
+                    "content-type":      "application/json",
+                },
+                json={
+                    "model":      "claude-haiku-4-5-20251001",
+                    "max_tokens": 600,
+                    "messages":   [{"role": "user", "content": prompt}],
+                },
+                timeout=30,
+            )
+            if response.status_code == 200:
+                raw = response.json()["content"][0]["text"].strip()
+                raw = raw.replace("```json", "").replace("```", "").strip()
+                parsed = json.loads(raw)
+                return {
+                    "quality_conclusion":  parsed.get("quality_conclusion",  rule_quality_conclusion),
+                    "risk_profile":        parsed.get("risk_profile",        rule_risk_profile),
+                    "investment_summary":  parsed.get("investment_summary",  rule_investment_summary),
+                    "source":              "api",
+                    "generated_at":        datetime.now().strftime("%Y-%m-%d %H:%M"),
+                }
+        except Exception as e:
+            print(f"  [NARRATIVE] {ticker}: API call failed ({str(e)[:60]}), using rules")
+
+    # ── Rule-based fallback ───────────────────────────────────────────────────
+    return {
+        "quality_conclusion":  rule_quality_conclusion,
+        "risk_profile":        rule_risk_profile,
+        "investment_summary":  rule_investment_summary,
+        "source":              "rules",
+        "generated_at":        datetime.now().strftime("%Y-%m-%d %H:%M"),
+    }
+
+
 def _sanitize(obj):
     """
     Recursively walks the output structure and replaces any float NaN or
