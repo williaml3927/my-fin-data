@@ -2904,6 +2904,14 @@ def analyze_ticker(ticker, retries=3):
 EDGAR_CIK_CACHE = {}   # ticker → zero-padded CIK string, populated once per run
 EDGAR_USER_AGENT = "InvestingApp contact@example.com"   # SEC requires this header
 
+# Annual filing form types accepted by EDGAR extractors.
+# 10-K  = US domestic companies (standard annual report)
+# 20-F  = Foreign private issuers (e.g. GLOB/Globant, ASML, SAP)
+#          These companies file 20-F instead of 10-K but EDGAR XBRL data
+#          has identical structure — the only difference is the form field.
+# 40-F  = Canadian companies listed in the US (e.g. CNQ, SU)
+EDGAR_ANNUAL_FORMS = {"10-K", "20-F", "40-F"}
+
 def _edgar_get_cik(ticker):
     """Return zero-padded CIK for ticker, or None if not found."""
     global EDGAR_CIK_CACHE
@@ -2959,7 +2967,7 @@ def _edgar_extract_earliest(facts, *concept_names):
         units = us_gaap[name].get("units", {})
         usd   = units.get("USD") or units.get("shares") or []
         for entry in usd:
-            if entry.get("form") != "10-K":
+            if entry.get("form") not in EDGAR_ANNUAL_FORMS:
                 continue
             if entry.get("fp") not in ("FY", "CY"):
                 continue
@@ -3013,7 +3021,7 @@ def _edgar_extract_merge(facts, *concept_names):
         units = us_gaap[name].get("units", {})
         usd   = units.get("USD") or units.get("shares") or []
         for entry in usd:
-            if entry.get("form") != "10-K":
+            if entry.get("form") not in EDGAR_ANNUAL_FORMS:
                 continue
             if entry.get("fp") not in ("FY", "CY"):
                 continue
@@ -3081,7 +3089,7 @@ def _edgar_extract(facts, *concept_names):
 
         for entry in usd:
             # 1. Annual 10-K only
-            if entry.get("form") != "10-K":
+            if entry.get("form") not in EDGAR_ANNUAL_FORMS:
                 continue
             # 2. Full-year period flag
             if entry.get("fp") not in ("FY", "CY"):
@@ -3732,10 +3740,15 @@ def _get_financials_chart_data_inner(stock, info, ticker=""):
         for col in cols:
             year = str(col.year)
             rev, ni = None, None
-            for name in ["Total Revenue", "TotalRevenue"]:
+            for name in ["Total Revenue", "TotalRevenue",
+                         "Revenue", "Revenues",
+                         "Operating Revenue", "OperatingRevenue"]:
                 if name in financials.index:
                     rev = to_m(financials.loc[name, col]); break
-            for name in ["Net Income", "NetIncome"]:
+            for name in ["Net Income", "NetIncome",
+                         "Net Income Common Stockholders",
+                         "Net Income Including Noncontrolling Interests",
+                         "Profit Loss", "ProfitLoss"]:
                 if name in financials.index:
                     ni = to_m(financials.loc[name, col]); break
             if rev is not None or ni is not None:
