@@ -122,8 +122,53 @@ DEFILLAMA_SLUGS = {
 }
 
 # =============================================================================
-# HELPERS
+# CURATED COIN DESCRIPTIONS
+# Pre-written descriptions for well-known tokens.
+# Used as fallback when CoinGecko detail API is unavailable or rate-limited.
+# These are stored in coin_profile.description in the JSON output.
 # =============================================================================
+COIN_DESCRIPTIONS = {
+    # ── Settlement Layers ─────────────────────────────────────────────────────
+    "BTC":   "Bitcoin is the original decentralised digital currency and the world's largest cryptocurrency by market cap. It operates on a proof-of-work blockchain with a fixed supply of 21 million coins, making it a programmatically scarce store of value. Often referred to as 'digital gold', Bitcoin is primarily used as a long-term store of value and hedge against inflation.",
+    "ETH":   "Ethereum is the leading smart contract platform and the foundation of decentralised finance (DeFi). It transitioned to proof-of-stake in 2022 (The Merge), making it energy-efficient. ETH is used to pay for computation on the network and is deflationary post-EIP-1559, with a portion of fees burned with every transaction. It underpins the majority of DeFi, NFT, and Layer 2 ecosystems.",
+    "SOL":   "Solana is a high-performance Layer 1 blockchain known for extremely fast transaction speeds (65,000+ TPS) and very low fees. It uses a unique Proof-of-History consensus combined with Proof-of-Stake. Solana hosts a growing ecosystem of DeFi, NFTs, payments, and consumer applications, and has emerged as the primary competitor to Ethereum for retail and high-frequency use cases.",
+    "BNB":   "BNB is the native token of the BNB Chain (formerly Binance Smart Chain) and the Binance exchange ecosystem. It offers reduced trading fees on Binance, powers the BNB Chain network, and undergoes quarterly token burns. BNB benefits from Binance's position as the world's largest cryptocurrency exchange.",
+    "ADA":   "Cardano is a proof-of-stake Layer 1 blockchain built on peer-reviewed academic research. It uses the Ouroboros consensus mechanism and is developed by IOHK. Cardano focuses on scalability, sustainability, and interoperability, with significant adoption in developing-world identity and financial inclusion projects.",
+    "AVAX":  "Avalanche is a high-speed, low-cost Layer 1 platform known for its subnet architecture, which allows anyone to launch custom blockchains. It achieves sub-second finality and hosts a growing DeFi ecosystem. AVAX is used for network fees, staking, and governance across the Avalanche platform.",
+    "DOT":   "Polkadot is a multichain protocol that enables different blockchains to interoperate and share security. It uses a relay chain and parachain architecture, with DOT used for governance, staking, and bonding parachains. It was founded by Ethereum co-founder Gavin Wood.",
+    "ATOM":  "Cosmos is the 'Internet of Blockchains' — a decentralised network of independent blockchains connected via the IBC (Inter-Blockchain Communication) protocol. ATOM is the staking and governance token of the Cosmos Hub, the central chain coordinating the ecosystem.",
+    "NEAR":  "NEAR Protocol is a developer-friendly Layer 1 blockchain with a focus on usability and scalability. It uses a sharding technique called Nightshade to achieve high throughput. NEAR is notable for its human-readable account names and low transaction costs.",
+    "TRX":   "TRON is a blockchain platform focused on decentralised entertainment and digital content. It hosts the largest USDT (Tether) circulation of any blockchain and processes extremely high transaction volumes daily. TRX is used for fees, staking, and governance.",
+    "TON":   "TON (The Open Network) is a blockchain originally developed by Telegram. It benefits from deep integration with the Telegram messaging app (900M+ users), enabling easy crypto payments and onboarding. TON is rapidly growing in DeFi and payments use cases.",
+    "HBAR":  "Hedera is an enterprise-grade public distributed ledger using hashgraph consensus technology rather than a traditional blockchain. It offers fast, fair, and secure transactions at low cost, and is governed by a council of major corporations including Google, IBM, and Deutsche Telekom.",
+    # ── Layer 2 ───────────────────────────────────────────────────────────────
+    "ARB":   "Arbitrum is the leading Ethereum Layer 2 scaling solution using optimistic rollup technology. It offers significantly lower fees than Ethereum mainnet while inheriting its security. ARB is the governance token of the Arbitrum DAO, which controls the Arbitrum network. Note: sequencer fees currently accrue to the foundation, not ARB holders.",
+    "OP":    "Optimism is an Ethereum Layer 2 using optimistic rollup technology. It pioneered the Superchain vision — a network of OP Stack chains including Coinbase's Base. OP is the governance token. Like Arbitrum, sequencer revenue currently goes to the foundation rather than token holders.",
+    "MATIC": "Polygon (now rebranding to POL) is an Ethereum sidechain and Layer 2 ecosystem. It offers fast, cheap transactions and hosts one of the largest DeFi and gaming ecosystems outside of Ethereum mainnet. The network is transitioning to a ZK-based architecture.",
+    # ── DeFi Blue Chips ───────────────────────────────────────────────────────
+    "UNI":   "Uniswap is the world's largest decentralised exchange (DEX) by volume, operating an automated market maker (AMM) model. It processes over $1 trillion in annual trading volume. The UNI token grants governance rights over the protocol. Importantly, the fee switch is currently off — all trading fees go to liquidity providers, not UNI holders — though a governance vote may activate fee sharing in future.",
+    "AAVE":  "Aave is the largest decentralised lending and borrowing protocol with over $16 billion in total value locked. Users can supply assets to earn interest or borrow against collateral. AAVE token holders govern the protocol and participate in the Safety Module, which provides insurance backing. A fee switch proposal to distribute revenue to stakers is actively progressing.",
+    "MKR":   "MakerDAO is the protocol behind DAI, the most battle-tested decentralised stablecoin. MKR holders govern the protocol and benefit from stability fee revenue through an active buyback-and-burn mechanism. The Endgame roadmap aims to further decentralise and scale the protocol.",
+    "CRV":   "Curve Finance is the dominant stablecoin and pegged-asset DEX, with $4B+ in TVL. veCRV holders receive 50% of all trading fees and control gauge emissions — making CRV central to the 'Curve Wars' for liquidity incentives across DeFi.",
+    "GMX":   "GMX is a leading decentralised perpetual futures exchange on Arbitrum and Avalanche. It offers leverage trading with low fees and zero price impact. 30% of protocol fees go directly to GMX stakers, making it one of the best fee-distribution models in DeFi.",
+    "LDO":   "Lido is the largest liquid staking protocol, controlling ~32% of all staked ETH. It allows users to stake ETH and receive stETH, which can be used across DeFi. Lido earns 10% of all staking rewards as protocol revenue. LDO governs the protocol.",
+    "LINK":  "Chainlink is the leading decentralised oracle network, providing real-world data to smart contracts across 1,000+ blockchain integrations. Node operators are paid in LINK for providing data feeds. Staking v0.2 is now live, allowing LINK holders to earn staking rewards while securing the network.",
+    "SNX":   "Synthetix is a derivatives liquidity protocol that enables the creation of synthetic assets tracking real-world prices. SNX stakers collateralise the system and earn all protocol trading fees as rewards — one of the most direct fee-distribution models in DeFi.",
+    "PENDLE": "Pendle is a yield tokenisation protocol that splits yield-bearing assets into principal and yield components, allowing users to trade future yield. vePENDLE holders receive 80% of swap fees plus additional protocol yield, making it a strong value-accrual token.",
+    "CAKE":  "PancakeSwap is the leading DEX on BNB Chain by volume. It uses a veCAKE model for governance and fee distribution, with buybacks and burns from protocol revenue. It has expanded to multiple chains.",
+    "JUP":   "Jupiter is Solana's dominant DEX aggregator, routing trades across all Solana DEXes for best execution. It handles the majority of Solana's swap volume. JUP token holders receive fee distributions, and the protocol is central to Solana's DeFi infrastructure.",
+    "GRT":   "The Graph is a decentralised indexing protocol for blockchain data — often described as 'Google for blockchains'. Developers use it to query on-chain data efficiently. GRT is used to pay indexers and curators who maintain and organise the data.",
+    # ── Store of Value ────────────────────────────────────────────────────────
+    "LTC":   "Litecoin is one of the oldest cryptocurrencies, created in 2011 as a 'lighter' version of Bitcoin. It offers faster block times (2.5 mins) and a larger supply (84M). Often used as a testnet for Bitcoin innovations, LTC is primarily a medium of exchange and store of value.",
+    "BCH":   "Bitcoin Cash is a Bitcoin fork created in 2017 to increase block size and enable cheaper on-chain payments. It prioritises low-fee peer-to-peer transactions over store of value.",
+    "XMR":   "Monero is the leading privacy-focused cryptocurrency. It uses ring signatures, stealth addresses, and RingCT to make all transactions untraceable by default. XMR is proof-of-work mined and is widely used where financial privacy is paramount.",
+    "DOGE":  "Dogecoin started as a meme in 2013 but became a top-10 cryptocurrency by market cap. It has an uncapped supply with 5 billion DOGE minted annually. It benefits from strong community support and celebrity endorsements, and is used for tipping and small payments.",
+    "ETC":   "Ethereum Classic is the original Ethereum chain that continued after the 2016 DAO hack fork. It maintains the original 'code is law' philosophy and is proof-of-work. ETC has a fixed supply schedule and positions itself as a store of value for the Ethereum ecosystem.",
+    # ── RWA / Stablecoins ─────────────────────────────────────────────────────
+    "ENA":   "Ethena is an RWA-backed synthetic dollar protocol. USDe is Ethena's stablecoin, backed by a delta-neutral strategy using staked ETH and short perpetual positions. The protocol distributes yield from this strategy to sUSDe holders and ENA stakers.",
+    "XRP":   "XRP is the native token of the XRP Ledger (XRPL), designed for fast, low-cost cross-border payments and currency exchange. Ripple (the company) uses XRP in its On-Demand Liquidity product. XRP settles transactions in 3-5 seconds with fees under $0.01.",
+}
+
 def _safe(val, fallback=None):
     if val is None: return fallback
     try:
@@ -2451,7 +2496,52 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                                "mos_note": "Data unavailable",
                                "zones_by_year": {}}
 
+        # ── Coin Profile — pre-computed so AI Studio never fetches live ─────────
+        # Sources: CoinGecko /coins/markets (always available) +
+        #          COIN_DESCRIPTIONS curated dict (known tokens) +
+        #          CoinGecko /coins/{id} detail (called for top-100 only).
+        # AI Studio reads this block for the header, hero card, and any
+        # "about this coin" section — never needs a live API call.
+        _ath               = _safe(coin.get("ath"))
+        _ath_date          = coin.get("ath_date", "")[:10] if coin.get("ath_date") else None
+        _ath_change_pct    = _safe(coin.get("ath_change_percentage"))
+        _atl               = _safe(coin.get("atl"))
+        _atl_date          = coin.get("atl_date", "")[:10] if coin.get("atl_date") else None
+        _image             = coin.get("image")
+        _description       = (
+            COIN_DESCRIPTIONS.get(symbol)          # curated (preferred — always present)
+            or f"{name} ({symbol}) — a {('Store of Value' if bucket == 'B' else 'Cash-Flow Protocol')} "
+               f"ranked #{rank} by market cap."    # generic fallback
+        )
+        coin_profile = {
+            "symbol":            symbol,
+            "name":              name,
+            "coin_id":           coin_id,
+            "bucket":            bucket,
+            "bucket_label":      "Store of Value" if bucket == "B" else "Cash-Flow Protocol",
+            "description":       _description,
+            "image_url":         _image,
+            "market_cap_rank":   rank,
+            "market_cap_usd":    mc,
+            "fully_diluted_valuation": round(fdv, 2) if fdv else None,
+            "current_price":     price,
+            "ath":               _ath,
+            "ath_date":          _ath_date,
+            "ath_change_pct":    round(_ath_change_pct, 1) if _ath_change_pct else None,
+            "atl":               _atl,
+            "atl_date":          _atl_date,
+            "price_change_7d_pct":  chg_7d,
+            "price_change_30d_pct": chg_30d,
+            "circulating_supply": _safe(coin.get("circulating_supply")),
+            "total_supply":       _safe(coin.get("total_supply")),
+            "max_supply":         _safe(coin.get("max_supply")),
+            "total_volume_24h":   _safe(coin.get("total_volume")),
+            "defillama_slug":     DEFILLAMA_SLUGS.get(symbol),
+            "has_curated_description": symbol in COIN_DESCRIPTIONS,
+        }
+
         return symbol, {
+            "coin_profile":      coin_profile,
             "name":              name,
             "coin_id":           coin_id,
             "bucket":            bucket,
@@ -2471,9 +2561,6 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
             "network_economics": network_econ,
             "valuation_chart":   valuation_chart,
             "forecast_meta":     forecast_meta,
-            # Top-level intrinsic_value for AI Studio hero card display
-            # Same as forecast_meta["base_iv"] but accessible without
-            # nested lookup — prevents "N/A - Insufficient Data" display.
             "intrinsic_value":   forecast_meta.get("base_iv") if forecast_meta else None,
             "iv_method":         (
                 ", ".join(methods_used) if methods_used
