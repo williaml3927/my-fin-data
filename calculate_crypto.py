@@ -27,7 +27,7 @@ GOLD_MARKET_CAP_USD = 21_000_000_000_000
 BTC_MINING_COST_USD = 35_000
 
 # Number of top coins to process
-TOP_N_COINS = 1000        # 4 pages × 250 per page
+TOP_N_COINS = 500         # 2 pages × 250 — keeps pipeline within 3h GitHub Actions limit
 
 # =============================================================================
 # BUCKET CLASSIFICATION
