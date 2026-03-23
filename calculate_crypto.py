@@ -1915,6 +1915,11 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
         # ── Common: Method 7 — Metcalfe ─────────────────────────────────────
         metcalfe_ratio = method_7_metcalfe(mc, volume=volume)
 
+        # Initialise network_econ to None so references inside the Bucket A
+        # block (normalised fees) don't cause NameError. The real value is
+        # assigned after the bucket valuation methods, before quality scoring.
+        network_econ = None
+
         # ── Bucket A: Fee-based methods ──────────────────────────────────────
         bucket_a_data = {}
         fdv = (price * (max_sup or total or circ)) if price else None
