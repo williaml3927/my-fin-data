@@ -12,7 +12,7 @@ import numpy as np
 
 # CoinGecko Demo API key — get free at https://www.coingecko.com/en/api
 # Leave empty to use the public endpoint (slower, more rate limited)
-COINGECKO_API_KEY = ""
+COINGECKO_API_KEY = "CG-gRVoRZKso8ZxgSnjW5sxv4QH"
 
 # DeFiLlama — completely free, no key needed
 DEFILLAMA_BASE    = "https://api.llama.fi"
@@ -2027,47 +2027,61 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
             }
 
         # ── Price History — fetch EARLY before DeFiLlama calls use API budget ──
-        # This is the single most rate-limit-sensitive call in the pipeline.
-        # By fetching it here (before the 3+ DeFiLlama calls in fetch_network_economics),
-        # we have a fresh CoinGecko rate-limit budget and maximise success rate.
-        # ETH was failing (price_history_years=0) because by the time the fetch
-        # ran (inside the base_iv block), the budget was exhausted by prior calls.
-        #
-        # Stored as top-level 'price_history' dict (same shape as stocks
-        # '10_Year_History') — AI Studio reads it directly for the chart.
-        # Also used to build valuation_chart historical rows later.
+        # current_year defined here so it's available for both the price history
+        # anchor line and later for the valuation chart year keys.
+        current_year = datetime.now().year
+
         price_history       = {}
         price_history_years = 0
-        for attempt in range(3):
-            try:
-                wait = [3.5, 25.0, 60.0][attempt]  # longer waits vs before (2/20/45)
-                time.sleep(wait)
-                hist_resp = requests.get(
-                    f"https://api.coingecko.com/api/v3/coins/{coin_id}"
-                    f"/market_chart?vs_currency=usd&days=3650",
-                    headers=_headers(), timeout=30
-                )
-                if hist_resp.status_code == 200:
-                    prices_raw = hist_resp.json().get("prices", [])
-                    year_prices = {}
-                    for ts_ms, p_val in prices_raw:
-                        yr = str(datetime.fromtimestamp(ts_ms / 1000).year)
-                        year_prices[yr] = _round_price(p_val)
-                    price_history       = year_prices
-                    price_history_years = len(year_prices)
-                    print(f"  [HIST] {symbol}: {price_history_years} years of price history")
+
+        # CoinGecko free-tier note:
+        # api.coingecko.com/api/v3/coins/{id}/market_chart now returns 401
+        # without a demo API key. We try two URLs:
+        #   1. Standard endpoint (works with COINGECKO_API_KEY set)
+        #   2. Public endpoint: api.coingecko.com/api/v3 — same domain but
+        #      the /market_chart path is rate-limited but doesn't 401 on free tier
+        # If both 401/fail we store an empty price_history gracefully.
+        _hist_urls = [
+            f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency=usd&days=3650",
+        ]
+        if not COINGECKO_API_KEY:
+            # Try the public (no-key) endpoint as fallback
+            _hist_urls.append(
+                f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency=usd&days=3650&precision=full"
+            )
+
+        for _url in _hist_urls:
+            _success = False
+            for attempt in range(3):
+                try:
+                    wait = [3.5, 25.0, 60.0][attempt]
+                    time.sleep(wait)
+                    hist_resp = requests.get(_url, headers=_headers(), timeout=30)
+                    if hist_resp.status_code == 200:
+                        prices_raw = hist_resp.json().get("prices", [])
+                        year_prices = {}
+                        for ts_ms, p_val in prices_raw:
+                            yr = str(datetime.fromtimestamp(ts_ms / 1000).year)
+                            year_prices[yr] = _round_price(p_val)
+                        price_history       = year_prices
+                        price_history_years = len(year_prices)
+                        print(f"  [HIST] {symbol}: {price_history_years} years")
+                        _success = True
+                        break
+                    elif hist_resp.status_code == 429:
+                        print(f"  [HIST] {symbol}: 429 rate limit (attempt {attempt+1}/3)")
+                        continue
+                    elif hist_resp.status_code == 401:
+                        print(f"  [HIST] {symbol}: 401 unauthorized — API key required")
+                        break   # no point retrying a 401
+                    else:
+                        print(f"  [HIST] {symbol}: HTTP {hist_resp.status_code}")
+                        break
+                except Exception as e:
+                    print(f"  [HIST] {symbol}: {str(e)[:60]}")
                     break
-                elif hist_resp.status_code == 429:
-                    print(f"  [HIST] {symbol}: 429 rate limit (attempt {attempt+1}/3)")
-                    if attempt == 2:
-                        print(f"  [HIST] {symbol}: all retries exhausted")
-                    continue
-                else:
-                    print(f"  [HIST] {symbol}: HTTP {hist_resp.status_code}")
-                    break
-            except Exception as e:
-                print(f"  [HIST] {symbol}: {str(e)[:60]}")
-                break
+            if _success:
+                break   # don't try second URL if first succeeded
 
         # Always include current year price so chart has at least one anchor
         price_history[str(current_year)] = _round_price(price) if price else None
@@ -2143,8 +2157,7 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
 
         # ── Valuation Chart — Forecast Adjustment Framework ──────────────────
         #
-        # current_year as int needed for chart year keys and arithmetic
-        current_year = datetime.now().year
+        # current_year already defined above (before price history fetch)
 
         # Philosophy — no compounding growth lines for crypto:
         #   Unlike stocks, crypto has no EPS or analyst consensus growth rate.
