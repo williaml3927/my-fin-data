@@ -2799,7 +2799,9 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
         }
 
     except Exception as e:
-        print(f"  [ERROR] {coin.get('symbol','?')}: {str(e)[:80]}")
+        import traceback
+        print(f"  [ERROR] {coin.get('symbol','?')}: {str(e)[:120]}")
+        print(f"  [TRACE] {traceback.format_exc()[-300:]}")
         return None
 
 
@@ -3706,6 +3708,11 @@ def main():
 
     print(f"    Bucket A (Cash-Flow): {bucket_a_count}")
     print(f"    Bucket B (Store of Value): {bucket_b_count}")
+
+    if len(master_results) == 0:
+        print("\n❌ PIPELINE FAILED: Zero coins were successfully analysed.")
+        print("   Check [ERROR] lines above for the root cause.")
+        import sys; sys.exit(1)
 
     # Attach market Fear & Greed to every coin
     for sym in master_results:
