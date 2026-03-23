@@ -36,7 +36,11 @@ jobs:
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
 
-          git add data_crypto/*.json || true
+          # Add entire data_crypto folder — using a glob (data_crypto/*.json)
+          # fails silently if the folder doesn't exist yet in the repo because
+          # the shell expands the glob before git runs and finds nothing.
+          # Using the folder path directly works whether or not it existed before.
+          git add data_crypto/
 
           git diff --staged --quiet && echo "No changes to commit" && exit 0
 
