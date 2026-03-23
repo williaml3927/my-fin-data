@@ -2034,54 +2034,34 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
         price_history       = {}
         price_history_years = 0
 
-        # CoinGecko free-tier note:
-        # api.coingecko.com/api/v3/coins/{id}/market_chart now returns 401
-        # without a demo API key. We try two URLs:
-        #   1. Standard endpoint (works with COINGECKO_API_KEY set)
-        #   2. Public endpoint: api.coingecko.com/api/v3 — same domain but
-        #      the /market_chart path is rate-limited but doesn't 401 on free tier
-        # If both 401/fail we store an empty price_history gracefully.
-        _hist_urls = [
-            f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency=usd&days=3650",
-        ]
-        if not COINGECKO_API_KEY:
-            # Try the public (no-key) endpoint as fallback
-            _hist_urls.append(
-                f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency=usd&days=3650&precision=full"
-            )
-
-        for _url in _hist_urls:
-            _success = False
-            for attempt in range(3):
-                try:
-                    wait = [3.5, 25.0, 60.0][attempt]
-                    time.sleep(wait)
-                    hist_resp = requests.get(_url, headers=_headers(), timeout=30)
-                    if hist_resp.status_code == 200:
-                        prices_raw = hist_resp.json().get("prices", [])
-                        year_prices = {}
-                        for ts_ms, p_val in prices_raw:
-                            yr = str(datetime.fromtimestamp(ts_ms / 1000).year)
-                            year_prices[yr] = _round_price(p_val)
-                        price_history       = year_prices
-                        price_history_years = len(year_prices)
-                        print(f"  [HIST] {symbol}: {price_history_years} years")
-                        _success = True
-                        break
-                    elif hist_resp.status_code == 429:
-                        print(f"  [HIST] {symbol}: 429 rate limit (attempt {attempt+1}/3)")
-                        continue
-                    elif hist_resp.status_code == 401:
-                        print(f"  [HIST] {symbol}: 401 unauthorized — API key required")
-                        break   # no point retrying a 401
-                    else:
-                        print(f"  [HIST] {symbol}: HTTP {hist_resp.status_code}")
-                        break
-                except Exception as e:
-                    print(f"  [HIST] {symbol}: {str(e)[:60]}")
+        for attempt in range(3):
+            try:
+                wait = [1.5, 15.0, 45.0][attempt]   # 1.5s first try, longer on retry
+                time.sleep(wait)
+                hist_resp = requests.get(
+                    f"https://api.coingecko.com/api/v3/coins/{coin_id}"
+                    f"/market_chart?vs_currency=usd&days=3650",
+                    headers=_headers(), timeout=30
+                )
+                if hist_resp.status_code == 200:
+                    prices_raw = hist_resp.json().get("prices", [])
+                    year_prices = {}
+                    for ts_ms, p_val in prices_raw:
+                        yr = str(datetime.fromtimestamp(ts_ms / 1000).year)
+                        year_prices[yr] = _round_price(p_val)
+                    price_history       = year_prices
+                    price_history_years = len(year_prices)
                     break
-            if _success:
-                break   # don't try second URL if first succeeded
+                elif hist_resp.status_code == 429:
+                    print(f"  [HIST] {symbol}: 429 rate limit (attempt {attempt+1}/3)")
+                    continue
+                elif hist_resp.status_code == 401:
+                    # API key missing or invalid — skip silently, coin still processed
+                    break
+                else:
+                    break
+            except Exception:
+                break
 
         # Always include current year price so chart has at least one anchor
         price_history[str(current_year)] = _round_price(price) if price else None
