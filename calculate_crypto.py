@@ -1225,6 +1225,20 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
             "chart_ref": None,
         }
 
+        # ── Hints as floor minimum for known Bucket A tokens ─────────────────
+        # Curated hints represent well-researched fundamentals. If live API
+        # data gives a LOWER score than the curated minimum, use the minimum.
+        # This prevents transient bad DeFiLlama data from misclassifying
+        # established protocols like ETH, SOL, BNB. Hints never inflate above
+        # what data supports — they only act as a floor, not a ceiling.
+        if _sym in hints:
+            s1 = max(s1, hints.get("fee_growth", 0))
+            s2 = max(s2, hints.get("capital_efficiency", 0))
+            s3 = max(s3, hints.get("holder_value_accrual", 0))
+            signals["fee_growth"]["score"]           = s1
+            signals["capital_efficiency"]["score"]   = s2
+            signals["holder_value_accrual"]["score"] = s3
+
     elif bucket == "B":
         # 1. Scarcity — supply overhang % (0-10, lower overhang = better)
         # Neutral (5) if data unavailable
@@ -1989,11 +2003,19 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
             chain_data  = (defillama_chain_data or {}).get(chain_slug, {}) \
                           if chain_slug else {}
 
-            # Current annualised fees from 30d average
-            annual_fees_current = fee_data.get("annual_fees") or chain_data.get("annual_fees")
-            annual_rev          = fee_data.get("annual_revenue") or chain_data.get("annual_revenue")
-            holders_rev         = fee_data.get("annual_holders_revenue")
-            tvl                 = fee_data.get("tvl") or chain_data.get("tvl")
+            # Current annualised fees — for L1 blockchains (ETH, SOL, BNB etc.)
+            # the chain endpoint has the correct gas fees ($2B+ for ETH).
+            # The protocol endpoint may return a small/wrong value for the same slug.
+            # Chain fees MUST take priority for all tokens in CHAIN_FEE_MAP.
+            if chain_slug and chain_data.get("annual_fees"):
+                annual_fees_current = chain_data.get("annual_fees")
+                annual_rev          = chain_data.get("annual_revenue") or fee_data.get("annual_revenue")
+                tvl                 = chain_data.get("tvl") or fee_data.get("tvl")
+            else:
+                annual_fees_current = fee_data.get("annual_fees") or chain_data.get("annual_fees")
+                annual_rev          = fee_data.get("annual_revenue") or chain_data.get("annual_revenue")
+                tvl                 = fee_data.get("tvl") or chain_data.get("tvl")
+            holders_rev = fee_data.get("annual_holders_revenue")
 
             # ── Normalised fees — use median of last 3 full years ─────────────
             # Using only the current 30d-annualised snapshot causes severe
@@ -2132,12 +2154,19 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
         )
 
         # ── Quality score ─────────────────────────────────────────────────────
-        # Reads from network_econ charts where possible — same values
-        # displayed in the Network Economics tab, ensuring full consistency.
-        _slug_data   = defillama_data.get(DEFILLAMA_SLUGS.get(symbol), {})
-        _ann_fees    = _slug_data.get("annual_fees")
-        _holders_rev = _slug_data.get("annual_holders_revenue")
-        _tvl         = _slug_data.get("tvl")
+        # Use the same merged fee source as bucket_a_data — chain fees for L1s,
+        # protocol fees for DeFi protocols. Previously used protocol-only data
+        # which caused ETH/SOL/BNB to get tiny fee values and score incorrectly.
+        _chain_slug_q = CHAIN_FEE_MAP.get(symbol)
+        _chain_data_q = (defillama_chain_data or {}).get(_chain_slug_q, {}) if _chain_slug_q else {}
+        _proto_data_q = defillama_data.get(DEFILLAMA_SLUGS.get(symbol), {})
+        if _chain_slug_q and _chain_data_q.get("annual_fees"):
+            _ann_fees = _chain_data_q.get("annual_fees")
+            _tvl      = _chain_data_q.get("tvl") or _proto_data_q.get("tvl")
+        else:
+            _ann_fees = _proto_data_q.get("annual_fees")
+            _tvl      = _proto_data_q.get("tvl")
+        _holders_rev = _proto_data_q.get("annual_holders_revenue")
         _gold_cap    = (bucket_b_data.get("monetary_premium") or {}).get("gold_capture_pct") if bucket == "B" else None
         _prem_cost   = (bucket_b_data.get("cost_of_production") or {}).get("premium_to_production_cost") if bucket == "B" else None
         _fdv_mc      = (dilution or {}).get("fdv_to_mc_ratio")
@@ -2323,7 +2352,10 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 # Expected MC for rank tier × quality premium/discount.
                 if rank and rank > 0 and circ and circ > 0 and price:
                     try:
-                        if rank <= 5:      exp_mc = 200e9
+                        # 2025/2026 calibrated MC tiers — top ranks updated for BTC/ETH
+                        if rank == 1:      exp_mc = 1_400e9
+                        elif rank == 2:    exp_mc = 300e9
+                        elif rank <= 5:    exp_mc = 150e9
                         elif rank <= 10:   exp_mc = 80e9
                         elif rank <= 20:   exp_mc = 30e9
                         elif rank <= 30:   exp_mc = 15e9
@@ -2335,7 +2367,7 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                         elif rank <= 300:  exp_mc = 120e6
                         elif rank <= 500:  exp_mc = 50e6
                         else:              exp_mc = 20e6
-                        q_adj = 1.20 if q_pct >= 70 else 1.05 if q_pct >= 60                                 else 0.90 if q_pct >= 45 else 0.70
+                        q_adj = 1.20 if q_pct >= 70 else 1.05 if q_pct >= 60 else 0.90 if q_pct >= 45 else 0.70
                         peer_iv = round((exp_mc * q_adj) / circ, 4)
                         if 0.2 * price <= peer_iv <= 5 * price:
                             valid_ivs.append(peer_iv)
@@ -2437,7 +2469,9 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 # ── B+: Peer value (same universal logic as Bucket A) ──────────
                 if rank and rank > 0 and circ and circ > 0 and price:
                     try:
-                        if rank <= 5:      exp_mc = 200e9
+                        if rank == 1:      exp_mc = 1_400e9
+                        elif rank == 2:    exp_mc = 300e9
+                        elif rank <= 5:    exp_mc = 150e9
                         elif rank <= 10:   exp_mc = 80e9
                         elif rank <= 20:   exp_mc = 30e9
                         elif rank <= 30:   exp_mc = 15e9
@@ -2447,7 +2481,7 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                         elif rank <= 200:  exp_mc = 250e6
                         elif rank <= 500:  exp_mc = 50e6
                         else:              exp_mc = 20e6
-                        q_adj = 1.20 if q_pct >= 70 else 1.05 if q_pct >= 60                                 else 0.90 if q_pct >= 45 else 0.70
+                        q_adj = 1.20 if q_pct >= 70 else 1.05 if q_pct >= 60 else 0.90 if q_pct >= 45 else 0.70
                         peer_iv = round((exp_mc * q_adj) / circ, 4)
                         if 0.2 * price <= peer_iv <= 5 * price:
                             valid_ivs.append(peer_iv)
