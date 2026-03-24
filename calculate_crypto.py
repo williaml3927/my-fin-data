@@ -1161,10 +1161,12 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
         # mediums of exchange, not protocols generating fees. Their vol/MC reflects
         # transaction volume not protocol adoption. We cap at 15% for stablecoins
         # (identifiable by price ~$1 and name containing 'USD', 'EUR', 'stable').
-        _is_stable = (price and 0.95 <= price <= 1.10) or any(
+        # Stablecoin detection by symbol name only — price is not available
+        # in this function scope. Name check reliably covers all major stablecoins.
+        _is_stable = any(
             kw in (_sym or "").upper()
             for kw in ("USD", "USDC", "USDT", "DAI", "EUR", "FRAX", "TUSD", "BUSD",
-                       "USDD", "CUSD", "GUSD", "USDP", "SUSD", "LUSD")
+                       "USDD", "CUSD", "GUSD", "USDP", "SUSD", "LUSD", "USDS")
         )
         _vol_mc_adj = min(vol_mc_pct, 15.0) if (_is_stable and vol_mc_pct) else vol_mc_pct
 
