@@ -2896,6 +2896,27 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     "bucket":                   bucket,
                     "iv_sources":               len([m for m in methods_used if "Market price" not in m]),
                     "methods_used":             methods_used,
+                    "iv_selection_rationale":   (
+                        # Bucket A: Cash-Flow Protocols — valued like businesses
+                        "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. "
+                        "M1 DCF discounts future fee revenue to present value. "
+                        "M2 P/S compares market cap to annual fees vs sector benchmarks. "
+                        "M3 P/E uses fee revenue accruing directly to token holders. "
+                        "M+ NVT treats trading volume as a proxy for network activity. "
+                        "M+ Peer Value anchors to expected market cap for this rank tier. "
+                        "M+ Dilution-adj penalises large token unlocks (high FDV/MC). "
+                        "Methods that produce values outside 0.1x–8x of current price are excluded as outliers. "
+                        "The median of all valid per-token estimates becomes the Speculative Fair Value."
+                        if bucket == "A" else
+                        # Bucket B: Store of Value — valued on scarcity and monetary adoption
+                        "Bucket B (Store of Value): Valued on scarcity and monetary premium. "
+                        "M6 Monetary Premium measures share of gold market cap captured. "
+                        "M8 Production Cost provides a PoW mining-cost floor (×2 premium). "
+                        "M10 Supply-adj penalises tokens with significant unlocked supply. "
+                        "M+ NVT (SoV) treats volume as monetary circulation velocity. "
+                        "M+ Peer Value anchors to expected market cap for this rank tier. "
+                        "The median of all valid per-token estimates becomes the Speculative Fair Value."
+                    ),
                     # Price history availability — AI Studio uses this to show
                     # a note when historical chart data is limited or unavailable.
                     "price_history_years":      price_history_years,
