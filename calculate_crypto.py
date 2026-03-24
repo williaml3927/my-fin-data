@@ -20,75 +20,102 @@ BTC_MINING_COST_USD = 35_000
 TOP_N_COINS = 500
 
 # =============================================================================
-# BINANCE PRICE HISTORY
+# PRICE HISTORY — CryptoCompare (primary) + CoinGecko demo key (fallback)
 #
-# Replaces the CoinGecko /market_chart endpoint which now requires a paid key.
-# Binance public klines API:
-#   - Completely free, zero authentication required, no API key needed
-#   - Rate limit: 1,200 requests/minute vs CoinGecko's 30/min (40x more generous)
-#   - No per-coin sleep needed — fetch is near-instant
-#   - Covers ~95% of top-500 coins; unlisted coins return {} gracefully
+# WHY NOT BINANCE:
+#   Binance.com geo-blocks US IP addresses. GitHub Actions runners are on
+#   AWS us-east-1, which is a US IP range. Every Binance call returns a
+#   451/403 error from GitHub Actions, producing {} for all 500 coins.
+#   This is why price_history showed only {"2026": X.XX} with no history.
 #
-# Endpoint: GET https://api.binance.com/api/v3/klines
-#   ?symbol=BTCUSDT&interval=1M&limit=120
-# Returns 120 monthly candles (~10 years). We keep the last close per year.
+# WHY CRYPTOCOMPARE:
+#   - Completely free, no API key required
+#   - No US geo-block — accessible from GitHub Actions AWS runners
+#   - Rate limit: 100 calls/second (generous)
+#   - Returns daily OHLCV with limit=2000 (~5.5 years per call)
+#   - Two calls per coin covers 11+ years of history
+#   - Returns {"Response": "Error"} gracefully for unknown symbols
+#
+# Endpoint: GET https://min-api.cryptocompare.com/data/v2/histoday
+#   ?fsym=ETH&tsym=USD&limit=2000
 # =============================================================================
 
-# Overrides for tokens where symbol+USDT differs from the Binance pair name
-BINANCE_SYMBOL_OVERRIDES = {
-    "RNDR":  "RENDERUSDT",   # rebranded from RNDR to RENDER on Binance
-    "MIOTA": "IOTAUSDT",
-    "POL":   "POLUSDT",
-}
-
-# Tokens never listed on Binance — skip immediately, no HTTP call wasted
-BINANCE_NOT_LISTED = {
+# Tokens to skip (stablecoins, exchange tokens — no meaningful price history)
+PRICE_HISTORY_SKIP = {
     "USDT", "USDC", "BUSD", "TUSD", "DAI", "FRAX", "USDD", "USDP",
-    "GUSD", "LUSD", "SUSD", "CUSD", "USDS", "USD1", "PYUSD",
-    "FDUSD", "EURC", "EURS", "EURI", "EURCV",
+    "GUSD", "LUSD", "SUSD", "CUSD", "USDS", "USD1", "PYUSD", "AUSD",
+    "FDUSD", "EURC", "EURS", "EURI", "EURCV", "AEUR", "AVUSD", "AUSDT",
     "PAXG", "XAUT",
     "WBT", "BGB", "OKB", "LEO", "GT", "KCS", "MX",
 }
 
+# CryptoCompare uses different symbols for a handful of coins
+CC_SYMBOL_OVERRIDES = {
+    "MIOTA": "IOTA",
+    "POL":   "MATIC",     # CryptoCompare still uses MATIC
+    "XBT":   "BTC",
+    "WBTC":  "BTC",       # wrapped — proxy with BTC
+    "WETH":  "ETH",       # wrapped — proxy with ETH
+}
 
+
+def fetch_price_history(symbol):
+    """
+    Fetch up to 11 years of annual closing prices.
+
+    Strategy: Two CryptoCompare calls cover ~11 years of history.
+      Call 1: Most recent 2000 days  (≈ 2020–2026)
+      Call 2: toTs = 2000 days ago   (≈ 2014–2020)
+
+    Returns dict { "2015": 1.23, "2024": 2081.65 } or {} on failure.
+    The current year is NOT included — set by caller from live price.
+    """
+    if symbol in PRICE_HISTORY_SKIP:
+        return {}
+
+    cc_sym = CC_SYMBOL_OVERRIDES.get(symbol, symbol)
+    year_prices = {}
+    current_year = datetime.now().year
+
+    # Two calls: recent data first, then older data
+    now_ts = int(datetime.now().timestamp())
+    to_ts_list = [None, now_ts - (2000 * 86400)]   # second call: 2000 days back
+
+    for to_ts in to_ts_list:
+        try:
+            params = {"fsym": cc_sym, "tsym": "USD", "limit": 2000}
+            if to_ts:
+                params["toTs"] = to_ts
+
+            resp = requests.get(
+                "https://min-api.cryptocompare.com/data/v2/histoday",
+                params=params,
+                timeout=12,
+            )
+            if resp.status_code != 200:
+                break
+
+            payload = resp.json()
+            if payload.get("Response") == "Error":
+                break
+
+            for entry in payload.get("Data", {}).get("Data", []):
+                ts    = entry.get("time")
+                close = entry.get("close")
+                if ts and close and close > 0:
+                    yr = str(datetime.fromtimestamp(ts).year)
+                    if int(yr) < current_year:   # exclude current year
+                        year_prices[yr] = _round_price(close)
+
+        except Exception:
+            break
+
+    return year_prices
+
+
+# Keep alias so any other references to the old function name still work
 def fetch_price_history_binance(symbol):
-    """
-    Fetch up to 10 years of annual closing prices from Binance public klines.
-
-    No API key, no sleep, no rate-limit issues.
-    Returns dict { "2016": 8.17, "2024": 2081.65 } or {} if not listed.
-    """
-    if symbol in BINANCE_NOT_LISTED:
-        return {}
-
-    pair = BINANCE_SYMBOL_OVERRIDES.get(symbol, f"{symbol}USDT")
-
-    try:
-        resp = requests.get(
-            "https://api.binance.com/api/v3/klines",
-            params={"symbol": pair, "interval": "1M", "limit": 120},
-            timeout=10,
-        )
-        if resp.status_code != 200:
-            return {}
-
-        klines = resp.json()
-        if not klines:
-            return {}
-
-        # kline format: [open_time_ms, open, high, low, close, volume, ...]
-        # Iterate forward so the last month of each year wins naturally
-        year_prices = {}
-        for k in klines:
-            ts_ms = int(k[0])
-            close = float(k[4])
-            yr    = str(datetime.fromtimestamp(ts_ms / 1000).year)
-            year_prices[yr] = _round_price(close)
-
-        return year_prices
-
-    except Exception:
-        return {}
+    return fetch_price_history(symbol)
 
 BUCKET_B_SYMBOLS = {
     # Proof-of-Work / Store of Value assets — valued on scarcity,
@@ -132,7 +159,8 @@ DEFILLAMA_SLUGS = {
     "ZKSYNC":"zksync-era",
     # DeFi protocols
     "UNI":   "uniswap",
-    "AAVE":  "aave",
+    "AAVE":  "aave-v3",      # DeFiLlama /overview/fees uses "aave-v3" slug
+    # "aave" slug exists but maps to older version with lower fees
     "COMP":  "compound",
     "MKR":   "makerdao",
     "SNX":   "synthetix",
@@ -952,6 +980,82 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
 
         # AXL: Cross-chain fees, growing bridge volume, staking rewards emerging.
         "AXL":    {"fee_growth": 6,  "capital_efficiency": 6, "holder_value_accrual": 5},
+
+        # ══════════════════════════════════════════════════════════════════════
+        # ESTABLISHED L1 BLOCKCHAINS — genuine fee activity, lower than ETH/SOL
+        # These tokens have established validator ecosystems and staking yield.
+        # Their raw fee/TVL metrics look poor vs pure DeFi protocols but they
+        # provide real value through security, throughput, and staking rewards.
+        # Hints prevent rank-10/20 L1s from being miscategorised as Dangerous.
+        # ══════════════════════════════════════════════════════════════════════
+
+        # ADA: Proof-of-stake L1, Ouroboros consensus. Very low transaction fees
+        # by design (Cardano prioritises micro-payments). ~3.5% staking yield.
+        # Fees are real but tiny: $733K annual vs $9.6B market cap = 13,083x PS.
+        # Hints reflect network quality, not fee extraction.
+        "ADA":    {"fee_growth": 4,  "capital_efficiency": 3, "holder_value_accrual": 5},
+
+        # AVAX: Subnet architecture, $63M fees in 2023 peak, $17M in 2024.
+        # Current annualized (~$2M) is a low-activity snapshot. Fee burn active.
+        # Subnets generate fee revenue not always captured by DeFiLlama.
+        "AVAX":   {"fee_growth": 6,  "capital_efficiency": 5, "holder_value_accrual": 6},
+
+        # DOT: Relay chain + parachain ecosystem. Staking yield ~15%.
+        # Treasury collects fees; nominators earn meaningful staking income.
+        "DOT":    {"fee_growth": 4,  "capital_efficiency": 4, "holder_value_accrual": 5},
+
+        # NEAR: 70% of fees burned, 30% to validators. Sharded L1, growing.
+        # FastAuth and account abstraction drive real user onboarding.
+        "NEAR":   {"fee_growth": 5,  "capital_efficiency": 5, "holder_value_accrual": 5},
+
+        # ATOM: Cosmos Hub staking ~15% yield. IBC ecosystem drives value.
+        # ATOM itself generates modest fees but secures the broader IBC network.
+        "ATOM":   {"fee_growth": 4,  "capital_efficiency": 4, "holder_value_accrual": 5},
+
+        # INJ: DeFi hub with real perps/DEX volume. 60% of fees burned each week.
+        # Strong value accrual model; insurance fund backed by protocol revenue.
+        "INJ":    {"fee_growth": 7,  "capital_efficiency": 6, "holder_value_accrual": 7},
+
+        # SUI: Growing L1, increasing DeFi TVL and fee activity.
+        # Stake subsidy declining; transitioning toward sustainable fee revenue.
+        "SUI":    {"fee_growth": 6,  "capital_efficiency": 5, "holder_value_accrual": 5},
+
+        # APT: Low fees by design (gas model). Ecosystem expanding.
+        # Below-median fee capture vs market cap; network is young but real.
+        "APT":    {"fee_growth": 5,  "capital_efficiency": 4, "holder_value_accrual": 4},
+
+        # HBAR: Enterprise-grade hashgraph. Council governance (Google, IBM, etc.)
+        # Growing fee activity as enterprise integrations scale.
+        "HBAR":   {"fee_growth": 5,  "capital_efficiency": 5, "holder_value_accrual": 5},
+
+        # ALGO: Ultra-low fees ($0.001 per tx) by design. Negligible fee revenue.
+        # Primary value is speed/finality for institutional/CBDC use cases.
+        "ALGO":   {"fee_growth": 3,  "capital_efficiency": 3, "holder_value_accrual": 4},
+
+        # XRP: XRPL fees are micro (<$0.01). Value proposition = payment rails.
+        # Ripple ODL drives institutional XRP demand, not on-chain fee revenue.
+        "XRP":    {"fee_growth": 5,  "capital_efficiency": 4, "holder_value_accrual": 4},
+
+        # FTM: Lower activity post-2022 bear market. Sonic (S) is successor L1.
+        # Legacy Fantom still operational; ecosystem rebuilding.
+        "FTM":    {"fee_growth": 4,  "capital_efficiency": 4, "holder_value_accrual": 4},
+
+        # SEI: Trading-focused L1. Growing DEX volume; young ecosystem.
+        "SEI":    {"fee_growth": 5,  "capital_efficiency": 5, "holder_value_accrual": 4},
+
+        # IMX: NFT/gaming L2 on Ethereum. Real NFT minting fees; ImmutableX protocol.
+        "IMX":    {"fee_growth": 6,  "capital_efficiency": 5, "holder_value_accrual": 5},
+
+        # ONE: Harmony suffered major bridge hack in 2022 ($100M). Recovering.
+        # Lower activity but PoS chain still operational.
+        "ONE":    {"fee_growth": 3,  "capital_efficiency": 3, "holder_value_accrual": 3},
+
+        # ZIL: Sharding L1, declining ecosystem. ZILLIQA 2.0 upgrade ongoing.
+        "ZIL":    {"fee_growth": 3,  "capital_efficiency": 3, "holder_value_accrual": 3},
+
+        # MORPHO: Efficient lending protocol. Revenue distributed to MORPHO via DAO.
+        # Growing TVL in modular lending niche with institutional demand.
+        "MORPHO": {"fee_growth": 7,  "capital_efficiency": 7, "holder_value_accrual": 6},
     }
 
     # Tokens that distribute value through staking/validator rewards (not direct fee split)
@@ -2103,15 +2207,15 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 "cost_of_production": prod_cost,
             }
 
-        # ── Price History — Binance klines (free, no key, 1200 req/min) ──────────
-        # Replaces CoinGecko /market_chart which now requires a paid API key and
-        # caused the pipeline to crash or produce incomplete JSON for all 500 coins.
-        # Binance is 40x more permissive on rate limits — no sleep needed per coin.
-        # Coins not listed on Binance (stablecoins, exchange tokens) return {}
-        # gracefully; the forecast chart still renders using the current price anchor.
+        # ── Price History — CryptoCompare (free, no key, US-accessible) ──────────
+        # CryptoCompare works from GitHub Actions AWS us-east-1 runners.
+        # Binance geo-blocks US IPs, causing every call to return {} from GHA.
+        # Two CryptoCompare calls cover ~11 years of history per coin.
+        # Stablecoins/exchange tokens return {} gracefully; chart renders
+        # using the current price anchor even with zero historical years.
         current_year        = datetime.now().year
-        price_history       = fetch_price_history_binance(symbol)
-        price_history_years = len([y for y in price_history if int(y) < current_year])
+        price_history       = fetch_price_history(symbol)
+        price_history_years = len(price_history)   # years before current year
 
         # Always pin current year to today's live price as the chart anchor
         price_history[str(current_year)] = _round_price(price) if price else None
