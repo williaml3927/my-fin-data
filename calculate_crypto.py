@@ -1335,7 +1335,12 @@ def score_crypto_quality(bucket, mc_ps_ratio, mc_pe_ratio, dilution,
         # This prevents transient bad DeFiLlama data from misclassifying
         # established protocols like ETH, SOL, BNB. Hints never inflate above
         # what data supports — they only act as a floor, not a ceiling.
-        if _sym in hints:
+        #
+        # BUG NOTE: hints = PROTOCOL_HINTS.get(_sym, {}) — it is already the
+        # inner dict {"fee_growth":10,...}, NOT the outer lookup. So the
+        # condition must be `if hints:` (non-empty dict), NOT `if _sym in hints:`
+        # which incorrectly checks whether the symbol is a KEY in the hints values.
+        if hints:   # hints is non-empty only for known tokens
             s1 = max(s1, hints.get("fee_growth", 0))
             s2 = max(s2, hints.get("capital_efficiency", 0))
             s3 = max(s3, hints.get("holder_value_accrual", 0))
@@ -2242,6 +2247,46 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
             },
             defillama_summary = _fee_summary,
         )
+
+        # ── Post-network_econ normalisation pass (Bucket A only) ─────────────
+        # bucket_a_data was computed before network_econ existed, so the
+        # normalised-fees block couldn't run. Now that network_econ is available,
+        # re-compute normalised fees and update ps_ratio and dcf_per_token.
+        # This prevents bear-market fee troughs from permanently anchoring IV:
+        #   ETH 2026 current: $128M → ps_ratio=2019x → IV=$32
+        #   ETH normalised (median 2022-2024): ~$2,400M → ps_ratio=108x → IV~$300
+        if bucket == "A" and bucket_a_data and network_econ:
+            try:
+                _hist_fees = network_econ.get("protocol_revenue_and_fees", {})
+                _curr_yr   = datetime.now().year
+                _hist_yrs  = sorted(
+                    [(int(yr), (e.get("fees_usd") or 0))
+                     for yr, e in _hist_fees.items()
+                     if int(yr) < _curr_yr
+                     and not e.get("is_estimated", False)
+                     and (e.get("fees_usd") or 0) > 0],
+                    reverse=True
+                )
+                if len(_hist_yrs) >= 2:
+                    _last_n    = _hist_yrs[:3]
+                    _fee_vals  = sorted([v * 1e6 for _, v in _last_n])  # $M → $
+                    _mid       = len(_fee_vals) // 2
+                    _normalised = _fee_vals[_mid]
+                    _current   = bucket_a_data.get("annual_protocol_fees_usd") or 0
+                    if _normalised > _current:
+                        # Update bucket_a_data with normalised values
+                        bucket_a_data["annual_protocol_fees_usd"] = round(_normalised, 2)
+                        bucket_a_data["annual_fees_normalised"] = True
+                        # Recompute ps_ratio with normalised fees
+                        if mc and _normalised > 0:
+                            bucket_a_data["ps_ratio"] = round(mc / _normalised, 2)
+                        # Recompute DCF per token with normalised fees
+                        _dcf_norm = method_1_dcf_fees(_normalised)
+                        if _dcf_norm and circ and circ > 0:
+                            bucket_a_data["dcf_protocol_value_usd"]  = _dcf_norm
+                            bucket_a_data["dcf_fair_value_per_token"] = round(_dcf_norm / circ, 4)
+            except Exception:
+                pass   # silently keep existing values
 
         # ── Fear & Greed — computed after price history fetch ────────────────
         # (placeholder — recalculated below once market_cycle is available)
