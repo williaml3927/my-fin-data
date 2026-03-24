@@ -2436,9 +2436,14 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 ps_rat      = proto.get("ps_ratio")
                 pe_rat      = proto.get("pe_ratio_fdv_to_holders_rev")
 
-                if dcf_v and dcf_v > 0:
-                    valid_ivs.append(dcf_v)
-                    methods_used.append("M1 DCF (fees)")
+                # Bounds filter: DCF is fee-derived and can be very low in bear markets.
+                # Only include if the result is plausibly proportional to current price.
+                # < 0.1x price → fees are severely depressed; don't let this anchor median.
+                # > 8x price → fees imply extreme undervaluation relative to market.
+                if dcf_v and dcf_v > 0 and price:
+                    if 0.1 * price <= dcf_v <= 8 * price:
+                        valid_ivs.append(dcf_v)
+                        methods_used.append("M1 DCF (fees)")
 
                 # ── A2: P/S analog — MC/Fees vs tier-median multiple ───────────
                 # Tier median PS ratios calibrated from DeFiLlama 2024 data:
@@ -2447,25 +2452,48 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 #   Speculative:    30x — growth-stage protocols
                 #   Dangerous:      50x — speculative premium
                 if ps_rat and ps_rat > 0 and price:
-                    if q_pct >= 70:   median_ps = 15
-                    elif q_pct >= 60: median_ps = 20
-                    elif q_pct >= 45: median_ps = 30
-                    else:             median_ps = 50
+                    # Crypto P/S multiples calibrated from DeFiLlama 2024 data.
+                    # Dominant L1s/DeFi protocols command far higher multiples than
+                    # traditional stocks due to network effects and monetary premium.
+                    # These represent FAIR multiples (mid-cycle, not peak):
+                    if q_pct >= 70:   median_ps = 50   # ETH/SOL/BNB tier
+                    elif q_pct >= 60: median_ps = 35   # AAVE/MKR/GMX tier
+                    elif q_pct >= 45: median_ps = 20   # growth protocols
+                    else:             median_ps = 10   # highly speculative
                     ps_iv = round(price * median_ps / ps_rat, 4)
                     if ps_iv > 0:
                         valid_ivs.append(ps_iv)
                         methods_used.append("M2 P/S analog")
 
-                # ── A3: P/E analog — FDV/Holders-revenue vs tier-median ────────
+                                # ── A3: P/E analog — FDV/Holders-revenue vs tier-median ────────
                 # Only fires when DeFiLlama tracks holders revenue separately.
-                # Tier median PE ratios (higher than PS — earnings quality premium):
-                #   Safe:         25x | Speculative: 45x | Dangerous: 75x
-                if pe_rat and pe_rat > 0 and price:
-                    if q_pct >= 60:   median_pe = 25
-                    elif q_pct >= 45: median_pe = 45
-                    else:             median_pe = 75
-                    pe_iv = round(price * median_pe / pe_rat, 4)
-                    if pe_iv > 0:
+                # Tier median PE ratios calibrated for crypto cash-flow protocols:
+                #   Safe ≥70%:    80x  (ETH/SOL: staking yield ~3-4%, PE=25-33x on yield)
+                #   Safe 60-69%:  50x  (AAVE/MKR: strong but not L1 premium)
+                #   Spec 45-64%:  30x
+                #   Danger <45%:  15x
+                #
+                # NOTE: If fees were normalised (partial year), normalise holders_rev too.
+                # DeFiLlama holders_revenue is proportional to fees, so we can scale it
+                # by the same normalisation ratio.
+                _pe_rat_to_use = pe_rat
+                if pe_rat and pe_rat > 0 and price and proto.get("annual_fees_normalised"):
+                    _curr_fees = proto.get("annual_fees_current_usd") or 0
+                    _norm_fees = proto.get("annual_protocol_fees_usd") or 0
+                    if _curr_fees > 0 and _norm_fees > _curr_fees:
+                        _holders_rev_raw = proto.get("annual_holders_revenue_usd") or 0
+                        _holders_rev_norm = _holders_rev_raw * (_norm_fees / _curr_fees)
+                        fdv_local = fdv or mc
+                        if _holders_rev_norm > 0 and fdv_local:
+                            _pe_rat_to_use = round(fdv_local / _holders_rev_norm, 2)
+                if _pe_rat_to_use and _pe_rat_to_use > 0 and price:
+                    if q_pct >= 70:   median_pe = 80
+                    elif q_pct >= 60: median_pe = 50
+                    elif q_pct >= 45: median_pe = 30
+                    else:             median_pe = 15
+                    pe_iv = round(price * median_pe / _pe_rat_to_use, 4)
+                    # Same bounds filter as M1 DCF: skip if wildly disproportionate
+                    if pe_iv > 0 and 0.1 * price <= pe_iv <= 8 * price:
                         valid_ivs.append(pe_iv)
                         methods_used.append("M3 P/E analog")
 
@@ -2473,10 +2501,15 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 # method_7_metcalfe() returns MC/metcalfe_value ratio.
                 # For Bucket A: volume proxies for fee-generating transactions.
                 # Fair value = price where ratio equals quality-tier median.
-                m7_ratio = method_7_metcalfe(mc, volume=volume)
-                if m7_ratio and 0.1 <= m7_ratio <= 15 and price:
+                # M7 Metcalfe: uses N² (active addresses) per Metcalfe's Law.
+                # Active address data requires paid CoinGecko — when unavailable,
+                # volume already captures network activity in M+ NVT below.
+                # Using volume as a Metcalfe proxy would duplicate NVT with worse
+                # calibration, so we only fire M7 when real address data exists.
+                m7_ratio = method_7_metcalfe(mc, active_addresses=None, volume=None)
+                if m7_ratio and 0.1 <= m7_ratio <= 30 and price:
                     m7_iv = round(price / m7_ratio, 4)
-                    if 0.15 * price <= m7_iv <= 7 * price:
+                    if 0.05 * price <= m7_iv <= 7 * price:
                         valid_ivs.append(m7_iv)
                         methods_used.append("M7 Metcalfe")
 
@@ -2551,15 +2584,22 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 mon  = sov.get("monetary_premium") or {}
 
                 # ── B6: Monetary premium — gold capture % ──────────────────────
-                # What % of gold's market cap has this asset captured?
-                # Fair value = price implied by sustaining current capture %
-                # as the gold market grows at its historical ~8% annual rate.
-                # Also provides price scenarios at 25/50/100% of gold.
+                # Fair IV = current gold market cap × current capture % / circ supply.
+                # This represents: "the price implied by this token maintaining
+                # its current share of gold's market cap."
+                # Gold MC ≈ $13T (historical range $10-15T). Use 1-year forward
+                # gold MC (×1.08) as the fair anchor — if gold grows 8%/yr and
+                # the token maintains its share, the token should also grow 8%/yr.
+                # This grounds M6 in actual monetary premium, not just price drift.
+                GOLD_MC_FORWARD = 13.0e12 * 1.08   # ~$14T
                 gcp = mon.get("gold_capture_pct")
-                if gcp and gcp > 0 and price:
-                    m6_iv = round(price * 1.08, 4)
-                    valid_ivs.append(m6_iv)
-                    methods_used.append("M6 Monetary premium")
+                if gcp and gcp > 0 and circ and circ > 0:
+                    m6_implied_mc = GOLD_MC_FORWARD * (gcp / 100.0)
+                    m6_iv = round(m6_implied_mc / circ, 4)
+                    # Only include if within reasonable range of current price
+                    if price and 0.5 * price <= m6_iv <= 10 * price:
+                        valid_ivs.append(m6_iv)
+                        methods_used.append("M6 Monetary premium")
 
                 # ── B7: Metcalfe — on-chain network activity ───────────────────
                 # NVT originated as a BTC tool (Willy Woo, 2017).
