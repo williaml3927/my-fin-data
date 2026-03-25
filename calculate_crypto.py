@@ -2508,14 +2508,23 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
             # The median of all valid per-token IV outputs becomes base_iv.
             # ══════════════════════════════════════════════════════════════════
 
-            # iv_pairs: list of (label, per-token-iv) in order of computation.
-            # Keep parallel because order matters for median calculation.
-            iv_pairs     = []   # [(label, iv_value), ...]
-            valid_ivs    = []   # per-token fair value estimates (order matches iv_pairs)
-            methods_used = []   # labels shown in hero card iv_method field
+            # iv_pairs: list of (label, per-token-iv) for ALL display methods.
+            # valid_ivs: subset used for median (excludes extreme floor outliers < 0.1x price).
+            # iv_floor_labels: methods shown in chart but not used in median.
+            iv_pairs        = []   # [(label, iv_value), ...] — all methods for bar chart
+            valid_ivs       = []   # per-token fair value estimates used for median
+            methods_used    = []   # labels of methods contributing to median
+            iv_floor_labels = []   # labels of display-only floor methods
             q_pct = quality.get("final_score_pct", 50) or 50
 
-            if bucket == "A":
+            if _is_stablecoin:
+                # Stablecoin bypass: price = peg value, no meaningful IV computation
+                base_iv      = price or 0
+                valid_ivs    = [base_iv] if base_iv else []
+                methods_used = ["Peg Value"] if base_iv else []
+                iv_breakdown = {"Peg Value": round(base_iv, 4)} if base_iv else {}
+
+            elif bucket == "A":
                 # ── A1: DCF on protocol fees ───────────────────────────────────
                 # Pre-computed in bucket_a_data by method_1_dcf_fees().
                 # Only fires when DeFiLlama has fee data for this protocol.
@@ -2529,10 +2538,15 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 # < 0.1x price → fees are severely depressed; don't let this anchor median.
                 # > 8x price → fees imply extreme undervaluation relative to market.
                 if dcf_v and dcf_v > 0 and price:
-                    if 0.03 * price <= dcf_v <= 15 * price:  # wide: include "overvalued" signals
+                    # Show in breakdown chart regardless (informational floor)
+                    # Only include in MEDIAN pool if >= 0.1x price (avoids outlier drag)
+                    if 0.03 * price <= dcf_v <= 15 * price:
                         iv_pairs.append(("Protocol Fee DCF", dcf_v))
-                        valid_ivs.append(dcf_v)
-                        methods_used.append("Protocol Fee DCF")
+                        if dcf_v >= 0.1 * price:   # median pool: exclude extreme floor values
+                            valid_ivs.append(dcf_v)
+                            methods_used.append("Protocol Fee DCF")
+                        else:
+                            iv_floor_labels.append("Protocol Fee DCF")
 
                 # ── A2: P/S analog — MC/Fees vs tier-median multiple ───────────
                 # Tier median PS ratios calibrated from DeFiLlama 2024 data:
@@ -2552,20 +2566,23 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     _is_monetary_l1 = symbol in {"ETH", "SOL", "BNB", "TRX", "TON"}
                     _is_l1_chain    = symbol in CHAIN_FEE_MAP
                     _is_l2_gov      = symbol in {"ARB", "OP", "IMX", "MATIC", "MNT"}
+                    # Fee/MC multiples calibrated to 2024-2025 mid-cycle observed ranges.
+                    # Prior multiples (60x, 12x) were bull-peak figures that overstated upside.
+                    # New figures represent realistic fair-value ranges per sector:
                     if _is_monetary_l1:
-                        median_ps = 60 if q_pct >= 70 else 30
+                        median_ps = 50 if q_pct >= 70 else 25   # ETH mid-cycle: 80-120x observed
                     elif _is_l1_chain:
-                        median_ps = 25 if q_pct >= 60 else 15
+                        median_ps = 20 if q_pct >= 60 else 12
                     elif _is_l2_gov:
-                        median_ps = 8 if q_pct >= 55 else 5
+                        median_ps = 6 if q_pct >= 55 else 4
                     elif q_pct >= 70:
-                        median_ps = 12   # DeFi blue chips (AAVE, GMX, MKR)
+                        median_ps = 8    # DeFi blue chips at mid-cycle P/F (was 12)
                     elif q_pct >= 60:
-                        median_ps = 10   # strong DeFi protocols
+                        median_ps = 6    # strong DeFi protocols
                     elif q_pct >= 45:
-                        median_ps = 7    # growth protocols
+                        median_ps = 4    # growth protocols
                     else:
-                        median_ps = 4    # highly speculative
+                        median_ps = 2.5  # highly speculative
                     ps_iv = round(price * median_ps / ps_rat, 4)
                     if ps_iv > 0:
                         iv_pairs.append(("Fee/MC Multiple", ps_iv))
@@ -2594,21 +2611,23 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                         if _holders_rev_norm > 0 and fdv_local:
                             _pe_rat_to_use = round(fdv_local / _holders_rev_norm, 2)
                 if _pe_rat_to_use and _pe_rat_to_use > 0 and price:
-                    # Holder Revenue multiples calibrated for crypto cash-flow protocols.
-                    # DeFi protocols with real holder revenue should trade 20-30x
-                    # earnings at fair value — similar to mature utility/SaaS companies.
-                    # High multiples (80x) implied extreme growth that most protocols
-                    # don't sustain; 25x is more realistic for mid-cycle fair value.
-                    if q_pct >= 70:   median_pe = 25   # blue chip: AAVE/GMX/MKR tier
-                    elif q_pct >= 60: median_pe = 20   # strong DeFi with accrual
-                    elif q_pct >= 45: median_pe = 15   # growth-stage protocols
-                    else:             median_pe = 10   # speculative/limited accrual
+                    # Holder Revenue multiples calibrated to mid-cycle observed DeFi P/E ratios.
+                    # 25x implied SaaS-level growth premiums not typical for DeFi protocols.
+                    # Historical mid-cycle DeFi P/E: 5-15x. Using 15x for Safe tier.
+                    if q_pct >= 70:   median_pe = 15   # blue chip DeFi (was 25)
+                    elif q_pct >= 60: median_pe = 12   # strong DeFi (was 20)
+                    elif q_pct >= 45: median_pe = 8    # growth-stage (was 15)
+                    else:             median_pe = 5    # speculative (was 10)
                     pe_iv = round(price * median_pe / _pe_rat_to_use, 4)
                     # Same bounds filter as M1 DCF: skip if wildly disproportionate
-                    if pe_iv > 0 and 0.03 * price <= pe_iv <= 15 * price:  # wide: include "overvalued" signals
+                    # Show in breakdown chart (informational); only in median pool if >= 0.1x price
+                    if pe_iv > 0 and 0.03 * price <= pe_iv <= 15 * price:
                         iv_pairs.append(("Holder Revenue", pe_iv))
-                        valid_ivs.append(pe_iv)
-                        methods_used.append("Holder Revenue")
+                        if pe_iv >= 0.1 * price:   # median pool: exclude extreme floor values
+                            valid_ivs.append(pe_iv)
+                            methods_used.append("Holder Revenue")
+                        else:
+                            iv_floor_labels.append("Holder Revenue")
 
                 # ── A7: Metcalfe — network activity vs market cap ──────────────
                 # method_7_metcalfe() returns MC/metcalfe_value ratio.
@@ -2655,7 +2674,7 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     try:
                         # 2025/2026 calibrated MC tiers — top ranks updated for BTC/ETH
                         if rank == 1:      exp_mc = 1_400e9
-                        elif rank == 2:    exp_mc = 300e9
+                        elif rank == 2:    exp_mc = 260e9
                         elif rank <= 5:    exp_mc = 150e9
                         elif rank <= 10:   exp_mc = 80e9
                         elif rank <= 20:   exp_mc = 30e9
@@ -2699,7 +2718,7 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     except Exception:
                         pass
 
-            elif bucket == "B":
+            elif not _is_stablecoin and bucket == "B":
                 sov  = bucket_b_data or {}
                 prod = sov.get("cost_of_production") or {}
                 mon  = sov.get("monetary_premium") or {}
@@ -2786,18 +2805,23 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 # ── B+: Peer value (same universal logic as Bucket A) ──────────
                 if rank and rank > 0 and circ and circ > 0 and price:
                     try:
+                        # Rank Benchmark exp_mc calibrated to 2025 bear/neutral market actual MCs.
+                        # Prior table used bull-peak figures (rank 15 = $30B vs actual $6-8B).
+                        # New table anchors to observable 2025 MC ranges per rank tier.
                         if rank == 1:      exp_mc = 1_400e9
-                        elif rank == 2:    exp_mc = 300e9
-                        elif rank <= 5:    exp_mc = 150e9
-                        elif rank <= 10:   exp_mc = 80e9
-                        elif rank <= 20:   exp_mc = 30e9
-                        elif rank <= 30:   exp_mc = 15e9
-                        elif rank <= 50:   exp_mc = 6e9
-                        elif rank <= 75:   exp_mc = 2.5e9
-                        elif rank <= 100:  exp_mc = 1.2e9
-                        elif rank <= 200:  exp_mc = 250e6
-                        elif rank <= 500:  exp_mc = 50e6
-                        else:              exp_mc = 20e6
+                        elif rank == 2:    exp_mc = 260e9
+                        elif rank <= 4:    exp_mc = 120e9
+                        elif rank <= 6:    exp_mc = 60e9
+                        elif rank <= 10:   exp_mc = 20e9
+                        elif rank <= 15:   exp_mc = 8e9
+                        elif rank <= 20:   exp_mc = 5e9
+                        elif rank <= 30:   exp_mc = 2.5e9
+                        elif rank <= 50:   exp_mc = 1e9
+                        elif rank <= 75:   exp_mc = 500e6
+                        elif rank <= 100:  exp_mc = 250e6
+                        elif rank <= 200:  exp_mc = 100e6
+                        elif rank <= 500:  exp_mc = 30e6
+                        else:              exp_mc = 10e6
                         q_adj = 1.20 if q_pct >= 70 else 1.05 if q_pct >= 60 else 0.90 if q_pct >= 45 else 0.70
                         peer_iv = round((exp_mc * q_adj) / circ, 4)
                         if 0.2 * price <= peer_iv <= 5 * price:
@@ -2809,19 +2833,30 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
 
             # ── Aggregate: median of all valid per-token IV estimates ─────────
             if valid_ivs:
-                valid_ivs_sorted = sorted(valid_ivs)
+                # Soft cap: no single method can contribute more than 2.0x current price
+                # to the median pool. Methods above this are still shown in iv_breakdown
+                # (display only) but capped here to prevent extreme upside distortion.
+                # This prevents genuinely cheap assets from showing >200% upside.
+                _cap_price  = (price or 0) * 2.0
+                valid_ivs_capped = [min(v, _cap_price) for v in valid_ivs]
+                valid_ivs_sorted = sorted(valid_ivs_capped)
                 mid     = len(valid_ivs_sorted) // 2
                 base_iv = valid_ivs_sorted[mid]
             else:
                 base_iv = price or 0
 
-            # Build per-method breakdown dict for frontend bar chart
-            # iv_pairs preserves insertion order; values are already filtered
+            # Build per-method breakdown dict for frontend bar chart.
+            # Floor methods (shown but not in median) are tagged with a prefix
+            # so the frontend can render them as dashed/secondary bars.
+            iv_floor_set = set(iv_floor_labels)
             iv_breakdown = {}
             for _lbl, _iv in iv_pairs:
-                # Strip outer quotes if label is a string literal
                 key = _lbl.strip('"').strip("'") if isinstance(_lbl, str) else str(_lbl)
-                iv_breakdown[key] = _iv
+                # Mark floor-only methods so frontend can style them differently
+                if key in iv_floor_set:
+                    iv_breakdown[f"[floor] {key}"] = _iv
+                else:
+                    iv_breakdown[key] = _iv
 
             if not base_iv or base_iv <= 0:
                 base_iv = price or 0
