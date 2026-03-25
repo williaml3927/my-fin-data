@@ -2529,10 +2529,10 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 # < 0.1x price → fees are severely depressed; don't let this anchor median.
                 # > 8x price → fees imply extreme undervaluation relative to market.
                 if dcf_v and dcf_v > 0 and price:
-                    if 0.1 * price <= dcf_v <= 8 * price:
-                        iv_pairs.append(("M1 DCF (fees)", dcf_v))
+                    if 0.03 * price <= dcf_v <= 15 * price:  # wide: include "overvalued" signals
+                        iv_pairs.append(("Protocol Fee DCF", dcf_v))
                         valid_ivs.append(dcf_v)
-                        methods_used.append("M1 DCF (fees)")
+                        methods_used.append("Protocol Fee DCF")
 
                 # ── A2: P/S analog — MC/Fees vs tier-median multiple ───────────
                 # Tier median PS ratios calibrated from DeFiLlama 2024 data:
@@ -2568,9 +2568,9 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                         median_ps = 4    # highly speculative
                     ps_iv = round(price * median_ps / ps_rat, 4)
                     if ps_iv > 0:
-                        iv_pairs.append(("M2 Fee/MC Multiple", ps_iv))
+                        iv_pairs.append(("Fee/MC Multiple", ps_iv))
                         valid_ivs.append(ps_iv)
-                        methods_used.append("M2 Fee/MC Multiple")
+                        methods_used.append("Fee/MC Multiple")
 
                                 # ── A3: P/E analog — FDV/Holders-revenue vs tier-median ────────
                 # Only fires when DeFiLlama tracks holders revenue separately.
@@ -2605,10 +2605,10 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     else:             median_pe = 10   # speculative/limited accrual
                     pe_iv = round(price * median_pe / _pe_rat_to_use, 4)
                     # Same bounds filter as M1 DCF: skip if wildly disproportionate
-                    if pe_iv > 0 and 0.1 * price <= pe_iv <= 8 * price:
-                        iv_pairs.append(("M3 Holder Revenue", pe_iv))
+                    if pe_iv > 0 and 0.03 * price <= pe_iv <= 15 * price:  # wide: include "overvalued" signals
+                        iv_pairs.append(("Holder Revenue", pe_iv))
                         valid_ivs.append(pe_iv)
-                        methods_used.append("M3 Holder Revenue")
+                        methods_used.append("Holder Revenue")
 
                 # ── A7: Metcalfe — network activity vs market cap ──────────────
                 # method_7_metcalfe() returns MC/metcalfe_value ratio.
@@ -2616,16 +2616,16 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 # Fair value = price where ratio equals quality-tier median.
                 # M7 Metcalfe: uses N² (active addresses) per Metcalfe's Law.
                 # Active address data requires paid CoinGecko — when unavailable,
-                # volume already captures network activity in M+ NVT below.
+                # volume already captures network activity in Network Activity (NVT) below.
                 # Using volume as a Metcalfe proxy would duplicate NVT with worse
                 # calibration, so we only fire M7 when real address data exists.
                 m7_ratio = method_7_metcalfe(mc, active_addresses=None, volume=None)
                 if m7_ratio and 0.1 <= m7_ratio <= 30 and price:
                     m7_iv = round(price / m7_ratio, 4)
                     if 0.05 * price <= m7_iv <= 7 * price:
-                        iv_pairs.append(("M7 Metcalfe", m7_iv))
+                        iv_pairs.append(("Metcalfe Network Value", m7_iv))
                         valid_ivs.append(m7_iv)
-                        methods_used.append("M7 Metcalfe")
+                        methods_used.append("Metcalfe Network Value")
 
                 # ── A+: NVT Fair Value ─────────────────────────────────────────
                 # NVT = MC / daily_volume. Crypto's P/E ratio.
@@ -2645,9 +2645,9 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     else:             fair_nvt = 5   # high-risk
                     nvt_iv = round((volume * fair_nvt) / circ, 4)
                     if price and 0.1 * price <= nvt_iv <= 10 * price:
-                        iv_pairs.append(("M+ Network Activity", nvt_iv))
+                        iv_pairs.append(("Network Activity (NVT)", nvt_iv))
                         valid_ivs.append(nvt_iv)
-                        methods_used.append("M+ Network Activity")
+                        methods_used.append("Network Activity (NVT)")
 
                 # ── A+: Peer value ─────────────────────────────────────────────
                 # Expected MC for rank tier × quality premium/discount.
@@ -2671,9 +2671,9 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                         q_adj = 1.20 if q_pct >= 70 else 1.05 if q_pct >= 60 else 0.90 if q_pct >= 45 else 0.70
                         peer_iv = round((exp_mc * q_adj) / circ, 4)
                         if 0.2 * price <= peer_iv <= 5 * price:
-                            iv_pairs.append(("M+ Rank Benchmark", peer_iv))
+                            iv_pairs.append(("Rank Benchmark", peer_iv))
                             valid_ivs.append(peer_iv)
-                            methods_used.append("M+ Rank Benchmark")
+                            methods_used.append("Rank Benchmark")
                     except Exception:
                         pass
 
@@ -2693,9 +2693,9 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                         if fdv_mc_actual > fair_fdv_mc + 0.10:
                             dilution_iv = round(price * (fair_fdv_mc / fdv_mc_actual), 4)
                             if 0 < dilution_iv < price:
-                                iv_pairs.append(("M+ Dilution-adj", dilution_iv))
+                                iv_pairs.append(("Dilution Adjustment", dilution_iv))
                                 valid_ivs.append(dilution_iv)
-                                methods_used.append("M+ Dilution-adj")
+                                methods_used.append("Dilution Adjustment")
                     except Exception:
                         pass
 
@@ -2719,9 +2719,9 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     m6_iv = round(m6_implied_mc / circ, 4)
                     # Only include if within reasonable range of current price
                     if price and 0.5 * price <= m6_iv <= 10 * price:
-                        iv_pairs.append(("M6 Monetary premium", m6_iv))
+                        iv_pairs.append(("Monetary Premium", m6_iv))
                         valid_ivs.append(m6_iv)
-                        methods_used.append("M6 Monetary premium")
+                        methods_used.append("Monetary Premium")
 
                 # ── B7: Metcalfe — on-chain network activity ───────────────────
                 # NVT originated as a BTC tool (Willy Woo, 2017).
@@ -2731,9 +2731,9 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 if m7_ratio and 0.05 <= m7_ratio <= 20 and price:
                     m7_iv = round(price / m7_ratio, 4)
                     if 0.1 * price <= m7_iv <= 10 * price:
-                        iv_pairs.append(("M7 Metcalfe", m7_iv))
+                        iv_pairs.append(("Metcalfe Network Value", m7_iv))
                         valid_ivs.append(m7_iv)
-                        methods_used.append("M7 Metcalfe")
+                        methods_used.append("Metcalfe Network Value")
 
                 # ── B8: Cost of production — PoW mining floor ──────────────────
                 # Estimated all-in mining cost provides a fundamental floor.
@@ -2742,9 +2742,9 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 cost = prod.get("estimated_production_cost_usd")
                 if cost and cost > 0:
                     m8_iv = round(cost * 2.0, 4)
-                    iv_pairs.append(("M8 Production cost", m8_iv))
+                    iv_pairs.append(("Production Cost Floor", m8_iv))
                     valid_ivs.append(m8_iv)
-                    methods_used.append("M8 Production cost")
+                    methods_used.append("Production Cost Floor")
 
                 # ── B10: Dilution analysis — supply schedule ───────────────────
                 # SoV assets MUST be near-fully circulating to credibly claim
@@ -2757,9 +2757,9 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     # if the full supply were circulating
                     m10_iv = round(price * (1.02 / fdv_mc_b), 4)
                     if m10_iv > 0:
-                        iv_pairs.append(("M10 Supply-adj", m10_iv))
+                        iv_pairs.append(("Supply Adjusted Value", m10_iv))
                         valid_ivs.append(m10_iv)
-                        methods_used.append("M10 Supply-adj")
+                        methods_used.append("Supply Adjusted Value")
 
                 # ── B+: NVT Fair Value ─────────────────────────────────────────
                 # For SoV assets, NVT measures monetary velocity.
@@ -2779,9 +2779,9 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     else:             fair_nvt_b = 6   # weak SoV thesis
                     nvt_iv_b = round((volume * fair_nvt_b) / circ, 4)
                     if price and 0.1 * price <= nvt_iv_b <= 10 * price:
-                        iv_pairs.append(("M+ Network Activity", nvt_iv_b))
+                        iv_pairs.append(("Network Activity (NVT)", nvt_iv_b))
                         valid_ivs.append(nvt_iv_b)
-                        methods_used.append("M+ Network Activity")
+                        methods_used.append("Network Activity (NVT)")
 
                 # ── B+: Peer value (same universal logic as Bucket A) ──────────
                 if rank and rank > 0 and circ and circ > 0 and price:
@@ -2801,9 +2801,9 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                         q_adj = 1.20 if q_pct >= 70 else 1.05 if q_pct >= 60 else 0.90 if q_pct >= 45 else 0.70
                         peer_iv = round((exp_mc * q_adj) / circ, 4)
                         if 0.2 * price <= peer_iv <= 5 * price:
-                            iv_pairs.append(("M+ Rank Benchmark", peer_iv))
+                            iv_pairs.append(("Rank Benchmark", peer_iv))
                             valid_ivs.append(peer_iv)
-                            methods_used.append("M+ Rank Benchmark")
+                            methods_used.append("Rank Benchmark")
                     except Exception:
                         pass
 
@@ -3037,22 +3037,22 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     "iv_selection_rationale":   (
                         # Bucket A: Cash-Flow Protocols — valued like businesses
                         "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. "
-                        "M1 DCF discounts future fee revenue to present value. "
-                        "M2 P/S compares market cap to annual fees vs sector benchmarks. "
-                        "M3 P/E uses fee revenue accruing directly to token holders. "
-                        "M+ NVT treats trading volume as a proxy for network activity. "
-                        "M+ Peer Value anchors to expected market cap for this rank tier. "
-                        "M+ Dilution-adj penalises large token unlocks (high FDV/MC). "
-                        "Methods that produce values outside 0.1x–8x of current price are excluded as outliers. "
+                        "Protocol Fee DCF discounts future fee revenue to present value. "
+                        "Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. "
+                        "Holder Revenue uses fee revenue accruing directly to token holders. "
+                        "Network Activity (NVT) treats trading volume as a proxy for network activity. "
+                        "Rank Benchmark anchors to expected market cap for this rank tier. "
+                        "Dilution Adjustment penalises large token unlocks (high FDV/MC). "
+                        "Methods producing values outside 0.03x–15x of current price are excluded as outliers. "
                         "The median of all valid per-token estimates becomes the Speculative Fair Value."
                         if bucket == "A" else
                         # Bucket B: Store of Value — valued on scarcity and monetary adoption
                         "Bucket B (Store of Value): Valued on scarcity and monetary premium. "
-                        "M6 Monetary Premium measures share of gold market cap captured. "
-                        "M8 Production Cost provides a PoW mining-cost floor (×2 premium). "
-                        "M10 Supply-adj penalises tokens with significant unlocked supply. "
-                        "M+ NVT (SoV) treats volume as monetary circulation velocity. "
-                        "M+ Peer Value anchors to expected market cap for this rank tier. "
+                        "Monetary Premium measures share of gold market cap captured. "
+                        "Production Cost Floor provides a PoW mining-cost floor (×2 premium). "
+                        "Supply Adjusted Value penalises tokens with significant unlocked supply. "
+                        "Network Activity (NVT) treats volume as monetary circulation velocity. "
+                        "Rank Benchmark anchors to expected market cap for this rank tier. "
                         "The median of all valid per-token estimates becomes the Speculative Fair Value."
                     ),
                     # Price history availability — AI Studio uses this to show
