@@ -2517,6 +2517,19 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
             iv_floor_labels = []   # labels of display-only floor methods
             q_pct = quality.get("final_score_pct", 50) or 50
 
+            # Detect stablecoins — pegged assets should not have IV computed via
+            # Rank/NVT methods (produces nonsense like EURS IV=$0.28 vs $1.23 peg).
+            _STABLECOIN_SYMS = {
+                "USDT","USDC","TUSD","BUSD","GUSD","USDP","SUSD","LUSD","USDS","CUSD",
+                "USDD","FRAX","DAI","EURC","EURS","EURI","EURCV","EUTBL","EUROC",
+                "USDR","USDX","CEUR","XCHF","XSGD","PYUSD","FDUSD","USDE",
+                "AUSD","AUSD","AUSDT","AVUSD","APXUSD","AEUR",
+            }
+            _is_stablecoin = (
+                symbol.upper() in _STABLECOIN_SYMS
+                or any(k in symbol.upper() for k in ("USDT","USDC","USDS","NUSD","STBL"))
+            ) and bool(price and 0.85 <= price <= 1.55)
+
             if _is_stablecoin:
                 # Stablecoin bypass: price = peg value, no meaningful IV computation
                 base_iv      = price or 0
@@ -2687,9 +2700,11 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                         elif rank <= 300:  exp_mc = 120e6
                         elif rank <= 500:  exp_mc = 50e6
                         else:              exp_mc = 20e6
-                        q_adj = 1.20 if q_pct >= 70 else 1.05 if q_pct >= 60 else 0.90 if q_pct >= 45 else 0.70
+                        q_adj = 1.10 if q_pct >= 70 else 1.00 if q_pct >= 60 else 0.90 if q_pct >= 45 else 0.80
                         peer_iv = round((exp_mc * q_adj) / circ, 4)
-                        if 0.2 * price <= peer_iv <= 5 * price:
+                        # Wide bounds: Rank Benchmark is an anchoring reference, not a price target
+                        # It signals both undervaluation (peer_iv > price) and overvaluation (peer_iv < price)
+                        if 0.05 * price <= peer_iv <= 10 * price:
                             iv_pairs.append(("Rank Benchmark", peer_iv))
                             valid_ivs.append(peer_iv)
                             methods_used.append("Rank Benchmark")
@@ -2822,9 +2837,11 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                         elif rank <= 200:  exp_mc = 100e6
                         elif rank <= 500:  exp_mc = 30e6
                         else:              exp_mc = 10e6
-                        q_adj = 1.20 if q_pct >= 70 else 1.05 if q_pct >= 60 else 0.90 if q_pct >= 45 else 0.70
+                        q_adj = 1.10 if q_pct >= 70 else 1.00 if q_pct >= 60 else 0.90 if q_pct >= 45 else 0.80
                         peer_iv = round((exp_mc * q_adj) / circ, 4)
-                        if 0.2 * price <= peer_iv <= 5 * price:
+                        # Wide bounds: Rank Benchmark is an anchoring reference, not a price target
+                        # It signals both undervaluation (peer_iv > price) and overvaluation (peer_iv < price)
+                        if 0.05 * price <= peer_iv <= 10 * price:
                             iv_pairs.append(("Rank Benchmark", peer_iv))
                             valid_ivs.append(peer_iv)
                             methods_used.append("Rank Benchmark")
