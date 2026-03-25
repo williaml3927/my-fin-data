@@ -133,14 +133,16 @@
       "above_3y_sma": null,
       "ath_price": null,
       "sma_3y": null,
-      "data_years": 0
+      "data_years": 1
     },
     "chart_zones": {
-      "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
+      "current_zone": "ACCUMULATION_ZONE",
+      "current_zone_label": "Accumulation Zone",
       "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "mos_note": "Cycle phase (Insufficient Data) not favourable for entry \u2014 wait for accumulation or early uptrend.",
+      "zones_by_year": {
+        "2026": "ACCUMULATION_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
@@ -160,14 +162,87 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 22:54"
+        "last_fetched": "2026-03-25 23:26"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2026": {
+        "market_price": 1.024,
+        "intrinsic_value": 2.048,
+        "bull_case": 2.048,
+        "bear_case": 2.048,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 2.1914,
+        "bull_case": 2.3142,
+        "bear_case": 1.7203,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 2.3448,
+        "bull_case": 2.6151,
+        "bear_case": 1.4451,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 2.5089,
+        "bull_case": 2.9551,
+        "bear_case": 1.2139,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 2.6845,
+        "bull_case": 3.3392,
+        "bear_case": 1.0196,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 2.8724,
+        "bull_case": 3.7733,
+        "bear_case": 0.8565,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 2.048,
+      "bull_iv": 2.048,
+      "bear_iv": 2.048,
+      "yr5_base_target": 2.8724,
+      "yr5_bull_target": 3.7733,
+      "yr5_bear_target": 0.8565,
+      "base_annual_growth_pct": 7.0,
+      "bull_annual_growth_pct": 13.0,
+      "bear_annual_growth_pct": -16.0,
+      "bull_5y_upside_pct": 84.2,
+      "bear_5y_change_pct": -58.2,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 6.3/10 and survivability 83.3%. Base: 7.0% p.a., Bull: 13.0% p.a., Bear: -16.0% p.a.",
+      "quality_score": 6.3,
+      "quality_multiplier": 0.9,
+      "survivability_pct": 83.3,
+      "survivability_mult": 1.0,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 1,
+      "methods_used": [
+        "Rank Benchmark"
+      ],
+      "iv_breakdown": {
+        "Rank Benchmark": 4.9515
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 0,
+      "price_history_note": "Historical price data unavailable for this token. Forecast chart shows projected values only."
+    },
+    "intrinsic_value": 2.048,
+    "iv_method": "Rank Benchmark",
+    "iv_methods_count": 1,
     "bull_bear": {
       "bull_points": [
         "Top-9 by market cap \u2014 established network effect and deep liquidity across major exchanges",
@@ -180,7 +255,7 @@
         "Regulatory uncertainty across major markets presents an ongoing risk"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 22:54"
+      "generated_at": "2026-03-25 23:26"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -195,7 +270,7 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 22:54",
+    "last_updated": "2026-03-25 23:26",
     "price_history": {
       "2026": 1.024
     },
@@ -215,20 +290,20 @@
       "description": "Filecoin (FIL) \u2014 a Cash-Flow Protocol ranked #84 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/12817/large/filecoin.png?1696512609",
       "market_cap_rank": 84,
-      "market_cap_usd": 712880106.0,
-      "fully_diluted_valuation": 1827384947.36,
-      "current_price": 0.933319,
+      "market_cap_usd": 710057004.0,
+      "fully_diluted_valuation": 1820735774.59,
+      "current_price": 0.929923,
       "ath": 236.84,
       "ath_date": "2021-04-01",
       "ath_change_pct": -99.6,
       "atl": 0.812608,
       "atl_date": "2026-02-06",
-      "price_change_7d_pct": 0.697126827421263,
-      "price_change_30d_pct": 5.12414815551883,
-      "circulating_supply": 763559379.0,
+      "price_change_7d_pct": 0.7416095009814885,
+      "price_change_30d_pct": 4.452168623760568,
+      "circulating_supply": 763560103.0,
       "total_supply": 1957942512.0,
       "max_supply": null,
-      "total_volume_24h": 89382866.0,
+      "total_volume_24h": 89567574.0,
       "defillama_slug": "filecoin",
       "has_curated_description": false
     },
@@ -236,19 +311,19 @@
     "coin_id": "filecoin",
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
-    "current_price": 0.933319,
-    "market_cap": 712880106.0,
-    "fully_diluted_valuation": 1827384947.36,
+    "current_price": 0.929923,
+    "market_cap": 710057004.0,
+    "fully_diluted_valuation": 1820735774.59,
     "market_cap_rank": 84,
-    "price_change_7d_pct": 0.697126827421263,
-    "price_change_30d_pct": 5.12414815551883,
+    "price_change_7d_pct": 0.7416095009814885,
+    "price_change_30d_pct": 4.452168623760568,
     "dilution": {
       "circulating_pct": 39.0,
       "supply_overhang": 61.0,
-      "fully_diluted_valuation": 1827384947.36,
+      "fully_diluted_valuation": 1820735774.59,
       "fdv_to_mc_ratio": 2.56
     },
-    "metcalfe_ratio": 7.98,
+    "metcalfe_ratio": 7.93,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -265,7 +340,7 @@
           "label": "Capital Efficiency",
           "score": 3,
           "max": 10,
-          "value": 210.14,
+          "value": 209.31,
           "unit": "MC/fees ratio",
           "chart_source": "Protocol Metrics (MC/Fees)",
           "chart_ref": "Network Economics \u2192 Capital Efficiency",
@@ -285,7 +360,7 @@
           "label": "Network Demand",
           "score": 8,
           "max": 10,
-          "value": 12.54,
+          "value": 12.61,
           "unit": "volume/MC %",
           "chart_source": "raw calculation (CoinGecko volume)",
           "chart_ref": null,
@@ -318,35 +393,45 @@
       "tiebreaker_used": true
     },
     "fear_greed": {
-      "score": 41,
-      "label": "Neutral",
-      "market_cycle_phase": "UNKNOWN",
-      "market_cycle_anchor": 30,
+      "score": 33,
+      "label": "Fear",
+      "market_cycle_phase": "ACCUMULATION",
+      "market_cycle_anchor": 15,
       "components": {
-        "price_momentum": 14,
+        "price_momentum": 10,
         "volume_momentum": 20,
         "volatility": 8,
         "momentum_trend": 12,
         "dilution_pressure": 1,
-        "cycle_anchor": 30
+        "cycle_anchor": 15
       }
     },
     "market_cycle": {
-      "phase": "UNKNOWN",
-      "phase_label": "Insufficient Data",
-      "drawdown_from_ath_pct": null,
-      "yoy_change_pct": null,
-      "above_3y_sma": null,
-      "ath_price": null,
-      "sma_3y": null,
-      "data_years": 0
+      "phase": "ACCUMULATION",
+      "phase_label": "Accumulation (deep bear)",
+      "drawdown_from_ath_pct": 97.3,
+      "yoy_change_pct": -28.1,
+      "above_3y_sma": false,
+      "ath_price": 34.26,
+      "sma_3y": 2.389,
+      "data_years": 9
     },
     "chart_zones": {
-      "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
-      "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "current_zone": "ACCUMULATION_ZONE",
+      "current_zone_label": "Accumulation Zone",
+      "margin_of_safety": true,
+      "mos_note": "Margin of safety present \u2014 price near or below speculative fair value during accumulation (deep bear) phase.",
+      "zones_by_year": {
+        "2020": "OVEREXTENDED_ZONE",
+        "2021": "OVEREXTENDED_ZONE",
+        "2022": "OVEREXTENDED_ZONE",
+        "2023": "OVEREXTENDED_ZONE",
+        "2024": "OVEREXTENDED_ZONE",
+        "2025": "NEUTRAL_ZONE",
+        "2018": "OVEREXTENDED_ZONE",
+        "2019": "OVEREXTENDED_ZONE",
+        "2026": "ACCUMULATION_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {
@@ -370,7 +455,7 @@
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 763.81,
+          "circulating_supply_m": 763.57,
           "supply_overhang_pct": 61.0,
           "fdv_to_mc": 2.56,
           "burn_rate": null,
@@ -403,14 +488,149 @@
         "data_coverage": "full",
         "years_available": 2,
         "data_note": null,
-        "last_fetched": "2026-03-25 22:56"
+        "last_fetched": "2026-03-25 23:31"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2018": {
+        "market_price": 3.747,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2019": {
+        "market_price": 6.411,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2020": {
+        "market_price": 22.17,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2021": {
+        "market_price": 34.26,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2022": {
+        "market_price": 3.007,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2023": {
+        "market_price": 6.922,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2024": {
+        "market_price": 4.943,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2025": {
+        "market_price": 1.294,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2026": {
+        "market_price": 0.9299,
+        "intrinsic_value": 1.4076,
+        "bull_case": 1.4076,
+        "bear_case": 1.4076,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 1.5061,
+        "bull_case": 1.5906,
+        "bear_case": 1.1103,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 1.6116,
+        "bull_case": 1.7974,
+        "bear_case": 0.8758,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 1.7244,
+        "bull_case": 2.031,
+        "bear_case": 0.6908,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 1.8451,
+        "bull_case": 2.2951,
+        "bear_case": 0.5449,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 1.9742,
+        "bull_case": 2.5934,
+        "bear_case": 0.4298,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 1.4076,
+      "bull_iv": 1.4076,
+      "bear_iv": 1.4076,
+      "yr5_base_target": 1.9742,
+      "yr5_bull_target": 2.5934,
+      "yr5_bear_target": 0.4298,
+      "base_annual_growth_pct": 7.0,
+      "bull_annual_growth_pct": 13.0,
+      "bear_annual_growth_pct": -21.1,
+      "bull_5y_upside_pct": 84.2,
+      "bear_5y_change_pct": -69.5,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 6.2/10 and survivability 53.3%. Base: 7.0% p.a., Bull: 13.0% p.a., Bear: -21.1% p.a.",
+      "quality_score": 6.2,
+      "quality_multiplier": 0.9,
+      "survivability_pct": 53.3,
+      "survivability_mult": 0.8,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 4,
+      "methods_used": [
+        "Fee/MC Multiple",
+        "Network Activity (NVT)",
+        "Rank Benchmark",
+        "Dilution Adjustment"
+      ],
+      "iv_breakdown": {
+        "Fee/MC Multiple": 0.0267,
+        "Network Activity (NVT)": 1.4076,
+        "Rank Benchmark": 1.5716,
+        "Dilution Adjustment": 0.4541
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 8,
+      "price_history_note": null
+    },
+    "intrinsic_value": 1.4076,
+    "iv_method": "Fee/MC Multiple, Network Activity (NVT), Rank Benchmark, Dilution Adjustment",
+    "iv_methods_count": 4,
     "bull_bear": {
       "bull_points": [
         "Multi-year on-chain data available \u2014 protocol has an established track record of fee generation across market cycles",
@@ -418,12 +638,12 @@
         "Long-term adoption thesis remains intact for Cash-Flow Protocol assets"
       ],
       "bear_points": [
-        "DCF model suggests Filecoin is trading at a 3531.6% premium to fair value (est. $0.03)",
-        "High MC/Fees ratio of 210.14x means investors are paying a large premium relative to actual protocol fee generation",
-        "FDV/Holders Revenue of 538.68x \u2014 very little fee revenue currently reaches token holders, limiting investment returns"
+        "DCF model suggests Filecoin is trading at a 3518.4% premium to fair value (est. $0.03)",
+        "High MC/Fees ratio of 209.31x means investors are paying a large premium relative to actual protocol fee generation",
+        "FDV/Holders Revenue of 536.72x \u2014 very little fee revenue currently reaches token holders, limiting investment returns"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 22:56"
+      "generated_at": "2026-03-25 23:31"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": 3392358.67,
@@ -434,13 +654,21 @@
       "tvl_usd": null,
       "dcf_protocol_value_usd": 19637395.84,
       "dcf_fair_value_per_token": 0.0257,
-      "ps_ratio": 210.14,
-      "pe_ratio_fdv_to_holders_rev": 538.68,
+      "ps_ratio": 209.31,
+      "pe_ratio_fdv_to_holders_rev": 536.72,
       "data_source": "defillama"
     },
-    "last_updated": "2026-03-25 22:56",
+    "last_updated": "2026-03-25 23:31",
     "price_history": {
-      "2026": 0.9333
+      "2020": 22.17,
+      "2021": 34.26,
+      "2022": 3.007,
+      "2023": 6.922,
+      "2024": 4.943,
+      "2025": 1.294,
+      "2018": 3.747,
+      "2019": 6.411,
+      "2026": 0.9299
     },
     "market_fear_greed": {
       "value": 14,
@@ -458,20 +686,20 @@
       "description": "Flare (FLR) \u2014 a Cash-Flow Protocol ranked #85 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/28624/large/FLR-icon200x200.png?1696527609",
       "market_cap_rank": 85,
-      "market_cap_usd": 686622467.0,
-      "fully_diluted_valuation": 847197070.27,
-      "current_price": 0.00804397,
+      "market_cap_usd": 685704206.0,
+      "fully_diluted_valuation": 846113319.61,
+      "current_price": 0.00803368,
       "ath": 0.150073,
       "ath_date": "2023-01-10",
       "ath_change_pct": -94.6,
       "atl": 0.00793235,
       "atl_date": "2026-03-23",
-      "price_change_7d_pct": -4.67769706815677,
-      "price_change_30d_pct": -11.633882032796148,
+      "price_change_7d_pct": -4.6909983919096945,
+      "price_change_30d_pct": -11.840064592907343,
       "circulating_supply": 85348200227.14429,
       "total_supply": 105320764532.1845,
       "max_supply": null,
-      "total_volume_24h": 2437980.0,
+      "total_volume_24h": 2430132.0,
       "defillama_slug": null,
       "has_curated_description": false
     },
@@ -479,19 +707,19 @@
     "coin_id": "flare-networks",
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
-    "current_price": 0.00804397,
-    "market_cap": 686622467.0,
-    "fully_diluted_valuation": 847197070.27,
+    "current_price": 0.00803368,
+    "market_cap": 685704206.0,
+    "fully_diluted_valuation": 846113319.61,
     "market_cap_rank": 85,
-    "price_change_7d_pct": -4.67769706815677,
-    "price_change_30d_pct": -11.633882032796148,
+    "price_change_7d_pct": -4.6909983919096945,
+    "price_change_30d_pct": -11.840064592907343,
     "dilution": {
       "circulating_pct": 81.04,
       "supply_overhang": 18.96,
-      "fully_diluted_valuation": 847197070.27,
+      "fully_diluted_valuation": 846113319.61,
       "fdv_to_mc_ratio": 1.23
     },
-    "metcalfe_ratio": 281.64,
+    "metcalfe_ratio": 282.17,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -528,7 +756,7 @@
           "label": "Network Demand",
           "score": 1,
           "max": 10,
-          "value": 0.36,
+          "value": 0.35,
           "unit": "volume/MC %",
           "chart_source": "raw calculation (CoinGecko volume)",
           "chart_ref": null,
@@ -561,42 +789,47 @@
       "tiebreaker_used": false
     },
     "fear_greed": {
-      "score": 26,
-      "label": "Fear",
-      "market_cycle_phase": "UNKNOWN",
-      "market_cycle_anchor": 30,
+      "score": 20,
+      "label": "Extreme Fear",
+      "market_cycle_phase": "ACCUMULATION",
+      "market_cycle_anchor": 15,
       "components": {
         "price_momentum": 5,
         "volume_momentum": 3,
         "volatility": 8,
         "momentum_trend": 3,
         "dilution_pressure": 6,
-        "cycle_anchor": 30
+        "cycle_anchor": 15
       }
     },
     "market_cycle": {
-      "phase": "UNKNOWN",
-      "phase_label": "Insufficient Data",
-      "drawdown_from_ath_pct": null,
-      "yoy_change_pct": null,
-      "above_3y_sma": null,
-      "ath_price": null,
-      "sma_3y": null,
-      "data_years": 0
+      "phase": "ACCUMULATION",
+      "phase_label": "Accumulation (bear market)",
+      "drawdown_from_ath_pct": 69.1,
+      "yoy_change_pct": -21.2,
+      "above_3y_sma": false,
+      "ath_price": 0.026,
+      "sma_3y": 0.0147,
+      "data_years": 4
     },
     "chart_zones": {
-      "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
-      "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "current_zone": "ACCUMULATION_ZONE",
+      "current_zone_label": "Accumulation Zone",
+      "margin_of_safety": true,
+      "mos_note": "Margin of safety present \u2014 price near or below speculative fair value during accumulation (bear market) phase.",
+      "zones_by_year": {
+        "2023": "OVEREXTENDED_ZONE",
+        "2024": "OVEREXTENDED_ZONE",
+        "2025": "NEUTRAL_ZONE",
+        "2026": "ACCUMULATION_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 85358.66,
+          "circulating_supply_m": 85353.69,
           "supply_overhang_pct": 18.96,
           "fdv_to_mc": 1.23,
           "burn_rate": null,
@@ -609,19 +842,113 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 22:56"
+        "last_fetched": "2026-03-25 23:31"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2023": {
+        "market_price": 0.0175,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2024": {
+        "market_price": 0.026,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2025": {
+        "market_price": 0.0102,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2026": {
+        "market_price": 0.00803368,
+        "intrinsic_value": 0.0112,
+        "bull_case": 0.0112,
+        "bear_case": 0.0112,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.0115,
+        "bull_case": 0.0122,
+        "bear_case": 0.00794752,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.0119,
+        "bull_case": 0.0133,
+        "bear_case": 0.00563956,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 0.0122,
+        "bull_case": 0.0145,
+        "bear_case": 0.00400183,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 0.0126,
+        "bull_case": 0.0158,
+        "bear_case": 0.0028397,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 0.013,
+        "bull_case": 0.0172,
+        "bear_case": 0.00201505,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 0.0112,
+      "bull_iv": 0.0112,
+      "bear_iv": 0.0112,
+      "yr5_base_target": 0.013,
+      "yr5_bull_target": 0.0172,
+      "yr5_bear_target": 0.00201505,
+      "base_annual_growth_pct": 3.0,
+      "bull_annual_growth_pct": 9.0,
+      "bear_annual_growth_pct": -29.0,
+      "bull_5y_upside_pct": 53.6,
+      "bear_5y_change_pct": -82.0,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 4.3/10 and survivability 50.0%. Base: 3.0% p.a., Bull: 9.0% p.a., Bear: -29.0% p.a.",
+      "quality_score": 4.3,
+      "quality_multiplier": 0.75,
+      "survivability_pct": 50.0,
+      "survivability_mult": 0.8,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 1,
+      "methods_used": [
+        "Rank Benchmark"
+      ],
+      "iv_breakdown": {
+        "Rank Benchmark": 0.0112
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 3,
+      "price_history_note": null
+    },
+    "intrinsic_value": 0.0112,
+    "iv_method": "Rank Benchmark",
+    "iv_methods_count": 1,
     "bull_bear": {
       "bull_points": [
+        "Fear & Greed score of 20 (Extreme Fear) indicates significant pessimism \u2014 often a contrarian buying opportunity",
         "Flare maintains a top-85 market cap position with established liquidity",
-        "Long-term adoption thesis remains intact for Cash-Flow Protocol assets",
-        "Broader crypto market development continues to benefit established protocols"
+        "Long-term adoption thesis remains intact for Cash-Flow Protocol assets"
       ],
       "bear_points": [
         "No historical fee data available on DeFiLlama \u2014 protocol may be too new or too small to have an established economic track record",
@@ -629,7 +956,7 @@
         "Regulatory uncertainty across major markets presents an ongoing risk"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 22:56"
+      "generated_at": "2026-03-25 23:31"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -644,12 +971,12 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 22:56",
+    "last_updated": "2026-03-25 23:31",
     "price_history": {
       "2023": 0.0175,
       "2024": 0.026,
       "2025": 0.0102,
-      "2026": 0.00804397
+      "2026": 0.00803368
     },
     "market_fear_greed": {
       "value": 14,
@@ -667,20 +994,20 @@
       "description": "Artificial Superintelligence Alliance (FET) \u2014 a Cash-Flow Protocol ranked #93 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/5681/large/ASI.png?1719827289",
       "market_cap_rank": 93,
-      "market_cap_usd": 584361499.0,
-      "fully_diluted_valuation": 703731337.57,
-      "current_price": 0.25926,
+      "market_cap_usd": 581894117.0,
+      "fully_diluted_valuation": 699320462.68,
+      "current_price": 0.257635,
       "ath": 3.45,
       "ath_date": "2024-03-28",
-      "ath_change_pct": -92.6,
+      "ath_change_pct": -92.5,
       "atl": 0.00816959,
       "atl_date": "2020-03-13",
-      "price_change_7d_pct": 16.661097618945806,
-      "price_change_30d_pct": 68.8632937443083,
+      "price_change_7d_pct": 15.981233406718843,
+      "price_change_30d_pct": 66.98701874655004,
       "circulating_supply": 2258378240.7357965,
       "total_supply": 2714384546.672,
       "max_supply": 2714384546.672,
-      "total_volume_24h": 241180172.0,
+      "total_volume_24h": 239888229.0,
       "defillama_slug": null,
       "has_curated_description": false
     },
@@ -688,19 +1015,19 @@
     "coin_id": "fetch-ai",
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
-    "current_price": 0.25926,
-    "market_cap": 584361499.0,
-    "fully_diluted_valuation": 703731337.57,
+    "current_price": 0.257635,
+    "market_cap": 581894117.0,
+    "fully_diluted_valuation": 699320462.68,
     "market_cap_rank": 93,
-    "price_change_7d_pct": 16.661097618945806,
-    "price_change_30d_pct": 68.8632937443083,
+    "price_change_7d_pct": 15.981233406718843,
+    "price_change_30d_pct": 66.98701874655004,
     "dilution": {
       "circulating_pct": 83.2,
       "supply_overhang": 16.8,
-      "fully_diluted_valuation": 703731337.57,
+      "fully_diluted_valuation": 699320462.68,
       "fdv_to_mc_ratio": 1.2
     },
-    "metcalfe_ratio": 2.42,
+    "metcalfe_ratio": 2.43,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -737,7 +1064,7 @@
           "label": "Network Demand",
           "score": 10,
           "max": 10,
-          "value": 41.27,
+          "value": 41.23,
           "unit": "volume/MC %",
           "chart_source": "raw calculation (CoinGecko volume)",
           "chart_ref": null,
@@ -770,42 +1097,50 @@
       "tiebreaker_used": true
     },
     "fear_greed": {
-      "score": 54,
+      "score": 48,
       "label": "Neutral",
-      "market_cycle_phase": "UNKNOWN",
-      "market_cycle_anchor": 30,
+      "market_cycle_phase": "ACCUMULATION",
+      "market_cycle_anchor": 15,
       "components": {
         "price_momentum": 26,
         "volume_momentum": 25,
         "volatility": 13,
         "momentum_trend": 12,
         "dilution_pressure": 6,
-        "cycle_anchor": 30
+        "cycle_anchor": 15
       }
     },
     "market_cycle": {
-      "phase": "UNKNOWN",
-      "phase_label": "Insufficient Data",
-      "drawdown_from_ath_pct": null,
-      "yoy_change_pct": null,
-      "above_3y_sma": null,
-      "ath_price": null,
-      "sma_3y": null,
-      "data_years": 0
+      "phase": "ACCUMULATION",
+      "phase_label": "Accumulation (deep bear)",
+      "drawdown_from_ath_pct": 79.7,
+      "yoy_change_pct": 30.1,
+      "above_3y_sma": false,
+      "ath_price": 1.27,
+      "sma_3y": 0.5752,
+      "data_years": 7
     },
     "chart_zones": {
-      "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
-      "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "current_zone": "ACCUMULATION_ZONE",
+      "current_zone_label": "Accumulation Zone",
+      "margin_of_safety": true,
+      "mos_note": "Margin of safety present \u2014 price near or below speculative fair value during accumulation (deep bear) phase.",
+      "zones_by_year": {
+        "2020": "ACCUMULATION_ZONE",
+        "2021": "NEUTRAL_ZONE",
+        "2022": "ACCUMULATION_ZONE",
+        "2023": "OVEREXTENDED_ZONE",
+        "2024": "OVEREXTENDED_ZONE",
+        "2025": "ACCUMULATION_ZONE",
+        "2026": "ACCUMULATION_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 2253.96,
+          "circulating_supply_m": 2258.6,
           "supply_overhang_pct": 16.8,
           "fdv_to_mc": 1.2,
           "burn_rate": null,
@@ -818,14 +1153,131 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 22:56"
+        "last_fetched": "2026-03-25 23:31"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2020": {
+        "market_price": 0.0519,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2021": {
+        "market_price": 0.5023,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2022": {
+        "market_price": 0.0916,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2023": {
+        "market_price": 0.672,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2024": {
+        "market_price": 1.27,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2025": {
+        "market_price": 0.198,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2026": {
+        "market_price": 0.2576,
+        "intrinsic_value": 0.5153,
+        "bull_case": 0.5153,
+        "bear_case": 0.5153,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.5513,
+        "bull_case": 0.5823,
+        "bear_case": 0.4064,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.5899,
+        "bull_case": 0.6579,
+        "bear_case": 0.3206,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 0.6312,
+        "bull_case": 0.7435,
+        "bear_case": 0.2529,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 0.6754,
+        "bull_case": 0.8401,
+        "bear_case": 0.1995,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 0.7227,
+        "bull_case": 0.9494,
+        "bear_case": 0.1574,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 0.5153,
+      "bull_iv": 0.5153,
+      "bear_iv": 0.5153,
+      "yr5_base_target": 0.7227,
+      "yr5_bull_target": 0.9494,
+      "yr5_bear_target": 0.1574,
+      "base_annual_growth_pct": 7.0,
+      "bull_annual_growth_pct": 13.0,
+      "bear_annual_growth_pct": -21.1,
+      "bull_5y_upside_pct": 84.3,
+      "bear_5y_change_pct": -69.5,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 6.0/10 and survivability 50.0%. Base: 7.0% p.a., Bull: 13.0% p.a., Bear: -21.1% p.a.",
+      "quality_score": 6.0,
+      "quality_multiplier": 0.9,
+      "survivability_pct": 50.0,
+      "survivability_mult": 0.8,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 2,
+      "methods_used": [
+        "Network Activity (NVT)",
+        "Rank Benchmark"
+      ],
+      "iv_breakdown": {
+        "Network Activity (NVT)": 1.2747,
+        "Rank Benchmark": 0.5314
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 6,
+      "price_history_note": null
+    },
+    "intrinsic_value": 0.5153,
+    "iv_method": "Network Activity (NVT), Rank Benchmark",
+    "iv_methods_count": 2,
     "bull_bear": {
       "bull_points": [
         "Artificial Superintelligence Alliance maintains a top-93 market cap position with established liquidity",
@@ -834,11 +1286,11 @@
       ],
       "bear_points": [
         "No historical fee data available on DeFiLlama \u2014 protocol may be too new or too small to have an established economic track record",
-        "Up 69% over 30 days \u2014 strong momentum but increases the risk of a short-term correction",
+        "Up 67% over 30 days \u2014 strong momentum but increases the risk of a short-term correction",
         "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 22:56"
+      "generated_at": "2026-03-25 23:31"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -853,16 +1305,15 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 22:56",
+    "last_updated": "2026-03-25 23:31",
     "price_history": {
-      "2020": 0.0548,
+      "2020": 0.0519,
       "2021": 0.5023,
       "2022": 0.0916,
       "2023": 0.672,
       "2024": 1.27,
       "2025": 0.198,
-      "2019": 0.0372,
-      "2026": 0.2593
+      "2026": 0.2576
     },
     "market_fear_greed": {
       "value": 14,
@@ -880,7 +1331,7 @@
       "description": "Fasttoken (FTN) \u2014 a Cash-Flow Protocol ranked #104 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/28478/large/lightenicon_200x200.png?1696527472",
       "market_cap_rank": 104,
-      "market_cap_usd": 472448793.0,
+      "market_cap_usd": 472173448.0,
       "fully_diluted_valuation": 1088000000.0,
       "current_price": 1.088,
       "ath": 4.61,
@@ -888,12 +1339,12 @@
       "ath_change_pct": -76.4,
       "atl": 0.334201,
       "atl_date": "2025-12-17",
-      "price_change_7d_pct": -0.030148970653321647,
-      "price_change_30d_pct": 0.0995074115141577,
+      "price_change_7d_pct": -0.07207092118926132,
+      "price_change_30d_pct": 0.055898318208339265,
       "circulating_supply": 433861414.6,
       "total_supply": 870742437.0,
       "max_supply": 1000000000.0,
-      "total_volume_24h": 54550.0,
+      "total_volume_24h": 55063.0,
       "defillama_slug": null,
       "has_curated_description": false
     },
@@ -902,18 +1353,18 @@
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
     "current_price": 1.088,
-    "market_cap": 472448793.0,
+    "market_cap": 472173448.0,
     "fully_diluted_valuation": 1088000000.0,
     "market_cap_rank": 104,
-    "price_change_7d_pct": -0.030148970653321647,
-    "price_change_30d_pct": 0.0995074115141577,
+    "price_change_7d_pct": -0.07207092118926132,
+    "price_change_30d_pct": 0.055898318208339265,
     "dilution": {
       "circulating_pct": 43.39,
       "supply_overhang": 56.61,
       "fully_diluted_valuation": 1088000000.0,
       "fdv_to_mc_ratio": 2.3
     },
-    "metcalfe_ratio": 8660.84,
+    "metcalfe_ratio": 8575.15,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -983,42 +1434,50 @@
       "tiebreaker_used": false
     },
     "fear_greed": {
-      "score": 27,
+      "score": 21,
       "label": "Fear",
-      "market_cycle_phase": "UNKNOWN",
-      "market_cycle_anchor": 30,
+      "market_cycle_phase": "ACCUMULATION",
+      "market_cycle_anchor": 15,
       "components": {
         "price_momentum": 10,
         "volume_momentum": 3,
         "volatility": 8,
         "momentum_trend": 6,
         "dilution_pressure": 1,
-        "cycle_anchor": 30
+        "cycle_anchor": 15
       }
     },
     "market_cycle": {
-      "phase": "UNKNOWN",
-      "phase_label": "Insufficient Data",
-      "drawdown_from_ath_pct": null,
-      "yoy_change_pct": null,
-      "above_3y_sma": null,
-      "ath_price": null,
-      "sma_3y": null,
-      "data_years": 0
+      "phase": "ACCUMULATION",
+      "phase_label": "Accumulation (bear market)",
+      "drawdown_from_ath_pct": 69.1,
+      "yoy_change_pct": 81.7,
+      "above_3y_sma": false,
+      "ath_price": 3.519,
+      "sma_3y": 1.7352,
+      "data_years": 7
     },
     "chart_zones": {
       "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
+      "current_zone_label": "Neutral Zone",
       "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "mos_note": "Price above speculative fair value \u2014 no margin of safety.",
+      "zones_by_year": {
+        "2020": "ACCUMULATION_ZONE",
+        "2021": "ACCUMULATION_ZONE",
+        "2022": "ACCUMULATION_ZONE",
+        "2023": "OVEREXTENDED_ZONE",
+        "2024": "OVEREXTENDED_ZONE",
+        "2025": "ACCUMULATION_ZONE",
+        "2026": "NEUTRAL_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 434.24,
+          "circulating_supply_m": 433.98,
           "supply_overhang_pct": 56.61,
           "fdv_to_mc": 2.3,
           "burn_rate": null,
@@ -1031,19 +1490,134 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 22:56"
+        "last_fetched": "2026-03-25 23:32"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2020": {
+        "market_price": 0.0123,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2021": {
+        "market_price": 0.0123,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2022": {
+        "market_price": 0.0123,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2023": {
+        "market_price": 1.369,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2024": {
+        "market_price": 3.519,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2025": {
+        "market_price": 0.5987,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2026": {
+        "market_price": 1.088,
+        "intrinsic_value": 0.922,
+        "bull_case": 0.922,
+        "bear_case": 0.922,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.9497,
+        "bull_case": 1.005,
+        "bear_case": 0.5812,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.9781,
+        "bull_case": 1.0954,
+        "bear_case": 0.3664,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 1.0075,
+        "bull_case": 1.194,
+        "bear_case": 0.231,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 1.0377,
+        "bull_case": 1.3015,
+        "bear_case": 0.1456,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 1.0689,
+        "bull_case": 1.4186,
+        "bear_case": 0.0918,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 0.922,
+      "bull_iv": 0.922,
+      "bear_iv": 0.922,
+      "yr5_base_target": 1.0689,
+      "yr5_bull_target": 1.4186,
+      "yr5_bear_target": 0.0918,
+      "base_annual_growth_pct": 3.0,
+      "bull_annual_growth_pct": 9.0,
+      "bear_annual_growth_pct": -37.0,
+      "bull_5y_upside_pct": 53.9,
+      "bear_5y_change_pct": -90.0,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 3.3/10 and survivability 30.0%. Base: 3.0% p.a., Bull: 9.0% p.a., Bear: -37.0% p.a.",
+      "quality_score": 3.3,
+      "quality_multiplier": 0.55,
+      "survivability_pct": 30.0,
+      "survivability_mult": 0.6,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 1,
+      "methods_used": [
+        "Rank Benchmark"
+      ],
+      "iv_breakdown": {
+        "Rank Benchmark": 0.922
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 6,
+      "price_history_note": null
+    },
+    "intrinsic_value": 0.922,
+    "iv_method": "Rank Benchmark",
+    "iv_methods_count": 1,
     "bull_bear": {
       "bull_points": [
+        "Fear & Greed score of 21 (Fear) indicates significant pessimism \u2014 often a contrarian buying opportunity",
         "Fasttoken maintains a top-104 market cap position with established liquidity",
-        "Long-term adoption thesis remains intact for Cash-Flow Protocol assets",
-        "Broader crypto market development continues to benefit established protocols"
+        "Long-term adoption thesis remains intact for Cash-Flow Protocol assets"
       ],
       "bear_points": [
         "No historical fee data available on DeFiLlama \u2014 protocol may be too new or too small to have an established economic track record",
@@ -1051,7 +1625,7 @@
         "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 22:56"
+      "generated_at": "2026-03-25 23:32"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -1066,7 +1640,7 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 22:56",
+    "last_updated": "2026-03-25 23:32",
     "price_history": {
       "2020": 0.0123,
       "2021": 0.0123,
@@ -1092,20 +1666,20 @@
       "description": "First Digital USD (FDUSD) \u2014 a Cash-Flow Protocol ranked #117 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/31079/large/FDUSD_icon_black.png?1731097953",
       "market_cap_rank": 117,
-      "market_cap_usd": 385410621.0,
-      "fully_diluted_valuation": 385730101.59,
-      "current_price": 0.999738,
+      "market_cap_usd": 385565438.0,
+      "fully_diluted_valuation": 385606249.78,
+      "current_price": 0.999417,
       "ath": 1.15,
       "ath_date": "2025-02-03",
       "ath_change_pct": -13.2,
       "atl": 0.940377,
       "atl_date": "2024-12-05",
-      "price_change_7d_pct": -0.001277787132290475,
-      "price_change_30d_pct": 0.11258917941504322,
+      "price_change_7d_pct": -0.032872132852032276,
+      "price_change_30d_pct": 0.08983965478466116,
       "circulating_supply": 385831189.362202,
       "total_supply": 385831189.362202,
       "max_supply": null,
-      "total_volume_24h": 179162207.0,
+      "total_volume_24h": 175877682.0,
       "defillama_slug": null,
       "has_curated_description": false
     },
@@ -1113,19 +1687,19 @@
     "coin_id": "first-digital-usd",
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
-    "current_price": 0.999738,
-    "market_cap": 385410621.0,
-    "fully_diluted_valuation": 385730101.59,
+    "current_price": 0.999417,
+    "market_cap": 385565438.0,
+    "fully_diluted_valuation": 385606249.78,
     "market_cap_rank": 117,
-    "price_change_7d_pct": -0.001277787132290475,
-    "price_change_30d_pct": 0.11258917941504322,
+    "price_change_7d_pct": -0.032872132852032276,
+    "price_change_30d_pct": 0.08983965478466116,
     "dilution": {
       "circulating_pct": 100.0,
       "supply_overhang": 0.0,
-      "fully_diluted_valuation": 385730101.59,
+      "fully_diluted_valuation": 385606249.78,
       "fdv_to_mc_ratio": 1.0
     },
-    "metcalfe_ratio": 2.15,
+    "metcalfe_ratio": 2.19,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -1162,7 +1736,7 @@
           "label": "Network Demand",
           "score": 8,
           "max": 10,
-          "value": 46.49,
+          "value": 45.62,
           "unit": "volume/MC %",
           "chart_source": "raw calculation (CoinGecko volume)",
           "chart_ref": null,
@@ -1216,21 +1790,23 @@
       "above_3y_sma": null,
       "ath_price": null,
       "sma_3y": null,
-      "data_years": 0
+      "data_years": 1
     },
     "chart_zones": {
       "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
+      "current_zone_label": "Neutral Zone",
       "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "mos_note": "Cycle phase (Insufficient Data) not favourable for entry \u2014 wait for accumulation or early uptrend.",
+      "zones_by_year": {
+        "2026": "NEUTRAL_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 385.51,
+          "circulating_supply_m": 385.79,
           "supply_overhang_pct": 0,
           "fdv_to_mc": 1.0,
           "burn_rate": null,
@@ -1243,14 +1819,85 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 22:57"
+        "last_fetched": "2026-03-25 23:32"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2026": {
+        "market_price": 0.9994,
+        "intrinsic_value": 0.9994,
+        "bull_case": 0.9994,
+        "bear_case": 0.9994,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 1.0694,
+        "bull_case": 1.1293,
+        "bear_case": 0.7883,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 1.1442,
+        "bull_case": 1.2762,
+        "bear_case": 0.6218,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 1.2243,
+        "bull_case": 1.4421,
+        "bear_case": 0.4905,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 1.31,
+        "bull_case": 1.6295,
+        "bear_case": 0.3869,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 1.4017,
+        "bull_case": 1.8414,
+        "bear_case": 0.3052,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 0.9994,
+      "bull_iv": 0.9994,
+      "bear_iv": 0.9994,
+      "yr5_base_target": 1.4017,
+      "yr5_bull_target": 1.8414,
+      "yr5_bear_target": 0.3052,
+      "base_annual_growth_pct": 7.0,
+      "bull_annual_growth_pct": 13.0,
+      "bear_annual_growth_pct": -21.1,
+      "bull_5y_upside_pct": 84.2,
+      "bear_5y_change_pct": -69.5,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 6.0/10 and survivability 56.7%. Base: 7.0% p.a., Bull: 13.0% p.a., Bear: -21.1% p.a.",
+      "quality_score": 6.0,
+      "quality_multiplier": 0.9,
+      "survivability_pct": 56.7,
+      "survivability_mult": 0.8,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 1,
+      "methods_used": [
+        "Peg Value"
+      ],
+      "iv_breakdown": {},
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 0,
+      "price_history_note": "Historical price data unavailable for this token. Forecast chart shows projected values only."
+    },
+    "intrinsic_value": 0.9994,
+    "iv_method": "Peg Value",
+    "iv_methods_count": 1,
     "bull_bear": {
       "bull_points": [
         "First Digital USD maintains a top-117 market cap position with established liquidity",
@@ -1263,7 +1910,7 @@
         "Regulatory uncertainty across major markets presents an ongoing risk"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 22:57"
+      "generated_at": "2026-03-25 23:32"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -1278,9 +1925,9 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 22:57",
+    "last_updated": "2026-03-25 23:32",
     "price_history": {
-      "2026": 0.9997
+      "2026": 0.9994
     },
     "market_fear_greed": {
       "value": 14,
@@ -1298,20 +1945,20 @@
       "description": "FLOKI (FLOKI) \u2014 a Cash-Flow Protocol ranked #135 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/16746/large/PNG_image.png?1696516318",
       "market_cap_rank": 135,
-      "market_cap_usd": 293464285.0,
-      "fully_diluted_valuation": 303900000.0,
-      "current_price": 3.039e-05,
+      "market_cap_usd": 292955808.0,
+      "fully_diluted_valuation": 303400000.0,
+      "current_price": 3.034e-05,
       "ath": 0.00034495,
       "ath_date": "2024-06-05",
       "ath_change_pct": -91.2,
       "atl": 8.428e-08,
       "atl_date": "2021-07-06",
-      "price_change_7d_pct": 1.7394885387929864,
-      "price_change_30d_pct": 8.777399583345694,
+      "price_change_7d_pct": 1.0005503966662337,
+      "price_change_30d_pct": 7.888094223464409,
       "circulating_supply": 9654423171754.0,
       "total_supply": 10000000000000.0,
       "max_supply": 10000000000000.0,
-      "total_volume_24h": 25960440.0,
+      "total_volume_24h": 25913841.0,
       "defillama_slug": null,
       "has_curated_description": false
     },
@@ -1319,16 +1966,16 @@
     "coin_id": "floki",
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
-    "current_price": 3.039e-05,
-    "market_cap": 293464285.0,
-    "fully_diluted_valuation": 303900000.0,
+    "current_price": 3.034e-05,
+    "market_cap": 292955808.0,
+    "fully_diluted_valuation": 303400000.0,
     "market_cap_rank": 135,
-    "price_change_7d_pct": 1.7394885387929864,
-    "price_change_30d_pct": 8.777399583345694,
+    "price_change_7d_pct": 1.0005503966662337,
+    "price_change_30d_pct": 7.888094223464409,
     "dilution": {
       "circulating_pct": 96.54,
       "supply_overhang": 3.46,
-      "fully_diluted_valuation": 303900000.0,
+      "fully_diluted_valuation": 303400000.0,
       "fdv_to_mc_ratio": 1.04
     },
     "metcalfe_ratio": 11.3,
@@ -1401,42 +2048,47 @@
       "tiebreaker_used": true
     },
     "fear_greed": {
-      "score": 43,
-      "label": "Neutral",
-      "market_cycle_phase": "UNKNOWN",
-      "market_cycle_anchor": 30,
+      "score": 37,
+      "label": "Fear",
+      "market_cycle_phase": "ACCUMULATION",
+      "market_cycle_anchor": 15,
       "components": {
         "price_momentum": 14,
         "volume_momentum": 16,
         "volatility": 8,
         "momentum_trend": 12,
         "dilution_pressure": 10,
-        "cycle_anchor": 30
+        "cycle_anchor": 15
       }
     },
     "market_cycle": {
-      "phase": "UNKNOWN",
-      "phase_label": "Insufficient Data",
-      "drawdown_from_ath_pct": null,
-      "yoy_change_pct": null,
-      "above_3y_sma": null,
-      "ath_price": null,
-      "sma_3y": null,
-      "data_years": 0
+      "phase": "ACCUMULATION",
+      "phase_label": "Accumulation (deep bear)",
+      "drawdown_from_ath_pct": 82.8,
+      "yoy_change_pct": -23.0,
+      "above_3y_sma": false,
+      "ath_price": 0.0002,
+      "sma_3y": 0.0001,
+      "data_years": 4
     },
     "chart_zones": {
       "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
-      "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "current_zone_label": "Neutral Zone",
+      "margin_of_safety": true,
+      "mos_note": "Margin of safety present \u2014 price near or below speculative fair value during accumulation (deep bear) phase.",
+      "zones_by_year": {
+        "2023": "NEUTRAL_ZONE",
+        "2024": "OVEREXTENDED_ZONE",
+        "2025": "OVEREXTENDED_ZONE",
+        "2026": "NEUTRAL_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 9656606.94,
+          "circulating_supply_m": 9655761.63,
           "supply_overhang_pct": 3.46,
           "fdv_to_mc": 1.04,
           "burn_rate": null,
@@ -1449,12 +2101,102 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 22:57"
+        "last_fetched": "2026-03-25 23:33"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
+    "valuation_chart": {
+      "2023": {
+        "market_price": 3.491e-05,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2024": {
+        "market_price": 0.0001769,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2025": {
+        "market_price": 3.941e-05,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2026": {
+        "market_price": 3.034e-05,
+        "intrinsic_value": 3.034e-05,
+        "bull_case": 3.034e-05,
+        "bear_case": 3.034e-05,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 3.24638e-05,
+        "bull_case": 3.42842e-05,
+        "bear_case": 2.39322e-05,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 3.47363e-05,
+        "bull_case": 3.87411e-05,
+        "bear_case": 1.88777e-05,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 3.71678e-05,
+        "bull_case": 4.37775e-05,
+        "bear_case": 1.48907e-05,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 3.97696e-05,
+        "bull_case": 4.94686e-05,
+        "bear_case": 1.17458e-05,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 4.25534e-05,
+        "bull_case": 5.58995e-05,
+        "bear_case": 9.2651e-06,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 3.034e-05,
+      "bull_iv": 3.034e-05,
+      "bear_iv": 3.034e-05,
+      "yr5_base_target": 4.25534e-05,
+      "yr5_bull_target": 5.58995e-05,
+      "yr5_bear_target": 9.2651e-06,
+      "base_annual_growth_pct": 7.0,
+      "bull_annual_growth_pct": 13.0,
+      "bear_annual_growth_pct": -21.1,
+      "bull_5y_upside_pct": 84.2,
+      "bear_5y_change_pct": -69.5,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 5.5/10 and survivability 56.7%. Base: 7.0% p.a., Bull: 13.0% p.a., Bear: -21.1% p.a.",
+      "quality_score": 5.5,
+      "quality_multiplier": 0.75,
+      "survivability_pct": 56.7,
+      "survivability_mult": 0.8,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 0,
+      "methods_used": [],
+      "iv_breakdown": {},
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 3,
+      "price_history_note": null
+    },
+    "intrinsic_value": 3.034e-05,
     "iv_method": "Market price (insufficient data)",
     "iv_methods_count": 0,
     "bull_bear": {
@@ -1469,7 +2211,7 @@
         "Regulatory uncertainty across major markets presents an ongoing risk"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 22:57"
+      "generated_at": "2026-03-25 23:33"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -1484,12 +2226,12 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 22:57",
+    "last_updated": "2026-03-25 23:33",
     "price_history": {
       "2023": 3.491e-05,
       "2024": 0.0001769,
       "2025": 3.941e-05,
-      "2026": 3.039e-05
+      "2026": 3.034e-05
     },
     "market_fear_greed": {
       "value": 14,
@@ -1504,23 +2246,23 @@
       "coin_id": "frax-share",
       "bucket": "A",
       "bucket_label": "Cash-Flow Protocol",
-      "description": "Frax (prev. FXS) (FRAX) \u2014 a Cash-Flow Protocol ranked #497 by market cap.",
+      "description": "Frax (prev. FXS) (FRAX) \u2014 a Cash-Flow Protocol ranked #498 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/13423/large/FRAX_icon.png?1768982703",
-      "market_cap_rank": 497,
-      "market_cap_usd": 43314128.0,
-      "fully_diluted_valuation": 45271547.4,
-      "current_price": 0.454162,
+      "market_cap_rank": 498,
+      "market_cap_usd": 43235424.0,
+      "fully_diluted_valuation": 45181335.65,
+      "current_price": 0.453257,
       "ath": 42.8,
       "ath_date": "2022-01-12",
       "ath_change_pct": -98.9,
       "atl": 0.43725,
       "atl_date": "2026-03-23",
-      "price_change_7d_pct": -25.71919819682824,
-      "price_change_30d_pct": -25.332837656441793,
+      "price_change_7d_pct": -26.051038799842047,
+      "price_change_30d_pct": -25.479990490780597,
       "circulating_supply": 95389147.61574002,
       "total_supply": 99681495.5911336,
       "max_supply": null,
-      "total_volume_24h": 1356828.0,
+      "total_volume_24h": 1335864.0,
       "defillama_slug": "frax",
       "has_curated_description": false
     },
@@ -1528,19 +2270,19 @@
     "coin_id": "frax-share",
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
-    "current_price": 0.454162,
-    "market_cap": 43314128.0,
-    "fully_diluted_valuation": 45271547.4,
-    "market_cap_rank": 497,
-    "price_change_7d_pct": -25.71919819682824,
-    "price_change_30d_pct": -25.332837656441793,
+    "current_price": 0.453257,
+    "market_cap": 43235424.0,
+    "fully_diluted_valuation": 45181335.65,
+    "market_cap_rank": 498,
+    "price_change_7d_pct": -26.051038799842047,
+    "price_change_30d_pct": -25.479990490780597,
     "dilution": {
       "circulating_pct": 95.69,
       "supply_overhang": 4.31,
-      "fully_diluted_valuation": 45271547.4,
+      "fully_diluted_valuation": 45181335.65,
       "fdv_to_mc_ratio": 1.05
     },
-    "metcalfe_ratio": 31.92,
+    "metcalfe_ratio": 32.37,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -1557,7 +2299,7 @@
           "label": "Capital Efficiency",
           "score": 8,
           "max": 10,
-          "value": 10.67,
+          "value": 10.65,
           "unit": "MC/fees ratio",
           "chart_source": "Protocol Metrics (MC/Fees)",
           "chart_ref": "Network Economics \u2192 Capital Efficiency",
@@ -1577,7 +2319,7 @@
           "label": "Network Demand",
           "score": 4,
           "max": 10,
-          "value": 3.13,
+          "value": 3.09,
           "unit": "volume/MC %",
           "chart_source": "raw calculation (CoinGecko volume)",
           "chart_ref": null,
@@ -1596,7 +2338,7 @@
           "label": "Protocol Maturity",
           "score": 1,
           "max": 10,
-          "value": 497,
+          "value": 498,
           "unit": "MC rank",
           "chart_source": "raw calculation (CoinGecko rank)",
           "chart_ref": null
@@ -1631,14 +2373,16 @@
       "above_3y_sma": null,
       "ath_price": null,
       "sma_3y": null,
-      "data_years": 0
+      "data_years": 1
     },
     "chart_zones": {
-      "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
+      "current_zone": "OVEREXTENDED_ZONE",
+      "current_zone_label": "Overextended Zone",
       "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "mos_note": "Price above speculative fair value \u2014 no margin of safety.",
+      "zones_by_year": {
+        "2026": "OVEREXTENDED_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {
@@ -1717,7 +2461,7 @@
           "note": "Treasury proxied from protocol TVL"
         },
         "2026": {
-          "treasury_usd_m": 61.48,
+          "treasury_usd_m": 61.49,
           "emissions_usd_m": null,
           "is_estimated": true,
           "note": "Treasury proxied from protocol TVL"
@@ -1725,7 +2469,7 @@
       },
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 95.37,
+          "circulating_supply_m": 95.39,
           "supply_overhang_pct": 4.31,
           "fdv_to_mc": 1.05,
           "burn_rate": null,
@@ -1782,27 +2526,106 @@
         "data_coverage": "full",
         "years_available": 6,
         "data_note": null,
-        "last_fetched": "2026-03-25 23:04"
+        "last_fetched": "2026-03-25 23:39"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2026": {
+        "market_price": 0.4533,
+        "intrinsic_value": 0.2464,
+        "bull_case": 0.2464,
+        "bear_case": 0.2464,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.2538,
+        "bull_case": 0.2686,
+        "bear_case": 0.1553,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.2614,
+        "bull_case": 0.2927,
+        "bear_case": 0.0979,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 0.2692,
+        "bull_case": 0.3191,
+        "bear_case": 0.0617,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 0.2773,
+        "bull_case": 0.3478,
+        "bear_case": 0.0389,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 0.2856,
+        "bull_case": 0.3791,
+        "bear_case": 0.0245,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 0.2464,
+      "bull_iv": 0.2464,
+      "bear_iv": 0.2464,
+      "yr5_base_target": 0.2856,
+      "yr5_bull_target": 0.3791,
+      "yr5_bear_target": 0.0245,
+      "base_annual_growth_pct": 3.0,
+      "bull_annual_growth_pct": 9.0,
+      "bear_annual_growth_pct": -37.0,
+      "bull_5y_upside_pct": 53.9,
+      "bear_5y_change_pct": -90.1,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 4.5/10 and survivability 43.3%. Base: 3.0% p.a., Bull: 9.0% p.a., Bear: -37.0% p.a.",
+      "quality_score": 4.5,
+      "quality_multiplier": 0.75,
+      "survivability_pct": 43.3,
+      "survivability_mult": 0.6,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 4,
+      "methods_used": [
+        "Protocol Fee DCF",
+        "Fee/MC Multiple",
+        "Network Activity (NVT)",
+        "Rank Benchmark"
+      ],
+      "iv_breakdown": {
+        "Protocol Fee DCF": 0.2464,
+        "Fee/MC Multiple": 0.1702,
+        "Network Activity (NVT)": 0.112,
+        "Rank Benchmark": 0.4718
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 0,
+      "price_history_note": "Historical price data unavailable for this token. Forecast chart shows projected values only."
+    },
+    "intrinsic_value": 0.2464,
+    "iv_method": "Protocol Fee DCF, Fee/MC Multiple, Network Activity (NVT), Rank Benchmark",
+    "iv_methods_count": 4,
     "bull_bear": {
       "bull_points": [
-        "Low MC/Fees ratio of 10.67x suggests the protocol is generating strong fee revenue relative to its valuation",
+        "Low MC/Fees ratio of 10.65x suggests the protocol is generating strong fee revenue relative to its valuation",
         "Multi-year on-chain data available \u2014 protocol has an established track record of fee generation across market cycles",
-        "Frax (prev. FXS) maintains a top-497 market cap position with established liquidity"
+        "Frax (prev. FXS) maintains a top-498 market cap position with established liquidity"
       ],
       "bear_points": [
-        "DCF model suggests Frax (prev. FXS) is trading at a 84.3% premium to fair value (est. $0.25)",
+        "DCF model suggests Frax (prev. FXS) is trading at a 84.0% premium to fair value (est. $0.25)",
         "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets",
         "Regulatory uncertainty across major markets presents an ongoing risk"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 23:04"
+      "generated_at": "2026-03-25 23:39"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": 4060000.0,
@@ -1813,13 +2636,13 @@
       "tvl_usd": null,
       "dcf_protocol_value_usd": 23502180.89,
       "dcf_fair_value_per_token": 0.2464,
-      "ps_ratio": 10.67,
+      "ps_ratio": 10.65,
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "defillama"
     },
-    "last_updated": "2026-03-25 23:04",
+    "last_updated": "2026-03-25 23:39",
     "price_history": {
-      "2026": 0.4542
+      "2026": 0.4533
     },
     "market_fear_greed": {
       "value": 14,
@@ -1837,20 +2660,20 @@
       "description": "Official FO (FO) \u2014 a Cash-Flow Protocol ranked #145 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/55682/large/fo.jpg?1746982885",
       "market_cap_rank": 145,
-      "market_cap_usd": 263146429.0,
-      "fully_diluted_valuation": 263855000.0,
-      "current_price": 0.263855,
+      "market_cap_usd": 263204120.0,
+      "fully_diluted_valuation": 263881000.0,
+      "current_price": 0.263881,
       "ath": 0.830025,
       "ath_date": "2025-09-28",
       "ath_change_pct": -68.2,
       "atl": 0.262767,
       "atl_date": "2026-03-23",
-      "price_change_7d_pct": 0.02991253063092066,
-      "price_change_30d_pct": -1.5451198072604928,
+      "price_change_7d_pct": -0.011322330923393825,
+      "price_change_30d_pct": -1.7131227920441552,
       "circulating_supply": 997490221.15,
       "total_supply": 997490221.15,
       "max_supply": 1000000000.0,
-      "total_volume_24h": 175064.0,
+      "total_volume_24h": 176050.0,
       "defillama_slug": null,
       "has_curated_description": false
     },
@@ -1858,19 +2681,19 @@
     "coin_id": "official-fo",
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
-    "current_price": 0.263855,
-    "market_cap": 263146429.0,
-    "fully_diluted_valuation": 263855000.0,
+    "current_price": 0.263881,
+    "market_cap": 263204120.0,
+    "fully_diluted_valuation": 263881000.0,
     "market_cap_rank": 145,
-    "price_change_7d_pct": 0.02991253063092066,
-    "price_change_30d_pct": -1.5451198072604928,
+    "price_change_7d_pct": -0.011322330923393825,
+    "price_change_30d_pct": -1.7131227920441552,
     "dilution": {
       "circulating_pct": 99.75,
       "supply_overhang": 0.25,
-      "fully_diluted_valuation": 263855000.0,
+      "fully_diluted_valuation": 263881000.0,
       "fdv_to_mc_ratio": 1.0
     },
-    "metcalfe_ratio": 1503.14,
+    "metcalfe_ratio": 1495.05,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -1940,7 +2763,7 @@
       "tiebreaker_used": false
     },
     "fear_greed": {
-      "score": 32,
+      "score": 29,
       "label": "Fear",
       "market_cycle_phase": "UNKNOWN",
       "market_cycle_anchor": 30,
@@ -1948,7 +2771,7 @@
         "price_momentum": 7,
         "volume_momentum": 3,
         "volatility": 8,
-        "momentum_trend": 9,
+        "momentum_trend": 3,
         "dilution_pressure": 10,
         "cycle_anchor": 30
       }
@@ -1961,21 +2784,23 @@
       "above_3y_sma": null,
       "ath_price": null,
       "sma_3y": null,
-      "data_years": 0
+      "data_years": 1
     },
     "chart_zones": {
-      "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
+      "current_zone": "ACCUMULATION_ZONE",
+      "current_zone_label": "Accumulation Zone",
       "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "mos_note": "Cycle phase (Insufficient Data) not favourable for entry \u2014 wait for accumulation or early uptrend.",
+      "zones_by_year": {
+        "2026": "ACCUMULATION_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 997.31,
+          "circulating_supply_m": 997.43,
           "supply_overhang_pct": 0.25,
           "fdv_to_mc": 1.0,
           "burn_rate": null,
@@ -1988,14 +2813,87 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 22:58"
+        "last_fetched": "2026-03-25 23:33"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2026": {
+        "market_price": 0.2639,
+        "intrinsic_value": 0.4511,
+        "bull_case": 0.4511,
+        "bear_case": 0.4511,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.4646,
+        "bull_case": 0.4917,
+        "bear_case": 0.3201,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.4786,
+        "bull_case": 0.536,
+        "bear_case": 0.2271,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 0.4929,
+        "bull_case": 0.5842,
+        "bear_case": 0.1612,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 0.5077,
+        "bull_case": 0.6368,
+        "bear_case": 0.1144,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 0.5229,
+        "bull_case": 0.6941,
+        "bear_case": 0.0812,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 0.4511,
+      "bull_iv": 0.4511,
+      "bear_iv": 0.4511,
+      "yr5_base_target": 0.5229,
+      "yr5_bull_target": 0.6941,
+      "yr5_bear_target": 0.0812,
+      "base_annual_growth_pct": 3.0,
+      "bull_annual_growth_pct": 9.0,
+      "bear_annual_growth_pct": -29.0,
+      "bull_5y_upside_pct": 53.9,
+      "bear_5y_change_pct": -82.0,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 4.7/10 and survivability 56.7%. Base: 3.0% p.a., Bull: 9.0% p.a., Bear: -29.0% p.a.",
+      "quality_score": 4.7,
+      "quality_multiplier": 0.75,
+      "survivability_pct": 56.7,
+      "survivability_mult": 0.8,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 1,
+      "methods_used": [
+        "Rank Benchmark"
+      ],
+      "iv_breakdown": {
+        "Rank Benchmark": 0.4511
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 0,
+      "price_history_note": "Historical price data unavailable for this token. Forecast chart shows projected values only."
+    },
+    "intrinsic_value": 0.4511,
+    "iv_method": "Rank Benchmark",
+    "iv_methods_count": 1,
     "bull_bear": {
       "bull_points": [
         "Official FO maintains a top-145 market cap position with established liquidity",
@@ -2008,7 +2906,7 @@
         "Regulatory uncertainty across major markets presents an ongoing risk"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 22:58"
+      "generated_at": "2026-03-25 23:33"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -2023,11 +2921,8 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 22:58",
+    "last_updated": "2026-03-25 23:33",
     "price_history": {
-      "2023": 0.002311,
-      "2024": 0.0008036,
-      "2025": 0.7465,
       "2026": 0.2639
     },
     "market_fear_greed": {
@@ -2046,20 +2941,20 @@
       "description": "Fartcoin (FARTCOIN) \u2014 a Cash-Flow Protocol ranked #176 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/50891/large/fart.jpg?1729503972",
       "market_cap_rank": 176,
-      "market_cap_usd": 192774953.0,
-      "fully_diluted_valuation": 192816000.0,
-      "current_price": 0.192816,
+      "market_cap_usd": 191816717.0,
+      "fully_diluted_valuation": 191906000.0,
+      "current_price": 0.191906,
       "ath": 2.48,
       "ath_date": "2025-01-19",
-      "ath_change_pct": -92.2,
+      "ath_change_pct": -92.3,
       "atl": 0.02002855,
       "atl_date": "2024-10-30",
-      "price_change_7d_pct": -7.054658370661376,
-      "price_change_30d_pct": 29.93164891896656,
+      "price_change_7d_pct": -8.776011046410414,
+      "price_change_30d_pct": 31.024057463611136,
       "circulating_supply": 999978886.923368,
       "total_supply": 999978886.923368,
       "max_supply": 1000000000.0,
-      "total_volume_24h": 38832520.0,
+      "total_volume_24h": 38111919.0,
       "defillama_slug": null,
       "has_curated_description": false
     },
@@ -2067,19 +2962,19 @@
     "coin_id": "fartcoin",
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
-    "current_price": 0.192816,
-    "market_cap": 192774953.0,
-    "fully_diluted_valuation": 192816000.0,
+    "current_price": 0.191906,
+    "market_cap": 191816717.0,
+    "fully_diluted_valuation": 191906000.0,
     "market_cap_rank": 176,
-    "price_change_7d_pct": -7.054658370661376,
-    "price_change_30d_pct": 29.93164891896656,
+    "price_change_7d_pct": -8.776011046410414,
+    "price_change_30d_pct": 31.024057463611136,
     "dilution": {
       "circulating_pct": 100.0,
       "supply_overhang": 0.0,
-      "fully_diluted_valuation": 192816000.0,
+      "fully_diluted_valuation": 191906000.0,
       "fdv_to_mc_ratio": 1.0
     },
-    "metcalfe_ratio": 4.96,
+    "metcalfe_ratio": 5.03,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -2114,9 +3009,9 @@
         },
         "network_demand": {
           "label": "Network Demand",
-          "score": 10,
+          "score": 8,
           "max": 10,
-          "value": 20.14,
+          "value": 19.87,
           "unit": "volume/MC %",
           "chart_source": "raw calculation (CoinGecko volume)",
           "chart_ref": null,
@@ -2142,49 +3037,53 @@
         }
       },
       "moat": null,
-      "final_score": 6.3,
-      "final_score_pct": 63.3,
-      "quantitative_pct": 63.3,
+      "final_score": 6.0,
+      "final_score_pct": 60.0,
+      "quantitative_pct": 60.0,
       "classification": "Speculative",
       "tiebreaker_used": true
     },
     "fear_greed": {
-      "score": 48,
-      "label": "Neutral",
-      "market_cycle_phase": "UNKNOWN",
-      "market_cycle_anchor": 30,
+      "score": 40,
+      "label": "Fear",
+      "market_cycle_phase": "ACCUMULATION",
+      "market_cycle_anchor": 15,
       "components": {
         "price_momentum": 22,
-        "volume_momentum": 25,
+        "volume_momentum": 20,
         "volatility": 7,
         "momentum_trend": 6,
         "dilution_pressure": 10,
-        "cycle_anchor": 30
+        "cycle_anchor": 15
       }
     },
     "market_cycle": {
-      "phase": "UNKNOWN",
-      "phase_label": "Insufficient Data",
-      "drawdown_from_ath_pct": null,
-      "yoy_change_pct": null,
-      "above_3y_sma": null,
-      "ath_price": null,
-      "sma_3y": null,
-      "data_years": 0
+      "phase": "ACCUMULATION",
+      "phase_label": "Accumulation (deep bear)",
+      "drawdown_from_ath_pct": 79.4,
+      "yoy_change_pct": -28.5,
+      "above_3y_sma": false,
+      "ath_price": 0.933,
+      "sma_3y": 0.4644,
+      "data_years": 3
     },
     "chart_zones": {
-      "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
-      "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "current_zone": "ACCUMULATION_ZONE",
+      "current_zone_label": "Accumulation Zone",
+      "margin_of_safety": true,
+      "mos_note": "Margin of safety present \u2014 price near or below speculative fair value during accumulation (deep bear) phase.",
+      "zones_by_year": {
+        "2024": "OVEREXTENDED_ZONE",
+        "2025": "ACCUMULATION_ZONE",
+        "2026": "ACCUMULATION_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 999.79,
+          "circulating_supply_m": 999.53,
           "supply_overhang_pct": 0,
           "fdv_to_mc": 1.0,
           "burn_rate": null,
@@ -2197,14 +3096,103 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 22:58"
+        "last_fetched": "2026-03-25 23:34"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2024": {
+        "market_price": 0.933,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2025": {
+        "market_price": 0.2684,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2026": {
+        "market_price": 0.1919,
+        "intrinsic_value": 0.3838,
+        "bull_case": 0.3838,
+        "bear_case": 0.3838,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.4107,
+        "bull_case": 0.4337,
+        "bear_case": 0.3028,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.4394,
+        "bull_case": 0.4901,
+        "bear_case": 0.2388,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 0.4702,
+        "bull_case": 0.5538,
+        "bear_case": 0.1884,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 0.5031,
+        "bull_case": 0.6258,
+        "bear_case": 0.1486,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 0.5383,
+        "bull_case": 0.7071,
+        "bear_case": 0.1172,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 0.3838,
+      "bull_iv": 0.3838,
+      "bear_iv": 0.3838,
+      "yr5_base_target": 0.5383,
+      "yr5_bull_target": 0.7071,
+      "yr5_bear_target": 0.1172,
+      "base_annual_growth_pct": 7.0,
+      "bull_annual_growth_pct": 13.0,
+      "bear_annual_growth_pct": -21.1,
+      "bull_5y_upside_pct": 84.2,
+      "bear_5y_change_pct": -69.5,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 6.0/10 and survivability 56.7%. Base: 7.0% p.a., Bull: 13.0% p.a., Bear: -21.1% p.a.",
+      "quality_score": 6.0,
+      "quality_multiplier": 0.9,
+      "survivability_pct": 56.7,
+      "survivability_mult": 0.8,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 2,
+      "methods_used": [
+        "Network Activity (NVT)",
+        "Rank Benchmark"
+      ],
+      "iv_breakdown": {
+        "Network Activity (NVT)": 0.4574,
+        "Rank Benchmark": 0.25
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 2,
+      "price_history_note": "Limited price history available (2 year(s)). This token may be recently listed or have insufficient on-chain data."
+    },
+    "intrinsic_value": 0.3838,
+    "iv_method": "Network Activity (NVT), Rank Benchmark",
+    "iv_methods_count": 2,
     "bull_bear": {
       "bull_points": [
         "Fartcoin maintains a top-176 market cap position with established liquidity",
@@ -2213,11 +3201,11 @@
       ],
       "bear_points": [
         "No historical fee data available on DeFiLlama \u2014 protocol may be too new or too small to have an established economic track record",
-        "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets",
-        "Regulatory uncertainty across major markets presents an ongoing risk"
+        "Up 31% over 30 days \u2014 strong momentum but increases the risk of a short-term correction",
+        "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 22:58"
+      "generated_at": "2026-03-25 23:34"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -2232,11 +3220,11 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 22:58",
+    "last_updated": "2026-03-25 23:34",
     "price_history": {
       "2024": 0.933,
       "2025": 0.2684,
-      "2026": 0.1928
+      "2026": 0.1919
     },
     "market_fear_greed": {
       "value": 14,
@@ -2254,20 +3242,20 @@
       "description": "Falcon Finance (FF) \u2014 a Cash-Flow Protocol ranked #191 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/69121/large/ff.png?1757573403",
       "market_cap_rank": 191,
-      "market_cap_usd": 168226715.0,
-      "fully_diluted_valuation": 718920000.0,
-      "current_price": 0.071892,
+      "market_cap_usd": 168156787.0,
+      "fully_diluted_valuation": 718560000.0,
+      "current_price": 0.071856,
       "ath": 0.770814,
       "ath_date": "2025-09-29",
       "ath_change_pct": -90.7,
       "atl": 0.062102,
       "atl_date": "2025-10-10",
-      "price_change_7d_pct": -1.1836458458416628,
-      "price_change_30d_pct": -6.629852823319364,
+      "price_change_7d_pct": -0.9248558059587797,
+      "price_change_30d_pct": -6.984538025338008,
       "circulating_supply": 2340000000.0,
       "total_supply": 10000000000.0,
       "max_supply": 10000000000.0,
-      "total_volume_24h": 10422478.0,
+      "total_volume_24h": 10045930.0,
       "defillama_slug": null,
       "has_curated_description": false
     },
@@ -2275,19 +3263,19 @@
     "coin_id": "falcon-finance-ff",
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
-    "current_price": 0.071892,
-    "market_cap": 168226715.0,
-    "fully_diluted_valuation": 718920000.0,
+    "current_price": 0.071856,
+    "market_cap": 168156787.0,
+    "fully_diluted_valuation": 718560000.0,
     "market_cap_rank": 191,
-    "price_change_7d_pct": -1.1836458458416628,
-    "price_change_30d_pct": -6.629852823319364,
+    "price_change_7d_pct": -0.9248558059587797,
+    "price_change_30d_pct": -6.984538025338008,
     "dilution": {
       "circulating_pct": 23.4,
       "supply_overhang": 76.6,
-      "fully_diluted_valuation": 718920000.0,
+      "fully_diluted_valuation": 718560000.0,
       "fdv_to_mc_ratio": 4.27
     },
-    "metcalfe_ratio": 16.14,
+    "metcalfe_ratio": 16.74,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -2324,7 +3312,7 @@
           "label": "Network Demand",
           "score": 6,
           "max": 10,
-          "value": 6.2,
+          "value": 5.97,
           "unit": "volume/MC %",
           "chart_source": "raw calculation (CoinGecko volume)",
           "chart_ref": null,
@@ -2378,21 +3366,23 @@
       "above_3y_sma": null,
       "ath_price": null,
       "sma_3y": null,
-      "data_years": 0
+      "data_years": 1
     },
     "chart_zones": {
-      "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
+      "current_zone": "OVEREXTENDED_ZONE",
+      "current_zone_label": "Overextended Zone",
       "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "mos_note": "Price above speculative fair value \u2014 no margin of safety.",
+      "zones_by_year": {
+        "2026": "OVEREXTENDED_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 2339.99,
+          "circulating_supply_m": 2340.19,
           "supply_overhang_pct": 76.6,
           "fdv_to_mc": 4.27,
           "burn_rate": null,
@@ -2405,14 +3395,91 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 22:59"
+        "last_fetched": "2026-03-25 23:34"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2026": {
+        "market_price": 0.0719,
+        "intrinsic_value": 0.0421,
+        "bull_case": 0.0421,
+        "bear_case": 0.0421,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.0434,
+        "bull_case": 0.0459,
+        "bear_case": 0.0265,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.0447,
+        "bull_case": 0.05,
+        "bear_case": 0.0167,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 0.046,
+        "bull_case": 0.0545,
+        "bear_case": 0.0105,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 0.0474,
+        "bull_case": 0.0594,
+        "bear_case": 0.00664886,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 0.0488,
+        "bull_case": 0.0648,
+        "bear_case": 0.00419144,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 0.0421,
+      "bull_iv": 0.0421,
+      "bear_iv": 0.0421,
+      "yr5_base_target": 0.0488,
+      "yr5_bull_target": 0.0648,
+      "yr5_bear_target": 0.00419144,
+      "base_annual_growth_pct": 3.0,
+      "bull_annual_growth_pct": 9.0,
+      "bear_annual_growth_pct": -37.0,
+      "bull_5y_upside_pct": 53.9,
+      "bear_5y_change_pct": -90.0,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 4.0/10 and survivability 26.7%. Base: 3.0% p.a., Bull: 9.0% p.a., Bear: -37.0% p.a.",
+      "quality_score": 4.0,
+      "quality_multiplier": 0.75,
+      "survivability_pct": 26.7,
+      "survivability_mult": 0.6,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 3,
+      "methods_used": [
+        "Network Activity (NVT)",
+        "Rank Benchmark",
+        "Dilution Adjustment"
+      ],
+      "iv_breakdown": {
+        "Network Activity (NVT)": 0.0215,
+        "Rank Benchmark": 0.0855,
+        "Dilution Adjustment": 0.0421
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 0,
+      "price_history_note": "Historical price data unavailable for this token. Forecast chart shows projected values only."
+    },
+    "intrinsic_value": 0.0421,
+    "iv_method": "Network Activity (NVT), Rank Benchmark, Dilution Adjustment",
+    "iv_methods_count": 3,
     "bull_bear": {
       "bull_points": [
         "Fear & Greed score of 24 (Fear) indicates significant pessimism \u2014 often a contrarian buying opportunity",
@@ -2425,7 +3492,7 @@
         "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 22:59"
+      "generated_at": "2026-03-25 23:34"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -2440,9 +3507,8 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 22:59",
+    "last_updated": "2026-03-25 23:34",
     "price_history": {
-      "2025": 0.0862,
       "2026": 0.0719
     },
     "market_fear_greed": {
@@ -2585,14 +3651,16 @@
       "above_3y_sma": null,
       "ath_price": null,
       "sma_3y": null,
-      "data_years": 0
+      "data_years": 1
     },
     "chart_zones": {
-      "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
+      "current_zone": "ACCUMULATION_ZONE",
+      "current_zone_label": "Accumulation Zone",
       "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "mos_note": "Cycle phase (Insufficient Data) not favourable for entry \u2014 wait for accumulation or early uptrend.",
+      "zones_by_year": {
+        "2026": "ACCUMULATION_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
@@ -2612,14 +3680,87 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 22:59"
+        "last_fetched": "2026-03-25 23:34"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2026": {
+        "market_price": 1.0,
+        "intrinsic_value": 1.3893,
+        "bull_case": 1.3893,
+        "bear_case": 1.3893,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 1.4866,
+        "bull_case": 1.5699,
+        "bear_case": 1.0959,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 1.5906,
+        "bull_case": 1.774,
+        "bear_case": 0.8644,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 1.702,
+        "bull_case": 2.0046,
+        "bear_case": 0.6819,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 1.8211,
+        "bull_case": 2.2652,
+        "bear_case": 0.5379,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 1.9486,
+        "bull_case": 2.5597,
+        "bear_case": 0.4243,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 1.3893,
+      "bull_iv": 1.3893,
+      "bear_iv": 1.3893,
+      "yr5_base_target": 1.9486,
+      "yr5_bull_target": 2.5597,
+      "yr5_bear_target": 0.4243,
+      "base_annual_growth_pct": 7.0,
+      "bull_annual_growth_pct": 13.0,
+      "bear_annual_growth_pct": -21.1,
+      "bull_5y_upside_pct": 84.2,
+      "bear_5y_change_pct": -69.5,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 5.3/10 and survivability 56.7%. Base: 7.0% p.a., Bull: 13.0% p.a., Bear: -21.1% p.a.",
+      "quality_score": 5.3,
+      "quality_multiplier": 0.75,
+      "survivability_pct": 56.7,
+      "survivability_mult": 0.8,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 1,
+      "methods_used": [
+        "Rank Benchmark"
+      ],
+      "iv_breakdown": {
+        "Rank Benchmark": 1.3893
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 0,
+      "price_history_note": "Historical price data unavailable for this token. Forecast chart shows projected values only."
+    },
+    "intrinsic_value": 1.3893,
+    "iv_method": "Rank Benchmark",
+    "iv_methods_count": 1,
     "bull_bear": {
       "bull_points": [
         "Fidelity Digital Interest Token maintains a top-199 market cap position with established liquidity",
@@ -2632,7 +3773,7 @@
         "Regulatory uncertainty across major markets presents an ongoing risk"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 22:59"
+      "generated_at": "2026-03-25 23:34"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -2647,7 +3788,7 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 22:59",
+    "last_updated": "2026-03-25 23:34",
     "price_history": {
       "2026": 1.0
     },
@@ -2664,23 +3805,23 @@
       "coin_id": "flying-tulip",
       "bucket": "A",
       "bucket_label": "Cash-Flow Protocol",
-      "description": "Flying Tulip (FT) \u2014 a Cash-Flow Protocol ranked #200 by market cap.",
+      "description": "Flying Tulip (FT) \u2014 a Cash-Flow Protocol ranked #201 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/68285/large/FlyingTulip_FT_200px.png?1759802398",
-      "market_cap_rank": 200,
-      "market_cap_usd": 157030724.0,
-      "fully_diluted_valuation": 978190000.0,
-      "current_price": 0.097819,
+      "market_cap_rank": 201,
+      "market_cap_usd": 156953571.0,
+      "fully_diluted_valuation": 977810000.0,
+      "current_price": 0.097781,
       "ath": 0.299855,
       "ath_date": "2026-02-23",
       "ath_change_pct": -67.4,
       "atl": 0.095207,
       "atl_date": "2026-03-19",
-      "price_change_7d_pct": -0.426265668430641,
-      "price_change_30d_pct": -2.3166765956960567,
+      "price_change_7d_pct": -0.40766514384775515,
+      "price_change_30d_pct": -2.8523279187754196,
       "circulating_supply": 1605318459.082579,
       "total_supply": 9988131898.77427,
       "max_supply": 10000000000.0,
-      "total_volume_24h": 143736.0,
+      "total_volume_24h": 143994.0,
       "defillama_slug": null,
       "has_curated_description": false
     },
@@ -2688,19 +3829,19 @@
     "coin_id": "flying-tulip",
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
-    "current_price": 0.097819,
-    "market_cap": 157030724.0,
-    "fully_diluted_valuation": 978190000.0,
-    "market_cap_rank": 200,
-    "price_change_7d_pct": -0.426265668430641,
-    "price_change_30d_pct": -2.3166765956960567,
+    "current_price": 0.097781,
+    "market_cap": 156953571.0,
+    "fully_diluted_valuation": 977810000.0,
+    "market_cap_rank": 201,
+    "price_change_7d_pct": -0.40766514384775515,
+    "price_change_30d_pct": -2.8523279187754196,
     "dilution": {
       "circulating_pct": 16.05,
       "supply_overhang": 83.95,
-      "fully_diluted_valuation": 978190000.0,
+      "fully_diluted_valuation": 977810000.0,
       "fdv_to_mc_ratio": 6.23
     },
-    "metcalfe_ratio": 1092.49,
+    "metcalfe_ratio": 1090.0,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -2754,18 +3895,18 @@
         },
         "protocol_maturity": {
           "label": "Protocol Maturity",
-          "score": 2,
+          "score": 1,
           "max": 10,
-          "value": 200,
+          "value": 201,
           "unit": "MC rank",
           "chart_source": "raw calculation (CoinGecko rank)",
           "chart_ref": null
         }
       },
       "moat": null,
-      "final_score": 3.2,
-      "final_score_pct": 31.7,
-      "quantitative_pct": 31.7,
+      "final_score": 3.0,
+      "final_score_pct": 30.0,
+      "quantitative_pct": 30.0,
       "classification": "Dangerous",
       "tiebreaker_used": false
     },
@@ -2791,21 +3932,23 @@
       "above_3y_sma": null,
       "ath_price": null,
       "sma_3y": null,
-      "data_years": 0
+      "data_years": 1
     },
     "chart_zones": {
-      "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
+      "current_zone": "OVEREXTENDED_ZONE",
+      "current_zone_label": "Overextended Zone",
       "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "mos_note": "Price above speculative fair value \u2014 no margin of safety.",
+      "zones_by_year": {
+        "2026": "OVEREXTENDED_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 1605.32,
+          "circulating_supply_m": 1605.15,
           "supply_overhang_pct": 83.95,
           "fdv_to_mc": 6.23,
           "burn_rate": null,
@@ -2818,27 +3961,102 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 22:59"
+        "last_fetched": "2026-03-25 23:34"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2026": {
+        "market_price": 0.0978,
+        "intrinsic_value": 0.0598,
+        "bull_case": 0.0598,
+        "bear_case": 0.0598,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.0616,
+        "bull_case": 0.0652,
+        "bear_case": 0.031,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.0634,
+        "bull_case": 0.071,
+        "bear_case": 0.0161,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 0.0653,
+        "bull_case": 0.0774,
+        "bear_case": 0.00836115,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 0.0673,
+        "bull_case": 0.0844,
+        "bear_case": 0.00433965,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 0.0693,
+        "bull_case": 0.092,
+        "bear_case": 0.00225238,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 0.0598,
+      "bull_iv": 0.0598,
+      "bear_iv": 0.0598,
+      "yr5_base_target": 0.0693,
+      "yr5_bull_target": 0.092,
+      "yr5_bear_target": 0.00225238,
+      "base_annual_growth_pct": 3.0,
+      "bull_annual_growth_pct": 9.0,
+      "bear_annual_growth_pct": -48.1,
+      "bull_5y_upside_pct": 53.8,
+      "bear_5y_change_pct": -96.2,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 3.0/10 and survivability 23.3%. Base: 3.0% p.a., Bull: 9.0% p.a., Bear: -48.1% p.a.",
+      "quality_score": 3.0,
+      "quality_multiplier": 0.55,
+      "survivability_pct": 23.3,
+      "survivability_mult": 0.35,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 2,
+      "methods_used": [
+        "Rank Benchmark",
+        "Dilution Adjustment"
+      ],
+      "iv_breakdown": {
+        "Rank Benchmark": 0.0598,
+        "Dilution Adjustment": 0.0392
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 0,
+      "price_history_note": "Historical price data unavailable for this token. Forecast chart shows projected values only."
+    },
+    "intrinsic_value": 0.0598,
+    "iv_method": "Rank Benchmark, Dilution Adjustment",
+    "iv_methods_count": 2,
     "bull_bear": {
       "bull_points": [
         "Fear & Greed score of 24 (Fear) indicates significant pessimism \u2014 often a contrarian buying opportunity",
-        "Flying Tulip maintains a top-200 market cap position with established liquidity",
+        "Flying Tulip maintains a top-201 market cap position with established liquidity",
         "Long-term adoption thesis remains intact for Cash-Flow Protocol assets"
       ],
       "bear_points": [
         "No historical fee data available on DeFiLlama \u2014 protocol may be too new or too small to have an established economic track record",
-        "FDV is 6.2x market cap \u2014 large token unlocks ahead could create sustained sell pressure",
-        "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets"
+        "Weak quality score of 3.0/10 (Dangerous) \u2014 most key metrics are below expectations",
+        "FDV is 6.2x market cap \u2014 large token unlocks ahead could create sustained sell pressure"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 22:59"
+      "generated_at": "2026-03-25 23:34"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -2853,7 +4071,7 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 22:59",
+    "last_updated": "2026-03-25 23:34",
     "price_history": {
       "2026": 0.0978
     },
@@ -2870,23 +4088,23 @@
       "coin_id": "instadapp",
       "bucket": "A",
       "bucket_label": "Cash-Flow Protocol",
-      "description": "Fluid (FLUID) \u2014 a Cash-Flow Protocol ranked #212 by market cap.",
+      "description": "Fluid (FLUID) \u2014 a Cash-Flow Protocol ranked #214 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/14688/large/Logo_1_%28brighter%29.png?1734430693",
-      "market_cap_rank": 212,
-      "market_cap_usd": 142860573.0,
-      "fully_diluted_valuation": 182000000.0,
-      "current_price": 1.82,
+      "market_cap_rank": 214,
+      "market_cap_usd": 142222646.0,
+      "fully_diluted_valuation": 181000000.0,
+      "current_price": 1.81,
       "ath": 24.4,
       "ath_date": "2021-06-16",
       "ath_change_pct": -92.6,
       "atl": 0.366538,
       "atl_date": "2022-12-28",
-      "price_change_7d_pct": -18.81491634466349,
-      "price_change_30d_pct": -7.875541354476899,
+      "price_change_7d_pct": -19.88817694525251,
+      "price_change_30d_pct": -8.357894067855549,
       "circulating_supply": 78532543.82034639,
       "total_supply": 100000000.0,
       "max_supply": 100000000.0,
-      "total_volume_24h": 3713951.0,
+      "total_volume_24h": 3708310.0,
       "defillama_slug": null,
       "has_curated_description": false
     },
@@ -2894,19 +4112,19 @@
     "coin_id": "instadapp",
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
-    "current_price": 1.82,
-    "market_cap": 142860573.0,
-    "fully_diluted_valuation": 182000000.0,
-    "market_cap_rank": 212,
-    "price_change_7d_pct": -18.81491634466349,
-    "price_change_30d_pct": -7.875541354476899,
+    "current_price": 1.81,
+    "market_cap": 142222646.0,
+    "fully_diluted_valuation": 181000000.0,
+    "market_cap_rank": 214,
+    "price_change_7d_pct": -19.88817694525251,
+    "price_change_30d_pct": -8.357894067855549,
     "dilution": {
       "circulating_pct": 78.53,
       "supply_overhang": 21.47,
-      "fully_diluted_valuation": 182000000.0,
+      "fully_diluted_valuation": 181000000.0,
       "fdv_to_mc_ratio": 1.27
     },
-    "metcalfe_ratio": 38.47,
+    "metcalfe_ratio": 38.35,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -2943,7 +4161,7 @@
           "label": "Network Demand",
           "score": 4,
           "max": 10,
-          "value": 2.6,
+          "value": 2.61,
           "unit": "volume/MC %",
           "chart_source": "raw calculation (CoinGecko volume)",
           "chart_ref": null,
@@ -2962,7 +4180,7 @@
           "label": "Protocol Maturity",
           "score": 1,
           "max": 10,
-          "value": 212,
+          "value": 214,
           "unit": "MC rank",
           "chart_source": "raw calculation (CoinGecko rank)",
           "chart_ref": null
@@ -2976,42 +4194,48 @@
       "tiebreaker_used": false
     },
     "fear_greed": {
-      "score": 29,
+      "score": 23,
       "label": "Fear",
-      "market_cycle_phase": "UNKNOWN",
-      "market_cycle_anchor": 30,
+      "market_cycle_phase": "ACCUMULATION",
+      "market_cycle_anchor": 15,
       "components": {
         "price_momentum": 5,
         "volume_momentum": 12,
         "volatility": 6,
         "momentum_trend": 3,
         "dilution_pressure": 6,
-        "cycle_anchor": 30
+        "cycle_anchor": 15
       }
     },
     "market_cycle": {
-      "phase": "UNKNOWN",
-      "phase_label": "Insufficient Data",
-      "drawdown_from_ath_pct": null,
-      "yoy_change_pct": null,
-      "above_3y_sma": null,
-      "ath_price": null,
-      "sma_3y": null,
-      "data_years": 0
+      "phase": "ACCUMULATION",
+      "phase_label": "Accumulation (deep bear)",
+      "drawdown_from_ath_pct": 76.2,
+      "yoy_change_pct": -31.5,
+      "above_3y_sma": false,
+      "ath_price": 7.604,
+      "sma_3y": 4.0183,
+      "data_years": 5
     },
     "chart_zones": {
-      "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
+      "current_zone": "OVEREXTENDED_ZONE",
+      "current_zone_label": "Overextended Zone",
       "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "mos_note": "Price above speculative fair value \u2014 no margin of safety.",
+      "zones_by_year": {
+        "2022": "ACCUMULATION_ZONE",
+        "2023": "OVEREXTENDED_ZONE",
+        "2024": "OVEREXTENDED_ZONE",
+        "2025": "OVEREXTENDED_ZONE",
+        "2026": "OVEREXTENDED_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 78.49,
+          "circulating_supply_m": 78.58,
           "supply_overhang_pct": 21.47,
           "fdv_to_mc": 1.27,
           "burn_rate": null,
@@ -3024,19 +4248,122 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 22:59"
+        "last_fetched": "2026-03-25 23:35"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2022": {
+        "market_price": 0.4308,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2023": {
+        "market_price": 1.849,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2024": {
+        "market_price": 7.604,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2025": {
+        "market_price": 2.641,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2026": {
+        "market_price": 1.81,
+        "intrinsic_value": 1.2224,
+        "bull_case": 1.2224,
+        "bear_case": 1.2224,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 1.2591,
+        "bull_case": 1.3324,
+        "bear_case": 0.7706,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 1.2968,
+        "bull_case": 1.4523,
+        "bear_case": 0.4858,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 1.3357,
+        "bull_case": 1.583,
+        "bear_case": 0.3062,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 1.3758,
+        "bull_case": 1.7255,
+        "bear_case": 0.1931,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 1.4171,
+        "bull_case": 1.8808,
+        "bear_case": 0.1217,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 1.2224,
+      "bull_iv": 1.2224,
+      "bear_iv": 1.2224,
+      "yr5_base_target": 1.4171,
+      "yr5_bull_target": 1.8808,
+      "yr5_bear_target": 0.1217,
+      "base_annual_growth_pct": 3.0,
+      "bull_annual_growth_pct": 9.0,
+      "bear_annual_growth_pct": -37.0,
+      "bull_5y_upside_pct": 53.9,
+      "bear_5y_change_pct": -90.0,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 4.2/10 and survivability 40.0%. Base: 3.0% p.a., Bull: 9.0% p.a., Bear: -37.0% p.a.",
+      "quality_score": 4.2,
+      "quality_multiplier": 0.75,
+      "survivability_pct": 40.0,
+      "survivability_mult": 0.6,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 2,
+      "methods_used": [
+        "Network Activity (NVT)",
+        "Rank Benchmark"
+      ],
+      "iv_breakdown": {
+        "Network Activity (NVT)": 0.2361,
+        "Rank Benchmark": 1.2224
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 4,
+      "price_history_note": null
+    },
+    "intrinsic_value": 1.2224,
+    "iv_method": "Network Activity (NVT), Rank Benchmark",
+    "iv_methods_count": 2,
     "bull_bear": {
       "bull_points": [
-        "Fluid maintains a top-212 market cap position with established liquidity",
-        "Long-term adoption thesis remains intact for Cash-Flow Protocol assets",
-        "Broader crypto market development continues to benefit established protocols"
+        "Fear & Greed score of 23 (Fear) indicates significant pessimism \u2014 often a contrarian buying opportunity",
+        "Fluid maintains a top-214 market cap position with established liquidity",
+        "Long-term adoption thesis remains intact for Cash-Flow Protocol assets"
       ],
       "bear_points": [
         "No historical fee data available on DeFiLlama \u2014 protocol may be too new or too small to have an established economic track record",
@@ -3044,7 +4371,7 @@
         "Regulatory uncertainty across major markets presents an ongoing risk"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 22:59"
+      "generated_at": "2026-03-25 23:35"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -3059,13 +4386,13 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 22:59",
+    "last_updated": "2026-03-25 23:35",
     "price_history": {
       "2022": 0.4308,
       "2023": 1.849,
       "2024": 7.604,
       "2025": 2.641,
-      "2026": 1.82
+      "2026": 1.81
     },
     "market_fear_greed": {
       "value": 14,
@@ -3080,23 +4407,23 @@
       "coin_id": "frax-usd",
       "bucket": "A",
       "bucket_label": "Cash-Flow Protocol",
-      "description": "Frax USD (FRXUSD) \u2014 a Cash-Flow Protocol ranked #236 by market cap.",
+      "description": "Frax USD (FRXUSD) \u2014 a Cash-Flow Protocol ranked #235 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/53963/large/frxUSD.png?1737792154",
-      "market_cap_rank": 236,
-      "market_cap_usd": 125223894.0,
+      "market_cap_rank": 235,
+      "market_cap_usd": 125200024.0,
       "fully_diluted_valuation": 125211075.81,
       "current_price": 1.0,
       "ath": 1.007,
       "ath_date": "2025-05-30",
-      "ath_change_pct": -0.6,
+      "ath_change_pct": -0.7,
       "atl": 0.97622,
       "atl_date": "2025-02-17",
-      "price_change_7d_pct": 0.008179009016450517,
-      "price_change_30d_pct": 0.05852796087226486,
+      "price_change_7d_pct": -0.030460527793747322,
+      "price_change_30d_pct": 0.028789849616933073,
       "circulating_supply": 125179820.4124438,
       "total_supply": 125211075.8066552,
       "max_supply": null,
-      "total_volume_24h": 2472226.0,
+      "total_volume_24h": 1993132.0,
       "defillama_slug": null,
       "has_curated_description": false
     },
@@ -3105,18 +4432,18 @@
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
     "current_price": 1.0,
-    "market_cap": 125223894.0,
+    "market_cap": 125200024.0,
     "fully_diluted_valuation": 125211075.81,
-    "market_cap_rank": 236,
-    "price_change_7d_pct": 0.008179009016450517,
-    "price_change_30d_pct": 0.05852796087226486,
+    "market_cap_rank": 235,
+    "price_change_7d_pct": -0.030460527793747322,
+    "price_change_30d_pct": 0.028789849616933073,
     "dilution": {
       "circulating_pct": 99.98,
       "supply_overhang": 0.02,
       "fully_diluted_valuation": 125211075.81,
       "fdv_to_mc_ratio": 1.0
     },
-    "metcalfe_ratio": 50.65,
+    "metcalfe_ratio": 62.82,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -3153,7 +4480,7 @@
           "label": "Network Demand",
           "score": 2,
           "max": 10,
-          "value": 1.97,
+          "value": 1.59,
           "unit": "volume/MC %",
           "chart_source": "raw calculation (CoinGecko volume)",
           "chart_ref": null,
@@ -3172,7 +4499,7 @@
           "label": "Protocol Maturity",
           "score": 1,
           "max": 10,
-          "value": 236,
+          "value": 235,
           "unit": "MC rank",
           "chart_source": "raw calculation (CoinGecko rank)",
           "chart_ref": null
@@ -3186,7 +4513,7 @@
       "tiebreaker_used": false
     },
     "fear_greed": {
-      "score": 37,
+      "score": 34,
       "label": "Fear",
       "market_cycle_phase": "UNKNOWN",
       "market_cycle_anchor": 30,
@@ -3194,7 +4521,7 @@
         "price_momentum": 10,
         "volume_momentum": 8,
         "volatility": 8,
-        "momentum_trend": 12,
+        "momentum_trend": 6,
         "dilution_pressure": 10,
         "cycle_anchor": 30
       }
@@ -3207,21 +4534,23 @@
       "above_3y_sma": null,
       "ath_price": null,
       "sma_3y": null,
-      "data_years": 0
+      "data_years": 1
     },
     "chart_zones": {
       "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
+      "current_zone_label": "Neutral Zone",
       "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "mos_note": "Price above speculative fair value \u2014 no margin of safety.",
+      "zones_by_year": {
+        "2026": "NEUTRAL_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 125.22,
+          "circulating_supply_m": 125.2,
           "supply_overhang_pct": 0.02,
           "fdv_to_mc": 1.0,
           "burn_rate": null,
@@ -3234,17 +4563,92 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 22:59"
+        "last_fetched": "2026-03-25 23:35"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2026": {
+        "market_price": 1.0,
+        "intrinsic_value": 0.8628,
+        "bull_case": 0.8628,
+        "bear_case": 0.8628,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.8887,
+        "bull_case": 0.9405,
+        "bear_case": 0.6122,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.9153,
+        "bull_case": 1.0251,
+        "bear_case": 0.4344,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 0.9428,
+        "bull_case": 1.1174,
+        "bear_case": 0.3083,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 0.9711,
+        "bull_case": 1.2179,
+        "bear_case": 0.2188,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 1.0002,
+        "bull_case": 1.3275,
+        "bear_case": 0.1552,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 0.8628,
+      "bull_iv": 0.8628,
+      "bear_iv": 0.8628,
+      "yr5_base_target": 1.0002,
+      "yr5_bull_target": 1.3275,
+      "yr5_bear_target": 0.1552,
+      "base_annual_growth_pct": 3.0,
+      "bull_annual_growth_pct": 9.0,
+      "bear_annual_growth_pct": -29.0,
+      "bull_5y_upside_pct": 53.9,
+      "bear_5y_change_pct": -82.0,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 4.7/10 and survivability 53.3%. Base: 3.0% p.a., Bull: 9.0% p.a., Bear: -29.0% p.a.",
+      "quality_score": 4.7,
+      "quality_multiplier": 0.75,
+      "survivability_pct": 53.3,
+      "survivability_mult": 0.8,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 2,
+      "methods_used": [
+        "Network Activity (NVT)",
+        "Rank Benchmark"
+      ],
+      "iv_breakdown": {
+        "Network Activity (NVT)": 0.1274,
+        "Rank Benchmark": 0.8628
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 0,
+      "price_history_note": "Historical price data unavailable for this token. Forecast chart shows projected values only."
+    },
+    "intrinsic_value": 0.8628,
+    "iv_method": "Network Activity (NVT), Rank Benchmark",
+    "iv_methods_count": 2,
     "bull_bear": {
       "bull_points": [
-        "Frax USD maintains a top-236 market cap position with established liquidity",
+        "Frax USD maintains a top-235 market cap position with established liquidity",
         "Long-term adoption thesis remains intact for Cash-Flow Protocol assets",
         "Broader crypto market development continues to benefit established protocols"
       ],
@@ -3254,7 +4658,7 @@
         "Regulatory uncertainty across major markets presents an ongoing risk"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 22:59"
+      "generated_at": "2026-03-25 23:35"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -3269,7 +4673,7 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 22:59",
+    "last_updated": "2026-03-25 23:35",
     "price_history": {
       "2026": 1.0
     },
@@ -3286,23 +4690,23 @@
       "coin_id": "four",
       "bucket": "A",
       "bucket_label": "Cash-Flow Protocol",
-      "description": "Four (FORM) \u2014 a Cash-Flow Protocol ranked #267 by market cap.",
+      "description": "Four (FORM) \u2014 a Cash-Flow Protocol ranked #268 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/54912/large/four.jpg?1742461445",
-      "market_cap_rank": 267,
-      "market_cap_usd": 100170122.0,
-      "fully_diluted_valuation": 152095720.0,
-      "current_price": 0.262234,
+      "market_cap_rank": 268,
+      "market_cap_usd": 99826095.0,
+      "fully_diluted_valuation": 151618380.0,
+      "current_price": 0.261411,
       "ath": 4.19,
       "ath_date": "2025-09-08",
-      "ath_change_pct": -93.7,
+      "ath_change_pct": -93.8,
       "atl": 0.180888,
       "atl_date": "2026-02-28",
-      "price_change_7d_pct": 5.7771226840096945,
-      "price_change_30d_pct": 36.77695287743954,
+      "price_change_7d_pct": 4.803578146826761,
+      "price_change_30d_pct": 35.90273228160447,
       "circulating_supply": 381867255.14,
       "total_supply": 572301922.1,
       "max_supply": 580000000.0,
-      "total_volume_24h": 3709180.0,
+      "total_volume_24h": 3770746.0,
       "defillama_slug": null,
       "has_curated_description": false
     },
@@ -3310,19 +4714,19 @@
     "coin_id": "four",
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
-    "current_price": 0.262234,
-    "market_cap": 100170122.0,
-    "fully_diluted_valuation": 152095720.0,
-    "market_cap_rank": 267,
-    "price_change_7d_pct": 5.7771226840096945,
-    "price_change_30d_pct": 36.77695287743954,
+    "current_price": 0.261411,
+    "market_cap": 99826095.0,
+    "fully_diluted_valuation": 151618380.0,
+    "market_cap_rank": 268,
+    "price_change_7d_pct": 4.803578146826761,
+    "price_change_30d_pct": 35.90273228160447,
     "dilution": {
       "circulating_pct": 65.84,
       "supply_overhang": 34.16,
-      "fully_diluted_valuation": 152095720.0,
+      "fully_diluted_valuation": 151618380.0,
       "fdv_to_mc_ratio": 1.52
     },
-    "metcalfe_ratio": 27.01,
+    "metcalfe_ratio": 26.47,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -3359,7 +4763,7 @@
           "label": "Network Demand",
           "score": 4,
           "max": 10,
-          "value": 3.7,
+          "value": 3.78,
           "unit": "volume/MC %",
           "chart_source": "raw calculation (CoinGecko volume)",
           "chart_ref": null,
@@ -3378,7 +4782,7 @@
           "label": "Protocol Maturity",
           "score": 1,
           "max": 10,
-          "value": 267,
+          "value": 268,
           "unit": "MC rank",
           "chart_source": "raw calculation (CoinGecko rank)",
           "chart_ref": null
@@ -3392,42 +4796,45 @@
       "tiebreaker_used": false
     },
     "fear_greed": {
-      "score": 43,
-      "label": "Neutral",
-      "market_cycle_phase": "UNKNOWN",
-      "market_cycle_anchor": 30,
+      "score": 37,
+      "label": "Fear",
+      "market_cycle_phase": "DOWNTREND",
+      "market_cycle_anchor": 18,
       "components": {
         "price_momentum": 22,
         "volume_momentum": 12,
-        "volatility": 10,
+        "volatility": 8,
         "momentum_trend": 12,
         "dilution_pressure": 3,
-        "cycle_anchor": 30
+        "cycle_anchor": 18
       }
     },
     "market_cycle": {
-      "phase": "UNKNOWN",
-      "phase_label": "Insufficient Data",
-      "drawdown_from_ath_pct": null,
-      "yoy_change_pct": null,
+      "phase": "DOWNTREND",
+      "phase_label": "Downtrend",
+      "drawdown_from_ath_pct": 26.3,
+      "yoy_change_pct": -26.3,
       "above_3y_sma": null,
-      "ath_price": null,
+      "ath_price": 0.3547,
       "sma_3y": null,
-      "data_years": 0
+      "data_years": 2
     },
     "chart_zones": {
       "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
+      "current_zone_label": "Neutral Zone",
       "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "mos_note": "Cycle phase (Downtrend) not favourable for entry \u2014 wait for accumulation or early uptrend.",
+      "zones_by_year": {
+        "2025": "OVEREXTENDED_ZONE",
+        "2026": "NEUTRAL_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 381.99,
+          "circulating_supply_m": 381.87,
           "supply_overhang_pct": 34.16,
           "fdv_to_mc": 1.52,
           "burn_rate": null,
@@ -3440,27 +4847,109 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 23:00"
+        "last_fetched": "2026-03-25 23:36"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2025": {
+        "market_price": 0.3547,
+        "intrinsic_value": null,
+        "bull_case": null,
+        "bear_case": null,
+        "is_historical": true
+      },
+      "2026": {
+        "market_price": 0.2614,
+        "intrinsic_value": 0.2514,
+        "bull_case": 0.2514,
+        "bear_case": 0.2514,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.2589,
+        "bull_case": 0.274,
+        "bear_case": 0.1585,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.2667,
+        "bull_case": 0.2987,
+        "bear_case": 0.0999,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 0.2747,
+        "bull_case": 0.3256,
+        "bear_case": 0.063,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 0.283,
+        "bull_case": 0.3549,
+        "bear_case": 0.0397,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 0.2914,
+        "bull_case": 0.3868,
+        "bear_case": 0.025,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 0.2514,
+      "bull_iv": 0.2514,
+      "bear_iv": 0.2514,
+      "yr5_base_target": 0.2914,
+      "yr5_bull_target": 0.3868,
+      "yr5_bear_target": 0.025,
+      "base_annual_growth_pct": 3.0,
+      "bull_annual_growth_pct": 9.0,
+      "bear_annual_growth_pct": -37.0,
+      "bull_5y_upside_pct": 53.9,
+      "bear_5y_change_pct": -90.1,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 3.8/10 and survivability 33.3%. Base: 3.0% p.a., Bull: 9.0% p.a., Bear: -37.0% p.a.",
+      "quality_score": 3.8,
+      "quality_multiplier": 0.55,
+      "survivability_pct": 33.3,
+      "survivability_mult": 0.6,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 2,
+      "methods_used": [
+        "Network Activity (NVT)",
+        "Rank Benchmark"
+      ],
+      "iv_breakdown": {
+        "Network Activity (NVT)": 0.0494,
+        "Rank Benchmark": 0.2514
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 1,
+      "price_history_note": "Limited price history available (1 year(s)). This token may be recently listed or have insufficient on-chain data."
+    },
+    "intrinsic_value": 0.2514,
+    "iv_method": "Network Activity (NVT), Rank Benchmark",
+    "iv_methods_count": 2,
     "bull_bear": {
       "bull_points": [
-        "Four maintains a top-267 market cap position with established liquidity",
+        "Four maintains a top-268 market cap position with established liquidity",
         "Long-term adoption thesis remains intact for Cash-Flow Protocol assets",
         "Broader crypto market development continues to benefit established protocols"
       ],
       "bear_points": [
         "No historical fee data available on DeFiLlama \u2014 protocol may be too new or too small to have an established economic track record",
-        "Up 37% over 30 days \u2014 strong momentum but increases the risk of a short-term correction",
+        "Up 36% over 30 days \u2014 strong momentum but increases the risk of a short-term correction",
         "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 23:00"
+      "generated_at": "2026-03-25 23:36"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -3475,9 +4964,10 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 23:00",
+    "last_updated": "2026-03-25 23:36",
     "price_history": {
-      "2026": 0.2622
+      "2025": 0.3547,
+      "2026": 0.2614
     },
     "market_fear_greed": {
       "value": 14,
@@ -3492,23 +4982,23 @@
       "coin_id": "felix-feusd",
       "bucket": "A",
       "bucket_label": "Cash-Flow Protocol",
-      "description": "Felix feUSD (FEUSD) \u2014 a Cash-Flow Protocol ranked #328 by market cap.",
+      "description": "Felix feUSD (FEUSD) \u2014 a Cash-Flow Protocol ranked #329 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/55068/large/feusd.jpg?1743581333",
-      "market_cap_rank": 328,
-      "market_cap_usd": 74794555.0,
-      "fully_diluted_valuation": 8879233671.92,
-      "current_price": 0.997207,
+      "market_cap_rank": 329,
+      "market_cap_usd": 74834635.0,
+      "fully_diluted_valuation": 8903283653.67,
+      "current_price": 0.999908,
       "ath": 1.067,
       "ath_date": "2025-04-02",
       "ath_change_pct": -6.5,
       "atl": 0.705908,
       "atl_date": "2025-10-10",
-      "price_change_7d_pct": -0.010779119271575564,
-      "price_change_30d_pct": 0.3729640790478256,
+      "price_change_7d_pct": 0.31764604182547906,
+      "price_change_30d_pct": 0.6185588292379995,
       "circulating_supply": 75004069.0,
       "total_supply": 8904102831.12653,
       "max_supply": null,
-      "total_volume_24h": 69842.0,
+      "total_volume_24h": 70074.0,
       "defillama_slug": null,
       "has_curated_description": false
     },
@@ -3516,19 +5006,19 @@
     "coin_id": "felix-feusd",
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
-    "current_price": 0.997207,
-    "market_cap": 74794555.0,
-    "fully_diluted_valuation": 8879233671.92,
-    "market_cap_rank": 328,
-    "price_change_7d_pct": -0.010779119271575564,
-    "price_change_30d_pct": 0.3729640790478256,
+    "current_price": 0.999908,
+    "market_cap": 74834635.0,
+    "fully_diluted_valuation": 8903283653.67,
+    "market_cap_rank": 329,
+    "price_change_7d_pct": 0.31764604182547906,
+    "price_change_30d_pct": 0.6185588292379995,
     "dilution": {
       "circulating_pct": 0.84,
       "supply_overhang": 99.16,
-      "fully_diluted_valuation": 8879233671.92,
-      "fdv_to_mc_ratio": 118.71
+      "fully_diluted_valuation": 8903283653.67,
+      "fdv_to_mc_ratio": 118.97
     },
-    "metcalfe_ratio": 1070.91,
+    "metcalfe_ratio": 1067.94,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -3584,7 +5074,7 @@
           "label": "Protocol Maturity",
           "score": 1,
           "max": 10,
-          "value": 328,
+          "value": 329,
           "unit": "MC rank",
           "chart_source": "raw calculation (CoinGecko rank)",
           "chart_ref": null
@@ -3598,7 +5088,7 @@
       "tiebreaker_used": false
     },
     "fear_greed": {
-      "score": 27,
+      "score": 31,
       "label": "Fear",
       "market_cycle_phase": "UNKNOWN",
       "market_cycle_anchor": 30,
@@ -3606,7 +5096,7 @@
         "price_momentum": 10,
         "volume_momentum": 3,
         "volatility": 8,
-        "momentum_trend": 6,
+        "momentum_trend": 15,
         "dilution_pressure": 0,
         "cycle_anchor": 30
       }
@@ -3619,23 +5109,25 @@
       "above_3y_sma": null,
       "ath_price": null,
       "sma_3y": null,
-      "data_years": 0
+      "data_years": 1
     },
     "chart_zones": {
-      "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
+      "current_zone": "OVEREXTENDED_ZONE",
+      "current_zone_label": "Overextended Zone",
       "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "mos_note": "Price above speculative fair value \u2014 no margin of safety.",
+      "zones_by_year": {
+        "2026": "OVEREXTENDED_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 75.0,
+          "circulating_supply_m": 74.84,
           "supply_overhang_pct": 99.16,
-          "fdv_to_mc": 118.71,
+          "fdv_to_mc": 118.97,
           "burn_rate": null,
           "net_issuance_note": "Current snapshot only. Historical supply data requires on-chain indexing not available via free APIs.",
           "is_estimated": true
@@ -3646,27 +5138,102 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 23:01"
+        "last_fetched": "2026-03-25 23:37"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2026": {
+        "market_price": 0.9999,
+        "intrinsic_value": 0.5333,
+        "bull_case": 0.5333,
+        "bear_case": 0.5333,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.5493,
+        "bull_case": 0.5813,
+        "bear_case": 0.2768,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.5658,
+        "bull_case": 0.6336,
+        "bear_case": 0.1437,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 0.5828,
+        "bull_case": 0.6906,
+        "bear_case": 0.0746,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 0.6002,
+        "bull_case": 0.7528,
+        "bear_case": 0.0387,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 0.6182,
+        "bull_case": 0.8205,
+        "bear_case": 0.0201,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 0.5333,
+      "bull_iv": 0.5333,
+      "bear_iv": 0.5333,
+      "yr5_base_target": 0.6182,
+      "yr5_bull_target": 0.8205,
+      "yr5_bear_target": 0.0201,
+      "base_annual_growth_pct": 3.0,
+      "bull_annual_growth_pct": 9.0,
+      "bear_annual_growth_pct": -48.1,
+      "bull_5y_upside_pct": 53.9,
+      "bear_5y_change_pct": -96.2,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 3.0/10 and survivability 23.3%. Base: 3.0% p.a., Bull: 9.0% p.a., Bear: -48.1% p.a.",
+      "quality_score": 3.0,
+      "quality_multiplier": 0.55,
+      "survivability_pct": 23.3,
+      "survivability_mult": 0.35,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 2,
+      "methods_used": [
+        "Rank Benchmark",
+        "Dilution Adjustment"
+      ],
+      "iv_breakdown": {
+        "Rank Benchmark": 0.5333,
+        "Dilution Adjustment": 0.021
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 0,
+      "price_history_note": "Historical price data unavailable for this token. Forecast chart shows projected values only."
+    },
+    "intrinsic_value": 0.5333,
+    "iv_method": "Rank Benchmark, Dilution Adjustment",
+    "iv_methods_count": 2,
     "bull_bear": {
       "bull_points": [
-        "Felix feUSD maintains a top-328 market cap position with established liquidity",
+        "Felix feUSD maintains a top-329 market cap position with established liquidity",
         "Long-term adoption thesis remains intact for Cash-Flow Protocol assets",
         "Broader crypto market development continues to benefit established protocols"
       ],
       "bear_points": [
         "No historical fee data available on DeFiLlama \u2014 protocol may be too new or too small to have an established economic track record",
         "Weak quality score of 3.0/10 (Dangerous) \u2014 most key metrics are below expectations",
-        "FDV is 118.7x market cap \u2014 large token unlocks ahead could create sustained sell pressure"
+        "FDV is 119.0x market cap \u2014 large token unlocks ahead could create sustained sell pressure"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 23:01"
+      "generated_at": "2026-03-25 23:37"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -3681,9 +5248,9 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 23:01",
+    "last_updated": "2026-03-25 23:37",
     "price_history": {
-      "2026": 0.9972
+      "2026": 0.9999
     },
     "market_fear_greed": {
       "value": 14,
@@ -3701,20 +5268,20 @@
       "description": "Fogo (FOGO) \u2014 a Cash-Flow Protocol ranked #333 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/68100/large/fogo_AppIcon.png?1767721208",
       "market_cap_rank": 333,
-      "market_cap_usd": 74024289.0,
-      "fully_diluted_valuation": 194258688.27,
-      "current_price": 0.01948606,
+      "market_cap_usd": 74067967.0,
+      "fully_diluted_valuation": 194667521.49,
+      "current_price": 0.01952707,
       "ath": 0.062549,
       "ath_date": "2026-01-15",
-      "ath_change_pct": -68.6,
+      "ath_change_pct": -68.8,
       "atl": 0.01777157,
       "atl_date": "2026-03-23",
-      "price_change_7d_pct": -6.239618392147496,
-      "price_change_30d_pct": -28.941557081054658,
-      "circulating_supply": 3795110644.147829,
+      "price_change_7d_pct": -7.577950183122434,
+      "price_change_30d_pct": -29.724680350019046,
+      "circulating_supply": 3795133386.264198,
       "total_supply": 9969110649.658487,
       "max_supply": null,
-      "total_volume_24h": 7208615.0,
+      "total_volume_24h": 7399736.0,
       "defillama_slug": null,
       "has_curated_description": false
     },
@@ -3722,19 +5289,19 @@
     "coin_id": "fogo",
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
-    "current_price": 0.01948606,
-    "market_cap": 74024289.0,
-    "fully_diluted_valuation": 194258688.27,
+    "current_price": 0.01952707,
+    "market_cap": 74067967.0,
+    "fully_diluted_valuation": 194667521.49,
     "market_cap_rank": 333,
-    "price_change_7d_pct": -6.239618392147496,
-    "price_change_30d_pct": -28.941557081054658,
+    "price_change_7d_pct": -7.577950183122434,
+    "price_change_30d_pct": -29.724680350019046,
     "dilution": {
       "circulating_pct": 38.07,
       "supply_overhang": 61.93,
-      "fully_diluted_valuation": 194258688.27,
-      "fdv_to_mc_ratio": 2.62
+      "fully_diluted_valuation": 194667521.49,
+      "fdv_to_mc_ratio": 2.63
     },
-    "metcalfe_ratio": 10.27,
+    "metcalfe_ratio": 10.01,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -3771,7 +5338,7 @@
           "label": "Network Demand",
           "score": 6,
           "max": 10,
-          "value": 9.74,
+          "value": 9.99,
           "unit": "volume/MC %",
           "chart_source": "raw calculation (CoinGecko volume)",
           "chart_ref": null,
@@ -3825,23 +5392,25 @@
       "above_3y_sma": null,
       "ath_price": null,
       "sma_3y": null,
-      "data_years": 0
+      "data_years": 1
     },
     "chart_zones": {
-      "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
+      "current_zone": "OVEREXTENDED_ZONE",
+      "current_zone_label": "Overextended Zone",
       "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "mos_note": "Price above speculative fair value \u2014 no margin of safety.",
+      "zones_by_year": {
+        "2026": "OVEREXTENDED_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 3798.83,
+          "circulating_supply_m": 3793.09,
           "supply_overhang_pct": 61.93,
-          "fdv_to_mc": 2.62,
+          "fdv_to_mc": 2.63,
           "burn_rate": null,
           "net_issuance_note": "Current snapshot only. Historical supply data requires on-chain indexing not available via free APIs.",
           "is_estimated": true
@@ -3852,14 +5421,91 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 23:01"
+        "last_fetched": "2026-03-25 23:37"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2026": {
+        "market_price": 0.0195,
+        "intrinsic_value": 0.0105,
+        "bull_case": 0.0105,
+        "bear_case": 0.0105,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.0108,
+        "bull_case": 0.0114,
+        "bear_case": 0.0066192,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.0111,
+        "bull_case": 0.0125,
+        "bear_case": 0.00417274,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 0.0115,
+        "bull_case": 0.0136,
+        "bear_case": 0.0026305,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 0.0118,
+        "bull_case": 0.0148,
+        "bear_case": 0.00165827,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 0.0122,
+        "bull_case": 0.0162,
+        "bear_case": 0.00104537,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 0.0105,
+      "bull_iv": 0.0105,
+      "bear_iv": 0.0105,
+      "yr5_base_target": 0.0122,
+      "yr5_bull_target": 0.0162,
+      "yr5_bear_target": 0.00104537,
+      "base_annual_growth_pct": 3.0,
+      "bull_annual_growth_pct": 9.0,
+      "bear_annual_growth_pct": -37.0,
+      "bull_5y_upside_pct": 54.3,
+      "bear_5y_change_pct": -90.0,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 4.0/10 and survivability 26.7%. Base: 3.0% p.a., Bull: 9.0% p.a., Bear: -37.0% p.a.",
+      "quality_score": 4.0,
+      "quality_multiplier": 0.75,
+      "survivability_pct": 26.7,
+      "survivability_mult": 0.6,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 3,
+      "methods_used": [
+        "Network Activity (NVT)",
+        "Rank Benchmark",
+        "Dilution Adjustment"
+      ],
+      "iv_breakdown": {
+        "Network Activity (NVT)": 0.0097,
+        "Rank Benchmark": 0.0105,
+        "Dilution Adjustment": 0.0186
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 0,
+      "price_history_note": "Historical price data unavailable for this token. Forecast chart shows projected values only."
+    },
+    "intrinsic_value": 0.0105,
+    "iv_method": "Network Activity (NVT), Rank Benchmark, Dilution Adjustment",
+    "iv_methods_count": 3,
     "bull_bear": {
       "bull_points": [
         "Fear & Greed score of 23 (Fear) indicates significant pessimism \u2014 often a contrarian buying opportunity",
@@ -3872,7 +5518,7 @@
         "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 23:01"
+      "generated_at": "2026-03-25 23:37"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -3887,7 +5533,7 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 23:01",
+    "last_updated": "2026-03-25 23:37",
     "price_history": {
       "2026": 0.0195
     },
@@ -3904,23 +5550,23 @@
       "coin_id": "flow",
       "bucket": "A",
       "bucket_label": "Cash-Flow Protocol",
-      "description": "Flow (FLOW) \u2014 a Cash-Flow Protocol ranked #427 by market cap.",
+      "description": "Flow (FLOW) \u2014 a Cash-Flow Protocol ranked #428 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/13446/large/5f6294c0c7a8cda55cb1c936_Flow_Wordmark.png?1696513210",
-      "market_cap_rank": 427,
-      "market_cap_usd": 54014299.0,
-      "fully_diluted_valuation": 54006809.5,
-      "current_price": 0.03270984,
+      "market_cap_rank": 428,
+      "market_cap_usd": 53741308.0,
+      "fully_diluted_valuation": 53730929.28,
+      "current_price": 0.03254275,
       "ath": 42.4,
       "ath_date": "2021-04-05",
       "ath_change_pct": -99.9,
       "atl": 0.02924833,
       "atl_date": "2026-03-22",
-      "price_change_7d_pct": 3.9864443469324766,
-      "price_change_30d_pct": -24.149616454118185,
+      "price_change_7d_pct": 4.552793201781386,
+      "price_change_30d_pct": -25.582146520225514,
       "circulating_supply": 1651087547.387057,
       "total_supply": 1651087547.387057,
       "max_supply": null,
-      "total_volume_24h": 7748249.0,
+      "total_volume_24h": 7604865.0,
       "defillama_slug": null,
       "has_curated_description": false
     },
@@ -3928,19 +5574,19 @@
     "coin_id": "flow",
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
-    "current_price": 0.03270984,
-    "market_cap": 54014299.0,
-    "fully_diluted_valuation": 54006809.5,
-    "market_cap_rank": 427,
-    "price_change_7d_pct": 3.9864443469324766,
-    "price_change_30d_pct": -24.149616454118185,
+    "current_price": 0.03254275,
+    "market_cap": 53741308.0,
+    "fully_diluted_valuation": 53730929.28,
+    "market_cap_rank": 428,
+    "price_change_7d_pct": 4.552793201781386,
+    "price_change_30d_pct": -25.582146520225514,
     "dilution": {
       "circulating_pct": 100.0,
       "supply_overhang": 0.0,
-      "fully_diluted_valuation": 54006809.5,
+      "fully_diluted_valuation": 53730929.28,
       "fdv_to_mc_ratio": 1.0
     },
-    "metcalfe_ratio": 6.97,
+    "metcalfe_ratio": 7.07,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -3977,7 +5623,7 @@
           "label": "Network Demand",
           "score": 8,
           "max": 10,
-          "value": 14.34,
+          "value": 14.15,
           "unit": "volume/MC %",
           "chart_source": "raw calculation (CoinGecko volume)",
           "chart_ref": null,
@@ -3996,7 +5642,7 @@
           "label": "Protocol Maturity",
           "score": 1,
           "max": 10,
-          "value": 427,
+          "value": 428,
           "unit": "MC rank",
           "chart_source": "raw calculation (CoinGecko rank)",
           "chart_ref": null
@@ -4031,21 +5677,23 @@
       "above_3y_sma": null,
       "ath_price": null,
       "sma_3y": null,
-      "data_years": 0
+      "data_years": 1
     },
     "chart_zones": {
       "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
+      "current_zone_label": "Neutral Zone",
       "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "mos_note": "Cycle phase (Insufficient Data) not favourable for entry \u2014 wait for accumulation or early uptrend.",
+      "zones_by_year": {
+        "2026": "NEUTRAL_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 1651.32,
+          "circulating_supply_m": 1651.41,
           "supply_overhang_pct": 0,
           "fdv_to_mc": 1.0,
           "burn_rate": null,
@@ -4058,17 +5706,92 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 23:03"
+        "last_fetched": "2026-03-25 23:38"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2026": {
+        "market_price": 0.0325,
+        "intrinsic_value": 0.0368,
+        "bull_case": 0.0368,
+        "bear_case": 0.0368,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.0394,
+        "bull_case": 0.0416,
+        "bear_case": 0.029,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.0421,
+        "bull_case": 0.047,
+        "bear_case": 0.0229,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 0.0451,
+        "bull_case": 0.0531,
+        "bear_case": 0.0181,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 0.0482,
+        "bull_case": 0.06,
+        "bear_case": 0.0142,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 0.0516,
+        "bull_case": 0.0678,
+        "bear_case": 0.0112,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 0.0368,
+      "bull_iv": 0.0368,
+      "bear_iv": 0.0368,
+      "yr5_base_target": 0.0516,
+      "yr5_bull_target": 0.0678,
+      "yr5_bear_target": 0.0112,
+      "base_annual_growth_pct": 7.0,
+      "bull_annual_growth_pct": 13.0,
+      "bear_annual_growth_pct": -21.1,
+      "bull_5y_upside_pct": 84.2,
+      "bear_5y_change_pct": -69.6,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 5.8/10 and survivability 53.3%. Base: 7.0% p.a., Bull: 13.0% p.a., Bear: -21.1% p.a.",
+      "quality_score": 5.8,
+      "quality_multiplier": 0.75,
+      "survivability_pct": 53.3,
+      "survivability_mult": 0.8,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 2,
+      "methods_used": [
+        "Network Activity (NVT)",
+        "Rank Benchmark"
+      ],
+      "iv_breakdown": {
+        "Network Activity (NVT)": 0.0368,
+        "Rank Benchmark": 0.0273
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 0,
+      "price_history_note": "Historical price data unavailable for this token. Forecast chart shows projected values only."
+    },
+    "intrinsic_value": 0.0368,
+    "iv_method": "Network Activity (NVT), Rank Benchmark",
+    "iv_methods_count": 2,
     "bull_bear": {
       "bull_points": [
-        "Flow maintains a top-427 market cap position with established liquidity",
+        "Flow maintains a top-428 market cap position with established liquidity",
         "Long-term adoption thesis remains intact for Cash-Flow Protocol assets",
         "Broader crypto market development continues to benefit established protocols"
       ],
@@ -4078,7 +5801,7 @@
         "Regulatory uncertainty across major markets presents an ongoing risk"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 23:03"
+      "generated_at": "2026-03-25 23:38"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -4093,14 +5816,9 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 23:03",
+    "last_updated": "2026-03-25 23:38",
     "price_history": {
-      "2021": 8.815,
-      "2022": 0.6531,
-      "2023": 0.91,
-      "2024": 0.695,
-      "2025": 0.107,
-      "2026": 0.0327
+      "2026": 0.0325
     },
     "market_fear_greed": {
       "value": 14,
@@ -4115,23 +5833,23 @@
       "coin_id": "fidelity-digital-dollar",
       "bucket": "A",
       "bucket_label": "Cash-Flow Protocol",
-      "description": "Fidelity Digital Dollar (FIDD) \u2014 a Cash-Flow Protocol ranked #449 by market cap.",
+      "description": "Fidelity Digital Dollar (FIDD) \u2014 a Cash-Flow Protocol ranked #451 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/102171776/large/FIDD-Green_%28792px%29.png?1769612802",
-      "market_cap_rank": 449,
-      "market_cap_usd": 50373474.0,
-      "fully_diluted_valuation": 50390252.36,
-      "current_price": 0.999785,
+      "market_cap_rank": 451,
+      "market_cap_usd": 50379261.0,
+      "fully_diluted_valuation": 50375232.83,
+      "current_price": 0.999487,
       "ath": 1.011,
       "ath_date": "2026-02-04",
-      "ath_change_pct": -1.3,
+      "ath_change_pct": -1.1,
       "atl": 0.994161,
       "atl_date": "2026-02-04",
-      "price_change_7d_pct": -0.0250671752811488,
-      "price_change_30d_pct": -0.012073872733984022,
+      "price_change_7d_pct": 0.005749250724929756,
+      "price_change_30d_pct": -0.038287170575060855,
       "circulating_supply": 50401088.58999999,
       "total_supply": 50401088.58999999,
       "max_supply": null,
-      "total_volume_24h": 19680668.0,
+      "total_volume_24h": 19294006.0,
       "defillama_slug": null,
       "has_curated_description": false
     },
@@ -4139,19 +5857,19 @@
     "coin_id": "fidelity-digital-dollar",
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
-    "current_price": 0.999785,
-    "market_cap": 50373474.0,
-    "fully_diluted_valuation": 50390252.36,
-    "market_cap_rank": 449,
-    "price_change_7d_pct": -0.0250671752811488,
-    "price_change_30d_pct": -0.012073872733984022,
+    "current_price": 0.999487,
+    "market_cap": 50379261.0,
+    "fully_diluted_valuation": 50375232.83,
+    "market_cap_rank": 451,
+    "price_change_7d_pct": 0.005749250724929756,
+    "price_change_30d_pct": -0.038287170575060855,
     "dilution": {
       "circulating_pct": 100.0,
       "supply_overhang": 0.0,
-      "fully_diluted_valuation": 50390252.36,
+      "fully_diluted_valuation": 50375232.83,
       "fdv_to_mc_ratio": 1.0
     },
-    "metcalfe_ratio": 2.56,
+    "metcalfe_ratio": 2.61,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -4188,7 +5906,7 @@
           "label": "Network Demand",
           "score": 10,
           "max": 10,
-          "value": 39.07,
+          "value": 38.3,
           "unit": "volume/MC %",
           "chart_source": "raw calculation (CoinGecko volume)",
           "chart_ref": null,
@@ -4207,7 +5925,7 @@
           "label": "Protocol Maturity",
           "score": 1,
           "max": 10,
-          "value": 449,
+          "value": 451,
           "unit": "MC rank",
           "chart_source": "raw calculation (CoinGecko rank)",
           "chart_ref": null
@@ -4221,15 +5939,15 @@
       "tiebreaker_used": true
     },
     "fear_greed": {
-      "score": 40,
-      "label": "Fear",
+      "score": 43,
+      "label": "Neutral",
       "market_cycle_phase": "UNKNOWN",
       "market_cycle_anchor": 30,
       "components": {
         "price_momentum": 7,
         "volume_momentum": 25,
         "volatility": 8,
-        "momentum_trend": 3,
+        "momentum_trend": 9,
         "dilution_pressure": 10,
         "cycle_anchor": 30
       }
@@ -4242,21 +5960,23 @@
       "above_3y_sma": null,
       "ath_price": null,
       "sma_3y": null,
-      "data_years": 0
+      "data_years": 1
     },
     "chart_zones": {
-      "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
+      "current_zone": "ACCUMULATION_ZONE",
+      "current_zone_label": "Accumulation Zone",
       "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "mos_note": "Cycle phase (Insufficient Data) not favourable for entry \u2014 wait for accumulation or early uptrend.",
+      "zones_by_year": {
+        "2026": "ACCUMULATION_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 50.38,
+          "circulating_supply_m": 50.41,
           "supply_overhang_pct": 0,
           "fdv_to_mc": 1.0,
           "burn_rate": null,
@@ -4269,17 +5989,92 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 23:03"
+        "last_fetched": "2026-03-25 23:38"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2026": {
+        "market_price": 0.9995,
+        "intrinsic_value": 1.999,
+        "bull_case": 1.999,
+        "bear_case": 1.999,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 2.1389,
+        "bull_case": 2.2588,
+        "bear_case": 1.5768,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 2.2886,
+        "bull_case": 2.5525,
+        "bear_case": 1.2438,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 2.4488,
+        "bull_case": 2.8843,
+        "bear_case": 0.9811,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 2.6202,
+        "bull_case": 3.2593,
+        "bear_case": 0.7739,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 2.8037,
+        "bull_case": 3.683,
+        "bear_case": 0.6104,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 1.999,
+      "bull_iv": 1.999,
+      "bear_iv": 1.999,
+      "yr5_base_target": 2.8037,
+      "yr5_bull_target": 3.683,
+      "yr5_bear_target": 0.6104,
+      "base_annual_growth_pct": 7.0,
+      "bull_annual_growth_pct": 13.0,
+      "bear_annual_growth_pct": -21.1,
+      "bull_5y_upside_pct": 84.2,
+      "bear_5y_change_pct": -69.5,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 6.2/10 and survivability 53.3%. Base: 7.0% p.a., Bull: 13.0% p.a., Bear: -21.1% p.a.",
+      "quality_score": 6.2,
+      "quality_multiplier": 0.9,
+      "survivability_pct": 53.3,
+      "survivability_mult": 0.8,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 2,
+      "methods_used": [
+        "Network Activity (NVT)",
+        "Rank Benchmark"
+      ],
+      "iv_breakdown": {
+        "Network Activity (NVT)": 4.5937,
+        "Rank Benchmark": 0.992
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 0,
+      "price_history_note": "Historical price data unavailable for this token. Forecast chart shows projected values only."
+    },
+    "intrinsic_value": 1.999,
+    "iv_method": "Network Activity (NVT), Rank Benchmark",
+    "iv_methods_count": 2,
     "bull_bear": {
       "bull_points": [
-        "Fidelity Digital Dollar maintains a top-449 market cap position with established liquidity",
+        "Fidelity Digital Dollar maintains a top-451 market cap position with established liquidity",
         "Long-term adoption thesis remains intact for Cash-Flow Protocol assets",
         "Broader crypto market development continues to benefit established protocols"
       ],
@@ -4289,7 +6084,7 @@
         "Regulatory uncertainty across major markets presents an ongoing risk"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 23:03"
+      "generated_at": "2026-03-25 23:38"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -4304,9 +6099,9 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 23:03",
+    "last_updated": "2026-03-25 23:38",
     "price_history": {
-      "2026": 0.9998
+      "2026": 0.9995
     },
     "market_fear_greed": {
       "value": 14,
@@ -4321,9 +6116,9 @@
       "coin_id": "sygnum-fiusd-liquidity-fund",
       "bucket": "A",
       "bucket_label": "Cash-Flow Protocol",
-      "description": "Sygnum FIUSD Liquidity Fund (FIUSD) \u2014 a Cash-Flow Protocol ranked #470 by market cap.",
+      "description": "Sygnum FIUSD Liquidity Fund (FIUSD) \u2014 a Cash-Flow Protocol ranked #471 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/50749/large/FIUDS_200x200px_%281%29.png?1728956878",
-      "market_cap_rank": 470,
+      "market_cap_rank": 471,
       "market_cap_usd": 47242587.0,
       "fully_diluted_valuation": 47242586.91,
       "current_price": 11817.56,
@@ -4332,7 +6127,7 @@
       "ath_change_pct": null,
       "atl": 11251.76,
       "atl_date": "2025-01-21",
-      "price_change_7d_pct": 0.0795212128551623,
+      "price_change_7d_pct": 0.06960592209216895,
       "price_change_30d_pct": 0.29985834600071404,
       "circulating_supply": 3997.66,
       "total_supply": 3997.66,
@@ -4348,8 +6143,8 @@
     "current_price": 11817.56,
     "market_cap": 47242587.0,
     "fully_diluted_valuation": 47242586.91,
-    "market_cap_rank": 470,
-    "price_change_7d_pct": 0.0795212128551623,
+    "market_cap_rank": 471,
+    "price_change_7d_pct": 0.06960592209216895,
     "price_change_30d_pct": 0.29985834600071404,
     "dilution": {
       "circulating_pct": 100.0,
@@ -4413,7 +6208,7 @@
           "label": "Protocol Maturity",
           "score": 1,
           "max": 10,
-          "value": 470,
+          "value": 471,
           "unit": "MC rank",
           "chart_source": "raw calculation (CoinGecko rank)",
           "chart_ref": null
@@ -4448,14 +6243,16 @@
       "above_3y_sma": null,
       "ath_price": null,
       "sma_3y": null,
-      "data_years": 0
+      "data_years": 1
     },
     "chart_zones": {
       "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
+      "current_zone_label": "Neutral Zone",
       "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "mos_note": "Cycle phase (Insufficient Data) not favourable for entry \u2014 wait for accumulation or early uptrend.",
+      "zones_by_year": {
+        "2026": "NEUTRAL_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
@@ -4475,17 +6272,90 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 23:03"
+        "last_fetched": "2026-03-25 23:39"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2026": {
+        "market_price": 11817.56,
+        "intrinsic_value": 11256.5851,
+        "bull_case": 11256.5851,
+        "bear_case": 11256.5851,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 12044.5461,
+        "bull_case": 12719.9412,
+        "bear_case": 8879.1943,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 12887.6643,
+        "bull_case": 14373.5335,
+        "bear_case": 7003.9085,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 13789.8008,
+        "bull_case": 16242.0929,
+        "bear_case": 5524.683,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 14755.0868,
+        "bull_case": 18353.5649,
+        "bear_case": 4357.87,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 15787.9429,
+        "bull_case": 20739.5284,
+        "bear_case": 3437.4878,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 11256.5851,
+      "bull_iv": 11256.5851,
+      "bear_iv": 11256.5851,
+      "yr5_base_target": 15787.9429,
+      "yr5_bull_target": 20739.5284,
+      "yr5_bear_target": 3437.4878,
+      "base_annual_growth_pct": 7.0,
+      "bull_annual_growth_pct": 13.0,
+      "bear_annual_growth_pct": -21.1,
+      "bull_5y_upside_pct": 84.2,
+      "bear_5y_change_pct": -69.5,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 5.2/10 and survivability 53.3%. Base: 7.0% p.a., Bull: 13.0% p.a., Bear: -21.1% p.a.",
+      "quality_score": 5.2,
+      "quality_multiplier": 0.75,
+      "survivability_pct": 53.3,
+      "survivability_mult": 0.8,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 1,
+      "methods_used": [
+        "Rank Benchmark"
+      ],
+      "iv_breakdown": {
+        "Rank Benchmark": 11256.5851
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 0,
+      "price_history_note": "Historical price data unavailable for this token. Forecast chart shows projected values only."
+    },
+    "intrinsic_value": 11256.5851,
+    "iv_method": "Rank Benchmark",
+    "iv_methods_count": 1,
     "bull_bear": {
       "bull_points": [
-        "Sygnum FIUSD Liquidity Fund maintains a top-470 market cap position with established liquidity",
+        "Sygnum FIUSD Liquidity Fund maintains a top-471 market cap position with established liquidity",
         "Long-term adoption thesis remains intact for Cash-Flow Protocol assets",
         "Broader crypto market development continues to benefit established protocols"
       ],
@@ -4495,7 +6365,7 @@
         "Regulatory uncertainty across major markets presents an ongoing risk"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 23:03"
+      "generated_at": "2026-03-25 23:39"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -4510,7 +6380,7 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 23:03",
+    "last_updated": "2026-03-25 23:39",
     "price_history": {
       "2026": 11817.56
     },
@@ -4527,23 +6397,23 @@
       "coin_id": "fractal-bitcoin",
       "bucket": "A",
       "bucket_label": "Cash-Flow Protocol",
-      "description": "Fractal Bitcoin (FB) \u2014 a Cash-Flow Protocol ranked #494 by market cap.",
+      "description": "Fractal Bitcoin (FB) \u2014 a Cash-Flow Protocol ranked #495 by market cap.",
       "image_url": "https://coin-images.coingecko.com/coins/images/40049/large/Fractal_LogoMark_Round.png?1725445811",
-      "market_cap_rank": 494,
-      "market_cap_usd": 43955031.0,
-      "fully_diluted_valuation": 93920190.0,
-      "current_price": 0.447239,
+      "market_cap_rank": 495,
+      "market_cap_usd": 43947085.0,
+      "fully_diluted_valuation": 93870000.0,
+      "current_price": 0.447,
       "ath": 38.8,
       "ath_date": "2024-09-15",
       "ath_change_pct": -98.8,
       "atl": 0.334207,
       "atl_date": "2025-11-22",
-      "price_change_7d_pct": -2.0879179436451496,
-      "price_change_30d_pct": -4.930394368857208,
-      "circulating_supply": 98298624.94607788,
+      "price_change_7d_pct": -2.1100667748518482,
+      "price_change_30d_pct": -5.111619737978422,
+      "circulating_supply": 98300474.94607788,
       "total_supply": 145548925.0,
       "max_supply": 210000000.0,
-      "total_volume_24h": 1395856.0,
+      "total_volume_24h": 1457522.0,
       "defillama_slug": null,
       "has_curated_description": false
     },
@@ -4551,19 +6421,19 @@
     "coin_id": "fractal-bitcoin",
     "bucket": "A",
     "bucket_label": "Cash-Flow Protocol",
-    "current_price": 0.447239,
-    "market_cap": 43955031.0,
-    "fully_diluted_valuation": 93920190.0,
-    "market_cap_rank": 494,
-    "price_change_7d_pct": -2.0879179436451496,
-    "price_change_30d_pct": -4.930394368857208,
+    "current_price": 0.447,
+    "market_cap": 43947085.0,
+    "fully_diluted_valuation": 93870000.0,
+    "market_cap_rank": 495,
+    "price_change_7d_pct": -2.1100667748518482,
+    "price_change_30d_pct": -5.111619737978422,
     "dilution": {
       "circulating_pct": 46.81,
       "supply_overhang": 53.19,
-      "fully_diluted_valuation": 93920190.0,
+      "fully_diluted_valuation": 93870000.0,
       "fdv_to_mc_ratio": 2.14
     },
-    "metcalfe_ratio": 31.49,
+    "metcalfe_ratio": 30.15,
     "quality": {
       "scores": {
         "fee_growth": {
@@ -4600,7 +6470,7 @@
           "label": "Network Demand",
           "score": 4,
           "max": 10,
-          "value": 3.18,
+          "value": 3.32,
           "unit": "volume/MC %",
           "chart_source": "raw calculation (CoinGecko volume)",
           "chart_ref": null,
@@ -4619,7 +6489,7 @@
           "label": "Protocol Maturity",
           "score": 1,
           "max": 10,
-          "value": 494,
+          "value": 495,
           "unit": "MC rank",
           "chart_source": "raw calculation (CoinGecko rank)",
           "chart_ref": null
@@ -4633,12 +6503,12 @@
       "tiebreaker_used": false
     },
     "fear_greed": {
-      "score": 29,
+      "score": 28,
       "label": "Fear",
       "market_cycle_phase": "UNKNOWN",
       "market_cycle_anchor": 30,
       "components": {
-        "price_momentum": 7,
+        "price_momentum": 5,
         "volume_momentum": 12,
         "volatility": 8,
         "momentum_trend": 3,
@@ -4654,21 +6524,23 @@
       "above_3y_sma": null,
       "ath_price": null,
       "sma_3y": null,
-      "data_years": 0
+      "data_years": 1
     },
     "chart_zones": {
       "current_zone": "NEUTRAL_ZONE",
-      "current_zone_label": "Neutral",
+      "current_zone_label": "Neutral Zone",
       "margin_of_safety": false,
-      "mos_note": "Data unavailable",
-      "zones_by_year": {}
+      "mos_note": "Price above speculative fair value \u2014 no margin of safety.",
+      "zones_by_year": {
+        "2026": "NEUTRAL_ZONE"
+      }
     },
     "network_economics": {
       "protocol_revenue_and_fees": {},
       "treasury_vs_emissions": {},
       "issuance_vs_burns": {
         "2026": {
-          "circulating_supply_m": 98.28,
+          "circulating_supply_m": 98.32,
           "supply_overhang_pct": 53.19,
           "fdv_to_mc": 2.14,
           "burn_rate": null,
@@ -4681,17 +6553,92 @@
         "data_coverage": "unavailable",
         "years_available": 0,
         "data_note": "No protocol fee or TVL data found for this token on DeFiLlama. Charts 1 and 2 are unavailable. Charts 3 and 4 show current-year supply and dilution data from CoinGecko.",
-        "last_fetched": "2026-03-25 23:04"
+        "last_fetched": "2026-03-25 23:39"
       }
     },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "intrinsic_value": null,
-    "iv_method": "Market price (insufficient data)",
-    "iv_methods_count": 0,
+    "valuation_chart": {
+      "2026": {
+        "market_price": 0.447,
+        "intrinsic_value": 0.4069,
+        "bull_case": 0.4069,
+        "bear_case": 0.4069,
+        "is_historical": false
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.4191,
+        "bull_case": 0.4435,
+        "bear_case": 0.2565,
+        "is_historical": false
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.4317,
+        "bull_case": 0.4834,
+        "bear_case": 0.1617,
+        "is_historical": false
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 0.4446,
+        "bull_case": 0.5269,
+        "bear_case": 0.1019,
+        "is_historical": false
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 0.458,
+        "bull_case": 0.5744,
+        "bear_case": 0.0643,
+        "is_historical": false
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 0.4717,
+        "bull_case": 0.6261,
+        "bear_case": 0.0405,
+        "is_historical": false
+      }
+    },
+    "forecast_meta": {
+      "base_iv": 0.4069,
+      "bull_iv": 0.4069,
+      "bear_iv": 0.4069,
+      "yr5_base_target": 0.4717,
+      "yr5_bull_target": 0.6261,
+      "yr5_bear_target": 0.0405,
+      "base_annual_growth_pct": 3.0,
+      "bull_annual_growth_pct": 9.0,
+      "bear_annual_growth_pct": -37.0,
+      "bull_5y_upside_pct": 53.9,
+      "bear_5y_change_pct": -90.0,
+      "growth_basis": "Quality-adjusted network adoption",
+      "growth_basis_note": "Annual growth rates derived from quality score 3.5/10 and survivability 26.7%. Base: 3.0% p.a., Bull: 9.0% p.a., Bear: -37.0% p.a.",
+      "quality_score": 3.5,
+      "quality_multiplier": 0.55,
+      "survivability_pct": 26.7,
+      "survivability_mult": 0.6,
+      "growth_constrained": true,
+      "bucket": "A",
+      "iv_sources": 2,
+      "methods_used": [
+        "Network Activity (NVT)",
+        "Rank Benchmark"
+      ],
+      "iv_breakdown": {
+        "Network Activity (NVT)": 0.0741,
+        "Rank Benchmark": 0.4069
+      },
+      "iv_selection_rationale": "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. Protocol Fee DCF discounts future fee revenue to present value. Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. Holder Revenue uses fee revenue accruing directly to token holders. Network Activity (NVT) treats trading volume as a proxy for network activity. Rank Benchmark anchors to expected market cap for this rank tier. Dilution Adjustment penalises large token unlocks (high FDV/MC). Methods producing values outside 0.03x\u201315x of current price are excluded as outliers. The median of all valid per-token estimates becomes the Speculative Fair Value.",
+      "price_history_years": 0,
+      "price_history_note": "Historical price data unavailable for this token. Forecast chart shows projected values only."
+    },
+    "intrinsic_value": 0.4069,
+    "iv_method": "Network Activity (NVT), Rank Benchmark",
+    "iv_methods_count": 2,
     "bull_bear": {
       "bull_points": [
-        "Fractal Bitcoin maintains a top-494 market cap position with established liquidity",
+        "Fractal Bitcoin maintains a top-495 market cap position with established liquidity",
         "Long-term adoption thesis remains intact for Cash-Flow Protocol assets",
         "Broader crypto market development continues to benefit established protocols"
       ],
@@ -4701,7 +6648,7 @@
         "Crypto market volatility remains high \u2014 macro conditions could impact all digital assets"
       ],
       "source": "rules",
-      "generated_at": "2026-03-25 23:04"
+      "generated_at": "2026-03-25 23:39"
     },
     "protocol_metrics": {
       "annual_protocol_fees_usd": null,
@@ -4716,12 +6663,9 @@
       "pe_ratio_fdv_to_holders_rev": null,
       "data_source": "unavailable"
     },
-    "last_updated": "2026-03-25 23:04",
+    "last_updated": "2026-03-25 23:39",
     "price_history": {
-      "2023": 0.8738,
-      "2024": 0.5361,
-      "2025": 0.4074,
-      "2026": 0.4472
+      "2026": 0.447
     },
     "market_fear_greed": {
       "value": 14,
