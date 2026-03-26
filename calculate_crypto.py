@@ -3441,6 +3441,20 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                                      chg_7d       = chg_7d,
                                      chg_30d      = chg_30d,
                                  ),
+            "quality_narrative": generate_crypto_quality_narrative(
+                                     symbol       = symbol,
+                                     name         = name,
+                                     bucket       = bucket,
+                                     quality      = quality,
+                                     dilution     = dilution,
+                                     network_econ = network_econ,
+                                     bucket_a_data= bucket_a_data,
+                                     bucket_b_data= bucket_b_data,
+                                     mc           = mc,
+                                     rank         = rank,
+                                     price        = price,
+                                     chg_30d      = chg_30d,
+                                 ),
             **({"protocol_metrics": bucket_a_data} if bucket == "A" else {}),
             **({"sov_metrics":      bucket_b_data} if bucket == "B" else {}),
             "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -3917,23 +3931,195 @@ Respond ONLY with valid JSON, no other text:
 
 
 
+
+def generate_crypto_quality_narrative(symbol, name, bucket, quality, dilution,
+                                       network_econ, bucket_a_data, bucket_b_data,
+                                       mc, rank, price, chg_30d):
+    """
+    Pre-compute per-metric quality assessments for the crypto Quality tab.
+    Mirrors the stocks generate_quality_narrative() pattern.
+
+    Returns:
+      {
+        "metric_assessments": {
+          "fee_growth":           "...",
+          "capital_efficiency":   "...",
+          ...
+        },
+        "quality_conclusion":  "...",
+        "source":   "api" | "rules",
+        "generated_at": "YYYY-MM-DD HH:MM"
+      }
+    """
+    quality_scores = quality.get("scores", {})
+    final_score    = quality.get("final_score", 0)
+    final_pct      = quality.get("final_score_pct", 0)
+    classification = quality.get("classification", "Speculative")
+    bucket_label   = "Cash-Flow Protocol" if bucket == "A" else "Store of Value"
+
+    # Build rule-based metric descriptions (fallback)
+    rule_assessments = {}
+    if bucket == "A":
+        metrics = ["fee_growth", "capital_efficiency", "holder_value_accrual",
+                   "network_demand", "dilution_control", "protocol_maturity"]
+    else:
+        metrics = ["scarcity", "adoption_momentum", "security_premium",
+                   "monetary_premium_quality", "dilution_control", "market_resilience"]
+
+    for m in metrics:
+        s = quality_scores.get(m, {})
+        score = s.get("score", 5)
+        label = s.get("label", m.replace("_", " ").title())
+        val   = s.get("value")
+        unit  = s.get("unit", "")
+        val_str = f" ({val} {unit})" if val is not None else ""
+        if score >= 8:
+            rule_assessments[m] = (f"{label} is a clear strength{val_str}, placing this "
+                                   f"token well above most peers on this dimension.")
+        elif score >= 6:
+            rule_assessments[m] = (f"{label} is solid{val_str}, meeting the expectations "
+                                   f"you'd want to see for a protocol at this stage.")
+        elif score >= 4:
+            rule_assessments[m] = (f"{label} is middling{val_str}. The numbers are "
+                                   f"acceptable but leave room for improvement before this "
+                                   f"becomes a genuine strength.")
+        else:
+            rule_assessments[m] = (f"{label} is a concern{val_str}. This dimension is "
+                                   f"below par and worth monitoring as it could weigh on "
+                                   f"the protocol's long-term competitiveness.")
+
+    rule_conclusion = (
+        f"{name} scores {final_score}/10 ({classification}) as a {bucket_label}. "
+        f"The overall quality profile reflects the protocol's maturity, fee economics, "
+        f"and token supply dynamics relative to peers."
+    )
+
+    rule_result = {
+        "metric_assessments": rule_assessments,
+        "quality_conclusion":  rule_conclusion,
+        "source":              "rules",
+        "generated_at":        datetime.now().strftime("%Y-%m-%d %H:%M"),
+    }
+
+    if not (ANTHROPIC_API_KEY and ANTHROPIC_API_KEY.strip()):
+        return rule_result
+
+    # Build context for Haiku
+    scores_summary = {m: {"score": quality_scores.get(m, {}).get("score"),
+                          "value": quality_scores.get(m, {}).get("value"),
+                          "unit":  quality_scores.get(m, {}).get("unit")}
+                      for m in metrics}
+
+    proto_context = {}
+    if bucket == "A" and bucket_a_data:
+        proto_context = {
+            "annual_fees_usd":   bucket_a_data.get("annual_protocol_fees_usd"),
+            "ps_ratio":          bucket_a_data.get("ps_ratio"),
+            "pe_ratio":          bucket_a_data.get("pe_ratio_fdv_to_holders_rev"),
+        }
+    elif bucket == "B" and bucket_b_data:
+        mp = (bucket_b_data.get("monetary_premium") or {})
+        proto_context = {
+            "gold_capture_pct":         mp.get("gold_capture_pct"),
+            "price_at_100pct_gold":     mp.get("price_at_100pct_gold"),
+        }
+
+    context = {
+        "symbol": symbol, "name": name, "bucket_label": bucket_label,
+        "rank": rank, "market_cap_usd": mc, "current_price": price,
+        "quality_score": final_score, "quality_pct": final_pct,
+        "classification": classification,
+        "scores": scores_summary,
+        "protocol_data": proto_context,
+        "circulating_pct": (dilution or {}).get("circulating_pct"),
+        "fdv_to_mc": (dilution or {}).get("fdv_to_mc_ratio"),
+        "price_change_30d_pct": chg_30d,
+    }
+
+    metric_list = ", ".join(metrics)
+    prompt = f"""You are a senior crypto analyst writing for a beginner-friendly investing app.
+
+Analyse {name} ({symbol}) — a {bucket_label} ranked #{rank}.
+
+Data:
+{json.dumps(context, indent=2)}
+
+Generate:
+1. metric_assessments: A dict with one plain-English assessment for each metric in [{metric_list}].
+   Write 2 sentences per metric for a beginner investor. Explain what the score actually means
+   for this specific protocol — what is the protocol doing well or poorly, and why does it matter?
+   Do NOT use labels like "weak", "strong", "good", "poor", "adequate". Describe the reality.
+
+2. quality_conclusion: 2-3 sentences summarising the overall quality profile.
+   Mention the classification ({classification}), the clearest strength and biggest concern,
+   and what that means for someone considering this as an investment.
+
+Rules:
+- Be specific to {name} — avoid generic crypto boilerplate
+- Use the actual numbers from the data (scores, fees, ratios)
+- Write in plain English suitable for a beginner investor
+- Respond ONLY with valid JSON, no other text:
+
+{{
+  "metric_assessments": {{
+    {chr(10).join(f'    "{m}": "...",' for m in metrics)}
+  }},
+  "quality_conclusion": "..."
+}}"""
+
+    try:
+        resp = requests.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={
+                "x-api-key":         ANTHROPIC_API_KEY,
+                "anthropic-version": "2023-06-01",
+                "content-type":      "application/json",
+            },
+            json={
+                "model":      "claude-haiku-4-5-20251001",
+                "max_tokens": 1200,
+                "messages":   [{"role": "user", "content": prompt}],
+            },
+            timeout=30,
+        )
+        if resp.status_code == 200:
+            raw = resp.json()["content"][0]["text"].strip()
+            raw = raw.replace("```json", "").replace("```", "").strip()
+            parsed = json.loads(raw)
+            return {
+                "metric_assessments": parsed.get("metric_assessments", rule_assessments),
+                "quality_conclusion":  parsed.get("quality_conclusion",  rule_conclusion),
+                "source":              "api",
+                "generated_at":        datetime.now().strftime("%Y-%m-%d %H:%M"),
+            }
+        else:
+            print(f"  [QUALITY] {symbol}: API returned {resp.status_code}, using rules")
+    except Exception as e:
+        print(f"  [QUALITY] {symbol}: API failed ({str(e)[:60]}), using rules")
+
+    return rule_result
+
+
 def generate_crypto_bull_bear(symbol, name, bucket, price, mc, rank,
                                quality, dilution, fear_greed,
                                network_econ, bucket_a_data, bucket_b_data,
                                chg_7d, chg_30d):
     """
-    Generate 3 bull and 3 bear points for a crypto token.
+    Generate short-term and long-term bull/bear thesis points for a crypto token.
+
+    short_term — next 3-6 months: recent news, sentiment, near-term catalysts
+                 (web search via Haiku API when key is set)
+    long_term  — 1-5 year horizon: network economics, fee fundamentals, moat,
+                 tokenomics
+
     Returns:
       {
-        "bull_points":  [...],
-        "bear_points":  [...],
-        "source":       "api" | "rules",
+        "short_term": {"bull_points": [...], "bear_points": [...]},
+        "long_term":  {"bull_points": [...], "bear_points": [...]},
+        "source":     "api" | "rules",
         "generated_at": "YYYY-MM-DD HH:MM"
       }
     """
-    bull_rules = []
-    bear_rules = []
-
     quality_scores  = quality.get("scores", {})
     final_score_pct = quality.get("final_score_pct", 0)
     classification  = quality.get("classification", "")
@@ -3945,94 +4131,106 @@ def generate_crypto_bull_bear(symbol, name, bucket, price, mc, rank,
     fg_label        = (fear_greed or {}).get("label", "Neutral")
     ne_meta         = (network_econ or {}).get("meta", {})
     ne_coverage     = ne_meta.get("data_coverage", "unavailable")
+    bktlbl          = bucket_label_str(bucket)
 
-    # ── Bucket A — Cash-Flow Protocol signals ────────────────────────────────
+    st_bull, st_bear = [], []   # short-term
+    lt_bull, lt_bear = [], []   # long-term
+
+    # ── Short-term signals ────────────────────────────────────────────────────
+    # Fear & Greed
+    if fg_score <= 25:
+        st_bull.append(
+            f"Fear & Greed score of {fg_score} ({fg_label}) signals extreme pessimism — "
+            f"historically a contrarian entry signal for {name} over the next 1-3 months"
+        )
+    elif fg_score >= 75:
+        st_bear.append(
+            f"Fear & Greed score of {fg_score} ({fg_label}) suggests near-term euphoria — "
+            f"historically associated with short-term corrections in {name}"
+        )
+
+    # 30-day price momentum
+    if chg_30d is not None:
+        if chg_30d < -30:
+            st_bull.append(
+                f"Down {abs(chg_30d):.0f}% over 30 days — significant drawdown may "
+                f"represent an attractive near-term entry for a recovery trade"
+            )
+        elif chg_30d > 30:
+            st_bear.append(
+                f"Up {chg_30d:.0f}% over 30 days — strong recent momentum increases "
+                f"the probability of a short-term mean reversion"
+            )
+
+    # 7-day momentum as a near-term signal
+    if chg_7d is not None:
+        if chg_7d < -15:
+            st_bull.append(
+                f"Down {abs(chg_7d):.0f}% in the past week — near-term selling pressure "
+                f"may be creating a short-term buying opportunity"
+            )
+        elif chg_7d > 15:
+            st_bear.append(
+                f"Up {chg_7d:.0f}% in the past week — rapid short-term move increases "
+                f"likelihood of a pullback before the next leg higher"
+            )
+
+    # ── Long-term signals — Bucket A ─────────────────────────────────────────
     if bucket == "A":
-        proto = bucket_a_data or {}
+        proto       = bucket_a_data or {}
         annual_fees = proto.get("annual_protocol_fees_usd")
         ps_ratio    = proto.get("ps_ratio")
         pe_ratio    = proto.get("pe_ratio_fdv_to_holders_rev")
         dcf_token   = proto.get("dcf_fair_value_per_token")
-        tvl         = proto.get("tvl_usd")
 
-        # Valuation signals
-        if dcf_token and price:
-            mos = round((dcf_token - price) / dcf_token * 100, 1)
-            if mos > 20:
-                bull_rules.append(
-                    f"DCF model suggests {name} is trading at a "
-                    f"{mos}% discount to fair value (est. ${dcf_token:,.2f})"
-                )
-            elif mos < -20:
-                bear_rules.append(
-                    f"DCF model suggests {name} is trading at a "
-                    f"{abs(mos)}% premium to fair value (est. ${dcf_token:,.2f})"
-                )
-
-        if ps_ratio is not None:
-            if ps_ratio < 15:
-                bull_rules.append(
-                    f"Low MC/Fees ratio of {ps_ratio}x suggests the protocol "
-                    f"is generating strong fee revenue relative to its valuation"
-                )
-            elif ps_ratio > 100:
-                bear_rules.append(
-                    f"High MC/Fees ratio of {ps_ratio}x means investors are paying "
-                    f"a large premium relative to actual protocol fee generation"
-                )
-
-        if pe_ratio is not None:
-            if pe_ratio < 30:
-                bull_rules.append(
-                    f"FDV/Holders Revenue of {pe_ratio}x indicates strong value "
-                    f"accrual to token holders relative to fully diluted valuation"
-                )
-            elif pe_ratio > 200:
-                bear_rules.append(
-                    f"FDV/Holders Revenue of {pe_ratio}x — very little fee revenue "
-                    f"currently reaches token holders, limiting investment returns"
-                )
-
-        # Fee and TVL signals
         if annual_fees and annual_fees > 1e8:
-            bull_rules.append(
-                f"Protocol generates ${annual_fees/1e9:.2f}B in annual fees — "
-                f"demonstrating real, sustained user demand"
+            lt_bull.append(
+                f"The protocol generates ${annual_fees/1e9:.2f}B in annual fees, "
+                f"demonstrating sustained organic user demand that supports long-term value"
             )
         elif annual_fees and annual_fees < 1e6:
-            bear_rules.append(
-                f"Annual protocol fees of ${annual_fees/1e6:.1f}M are low, "
-                f"suggesting limited organic user demand"
+            lt_bear.append(
+                f"Annual fees of only ${annual_fees/1e6:.1f}M are low relative to market cap, "
+                f"suggesting the protocol has not yet built a durable fee-generating business"
             )
 
-        # Capital efficiency score
-        cap_eff = quality_scores.get("capital_efficiency", {})
-        if cap_eff.get("score", 0) == 2:
-            bull_rules.append(
-                f"Strong capital efficiency — the protocol converts locked capital "
-                f"into fee revenue at an above-average rate"
+        if ps_ratio is not None:
+            if ps_ratio < 20:
+                lt_bull.append(
+                    f"MC/Fees of {ps_ratio:.0f}x is low for a {bktlbl} — "
+                    f"the protocol is priced attractively relative to its actual fee revenue"
+                )
+            elif ps_ratio > 150:
+                lt_bear.append(
+                    f"MC/Fees of {ps_ratio:.0f}x prices in substantial fee growth that "
+                    f"has not yet materialised — long-term holders need adoption to accelerate"
+                )
+
+        if pe_ratio and pe_ratio < 50:
+            lt_bull.append(
+                f"FDV/Holders Revenue of {pe_ratio:.0f}x indicates meaningful value "
+                f"accrual to token holders, a rarity among crypto protocols"
             )
-        elif cap_eff.get("score", 0) == 0 and cap_eff.get("value") is not None:
-            bear_rules.append(
-                f"Poor capital efficiency — large TVL generates relatively "
-                f"little fee revenue, suggesting capital is not being productively deployed"
+        elif pe_ratio and pe_ratio > 300:
+            lt_bear.append(
+                f"FDV/Holders Revenue of {pe_ratio:.0f}x means almost none of the "
+                f"protocol's fees flow to token holders — the token lacks direct cash-flow backing"
             )
 
-        # Network economics data quality
         if ne_coverage == "full":
-            bull_rules.append(
-                f"Multi-year on-chain data available — protocol has an established "
-                f"track record of fee generation across market cycles"
+            lt_bull.append(
+                f"Multi-year on-chain fee data confirms the protocol has generated "
+                f"real revenue across both bull and bear market cycles"
             )
         elif ne_coverage == "unavailable":
-            bear_rules.append(
-                f"No historical fee data available on DeFiLlama — protocol may be "
-                f"too new or too small to have an established economic track record"
+            lt_bear.append(
+                f"No multi-year fee data exists for {name} — the protocol's long-term "
+                f"economic durability remains unproven"
             )
 
-    # ── Bucket B — Store of Value signals ────────────────────────────────────
+    # ── Long-term signals — Bucket B ─────────────────────────────────────────
     elif bucket == "B":
-        sov = bucket_b_data or {}
+        sov       = bucket_b_data or {}
         mon_prem  = sov.get("monetary_premium") or {}
         prod_cost = sov.get("cost_of_production") or {}
 
@@ -4043,188 +4241,208 @@ def generate_crypto_bull_bear(symbol, name, bucket, price, mc, rank,
 
         if gold_cap:
             if gold_cap > 5:
-                bull_rules.append(
-                    f"Has captured {gold_cap:.1f}% of gold's market cap — "
-                    f"significant monetary adoption as a store of value"
+                lt_bull.append(
+                    f"Having captured {gold_cap:.1f}% of gold's market cap, "
+                    f"{name} has demonstrated genuine monetary adoption at scale"
                 )
             else:
-                bull_rules.append(
-                    f"At {gold_cap:.2f}% of gold's market cap, substantial "
-                    f"upside remains if monetary adoption continues to grow"
+                lt_bull.append(
+                    f"At only {gold_cap:.2f}% of gold's market cap, long-term upside "
+                    f"remains large if monetary adoption continues on its current trajectory"
                 )
 
         if p_100gold and price:
             upside = round((p_100gold / price - 1) * 100, 0)
-            if upside > 0:
-                bull_rules.append(
-                    f"Full gold parity would imply a price of "
-                    f"${p_100gold:,.0f} — {upside:.0f}% above current price"
+            if upside > 100:
+                lt_bull.append(
+                    f"Full gold parity implies ${p_100gold:,.0f} per token — "
+                    f"a {upside:.0f}% long-term upside scenario if the monetary thesis plays out"
                 )
 
         if prem_cost:
             if 1 < prem_cost <= 3:
-                bull_rules.append(
-                    f"Trading at {prem_cost:.1f}x estimated production cost — "
-                    f"a healthy premium that incentivises miners without being excessive"
+                lt_bull.append(
+                    f"Trading at {prem_cost:.1f}x production cost — a sustainable premium "
+                    f"that incentivises miner security without signalling speculative excess"
                 )
             elif prem_cost < 1:
-                bear_rules.append(
-                    f"Trading below estimated production cost of "
-                    f"${cost_usd:,} — miners may reduce security spend, "
-                    f"weakening the network"
-                )
-            elif prem_cost > 10:
-                bear_rules.append(
-                    f"Trading at {prem_cost:.0f}x production cost — "
-                    f"significant premium above mining economics may not be sustainable"
+                lt_bear.append(
+                    f"Trading below estimated production cost of ${cost_usd:,} — "
+                    f"this level is historically unsustainable and may reduce miner security"
                 )
 
-        scarcity = quality_scores.get("scarcity", {})
-        if scarcity.get("score", 0) == 2:
-            bull_rules.append(
-                f"Over {100 - (overhang or 0):.0f}% of maximum supply already "
-                f"in circulation — minimal future dilution risk"
-            )
-        elif overhang and overhang > 50:
-            bear_rules.append(
-                f"Only {circ_pct:.0f}% of maximum supply currently circulating — "
-                f"significant future issuance could dilute existing holders"
-            )
-
-    # ── Common signals (both buckets) ────────────────────────────────────────
-    # Fear & Greed context
-    if fg_score >= 75:
-        bear_rules.append(
-            f"Token-specific Fear & Greed score of {fg_score} ({fg_label}) "
-            f"suggests short-term euphoria — historically a caution signal"
-        )
-    elif fg_score <= 25:
-        bull_rules.append(
-            f"Fear & Greed score of {fg_score} ({fg_label}) indicates "
-            f"significant pessimism — often a contrarian buying opportunity"
-        )
-
-    # Price momentum
-    if chg_30d is not None:
-        if chg_30d > 30:
-            bear_rules.append(
-                f"Up {chg_30d:.0f}% over 30 days — strong momentum but "
-                f"increases the risk of a short-term correction"
-            )
-        elif chg_30d < -30:
-            bull_rules.append(
-                f"Down {abs(chg_30d):.0f}% over 30 days — significant "
-                f"drawdown may represent a long-term entry opportunity"
-            )
-
-    # Overall quality
-    if final_score_pct >= 70:
-        bull_rules.append(
-            f"Strong quality score of {quality.get('final_score', 0):.1f}/10 "
-            f"({classification}) across all key metrics"
-        )
-    elif final_score_pct <= 30:
-        bear_rules.append(
-            f"Weak quality score of {quality.get('final_score', 0):.1f}/10 "
-            f"({classification}) — most key metrics are below expectations"
-        )
-
-    # FDV/MC ratio
+    # ── Common long-term signals ──────────────────────────────────────────────
     if fdv_mc and fdv_mc > 2:
-        bear_rules.append(
-            f"FDV is {fdv_mc:.1f}x market cap — large token unlocks ahead "
-            f"could create sustained sell pressure"
+        lt_bear.append(
+            f"FDV is {fdv_mc:.1f}x market cap — substantial token unlock pressure "
+            f"over the coming years could persistently weigh on price"
+        )
+    elif circ_pct and circ_pct >= 95:
+        lt_bull.append(
+            f"Over {circ_pct:.0f}% of the maximum supply is already in circulation — "
+            f"future dilution risk is minimal for long-term holders"
         )
 
-    # Market rank
     if rank and rank <= 10:
-        bull_rules.append(
-            f"Top-{rank} by market cap — established network effect and "
-            f"deep liquidity across major exchanges"
+        lt_bull.append(
+            f"Top-{rank} market cap position brings deep liquidity, institutional "
+            f"coverage, and the reflexive benefit of being widely held"
         )
 
-    # ── Pad to 3 points minimum ───────────────────────────────────────────────
-    generic_bull = [
-        f"{name} maintains a top-{rank or 'N/A'} market cap position with established liquidity",
-        f"Long-term adoption thesis remains intact for {bucket_label_str(bucket)} assets",
-        f"Broader crypto market development continues to benefit established protocols",
-    ]
-    generic_bear = [
-        f"Crypto market volatility remains high — macro conditions could impact all digital assets",
-        f"Regulatory uncertainty across major markets presents an ongoing risk",
-        f"Competition from newer protocols could erode {name}'s market position over time",
-    ]
-    i = 0
-    while len(bull_rules) < 3:
-        bull_rules.append(generic_bull[i % len(generic_bull)])
-        i += 1
-    i = 0
-    while len(bear_rules) < 3:
-        bear_rules.append(generic_bear[i % len(generic_bear)])
-        i += 1
+    if final_score_pct >= 70:
+        lt_bull.append(
+            f"Quality score of {quality.get('final_score', 0):.1f}/10 ({classification}) "
+            f"places {name} among the better-quality protocols in the crypto universe"
+        )
+    elif final_score_pct <= 35:
+        lt_bear.append(
+            f"Quality score of {quality.get('final_score', 0):.1f}/10 ({classification}) "
+            f"signals multiple structural concerns that could compound over a long horizon"
+        )
 
-    # ── Anthropic API call ────────────────────────────────────────────────────
-    if ANTHROPIC_API_KEY and ANTHROPIC_API_KEY.strip():
-        context = {
-            "symbol": symbol, "name": name, "bucket": bucket,
-            "current_price": price, "market_cap_usd": mc,
-            "rank": rank, "price_change_30d_pct": chg_30d,
-            "quality_score": quality.get("final_score"),
-            "quality_classification": classification,
-            "fear_greed_score": fg_score,
-            "fear_greed_label": fg_label,
-            "dilution_circulating_pct": circ_pct,
-            "fdv_to_mc_ratio": fdv_mc,
-            "rule_based_bull": bull_rules[:3],
-            "rule_based_bear": bear_rules[:3],
-        }
-        try:
-            prompt = (
-                f"You are a senior crypto analyst. Based on the data below, "
-                f"generate exactly 3 bull and 3 bear arguments for {name} ({symbol}), "
-                f"classified as a {bucket_label_str(bucket)}.\n\n"
-                f"Data:\n{json.dumps(context, indent=2)}\n\n"
-                f"Requirements:\n"
-                f"- Each point must be specific and grounded in the data\n"
-                f"- Do not repeat the rule-based signals verbatim — expand or add new insights\n"
-                f"- Keep each point to 1-2 sentences\n"
-                f"- Respond ONLY with valid JSON, no other text:\n"
-                f'{{ "bull_points": ["...", "...", "..."], '
-                f'"bear_points": ["...", "...", "..."] }}'
-            )
-            resp = requests.post(
-                "https://api.anthropic.com/v1/messages",
-                headers={
-                    "x-api-key":         ANTHROPIC_API_KEY,
-                    "anthropic-version": "2023-06-01",
-                    "content-type":      "application/json",
-                },
-                json={
-                    "model":      "claude-haiku-4-5-20251001",
-                    "max_tokens": 500,
-                    "messages":   [{"role": "user", "content": prompt}],
-                },
-                timeout=30,
-            )
-            if resp.status_code == 200:
-                raw = resp.json()["content"][0]["text"].strip()
-                raw = raw.replace("```json", "").replace("```", "").strip()
-                parsed = json.loads(raw)
-                return {
-                    "bull_points":  parsed.get("bull_points", bull_rules[:3]),
-                    "bear_points":  parsed.get("bear_points", bear_rules[:3]),
-                    "source":       "api",
-                    "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
-                }
-        except Exception as e:
-            print(f"  [BULL/BEAR] {symbol}: API failed ({str(e)[:50]}), using rules")
+    # ── Pad to 3 each ─────────────────────────────────────────────────────────
+    generic_st_bull = [
+        f"Current market fear environment may create a near-term mean reversion opportunity in {name}",
+        f"Any positive news catalyst — exchange listing, partnership, or protocol upgrade — "
+        f"could trigger a sharp near-term rally from current levels",
+        f"Crypto market sentiment is cyclical — {name}'s short-term setup may improve "
+        f"as macro uncertainty fades",
+    ]
+    generic_st_bear = [
+        f"Broader crypto market volatility and macro headwinds present near-term downside risk",
+        f"Regulatory developments in major markets could create short-term selling pressure",
+        f"Without a near-term catalyst, {name} may continue to consolidate or drift lower",
+    ]
+    generic_lt_bull = [
+        f"Long-term adoption thesis for {bktlbl} assets remains structurally intact",
+        f"As the crypto ecosystem matures, {name}'s established position should compound in value",
+        f"Continued development activity and ecosystem growth support a constructive long-term view",
+    ]
+    generic_lt_bear = [
+        f"Competitive intensity in the {bktlbl} category may erode {name}'s position over time",
+        f"Technology or regulatory disruption risk cannot be ruled out over a 3-5 year horizon",
+        f"Long-term execution risk remains a key variable for any crypto investment",
+    ]
 
-    return {
-        "bull_points":  bull_rules[:3],
-        "bear_points":  bear_rules[:3],
+    while len(st_bull) < 3:
+        st_bull.append(generic_st_bull[len(st_bull)])
+    while len(st_bear) < 3:
+        st_bear.append(generic_st_bear[len(st_bear)])
+    while len(lt_bull) < 3:
+        lt_bull.append(generic_lt_bull[len(lt_bull)])
+    while len(lt_bear) < 3:
+        lt_bear.append(generic_lt_bear[len(lt_bear)])
+
+    rule_result = {
+        "short_term":   {"bull_points": st_bull[:3], "bear_points": st_bear[:3]},
+        "long_term":    {"bull_points": lt_bull[:3], "bear_points": lt_bear[:3]},
         "source":       "rules",
         "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
     }
+
+    # ── Anthropic API with web search ─────────────────────────────────────────
+    if not (ANTHROPIC_API_KEY and ANTHROPIC_API_KEY.strip()):
+        return rule_result
+
+    context = {
+        "symbol": symbol, "name": name, "bucket_label": bktlbl,
+        "current_price": price, "market_cap_usd": mc, "rank": rank,
+        "price_change_7d_pct": chg_7d, "price_change_30d_pct": chg_30d,
+        "quality_score": quality.get("final_score"),
+        "quality_classification": classification,
+        "fear_greed_score": fg_score, "fear_greed_label": fg_label,
+        "circulating_pct": circ_pct, "fdv_to_mc_ratio": fdv_mc,
+        "annual_fees_usd": (bucket_a_data or {}).get("annual_protocol_fees_usd"),
+        "ps_ratio": (bucket_a_data or {}).get("ps_ratio"),
+        "rule_st_bull": st_bull[:3], "rule_st_bear": st_bear[:3],
+        "rule_lt_bull": lt_bull[:3], "rule_lt_bear": lt_bear[:3],
+    }
+
+    try:
+        prompt = f"""You are a senior crypto analyst writing for a professional investing app.
+Your task is to generate four sets of investment thesis points for {name} ({symbol}),
+classified as a {bktlbl}.
+
+STEP 1 — Search the web for recent news on {name} ({symbol}):
+Search for: "{symbol} {name} crypto news outlook 2025 2026"
+Look for: recent protocol upgrades, partnership announcements, regulatory developments,
+on-chain activity trends, analyst commentary, major whale movements or exchange listings.
+
+STEP 2 — Using the network economics data below AND the news you found, generate:
+
+Data:
+{json.dumps(context, indent=2)}
+
+Generate exactly four arrays:
+
+1. short_term_bull (3 points): Bull arguments for the NEXT 3-6 MONTHS.
+   Ground these in recent news, upcoming protocol upgrades or catalysts, near-term sentiment
+   and market positioning. Be specific — reference actual events or data you found.
+
+2. short_term_bear (3 points): Bear arguments for the NEXT 3-6 MONTHS.
+   Ground these in near-term headwinds, regulatory risks, or negative on-chain trends.
+
+3. long_term_bull (3 points): Bull arguments for a 1-5 YEAR horizon.
+   Ground these in the network economics data — fees, MC/Fees ratio, holder value accrual,
+   supply dynamics, and competitive position.
+
+4. long_term_bear (3 points): Bear arguments for a 1-5 YEAR horizon.
+   Ground these in structural tokenomics risks, competitive threats, or fee sustainability.
+
+Rules:
+- Each point must be 1-2 sentences, specific to {name}
+- Short-term points must reference something concrete from the news or recent data
+- Long-term points must reference the network economics data provided
+- Respond ONLY with valid JSON, no other text:
+
+{{
+  "short_term_bull": ["point 1", "point 2", "point 3"],
+  "short_term_bear": ["point 1", "point 2", "point 3"],
+  "long_term_bull":  ["point 1", "point 2", "point 3"],
+  "long_term_bear":  ["point 1", "point 2", "point 3"]
+}}"""
+
+        resp = requests.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={
+                "x-api-key":         ANTHROPIC_API_KEY,
+                "anthropic-version": "2023-06-01",
+                "content-type":      "application/json",
+            },
+            json={
+                "model":      "claude-haiku-4-5-20251001",
+                "max_tokens": 1500,
+                "tools":      [{"type": "web_search_20250305", "name": "web_search"}],
+                "messages":   [{"role": "user", "content": prompt}],
+            },
+            timeout=60,
+        )
+        if resp.status_code == 200:
+            content_blocks = resp.json().get("content", [])
+            text_blocks = [b["text"] for b in content_blocks if b.get("type") == "text"]
+            if text_blocks:
+                raw = text_blocks[-1].strip()
+                raw = raw.replace("```json", "").replace("```", "").strip()
+                parsed = json.loads(raw)
+                return {
+                    "short_term": {
+                        "bull_points": parsed.get("short_term_bull", st_bull[:3]),
+                        "bear_points": parsed.get("short_term_bear", st_bear[:3]),
+                    },
+                    "long_term": {
+                        "bull_points": parsed.get("long_term_bull",  lt_bull[:3]),
+                        "bear_points": parsed.get("long_term_bear",  lt_bear[:3]),
+                    },
+                    "source":       "api",
+                    "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
+                }
+        else:
+            print(f"  [BULL/BEAR] {symbol}: API returned {resp.status_code}, using rules")
+    except Exception as e:
+        print(f"  [BULL/BEAR] {symbol}: API failed ({str(e)[:60]}), using rules")
+
+    return rule_result
+
 
 
 def bucket_label_str(bucket):
