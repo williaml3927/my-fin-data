@@ -2792,6 +2792,42 @@ def analyze_ticker(ticker, retries=3):
                 company_type        = company_type,
             )
 
+            # ── Wire moat score back into quality dict ─────────────────────
+            # Haiku scored moat (0-10) inside the same API call as the
+            # narrative. Now apply it: recalculate final_score_pct out of 50
+            # and re-classify with the full 5-metric score.
+            moat_score = quality_narrative.get("moat_score")
+            if moat_score is not None:
+                try:
+                    moat_score = int(round(float(moat_score)))
+                    moat_score = max(0, min(10, moat_score))
+                except (TypeError, ValueError):
+                    moat_score = None
+
+            if moat_score is not None:
+                quality["scores"]["moat"]      = moat_score
+                quality["score_labels"]["moat"] = _score_label(moat_score)
+                # Recalculate final score out of 50 with moat included
+                FULL_METRICS = ("profitability", "financial_strength",
+                                "growth", "predictability")
+                full_subtotal = sum(
+                    final_scores.get(m, 0) or 0 for m in FULL_METRICS
+                ) + moat_score
+                full_pct = round((full_subtotal / 50) * 100, 2)
+                # Re-classify with full 5-metric score
+                full_classification = classify_quality(
+                    {**final_scores, "moat": moat_score},
+                    full_pct,
+                    roe       = pre_roe,
+                    roic      = pre_roic,
+                    eps_next_5y = eps_next_5y,
+                )
+                quality["final_score_pct"]  = full_classification["final_score_pct"]
+                quality["classification"]   = full_classification["label"]
+                quality["penalty_pct"]      = full_classification["penalty_pct"]
+                quality["tiebreaker_used"]  = full_classification["tiebreaker_used"]
+                quality["note"] = "Moat scored by Haiku API — final_score_pct computed out of 50."
+
             # ── Margin of Safety — pre-computed for hero card ──────────────
             # Positive = stock is cheaper than IV (discount) — good
             # Negative = stock is more expensive than IV (premium)
@@ -4146,19 +4182,25 @@ def summarise_description(ticker, description, company_name, sector, industry, c
 
 def generate_bull_bear(ticker, info, final_scores, fundamentals,
                        fwd_growth, intrinsic_value, forecast_meta):
-    """Generate bull and bear thesis points for a ticker."""
+    """
+    Generate bull and bear thesis split into two time horizons:
 
-    # ── Step 1: Build rule-based signals ─────────────────────────────────────
-    company_name = info.get("longName", ticker)
-    sector       = info.get("sector", "Unknown")
+      short_term — next 3-6 months, driven by recent news, catalysts, sentiment
+      long_term  — 1-5 year view, driven by financial fundamentals and moat
+
+    When the Anthropic API key is set, Haiku uses its web_search tool to fetch
+    recent news and analyst commentary before writing the short-term points.
+    Long-term points are grounded entirely in the financial data.
+    Rule-based fallback fires when the API key is absent or the call fails.
+    """
+    company_name  = info.get("longName", ticker)
+    sector        = info.get("sector", "Unknown")
     current_price = _safe(info.get("currentPrice") or info.get("regularMarketPrice"))
 
-    # Margin of safety
     mos = None
     if intrinsic_value and intrinsic_value > 0 and current_price and current_price > 0:
         mos = round((intrinsic_value - current_price) / intrinsic_value * 100, 1)
 
-    # Key metrics
     rev_growth    = _safe(info.get("revenueGrowth"))
     profit_margin = None
     rev           = _safe(info.get("totalRevenue"))
@@ -4166,12 +4208,14 @@ def generate_bull_bear(ticker, info, final_scores, fundamentals,
     if rev and rev > 0 and ni is not None:
         profit_margin = round(ni / rev * 100, 1)
 
+    eps5y = round(fwd_growth.get("raw", 0) * 100, 1) if fwd_growth else 0
+
     context = {
-        "ticker":         ticker,
-        "company":        company_name,
-        "sector":         sector,
-        "current_price":  current_price,
-        "intrinsic_value": intrinsic_value,
+        "ticker":              ticker,
+        "company":             company_name,
+        "sector":              sector,
+        "current_price":       current_price,
+        "intrinsic_value":     intrinsic_value,
         "margin_of_safety_pct": mos,
         "quality_scores": {
             "profitability":      final_scores.get("profitability"),
@@ -4180,150 +4224,215 @@ def generate_bull_bear(ticker, info, final_scores, fundamentals,
             "predictability":     final_scores.get("predictability"),
             "valuation":          final_scores.get("valuation"),
         },
-        "eps_next_5y_pct":    round(fwd_growth.get("raw", 0) * 100, 1),
-        "growth_source":      fwd_growth.get("source"),
-        "roe_pct":            fundamentals.get("roe_pct"),
-        "roic_pct":           fundamentals.get("roic_pct"),
-        "current_ratio":      fundamentals.get("current_ratio"),
-        "debt_to_ebitda":     fundamentals.get("debt_to_ebitda"),
-        "debt_service_ratio": fundamentals.get("debt_service_ratio"),
-        "revenue_growth_pct": round(rev_growth * 100, 1) if rev_growth else None,
-        "profit_margin_pct":  profit_margin,
-        "base_growth_rate":   round(forecast_meta.get("base_growth_rate", 0) * 100, 1),
-        "growth_constrained": forecast_meta.get("growth_constrained", False),
-        "constraint_note":    forecast_meta.get("constraint_note"),
+        "eps_next_5y_pct":     eps5y,
+        "roe_pct":             fundamentals.get("roe_pct"),
+        "roic_pct":            fundamentals.get("roic_pct"),
+        "current_ratio":       fundamentals.get("current_ratio"),
+        "debt_to_ebitda":      fundamentals.get("debt_to_ebitda"),
+        "revenue_growth_pct":  round(rev_growth * 100, 1) if rev_growth else None,
+        "profit_margin_pct":   profit_margin,
+        "base_growth_rate":    round(forecast_meta.get("base_growth_rate", 0) * 100, 1),
+        "growth_constrained":  forecast_meta.get("growth_constrained", False),
+        "constraint_note":     forecast_meta.get("constraint_note"),
     }
 
-    # ── Step 2: Rule-based fallback points ────────────────────────────────────
-    bull_rules = []
-    bear_rules = []
+    # ── Rule-based fallback points ────────────────────────────────────────────
+    st_bull, st_bear = [], []   # short-term
+    lt_bull, lt_bear = [], []   # long-term
 
-    # Valuation
+    # Short-term rules
     if mos and mos > 20:
-        bull_rules.append(f"Trading at a {mos}% discount to estimated intrinsic value of ${intrinsic_value}")
+        st_bull.append(f"Trading at a {mos}% discount to estimated intrinsic value — "
+                       f"technical setup favours near-term mean reversion toward ${intrinsic_value}")
     elif mos and mos < -20:
-        bear_rules.append(f"Trading at a {abs(mos)}% premium to estimated intrinsic value of ${intrinsic_value}")
+        st_bear.append(f"Trading at a {abs(mos):.0f}% premium to intrinsic value — "
+                       f"elevated risk of near-term multiple compression")
 
-    # Growth
-    if context["eps_next_5y_pct"] > 10:
-        bull_rules.append(f"Analyst consensus forecasts {context['eps_next_5y_pct']}% EPS growth over the next 5 years")
-    elif context["eps_next_5y_pct"] < 3:
-        bear_rules.append(f"Analyst consensus forecasts only {context['eps_next_5y_pct']}% EPS growth over the next 5 years")
-
-    # Profitability
-    if final_scores.get("profitability", 0) >= 8:
-        bull_rules.append(f"High profitability score ({final_scores['profitability']}/10) — strong margins and returns")
-    elif final_scores.get("profitability", 0) <= 3:
-        bear_rules.append(f"Low profitability score ({final_scores['profitability']}/10) — weak margins or negative returns")
-
-    # Financial strength
-    if final_scores.get("financial_strength", 0) >= 8:
-        bull_rules.append(f"Strong balance sheet ({final_scores['financial_strength']}/10) — low leverage and healthy cash position")
-    elif final_scores.get("financial_strength", 0) <= 3:
-        bear_rules.append(f"Weak balance sheet ({final_scores['financial_strength']}/10) — high leverage or poor liquidity")
-
-    # ROIC
-    if fundamentals.get("roic_pct"):
-        roic_val = fundamentals.get("roic")
-        if roic_val and roic_val > 0.20:
-            bull_rules.append(f"Exceptional ROIC of {fundamentals['roic_pct']} — highly efficient capital allocation")
-        elif roic_val and roic_val < 0.05:
-            bear_rules.append(f"Low ROIC of {fundamentals['roic_pct']} — poor returns on invested capital")
-
-    # Predictability
-    if final_scores.get("predictability", 0) >= 8:
-        bull_rules.append(f"Highly predictable business ({final_scores['predictability']}/10) — consistent revenue and earnings trajectory")
-    elif final_scores.get("predictability", 0) <= 3:
-        bear_rules.append(f"Unpredictable business ({final_scores['predictability']}/10) — volatile earnings and revenue")
-
-    # Growth constraint warning
-    if context["growth_constrained"]:
-        bear_rules.append(f"Financial strength constrains growth outlook — {context['constraint_note']}")
-
-    # Revenue growth
     if rev_growth and rev_growth > 0.15:
-        bull_rules.append(f"Strong revenue growth of {context['revenue_growth_pct']}% year-over-year")
+        st_bull.append(f"Revenue growing at {round(rev_growth*100,1)}% year-over-year, "
+                       f"indicating sustained demand momentum heading into the next quarter")
     elif rev_growth and rev_growth < -0.05:
-        bear_rules.append(f"Declining revenue of {context['revenue_growth_pct']}% year-over-year")
+        st_bear.append(f"Declining revenue of {round(rev_growth*100,1)}% may weigh on "
+                       f"near-term earnings and investor sentiment")
 
-    # ── Step 3: API call to Claude Haiku ──────────────────────────────────────
-    if ANTHROPIC_API_KEY and ANTHROPIC_API_KEY.strip():
-        try:
-            prompt = f"""You are a senior equity analyst. Based on the financial data below, 
-generate exactly 3 bull case arguments and 3 bear case arguments for {company_name} ({ticker}).
+    if eps5y > 10:
+        st_bull.append(f"Analyst consensus of {eps5y}% EPS growth over five years "
+                       f"provides a near-term catalyst if the company delivers on guidance")
+    elif eps5y < 3:
+        st_bear.append(f"Low consensus EPS growth forecast of {eps5y}% p.a. limits "
+                       f"re-rating potential in the near term")
+
+    # Long-term rules
+    p   = final_scores.get("profitability", 0) or 0
+    fs  = final_scores.get("financial_strength", 0) or 0
+    pre = final_scores.get("predictability", 0) or 0
+
+    if p >= 8:
+        lt_bull.append(f"High profitability score ({p}/10) reflects durable margins and "
+                       f"returns that compound value over a multi-year horizon")
+    elif p <= 3:
+        lt_bear.append(f"Low profitability score ({p}/10) suggests thin or negative margins "
+                       f"that structurally limit long-term earnings power")
+
+    if fs >= 8:
+        lt_bull.append(f"Strong balance sheet ({fs}/10) provides the financial flexibility "
+                       f"to invest through cycles and return capital to shareholders")
+    elif fs <= 3:
+        lt_bear.append(f"Weak balance sheet ({fs}/10) constrains long-term capital allocation "
+                       f"and increases vulnerability in a downturn")
+
+    roic_val = fundamentals.get("roic")
+    if roic_val and roic_val > 0.20:
+        lt_bull.append(f"ROIC of {fundamentals.get('roic_pct')} significantly exceeds cost of capital "
+                       f"— the business creates substantial economic value over time")
+    elif roic_val and roic_val < 0.05:
+        lt_bear.append(f"ROIC of {fundamentals.get('roic_pct')} is below most cost-of-capital benchmarks, "
+                       f"suggesting the business destroys value over the long run")
+
+    if pre >= 8:
+        lt_bull.append(f"Highly predictable earnings trajectory ({pre}/10) supports reliable "
+                       f"long-term DCF modelling and reduces reinvestment risk")
+    elif pre <= 3:
+        lt_bear.append(f"Unpredictable earnings ({pre}/10) make long-term forecasting unreliable "
+                       f"and compress the valuation multiple the market is willing to pay")
+
+    if forecast_meta.get("growth_constrained"):
+        lt_bear.append(f"Financial strength is constraining the assumed growth rate in "
+                       f"the valuation model — {forecast_meta.get('constraint_note', '')}")
+
+    # Pad to 3 each
+    generic_st_bull = [
+        f"Consensus expectations are broadly supportive for {company_name} in the near term",
+        f"Current market positioning in the {sector} sector may attract tactical buyers",
+        "Any positive earnings surprise could act as a near-term re-rating catalyst",
+    ]
+    generic_st_bear = [
+        f"Broader {sector} sector headwinds could weigh on near-term sentiment",
+        "Macro uncertainty and rate expectations may suppress multiple expansion",
+        "Short-term earnings visibility is limited without additional guidance",
+    ]
+    generic_lt_bull = [
+        f"{company_name} operates in a sector with long-term structural tailwinds",
+        "Management has demonstrated consistent capital allocation discipline",
+        "The business has the scale to compound earnings over a multi-year horizon",
+    ]
+    generic_lt_bear = [
+        f"Competitive intensity in the {sector} sector may erode margins over time",
+        "Long-term technology or regulatory disruption risk cannot be ruled out",
+        "Execution risk remains a key variable over a multi-year investment horizon",
+    ]
+
+    while len(st_bull) < 3:
+        st_bull.append(generic_st_bull[len(st_bull)])
+    while len(st_bear) < 3:
+        st_bear.append(generic_st_bear[len(st_bear)])
+    while len(lt_bull) < 3:
+        lt_bull.append(generic_lt_bull[len(lt_bull)])
+    while len(lt_bear) < 3:
+        lt_bear.append(generic_lt_bear[len(lt_bear)])
+
+    rule_result = {
+        "short_term": {"bull_points": st_bull[:3], "bear_points": st_bear[:3]},
+        "long_term":  {"bull_points": lt_bull[:3], "bear_points": lt_bear[:3]},
+        "source":      "rules",
+        "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
+    }
+
+    # ── API call with web search ──────────────────────────────────────────────
+    if not (ANTHROPIC_API_KEY and ANTHROPIC_API_KEY.strip()):
+        return rule_result
+
+    try:
+        prompt = f"""You are a senior equity analyst writing for a professional investing app.
+Your task is to generate four sets of investment thesis points for {company_name} ({ticker}).
+
+STEP 1 — Search the web for recent news on {company_name} ({ticker}):
+Search for: "{ticker} {company_name} earnings outlook news 2025 2026"
+Look for: recent earnings results, guidance updates, analyst upgrades/downgrades, product launches,
+regulatory developments, macro tailwinds/headwinds specific to this company.
+
+STEP 2 — Using the financial data below AND the news you found, generate:
 
 Financial Data:
 {json.dumps(context, indent=2)}
 
-Rule-based signals already identified:
-Bull signals: {bull_rules}
-Bear signals: {bear_rules}
+Generate exactly four arrays:
 
-Requirements:
-- Each point must be specific, factual and grounded in the data provided
-- Do not repeat the rule-based signals verbatim — expand on them or add new insights
-- Bull points should highlight genuine competitive strengths or opportunities
-- Bear points should highlight genuine risks or weaknesses
-- Keep each point to 1-2 sentences maximum
-- Respond ONLY with valid JSON in this exact format, no other text:
+1. short_term_bull (3 points): Bull arguments for the NEXT 3-6 MONTHS.
+   Ground these in recent news, upcoming catalysts, near-term earnings momentum,
+   technical setup relative to intrinsic value. Be specific — reference actual events
+   or data points you found.
+
+2. short_term_bear (3 points): Bear arguments for the NEXT 3-6 MONTHS.
+   Ground these in near-term headwinds, risks to the next earnings print,
+   valuation concerns, or negative news. Be specific.
+
+3. long_term_bull (3 points): Bull arguments for a 1-5 YEAR investment horizon.
+   Ground these in the company's financial quality (ROIC, margins, balance sheet),
+   competitive moat, and long-term growth drivers.
+
+4. long_term_bear (3 points): Bear arguments for a 1-5 YEAR investment horizon.
+   Ground these in structural risks, balance sheet constraints, competitive threats,
+   or long-term execution uncertainty.
+
+Rules:
+- Each point must be 1-2 sentences, specific and factual
+- Short-term points must reference something concrete (a news item, metric, or catalyst)
+- Long-term points must reference financial data provided above
+- Respond ONLY with valid JSON, no other text:
+
 {{
-  "bull_points": ["point 1", "point 2", "point 3"],
-  "bear_points": ["point 1", "point 2", "point 3"]
+  "short_term_bull": ["point 1", "point 2", "point 3"],
+  "short_term_bear": ["point 1", "point 2", "point 3"],
+  "long_term_bull":  ["point 1", "point 2", "point 3"],
+  "long_term_bear":  ["point 1", "point 2", "point 3"]
 }}"""
 
-            response = requests.post(
-                "https://api.anthropic.com/v1/messages",
-                headers={
-                    "x-api-key":         ANTHROPIC_API_KEY,
-                    "anthropic-version": "2023-06-01",
-                    "content-type":      "application/json",
-                },
-                json={
-                    "model":      "claude-haiku-4-5-20251001",
-                    "max_tokens": 500,
-                    "messages":   [{"role": "user", "content": prompt}],
-                },
-                timeout=30,
-            )
+        response = requests.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={
+                "x-api-key":         ANTHROPIC_API_KEY,
+                "anthropic-version": "2023-06-01",
+                "content-type":      "application/json",
+            },
+            json={
+                "model":      "claude-haiku-4-5-20251001",
+                "max_tokens": 1500,
+                "tools": [{"type": "web_search_20250305", "name": "web_search"}],
+                "messages":   [{"role": "user", "content": prompt}],
+            },
+            timeout=60,   # web search adds latency
+        )
 
-            if response.status_code == 200:
-                raw = response.json()["content"][0]["text"].strip()
-                # Strip markdown fences if present
+        if response.status_code == 200:
+            content_blocks = response.json().get("content", [])
+            # Extract the final text block (after any tool_use/tool_result blocks)
+            text_blocks = [b["text"] for b in content_blocks if b.get("type") == "text"]
+            if text_blocks:
+                raw = text_blocks[-1].strip()
                 raw = raw.replace("```json", "").replace("```", "").strip()
                 parsed = json.loads(raw)
                 return {
-                    "bull_points":  parsed.get("bull_points", bull_rules[:3]),
-                    "bear_points":  parsed.get("bear_points", bear_rules[:3]),
+                    "short_term": {
+                        "bull_points": parsed.get("short_term_bull", st_bull[:3]),
+                        "bear_points": parsed.get("short_term_bear", st_bear[:3]),
+                    },
+                    "long_term": {
+                        "bull_points": parsed.get("long_term_bull", lt_bull[:3]),
+                        "bear_points": parsed.get("long_term_bear", lt_bear[:3]),
+                    },
                     "source":       "api",
                     "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
                 }
-        except Exception as e:
-            print(f"  [BULL/BEAR] {ticker}: API call failed ({str(e)[:60]}), using rules")
+        else:
+            print(f"  [BULL/BEAR] {ticker}: API returned {response.status_code}, using rules")
 
-    # ── Fallback: rule-based only ─────────────────────────────────────────────
-    # Pad to 3 points if needed
-    generic_bull = [
-        f"Operates in the {sector} sector with established market presence",
-        "Management has maintained operations through varying market conditions",
-        "Company continues to generate revenue and maintain market position",
-    ]
-    generic_bear = [
-        f"Subject to {sector} sector risks including competition and regulation",
-        "Macroeconomic headwinds could impact near-term performance",
-        "Valuation uncertainty given limited forward visibility",
-    ]
+    except Exception as e:
+        print(f"  [BULL/BEAR] {ticker}: API call failed ({str(e)[:60]}), using rules")
 
-    while len(bull_rules) < 3:
-        bull_rules.append(generic_bull[len(bull_rules) - len(bull_rules)])
-    while len(bear_rules) < 3:
-        bear_rules.append(generic_bear[len(bear_rules) - len(bear_rules)])
+    return rule_result
 
-    return {
-        "bull_points":  bull_rules[:3],
-        "bear_points":  bear_rules[:3],
-        "source":       "rules",
-        "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
-    }
+
 
 
 def generate_quality_narrative(ticker, info, final_scores, score_labels,
@@ -4491,23 +4600,49 @@ def generate_quality_narrative(ticker, info, final_scores, score_labels,
         }
 
         prompt = f"""You are a senior equity analyst writing for a professional investing app.
-Generate three concise narrative blocks for {company_name} ({ticker}) based on the data below.
+Based on the financial data below, generate narrative content for {company_name} ({ticker}).
 
 Data:
 {json.dumps(context, indent=2)}
 
-Generate exactly:
-1. quality_conclusion: 2-3 sentences summarising the overall business quality. Mention the classification ({classification}), the strongest and weakest scoring dimensions, and what that means for the business.
-2. risk_profile: 2-3 sentences covering the key risks. Be specific to this company's data — reference actual metrics (debt ratios, growth rates, margins) rather than generic sector risks.
-3. investment_summary: 2-3 sentences summarising the investment case. Cover quality, valuation (margin of safety), and growth outlook. End with a clear one-line stance.
+Generate ALL of the following in a single JSON response:
+
+1. moat_score: An integer from 0-10 representing the strength of the company's competitive moat.
+   Score on: pricing power, switching costs, network effects, cost advantages, intangible assets.
+   Use the financial data provided (ROIC, margins, predictability, growth consistency) as evidence.
+   10=exceptional durable moat, 7-9=strong moat, 4-6=moderate moat, 1-3=weak moat, 0=no moat.
+
+2. moat_rationale: One sentence explaining the moat score. Be specific to this company.
+
+3. metric_assessments: A dict with one plain-English assessment per metric (1-2 sentences each).
+   Write for a beginner investor. Explain what the score means in practice — what the company
+   is actually doing well or poorly, and why it matters. Do NOT use labels like "weak", "strong",
+   "good", "adequate", or "poor" — describe the reality behind the number instead.
+   Keys: "profitability", "financial_strength", "growth", "predictability", "valuation"
+
+4. quality_conclusion: 2-3 sentences on overall business quality. Mention classification
+   ({classification}), strongest and weakest dimensions, and what that means for the business.
+
+5. risk_profile: 2-3 sentences on key risks. Reference actual metrics, not generic sector risks.
+
+6. investment_summary: 2-3 sentences on the investment case covering quality, valuation,
+   and growth outlook. End with a clear one-line stance.
 
 Rules:
-- Use the score_label words exactly (e.g. "Good profitability", not "above average profitability")
-- For {company_type} companies, do not flag high leverage as a risk if financial_strength ≥ 7 (structural leverage is normal)
-- Be specific, factual, and grounded in the numbers
+- For {company_type} companies, do not flag high leverage as a risk if financial_strength ≥ 7
+- Be specific, factual, and grounded in the data provided
 - Respond ONLY with valid JSON, no other text:
 
 {{
+  "moat_score": 0,
+  "moat_rationale": "...",
+  "metric_assessments": {{
+    "profitability": "...",
+    "financial_strength": "...",
+    "growth": "...",
+    "predictability": "...",
+    "valuation": "..."
+  }},
   "quality_conclusion": "...",
   "risk_profile": "...",
   "investment_summary": "..."
@@ -4523,7 +4658,7 @@ Rules:
                 },
                 json={
                     "model":      "claude-haiku-4-5-20251001",
-                    "max_tokens": 600,
+                    "max_tokens": 1200,
                     "messages":   [{"role": "user", "content": prompt}],
                 },
                 timeout=30,
@@ -4533,6 +4668,9 @@ Rules:
                 raw = raw.replace("```json", "").replace("```", "").strip()
                 parsed = json.loads(raw)
                 return {
+                    "moat_score":          parsed.get("moat_score"),
+                    "moat_rationale":      parsed.get("moat_rationale", ""),
+                    "metric_assessments":  parsed.get("metric_assessments", {}),
                     "quality_conclusion":  parsed.get("quality_conclusion",  rule_quality_conclusion),
                     "risk_profile":        parsed.get("risk_profile",        rule_risk_profile),
                     "investment_summary":  parsed.get("investment_summary",  rule_investment_summary),
@@ -4544,6 +4682,9 @@ Rules:
 
     # ── Rule-based fallback ───────────────────────────────────────────────────
     return {
+        "moat_score":          None,
+        "moat_rationale":      "",
+        "metric_assessments":  {},
         "quality_conclusion":  rule_quality_conclusion,
         "risk_profile":        rule_risk_profile,
         "investment_summary":  rule_investment_summary,
