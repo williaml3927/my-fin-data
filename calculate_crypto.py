@@ -2276,7 +2276,7 @@ def _build_rationale(bucket, methods_used, iv_floor_labels, iv_breakdown,
 
         lines_out.append(
             "Methods producing values outside 0.01x–15x of current price are excluded as outliers. "
-            "The median of all qualifying per-token estimates becomes the Speculative Fair Value."
+            "The mean of all qualifying per-token estimates becomes the Speculative Fair Value."
         )
 
     else:  # Bucket B
@@ -2352,7 +2352,7 @@ def _build_rationale(bucket, methods_used, iv_floor_labels, iv_breakdown,
             )
 
         lines_out.append(
-            "The median of all qualifying per-token estimates becomes the Speculative Fair Value."
+            "The mean of all qualifying per-token estimates becomes the Speculative Fair Value."
         )
 
     return " ".join(lines_out)
@@ -2719,7 +2719,7 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
             # ══════════════════════════════════════════════════════════════════
 
             # iv_pairs: list of (label, per-token-iv) for ALL display methods.
-            # valid_ivs: subset used for median (excludes extreme floor outliers < 0.1x price).
+            # valid_ivs: subset used for mean (excludes extreme floor outliers < 0.1x price).
             # iv_floor_labels: methods shown in chart but not used in median.
             iv_pairs        = []   # [(label, iv_value), ...] — all methods for bar chart
             valid_ivs       = []   # per-token fair value estimates used for median
@@ -3065,17 +3065,14 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     except Exception:
                         pass
 
-            # ── Aggregate: median of all valid per-token IV estimates ─────────
+            # ── Aggregate: mean of all valid per-token IV estimates ──────────
             if valid_ivs:
                 # Soft cap: no single method can contribute more than 2.0x current price
-                # to the median pool. Methods above this are still shown in iv_breakdown
-                # (display only) but capped here to prevent extreme upside distortion.
-                # This prevents genuinely cheap assets from showing >200% upside.
-                _cap_price  = (price or 0) * 2.0
+                # to the mean pool. Methods above this are capped to prevent extreme
+                # upside distortion from a single outlier method.
+                _cap_price       = (price or 0) * 2.0
                 valid_ivs_capped = [min(v, _cap_price) for v in valid_ivs]
-                valid_ivs_sorted = sorted(valid_ivs_capped)
-                mid     = len(valid_ivs_sorted) // 2
-                base_iv = valid_ivs_sorted[mid]
+                base_iv          = round(sum(valid_ivs_capped) / len(valid_ivs_capped), 4)
             else:
                 base_iv = price or 0
 
