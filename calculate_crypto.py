@@ -2154,6 +2154,210 @@ def calc_fear_greed(price_change_7d, price_change_30d, volume, market_cap,
 # =============================================================================
 # MAIN COIN ANALYSER
 # =============================================================================
+
+def _build_rationale(bucket, methods_used, iv_floor_labels, iv_breakdown,
+                     bucket_a_data, bucket_b_data, volume, circ, symbol,
+                     defillama_data, DEFILLAMA_SLUGS, CHAIN_FEE_MAP):
+    """
+    Build a dynamic iv_selection_rationale string that explains:
+    1. What bucket this token is in and what methods are available
+    2. Which specific methods fired and why
+    3. Why fewer methods fired (no fee data, price bounds, floor-only, etc.)
+    """
+    method_set = set(methods_used)
+    floor_set  = set(iv_floor_labels or [])
+    lines_out  = []
+
+    if bucket == "A":
+        lines_out.append(
+            "Bucket A (Cash-Flow Protocol): Up to 7 methods are available — "
+            "Protocol Fee DCF, Fee/MC Multiple, Holder Revenue, Metcalfe Network Value, "
+            "Network Activity (NVT), Rank Benchmark, and Dilution Adjustment."
+        )
+
+        # Explain which fee-based methods fired and why others didn't
+        has_defillama = bool(
+            (bucket_a_data or {}).get("annual_protocol_fees_usd") or
+            (bucket_a_data or {}).get("ps_ratio")
+        )
+        slug_in_map = DEFILLAMA_SLUGS.get(symbol) or CHAIN_FEE_MAP.get(symbol)
+
+        if has_defillama:
+            fee_methods_active = [m for m in ["Protocol Fee DCF", "Fee/MC Multiple", "Holder Revenue"]
+                                  if m in method_set or m in floor_set]
+            if fee_methods_active:
+                lines_out.append(
+                    f"Fee-based methods ({', '.join(fee_methods_active)}) used DeFiLlama protocol "
+                    f"fee data to anchor the valuation."
+                )
+            fee_floors = [m for m in ["Protocol Fee DCF", "Fee/MC Multiple", "Holder Revenue"]
+                          if m in floor_set]
+            if fee_floors:
+                lines_out.append(
+                    f"{', '.join(fee_floors)} produced a value below 10% of current price "
+                    f"(fees are low relative to market cap) — shown as an informational floor "
+                    f"in the breakdown chart but excluded from the median pool."
+                )
+        else:
+            if slug_in_map:
+                lines_out.append(
+                    "Protocol Fee DCF, Fee/MC Multiple, and Holder Revenue are unavailable: "
+                    "DeFiLlama has no fee data for this token. "
+                    "This typically means the protocol does not generate trackable on-chain fees, "
+                    "or its fee reporting is not yet indexed."
+                )
+            else:
+                lines_out.append(
+                    "Protocol Fee DCF, Fee/MC Multiple, and Holder Revenue are unavailable: "
+                    "this token has no DeFiLlama fee tracking. "
+                    "Valuation relies entirely on network activity and market positioning signals."
+                )
+
+        # NVT
+        if "Network Activity (NVT)" in method_set:
+            lines_out.append(
+                "Network Activity (NVT) treats 24h trading volume as a proxy for on-chain "
+                "utility — it fires when volume is available and the resulting IV falls "
+                "within 0.1x–10x of current price."
+            )
+        elif volume and circ:
+            lines_out.append(
+                "Network Activity (NVT) did not contribute to the median: "
+                "the implied fair value fell outside the 0.1x–10x price bounds "
+                "(volume is very low or very high relative to circulating supply)."
+            )
+
+        # Metcalfe
+        if "Metcalfe Network Value" in method_set:
+            lines_out.append(
+                "Metcalfe Network Value (MC/Volume ratio) confirmed the NVT signal "
+                "and contributed to the median pool."
+            )
+        elif "Metcalfe Network Value" in floor_set:
+            lines_out.append(
+                "Metcalfe Network Value is shown as an informational floor: "
+                "the implied IV is below 10% of current price, indicating the token "
+                "is trading at a significant premium to its network activity level."
+            )
+
+        # Rank Benchmark
+        if "Rank Benchmark" in method_set:
+            lines_out.append(
+                "Rank Benchmark anchors to the expected market cap for this token's rank tier, "
+                "quality-adjusted and capped at 2× current price to avoid distortion."
+            )
+
+        # Dilution
+        if "Dilution Adjustment" in method_set:
+            fdv_mc = (bucket_a_data or {}).get("fdv_to_mc_ratio") or \
+                     (iv_breakdown or {}).get("Dilution Adjustment") and "high"
+            lines_out.append(
+                "Dilution Adjustment penalises the large gap between circulating and fully-diluted "
+                "supply — future token unlocks are expected to create selling pressure."
+            )
+        else:
+            lines_out.append(
+                "Dilution Adjustment did not fire: FDV/MC is within the acceptable range "
+                "for this quality tier, so no dilution penalty was applied."
+            )
+
+        # Summary
+        n = len(methods_used)
+        if n == 1:
+            lines_out.append(
+                f"Only 1 method contributed to the median — the valuation should be treated "
+                f"as a rough anchor, not a precise fair value."
+            )
+        elif n < 3:
+            lines_out.append(
+                f"Only {n} methods contributed to the median. More data sources "
+                f"(DeFiLlama fee history) would improve confidence in this estimate."
+            )
+
+        lines_out.append(
+            "Methods producing values outside 0.01x–15x of current price are excluded as outliers. "
+            "The median of all qualifying per-token estimates becomes the Speculative Fair Value."
+        )
+
+    else:  # Bucket B
+        lines_out.append(
+            "Bucket B (Store of Value): Up to 6 methods are available — "
+            "Monetary Premium, Production Cost Floor, Metcalfe Network Value, "
+            "Supply Adjusted Value, Network Activity (NVT), and Rank Benchmark."
+        )
+
+        if "Monetary Premium" in method_set:
+            lines_out.append(
+                "Monetary Premium measures the token's current share of gold's market cap, "
+                "projecting fair value if that share is maintained as gold appreciates."
+            )
+        else:
+            lines_out.append(
+                "Monetary Premium is unavailable: gold capture percentage could not be computed "
+                "for this token."
+            )
+
+        if "Production Cost Floor" in method_set:
+            lines_out.append(
+                "Production Cost Floor estimates the PoW mining cost (×2 fair-value premium) "
+                "as a fundamental floor — it only fires for mineable assets."
+            )
+        else:
+            lines_out.append(
+                "Production Cost Floor is unavailable: this token is not a PoW-mineable asset "
+                "or mining cost data is not available."
+            )
+
+        if "Metcalfe Network Value" in method_set:
+            lines_out.append("Metcalfe Network Value uses MC/Volume ratio to gauge network activity vs valuation.")
+        elif "Metcalfe Network Value" in floor_set:
+            lines_out.append(
+                "Metcalfe Network Value is shown as an informational floor: "
+                "implied IV is below 10% of price."
+            )
+
+        if "Supply Adjusted Value" in method_set:
+            lines_out.append(
+                "Supply Adjusted Value penalises the large gap between circulating and "
+                "fully-diluted supply — inconsistent with a credible scarcity claim."
+            )
+        else:
+            lines_out.append(
+                "Supply Adjusted Value did not fire: FDV/MC is within acceptable range, "
+                "so no supply dilution penalty was applied."
+            )
+
+        if "Network Activity (NVT)" in method_set:
+            lines_out.append(
+                "Network Activity (NVT) treats volume as monetary circulation velocity — "
+                "higher NVT targets apply to SoV assets held long-term rather than traded for fees."
+            )
+        elif volume and circ:
+            lines_out.append(
+                "Network Activity (NVT) did not contribute to the median: "
+                "implied IV fell outside the 0.1x–10x price bounds."
+            )
+
+        if "Rank Benchmark" in method_set:
+            lines_out.append(
+                "Rank Benchmark anchors to the expected market cap for this token's rank tier, "
+                "quality-adjusted and capped at 2× current price."
+            )
+
+        n = len(methods_used)
+        if n < 3:
+            lines_out.append(
+                f"Only {n} method(s) contributed to the median. "
+                f"Limited data reduces confidence — treat the estimate as a directional guide."
+            )
+
+        lines_out.append(
+            "The median of all qualifying per-token estimates becomes the Speculative Fair Value."
+        )
+
+    return " ".join(lines_out)
+
+
 def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
     """Full valuation analysis for a single coin."""
     try:
@@ -2357,16 +2561,22 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     _fee_vals  = sorted([v * 1e6 for _, v in _last_n])  # $M → $
                     _mid       = len(_fee_vals) // 2
                     _normalised = _fee_vals[_mid]
+                    # Most-recent full year — for fast-growing protocols (LINK, AAVE)
+                    # the most recent full year is more informative than the median
+                    _most_recent = _hist_yrs[0][1] * 1e6 if _hist_yrs else 0
+                    # Best estimate: highest of (normalised median, most-recent full year)
+                    # This prevents bear-market anchoring AND fast-growth understating
+                    _best_normalised = max(_normalised, _most_recent)
                     _current   = bucket_a_data.get("annual_protocol_fees_usd") or 0
-                    if _normalised > _current:
+                    if _best_normalised > _current:
                         # Update bucket_a_data with normalised values
-                        bucket_a_data["annual_protocol_fees_usd"] = round(_normalised, 2)
+                        bucket_a_data["annual_protocol_fees_usd"] = round(_best_normalised, 2)
                         bucket_a_data["annual_fees_normalised"] = True
                         # Recompute ps_ratio with normalised fees
-                        if mc and _normalised > 0:
-                            bucket_a_data["ps_ratio"] = round(mc / _normalised, 2)
+                        if mc and _best_normalised > 0:
+                            bucket_a_data["ps_ratio"] = round(mc / _best_normalised, 2)
                         # Recompute DCF per token with normalised fees
-                        _dcf_norm = method_1_dcf_fees(_normalised)
+                        _dcf_norm = method_1_dcf_fees(_best_normalised)
                         if _dcf_norm and circ and circ > 0:
                             bucket_a_data["dcf_protocol_value_usd"]  = _dcf_norm
                             bucket_a_data["dcf_fair_value_per_token"] = round(_dcf_norm / circ, 4)
@@ -2552,8 +2762,9 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 # > 8x price → fees imply extreme undervaluation relative to market.
                 if dcf_v and dcf_v > 0 and price:
                     # Show in breakdown chart regardless (informational floor)
-                    # Only include in MEDIAN pool if >= 0.1x price (avoids outlier drag)
-                    if 0.03 * price <= dcf_v <= 15 * price:
+                    # DCF can legitimately be very low (high-PS-ratio protocols like LINK)
+                    # Display: 0.01x-15x price range. Median pool: >= 0.1x price.
+                    if 0.01 * price <= dcf_v <= 15 * price:
                         iv_pairs.append(("Protocol Fee DCF", dcf_v))
                         if dcf_v >= 0.1 * price:   # median pool: exclude extreme floor values
                             valid_ivs.append(dcf_v)
@@ -2651,13 +2862,16 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 # volume already captures network activity in Network Activity (NVT) below.
                 # Using volume as a Metcalfe proxy would duplicate NVT with worse
                 # calibration, so we only fire M7 when real address data exists.
-                m7_ratio = method_7_metcalfe(mc, active_addresses=None, volume=None)
+                m7_ratio = method_7_metcalfe(mc, active_addresses=None, volume=volume)
                 if m7_ratio and 0.1 <= m7_ratio <= 30 and price:
                     m7_iv = round(price / m7_ratio, 4)
                     if 0.05 * price <= m7_iv <= 7 * price:
                         iv_pairs.append(("Metcalfe Network Value", m7_iv))
-                        valid_ivs.append(m7_iv)
-                        methods_used.append("Metcalfe Network Value")
+                        if m7_iv >= 0.1 * price:   # median pool: exclude floor values
+                            valid_ivs.append(m7_iv)
+                            methods_used.append("Metcalfe Network Value")
+                        else:
+                            iv_floor_labels.append("Metcalfe Network Value")
 
                 # ── A+: NVT Fair Value ─────────────────────────────────────────
                 # NVT = MC / daily_volume. Crypto's P/E ratio.
@@ -3086,26 +3300,10 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     "iv_sources":               len([m for m in methods_used if "Market price" not in m]),
                     "methods_used":             methods_used,
                     "iv_breakdown":             iv_breakdown,
-                    "iv_selection_rationale":   (
-                        # Bucket A: Cash-Flow Protocols — valued like businesses
-                        "Bucket A (Cash-Flow Protocol): Valued using fee-based methods. "
-                        "Protocol Fee DCF discounts future fee revenue to present value. "
-                        "Fee/MC Multiple compares market cap to annual fees vs sector benchmarks. "
-                        "Holder Revenue uses fee revenue accruing directly to token holders. "
-                        "Network Activity (NVT) treats trading volume as a proxy for network activity. "
-                        "Rank Benchmark anchors to expected market cap for this rank tier. "
-                        "Dilution Adjustment penalises large token unlocks (high FDV/MC). "
-                        "Methods producing values outside 0.03x–15x of current price are excluded as outliers. "
-                        "The median of all valid per-token estimates becomes the Speculative Fair Value."
-                        if bucket == "A" else
-                        # Bucket B: Store of Value — valued on scarcity and monetary adoption
-                        "Bucket B (Store of Value): Valued on scarcity and monetary premium. "
-                        "Monetary Premium measures share of gold market cap captured. "
-                        "Production Cost Floor provides a PoW mining-cost floor (×2 premium). "
-                        "Supply Adjusted Value penalises tokens with significant unlocked supply. "
-                        "Network Activity (NVT) treats volume as monetary circulation velocity. "
-                        "Rank Benchmark anchors to expected market cap for this rank tier. "
-                        "The median of all valid per-token estimates becomes the Speculative Fair Value."
+                    "iv_selection_rationale":   _build_rationale(
+                        bucket, methods_used, iv_floor_labels, iv_breakdown,
+                        bucket_a_data, bucket_b_data, volume, circ, symbol,
+                        defillama_data, DEFILLAMA_SLUGS, CHAIN_FEE_MAP
                     ),
                     # Price history availability — AI Studio uses this to show
                     # a note when historical chart data is limited or unavailable.
@@ -4104,6 +4302,11 @@ def save_partitions(results):
             files_written += 1
 
     # Save ticker → file mapping
+    # Also add coin_id → stem so the frontend can look up by coin_id OR symbol
+    for sym, data in results.items():
+        coin_id = (data.get("coin_id") or data.get("coin_profile", {}).get("coin_id") or "")
+        if coin_id and coin_id not in ticker_map:
+            ticker_map[coin_id] = ticker_map.get(sym.upper(), ticker_map.get(sym, ""))
     with open("data_crypto/ticker_map.json", "w") as f:
         json.dump(ticker_map, f, indent=2)
 
