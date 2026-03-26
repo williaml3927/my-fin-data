@@ -4472,13 +4472,16 @@ def bucket_label_str(bucket):
 # JSON SAVER
 # =============================================================================
 def _sanitize(obj):
-    """Replace NaN/Inf with None recursively."""
+    """Replace NaN/Inf with None recursively, and strip bad control characters from strings."""
     if isinstance(obj, dict):
         return {k: _sanitize(v) for k, v in obj.items()}
     if isinstance(obj, list):
         return [_sanitize(v) for v in obj]
     if isinstance(obj, float) and (obj != obj or abs(obj) == float("inf")):
         return None
+    if isinstance(obj, str):
+        # Remove control characters that break JSON parsing (except \t and \n which json.dumps handles)
+        return "".join(c for c in obj if ord(c) >= 32 or c in ("\t", "\n", "\r"))
     return obj
 
 
