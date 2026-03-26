@@ -2765,8 +2765,8 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     # DCF can legitimately be very low (high-PS-ratio protocols like LINK)
                     # Display: 0.01x-15x price range. Median pool: >= 0.1x price.
                     if 0.01 * price <= dcf_v <= 15 * price:
-                        iv_pairs.append(("Protocol Fee DCF", dcf_v))
-                        if dcf_v >= 0.1 * price:   # median pool: exclude extreme floor values
+                        if dcf_v >= 0.1 * price:   # median pool
+                            iv_pairs.append(("Protocol Fee DCF", dcf_v))
                             valid_ivs.append(dcf_v)
                             methods_used.append("Protocol Fee DCF")
                         else:
@@ -2809,8 +2809,8 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                         median_ps = 3    # highly speculative
                     ps_iv = round(price * median_ps / ps_rat, 4)
                     if ps_iv > 0 and 0.01 * price <= ps_iv <= 15 * price:
-                        iv_pairs.append(("Fee/MC Multiple", ps_iv))
-                        if ps_iv >= 0.1 * price:   # median pool: exclude extreme floor values
+                        if ps_iv >= 0.1 * price:   # median pool
+                            iv_pairs.append(("Fee/MC Multiple", ps_iv))
                             valid_ivs.append(ps_iv)
                             methods_used.append("Fee/MC Multiple")
                         else:
@@ -2849,8 +2849,8 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     # Same bounds filter as M1 DCF: skip if wildly disproportionate
                     # Show in breakdown chart (informational); only in median pool if >= 0.1x price
                     if pe_iv > 0 and 0.03 * price <= pe_iv <= 15 * price:
-                        iv_pairs.append(("Holder Revenue", pe_iv))
-                        if pe_iv >= 0.1 * price:   # median pool: exclude extreme floor values
+                        if pe_iv >= 0.1 * price:   # median pool
+                            iv_pairs.append(("Holder Revenue", pe_iv))
                             valid_ivs.append(pe_iv)
                             methods_used.append("Holder Revenue")
                         else:
@@ -2869,8 +2869,8 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 if m7_ratio and 0.1 <= m7_ratio <= 30 and price:
                     m7_iv = round(price / m7_ratio, 4)
                     if 0.05 * price <= m7_iv <= 7 * price:
-                        iv_pairs.append(("Metcalfe Network Value", m7_iv))
-                        if m7_iv >= 0.1 * price:   # median pool: exclude floor values
+                        if m7_iv >= 0.1 * price:   # median pool
+                            iv_pairs.append(("Metcalfe Network Value", m7_iv))
                             valid_ivs.append(m7_iv)
                             methods_used.append("Metcalfe Network Value")
                         else:
