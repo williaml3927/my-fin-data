@@ -3300,6 +3300,25 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     "iv_sources":               len([m for m in methods_used if "Market price" not in m]),
                     "methods_used":             methods_used,
                     "iv_breakdown":             iv_breakdown,
+                    "method_explanation":       (
+                        "This token is valued as a Cash-Flow Protocol — a blockchain or "
+                        "DeFi protocol that generates real fee revenue from users. The "
+                        "valuation combines three approaches: Network Activity (NVT) treats "
+                        "daily trading volume as a proxy for economic utility; Fee/MC Multiple "
+                        "compares the market cap to annual fees, similar to a Price/Sales ratio "
+                        "for stocks; and Rank Benchmark anchors the value to what a token of "
+                        "this size and quality tier would typically be worth. The final "
+                        "Speculative Fair Value is the mean of all methods that produced a "
+                        "reasonable result."
+                        if bucket == "A" else
+                        "This token is valued as a Store of Value asset — a cryptocurrency "
+                        "whose primary role is preserving purchasing power rather than "
+                        "generating fees. The valuation uses two approaches: Monetary Premium "
+                        "measures how much of gold's market cap this asset has captured, "
+                        "reflecting adoption as digital money; and Production Cost Floor "
+                        "estimates the mining cost as a fundamental price anchor, since price "
+                        "rarely stays below what it costs to produce the asset."
+                    ),
                     "iv_selection_rationale":   _build_rationale(
                         bucket, methods_used, iv_floor_labels, iv_breakdown,
                         bucket_a_data, bucket_b_data, volume, circ, symbol,
