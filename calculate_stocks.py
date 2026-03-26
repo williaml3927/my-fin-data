@@ -2827,6 +2827,14 @@ def analyze_ticker(ticker, retries=3):
                 "company_type":      company_type,
                 "type_rationale":    type_rationale,
                 "description":       info.get("longBusinessSummary"),
+                 "description_summary": summarise_description(
+                     ticker,
+                     info.get("longBusinessSummary"),
+                     info.get("longName") or info.get("shortName") or ticker,
+                     info.get("sector"),
+                     info.get("industry"),
+                     company_type,
+                 ),
                 "website":           info.get("website"),
                 "employees":         info.get("fullTimeEmployees"),
                 "country":           info.get("country"),
@@ -4071,6 +4079,70 @@ def _get_financials_chart_data_inner(stock, info, ticker=""):
 # =============================================================================
 ANTHROPIC_API_KEY = ""   # ← paste your Anthropic API key here (optional)
                           #   Leave empty to use rule-based fallback only
+
+
+def summarise_description(ticker, description, company_name, sector, industry, company_type):
+    """
+    Pre-compute a 1-2 paragraph company description summary (≤80 words).
+    AI Studio reads description_summary directly — zero generation at query time.
+    Falls back to a trimmed rule-based version when the API key is absent or the
+    call fails.
+    """
+    if not description or not description.strip():
+        return (
+            f"{company_name} is a {sector or 'publicly listed'} company"
+            f"{' in the ' + industry + ' industry' if industry else ''}. "
+            "Detailed business description is unavailable."
+        )
+
+    # ── Rule-based fallback: keep only first 2 sentences ────────────────────
+    import re
+    sentences = re.split(r'(?<=[.!?])\s+', description.strip())
+    fallback = " ".join(sentences[:2]).strip()
+    # Hard cap at 120 words
+    words = fallback.split()
+    if len(words) > 120:
+        fallback = " ".join(words[:120]) + "…"
+
+    if not (ANTHROPIC_API_KEY and ANTHROPIC_API_KEY.strip()):
+        return fallback
+
+    # ── Haiku API call ────────────────────────────────────────────────────────
+    prompt = (
+        f"Summarise the following company description for {company_name} ({ticker}) "
+        f"into 1–2 short paragraphs of plain prose. "
+        f"Maximum 80 words total. Present tense. No bullet points. "
+        f"Paragraph 1: what the company does and its main revenue source. "
+        f"Paragraph 2 (optional, only if materially different info exists): "
+        f"what makes it distinctive. "
+        f"Do not start with the company name. No founding year or employee count.\n\n"
+        f"Description:\n{description[:2000]}"
+    )
+
+    try:
+        response = requests.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={
+                "x-api-key":         ANTHROPIC_API_KEY,
+                "anthropic-version": "2023-06-01",
+                "content-type":      "application/json",
+            },
+            json={
+                "model":      "claude-haiku-4-5-20251001",
+                "max_tokens": 200,
+                "messages":   [{"role": "user", "content": prompt}],
+            },
+            timeout=20,
+        )
+        if response.status_code == 200:
+            result = response.json()["content"][0]["text"].strip()
+            if result:
+                return result
+    except Exception as e:
+        print(f"  [DESC SUMMARY] {ticker}: API call failed ({str(e)[:60]}), using fallback")
+
+    return fallback
+
 
 def generate_bull_bear(ticker, info, final_scores, fundamentals,
                        fwd_growth, intrinsic_value, forecast_meta):
