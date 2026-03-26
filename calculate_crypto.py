@@ -2195,8 +2195,8 @@ def _build_rationale(bucket, methods_used, iv_floor_labels, iv_breakdown,
             if fee_floors:
                 lines_out.append(
                     f"{', '.join(fee_floors)} produced a value below 10% of current price "
-                    f"(fees are low relative to market cap) — shown as an informational floor "
-                    f"in the breakdown chart but excluded from the median pool."
+                    f"(fees are low relative to market cap) — shown in the breakdown chart "
+                    f"but excluded from the median pool."
                 )
         else:
             if slug_in_map:
@@ -2235,7 +2235,7 @@ def _build_rationale(bucket, methods_used, iv_floor_labels, iv_breakdown,
             )
         elif "Metcalfe Network Value" in floor_set:
             lines_out.append(
-                "Metcalfe Network Value is shown as an informational floor: "
+                "Metcalfe Network Value is shown in the breakdown chart without contributing to the median: "
                 "the implied IV is below 10% of current price, indicating the token "
                 "is trading at a significant premium to its network activity level."
             )
@@ -2312,7 +2312,7 @@ def _build_rationale(bucket, methods_used, iv_floor_labels, iv_breakdown,
             lines_out.append("Metcalfe Network Value uses MC/Volume ratio to gauge network activity vs valuation.")
         elif "Metcalfe Network Value" in floor_set:
             lines_out.append(
-                "Metcalfe Network Value is shown as an informational floor: "
+                "Metcalfe Network Value is shown in the breakdown chart without contributing to the median: "
                 "implied IV is below 10% of price."
             )
 
@@ -2794,24 +2794,27 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     # Prior multiples (60x, 12x) were bull-peak figures that overstated upside.
                     # New figures represent realistic fair-value ranges per sector:
                     if _is_monetary_l1:
-                        median_ps = 50 if q_pct >= 70 else 25   # ETH mid-cycle: 80-120x observed
+                        median_ps = 70 if q_pct >= 70 else 35   # ETH/SOL mid-cycle: 80-120x observed; 70x = conservative mid
                     elif _is_l1_chain:
-                        median_ps = 20 if q_pct >= 60 else 12
+                        median_ps = 20 if q_pct >= 60 else 15   # AVAX/NEAR historically 20-50x; 15x conservative
                     elif _is_l2_gov:
                         median_ps = 6 if q_pct >= 55 else 4
                     elif q_pct >= 70:
-                        median_ps = 8    # DeFi blue chips at mid-cycle P/F (was 12)
+                        median_ps = 10   # DeFi blue chips mid-cycle (AAVE/MKR: 10-20x)
                     elif q_pct >= 60:
-                        median_ps = 6    # strong DeFi protocols
+                        median_ps = 8    # strong DeFi protocols
                     elif q_pct >= 45:
-                        median_ps = 4    # growth protocols
+                        median_ps = 5    # growth protocols
                     else:
-                        median_ps = 2.5  # highly speculative
+                        median_ps = 3    # highly speculative
                     ps_iv = round(price * median_ps / ps_rat, 4)
-                    if ps_iv > 0:
+                    if ps_iv > 0 and 0.01 * price <= ps_iv <= 15 * price:
                         iv_pairs.append(("Fee/MC Multiple", ps_iv))
-                        valid_ivs.append(ps_iv)
-                        methods_used.append("Fee/MC Multiple")
+                        if ps_iv >= 0.1 * price:   # median pool: exclude extreme floor values
+                            valid_ivs.append(ps_iv)
+                            methods_used.append("Fee/MC Multiple")
+                        else:
+                            iv_floor_labels.append("Fee/MC Multiple")
 
                                 # ── A3: P/E analog — FDV/Holders-revenue vs tier-median ────────
                 # Only fires when DeFiLlama tracks holders revenue separately.
@@ -2885,10 +2888,10 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     # NVT = MC/DailyVolume. Lower NVT = undervalued relative to usage.
                     # ETH historical fair-value NVT: ~10-15. BTC: ~15-25.
                     # These are conservative mid-cycle anchors, not peak values.
-                    if q_pct >= 70:   fair_nvt = 15  # established protocols: ETH ~12, SOL ~10
-                    elif q_pct >= 60: fair_nvt = 12  # strong DeFi protocols
-                    elif q_pct >= 45: fair_nvt = 8   # speculative
-                    else:             fair_nvt = 5   # high-risk
+                    if q_pct >= 70:   fair_nvt = 20  # 20x daily vol ≈ mid-cycle MC/vol ratio for major L1s
+                    elif q_pct >= 60: fair_nvt = 15  # strong protocols
+                    elif q_pct >= 45: fair_nvt = 10  # speculative
+                    else:             fair_nvt = 6   # high-risk
                     nvt_iv = round((volume * fair_nvt) / circ, 4)
                     if price and 0.1 * price <= nvt_iv <= 10 * price:
                         iv_pairs.append(("Network Activity (NVT)", nvt_iv))
@@ -3085,7 +3088,7 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 key = _lbl.strip('"').strip("'") if isinstance(_lbl, str) else str(_lbl)
                 # Mark floor-only methods so frontend can style them differently
                 if key in iv_floor_set:
-                    iv_breakdown[f"[floor] {key}"] = _iv
+                    iv_breakdown[key] = _iv
                 else:
                     iv_breakdown[key] = _iv
 
