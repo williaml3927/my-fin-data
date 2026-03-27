@@ -38,7 +38,7 @@ TIER_CONFIG = {
     },
 }
 
-DCF_YEARS     = 20
+DCF_YEARS     = 10
 HISTORY_YEARS = 5
 
 # =============================================================================
@@ -64,7 +64,8 @@ MAX_EV_EBITDA = 40   # company's own EV/EBITDA capped at 40x to filter distortio
 #   DCF methods apply the MIN_GROWTH_RATE floor so they still produce a value.
 # =============================================================================
 MAX_GROWTH_RATE    = 0.30
-MAX_PEG_PSG_GROWTH = 0.30
+MAX_PEG_PSG_GROWTH = 0.20   # PSG/PEG capped at 20% → max effective P/S or P/E of 20x
+MAX_DCF_GROWTH_RATE = 0.15  # DCF capped at 15% — higher rates compound to absurd values over 10 years
 MIN_GROWTH_RATE    = 0.02
 
 # =============================================================================
@@ -1883,27 +1884,35 @@ def get_historical_mean_multiples(stock, shares):
 def calc_dcf_operating_cf(info, shares, growth_s1, growth_s2, discount):
     ocf = _safe(info.get('operatingCashflow'))
     if ocf is None or shares <= 0: return None
-    return _dcf_sum(ocf / shares, growth_s1, growth_s2, discount)
+    g1 = min(growth_s1, MAX_DCF_GROWTH_RATE)
+    g2 = min(growth_s2, MAX_DCF_GROWTH_RATE * 0.5)
+    return _dcf_sum(ocf / shares, g1, g2, discount)
 
 def calc_dcf_fcf(info, shares, growth_s1, growth_s2, discount):
     fcf = _safe(info.get('freeCashflow'))
     if fcf is None or shares <= 0: return None
-    return _dcf_sum(fcf / shares, growth_s1, growth_s2, discount)
+    g1 = min(growth_s1, MAX_DCF_GROWTH_RATE)
+    g2 = min(growth_s2, MAX_DCF_GROWTH_RATE * 0.5)
+    return _dcf_sum(fcf / shares, g1, g2, discount)
 
 def calc_dcf_net_income(info, shares, growth_s1, growth_s2, discount):
     ni = _safe(info.get('netIncomeToCommon'))
     if ni is None or shares <= 0: return None
-    return _dcf_sum(ni / shares, growth_s1, growth_s2, discount)
+    g1 = min(growth_s1, MAX_DCF_GROWTH_RATE)
+    g2 = min(growth_s2, MAX_DCF_GROWTH_RATE * 0.5)
+    return _dcf_sum(ni / shares, g1, g2, discount)
 
 def calc_dcf_terminal_value(info, shares, growth_s1, growth_s2, discount, terminal_growth, dcf_fcf_value=None):
     fcf = _safe(info.get('freeCashflow'))
     if fcf is None or shares <= 0: return None
     fcf_ps = fcf / shares
     if fcf_ps <= 0: return None
-    pv_cf  = _dcf_sum(fcf_ps, growth_s1, growth_s2, discount)
+    g1 = min(growth_s1, MAX_DCF_GROWTH_RATE)
+    g2 = min(growth_s2, MAX_DCF_GROWTH_RATE * 0.5)
+    pv_cf  = _dcf_sum(fcf_ps, g1, g2, discount)
     cf_end = fcf_ps
     for t in range(1, DCF_YEARS + 1):
-        cf_end = cf_end * (1 + (growth_s1 if t <= 10 else growth_s2))
+        cf_end = cf_end * (1 + (g1 if t <= 10 else g2))
     if discount <= terminal_growth: return None
     pv_tv  = ((cf_end * (1 + terminal_growth)) / (discount - terminal_growth)) / (1 + discount) ** DCF_YEARS
     result = round(pv_cf + pv_tv, 2)
@@ -1996,13 +2005,19 @@ def calc_ev_ebitda(info, shares, mean_ev_ebitda):
 # INTRINSIC VALUE AGGREGATOR — tier-weighted mean
 # =============================================================================
 def calc_intrinsic_value(valuations: dict, tier: str = "Average",
-                          dynamic_weights: dict = None) -> dict:
+                          dynamic_weights: dict = None,
+                          current_price: float = None) -> dict:
     """
     Weighted intrinsic value aggregator.
 
     dynamic_weights: if provided, overrides tier weights. Methods with
     weight 0.0 are excluded entirely (appropriate for REITs, banks etc.)
     even if they produced a value — this is intentional.
+
+    current_price: if provided, methods producing values more than 5x above
+    or less than 0.1x the current price are rejected as outliers. This
+    prevents exploding DCF values and currency-inflated metrics from
+    distorting the aggregate intrinsic value.
 
     Confidence penalty:
     If the spread between the highest and lowest valid method is > 100%
@@ -2016,13 +2031,21 @@ def calc_intrinsic_value(valuations: dict, tier: str = "Average",
     ]
     weights = dynamic_weights if dynamic_weights is not None else               TIER_WEIGHTS.get(tier, TIER_WEIGHTS["Average"])
 
+    # Outlier bounds — reject values implausibly far from current market price
+    if current_price and current_price > 0:
+        outlier_upper = current_price * 5.0   # cap at 5× current price
+        outlier_lower = current_price * 0.10  # floor at 10% of current price
+    else:
+        outlier_upper = 1_000_000
+        outlier_lower = 0
+
     valid_vals, valid_weights, active_methods = [], [], []
     for k in keys:
         v = valuations.get(k)
         w = weights.get(k, 0.10)
         if w == 0.0:
             continue   # method excluded for this company type
-        if v is not None and isinstance(v, (int, float)) and 0 < v < 1_000_000:
+        if v is not None and isinstance(v, (int, float)) and outlier_lower < v < outlier_upper:
             valid_vals.append(v)
             valid_weights.append(w)
             active_methods.append(k)
@@ -2413,10 +2436,13 @@ def analyze_ticker(ticker, retries=3):
                 "10_EV_EBITDA":         calc_ev_ebitda(info, shares, mean_ev_ebitda),
             }
 
+            _cp_for_iv = (_safe(info.get('currentPrice')) or
+                          _safe(info.get('regularMarketPrice')))
             aggregate = calc_intrinsic_value(
                 valuations,
                 tier=tier_data["tier"],
                 dynamic_weights=dynamic_weights,
+                current_price=_cp_for_iv,
             )
             valuations.update(aggregate)
 
@@ -2424,6 +2450,68 @@ def analyze_ticker(ticker, retries=3):
             excluded_methods = [
                 k for k, w in dynamic_weights.items() if w == 0.0
             ]
+
+            _type_explanation = {
+                "BANK": (
+                    "Banks make money from the difference between what they charge on loans and what they pay on deposits — "
+                    "not from traditional business cash flows. Because of this, standard cash flow models (DCF) do not work well for banks. "
+                    "Instead, we focus on Price-to-Book (P/B), which compares the stock price to the value of the bank's assets on its books. "
+                    "Banks also carry a lot of debt by design — they borrow money to lend it out — so high leverage is normal and not a red flag."
+                ),
+                "REIT": (
+                    "Real Estate Investment Trusts (REITs) own properties and are legally required to pay out most of their income as dividends. "
+                    "This means they rarely have much free cash flow left over, so DCF models give misleading results. "
+                    "Instead, we use Price-to-Book (P/B) to estimate the value of the underlying properties, "
+                    "and EV/EBITDA to compare the business to similar property companies."
+                ),
+                "INSURANCE": (
+                    "Insurance companies collect premiums upfront and pay out claims later — sometimes years later. "
+                    "This makes their cash flow very lumpy and hard to predict, so we rely on net income instead. "
+                    "The key question for an insurer is whether they are pricing their policies correctly and managing their investment portfolio well. "
+                    "Price-to-Book and net income DCF are the most reliable ways to assess this."
+                ),
+                "UTILITY": (
+                    "Utilities like electricity and water companies operate under government regulation, which means their prices and profits are capped but also very stable. "
+                    "They tend to carry a lot of debt because building infrastructure is expensive — but this is normal and expected for the industry. "
+                    "Because earnings are so predictable, Price-to-Earnings (P/E) and EV/EBITDA work well. "
+                    "DCF is less useful here because regulated utilities have limited ability to grow beyond what regulators allow."
+                ),
+                "SPECGROWTH": (
+                    "High-growth companies — typically in technology or biotech — are often not yet profitable, which means earnings-based methods like P/E give no useful result. "
+                    "Instead, we use Price-to-Sales (P/S), which compares the stock price to total revenue regardless of whether the company is making a profit. "
+                    "The PSG ratio (Price/Sales/Growth) also adjusts for how fast revenue is growing. "
+                    "These methods are imperfect but they are the best available tools when a company is still investing heavily to grow."
+                ),
+                "CYCLICAL": (
+                    "Cyclical companies — such as semiconductors, mining, or manufacturing — have profits that rise sharply in good times and fall sharply in downturns. "
+                    "This makes earnings-based methods like P/E unreliable, because the earnings figure at any single point in time can be unusually high or low. "
+                    "EV/EBITDA smooths out some of this distortion by looking at earnings before interest and tax, making it a fairer comparison across the economic cycle. "
+                    "Price-to-Sales is also useful as revenue tends to be more stable than profits for cyclical businesses."
+                ),
+                "FCF_COMPOUNDER": (
+                    "Free cash flow compounders are businesses that consistently generate more cash than they need to run the business — "
+                    "think of companies like consumer goods brands or software firms with subscription revenue. "
+                    "Because their cash flows are reliable year after year, a Discounted Cash Flow (DCF) model works very well. "
+                    "DCF asks: if I add up all the future cash flows this company will generate and adjust for the time value of money, what is it worth today? "
+                    "For these companies, that calculation gives a meaningful and trustworthy answer."
+                ),
+                "ASSET_MGR": (
+                    "Asset managers and brokers earn fees for managing other people's money. Their balance sheets hold client assets that do not belong to the firm, "
+                    "which makes standard balance sheet metrics like Price-to-Book misleading. "
+                    "Instead, we focus on net income and revenue-based methods, which better reflect the underlying fee-earning power of the business."
+                ),
+                "CONSUMER_FINANCE": (
+                    "Consumer finance companies — such as credit card providers or personal lenders — earn income from the interest they charge on loans. "
+                    "Like banks, they carry a lot of debt by design because lending money is their core business model. "
+                    "We use net income DCF and Price-to-Book, which together capture both the earning power and the asset value of the loan book."
+                ),
+                "STANDARD": (
+                    "This company does not fit neatly into a specialist category, so we apply a balanced mix of all ten valuation methods. "
+                    "These include Discounted Cash Flow (which estimates the present value of future cash flows), "
+                    "earnings multiples (P/E and PEG), revenue multiples (P/S and PSG), book value (P/B), and EV/EBITDA. "
+                    "Each method approaches value from a different angle — using all of them together gives a more rounded estimate than relying on any single number."
+                ),
+            }.get(company_type, "A balanced mix of valuation methods has been applied to estimate the intrinsic value of this company.")
 
             valuations["_meta"] = {
                 "pe_source":        "historical_mean" if mean_pe else "current_trailing",
@@ -2440,6 +2528,7 @@ def analyze_ticker(ticker, retries=3):
                 "tier":             tier_data["tier"],
                 "company_type":     company_type,
                 "type_rationale":   type_rationale,
+                "method_explanation": _type_explanation,
                 "weights_applied":  dynamic_weights,
                 "excluded_methods": excluded_methods,
                 "active_methods":   aggregate.get("active_methods", []),
@@ -4705,6 +4794,9 @@ def _sanitize(obj):
         return [_sanitize(v) for v in obj]
     if isinstance(obj, float) and (obj != obj or obj == float('inf') or obj == float('-inf')):
         return None   # NaN and ±Inf → null
+    if isinstance(obj, str):
+        # Strip control characters that break JSON parsing in the browser
+        return "".join(c for c in obj if ord(c) >= 32 or c in ("\t", "\n", "\r"))
     return obj
 
 
