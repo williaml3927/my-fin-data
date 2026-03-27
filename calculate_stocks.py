@@ -3572,6 +3572,13 @@ def get_financials_chart_data(stock, info, ticker=""):
         "shares_vs_buybacks":    {},
         "returns_trajectory":    {},
         "revenue_vs_ar":         {},
+        "_notes": {
+            "revenue_vs_net_income": "Shows revenue vs net income over time — both should grow together.",
+            "fcf_vs_debt": "Compares free cash flow to total debt — rising cash and falling debt is healthy.",
+            "shares_vs_buybacks": "Tracks share count changes — buybacks reduce shares and return value to shareholders.",
+            "returns_trajectory": "Shows ROE and ROIC over time — above 15% consistently suggests a competitive advantage.",
+            "revenue_vs_ar": "Compares revenue growth to accounts receivable growth — AR growing faster than revenue can signal collection problems.",
+        },
     }
     try:
         return _get_financials_chart_data_inner(stock, info, ticker)
@@ -3587,6 +3594,48 @@ def _get_financials_chart_data_inner(stock, info, ticker=""):
         "shares_vs_buybacks":    {},
         "returns_trajectory":    {},
         "revenue_vs_ar":         {},
+        "_notes": {
+            "revenue_vs_net_income": (
+                "This chart shows how much money the company brings in (revenue) versus "
+                "how much it actually keeps as profit (net income) each year. "
+                "A healthy company should show both lines growing over time. "
+                "If revenue grows but net income shrinks, the company is spending more "
+                "than it is earning — a warning sign worth investigating."
+            ),
+            "fcf_vs_debt": (
+                "Free cash flow is the cash left over after the company has paid for "
+                "everything it needs to run and grow the business. "
+                "This chart compares that cash to the company's total debt. "
+                "A company with rising free cash flow and falling debt is in a strong "
+                "financial position. If debt is rising faster than cash, the company "
+                "may be taking on more risk than it can comfortably manage."
+            ),
+            "shares_vs_buybacks": (
+                "When a company buys back its own shares, it reduces the total number "
+                "of shares in circulation — which means each remaining share represents "
+                "a larger slice of the business. "
+                "This chart shows how the share count has changed over time. "
+                "Consistent buybacks are generally a sign that management believes the "
+                "stock is undervalued and wants to return cash to shareholders."
+            ),
+            "returns_trajectory": (
+                "Return on Equity (ROE) measures how much profit a company generates "
+                "for every dollar of shareholder money invested. "
+                "Return on Invested Capital (ROIC) is similar but also includes debt. "
+                "Both are expressed as a percentage — higher is better. "
+                "A company consistently earning above 15% ROIC is generally considered "
+                "to have a genuine competitive advantage over its peers."
+            ),
+            "revenue_vs_ar": (
+                "Accounts receivable is money the company is owed by customers who have "
+                "not yet paid their bills. "
+                "This chart compares revenue growth to accounts receivable growth each year. "
+                "If accounts receivable is growing much faster than revenue, it may mean "
+                "the company is struggling to collect payments — sometimes a sign of "
+                "aggressive or fictitious revenue reporting. "
+                "A healthy company should see both lines move at a similar pace."
+            ),
+        },
     }
 
     def to_m(val):
