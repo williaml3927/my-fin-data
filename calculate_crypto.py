@@ -3301,23 +3301,35 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     "methods_used":             methods_used,
                     "iv_breakdown":             iv_breakdown,
                     "method_explanation":       (
-                        "This token is valued as a Cash-Flow Protocol — a blockchain or "
-                        "DeFi protocol that generates real fee revenue from users. The "
-                        "valuation combines three approaches: Network Activity (NVT) treats "
-                        "daily trading volume as a proxy for economic utility; Fee/MC Multiple "
-                        "compares the market cap to annual fees, similar to a Price/Sales ratio "
-                        "for stocks; and Rank Benchmark anchors the value to what a token of "
-                        "this size and quality tier would typically be worth. The final "
-                        "Speculative Fair Value is the mean of all methods that produced a "
-                        "reasonable result."
+                        # Bucket A — Cash-Flow Protocol
+                        "This token is classified as a Cash-Flow Protocol — meaning it is a "
+                        "blockchain or decentralised finance (DeFi) protocol that earns real "
+                        "fee revenue from people using it, similar to how a business earns revenue. "
+                        "We use three methods to estimate its fair value. "
+                        "Network Activity (NVT) looks at how much trading volume flows through the "
+                        "network relative to its market cap — think of it like checking how busy a "
+                        "toll road is compared to what it costs to build. "
+                        "Fee/MC Multiple compares the total market cap to annual fee revenue, "
+                        "similar to a Price/Sales ratio for stocks — a lower ratio means you are "
+                        "paying less for each dollar of revenue the protocol earns. "
+                        "Rank Benchmark uses the historical relationship between a token's market "
+                        "cap rank and its price to anchor the estimate. "
+                        "The Speculative Fair Value shown is the average of whichever methods "
+                        "produced a reasonable result for this token."
                         if bucket == "A" else
-                        "This token is valued as a Store of Value asset — a cryptocurrency "
-                        "whose primary role is preserving purchasing power rather than "
-                        "generating fees. The valuation uses two approaches: Monetary Premium "
-                        "measures how much of gold's market cap this asset has captured, "
-                        "reflecting adoption as digital money; and Production Cost Floor "
-                        "estimates the mining cost as a fundamental price anchor, since price "
-                        "rarely stays below what it costs to produce the asset."
+                        # Bucket B — Store of Value
+                        "This token is classified as a Store of Value asset — meaning its primary "
+                        "purpose is to hold and preserve purchasing power over time, similar to "
+                        "gold, rather than generating fee income. "
+                        "We use two methods to estimate its fair value. "
+                        "Monetary Premium compares this asset's total market cap to gold's market cap. "
+                        "If people increasingly treat it as digital gold, its market cap should "
+                        "grow toward gold's — so even capturing a small percentage of gold's value "
+                        "implies significant upside. "
+                        "Production Cost Floor estimates how much it costs miners to produce one "
+                        "coin. Historically, prices rarely stay below production cost for long "
+                        "because miners would simply stop mining, reducing supply. "
+                        "The Speculative Fair Value is the average of both methods where available."
                     ),
                     "iv_selection_rationale":   _build_rationale(
                         bucket, methods_used, iv_floor_labels, iv_breakdown,
