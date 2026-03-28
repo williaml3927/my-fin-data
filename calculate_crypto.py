@@ -2373,7 +2373,29 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
         name     = coin.get("name", symbol)
         price    = _safe(coin.get("current_price"))
         mc       = _safe(coin.get("market_cap"), 0)
-        volume   = _safe(coin.get("total_volume"), 0)
+        volume_24h = _safe(coin.get("total_volume"), 0)
+
+        # ── 7-day average volume — smooths out weekend/holiday distortion ────
+        # The 24h volume snapshot can be 30-50% lower on weekends, which
+        # directly depresses NVT-based IV. We fetch the last 7 days of daily
+        # volume from CoinGecko and use the average instead, capping the
+        # single-day max at 2x the 7d mean to avoid outlier spikes too.
+        volume = volume_24h   # default — overridden below if fetch succeeds
+        try:
+            _vol_resp = requests.get(
+                f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart",
+                params={"vs_currency": "usd", "days": "7", "interval": "daily"},
+                timeout=10,
+            )
+            if _vol_resp.status_code == 200:
+                _vols = [v[1] for v in _vol_resp.json().get("total_volumes", []) if v[1] > 0]
+                if len(_vols) >= 3:
+                    _avg_vol = sum(_vols) / len(_vols)
+                    # Cap single-day spikes: no day counts more than 2x the average
+                    _smoothed = [min(v, _avg_vol * 2) for v in _vols]
+                    volume = round(sum(_smoothed) / len(_smoothed), 2)
+        except Exception:
+            pass   # fall back to 24h snapshot silently
         circ     = _safe(coin.get("circulating_supply"), 0)
         total    = _safe(coin.get("total_supply")) or circ
         max_sup  = _safe(coin.get("max_supply"))
@@ -2547,6 +2569,8 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
 
         # Always pin current year to today's live price as the chart anchor
         price_history[str(current_year)] = _round_price(price) if price else None
+        # Sort chronologically so valuation chart renders in correct order
+        price_history = dict(sorted(price_history.items(), key=lambda x: int(x[0])))
 
         # ── Network Economics charts ─────────────────────────────────────────
         # Computed BEFORE quality scoring so chart values feed into scores
