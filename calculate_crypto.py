@@ -42,10 +42,17 @@ TOP_N_COINS = 500
 
 # Tokens to skip (stablecoins, exchange tokens — no meaningful price history)
 PRICE_HISTORY_SKIP = {
+    # USD-pegged stablecoins — price is always ~$1, charting history is meaningless
     "USDT", "USDC", "BUSD", "TUSD", "DAI", "FRAX", "USDD", "USDP",
     "GUSD", "LUSD", "SUSD", "CUSD", "USDS", "USD1", "PYUSD", "AUSD",
-    "FDUSD", "EURC", "EURS", "EURI", "EURCV", "AEUR", "AVUSD", "AUSDT",
+    "FDUSD", "USDG", "USDF", "USDY", "USDTB", "USDE", "USDX", "USDM",
+    # EUR-pegged stablecoins
+    "EURC", "EURS", "EURI", "EURCV", "AEUR",
+    # Yield-bearing / wrapped stablecoins
+    "AVUSD", "AUSDT", "STUSD", "SUSDE", "SUSDX",
+    # Gold-backed tokens
     "PAXG", "XAUT",
+    # Exchange tokens — skip, often non-USD and illiquid
     "WBT", "BGB", "OKB", "LEO", "GT", "KCS", "MX",
 }
 
@@ -2509,6 +2516,33 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
         # using the current price anchor even with zero historical years.
         current_year        = datetime.now().year
         price_history       = fetch_price_history(symbol)
+
+        # CoinGecko fallback — fires when CryptoCompare returns no history
+        # for a token that has been around for a while (e.g. UNI, LINK).
+        # Uses the CoinGecko market_chart endpoint which covers most listed tokens.
+        if not price_history and symbol not in PRICE_HISTORY_SKIP:
+            coin_id_for_hist = coin_id   # already resolved earlier
+            try:
+                cg_resp = requests.get(
+                    f"https://api.coingecko.com/api/v3/coins/{coin_id_for_hist}/market_chart",
+                    params={"vs_currency": "usd", "days": "3650", "interval": "daily"},
+                    timeout=15,
+                )
+                if cg_resp.status_code == 200:
+                    cg_data = cg_resp.json().get("prices", [])
+                    # CoinGecko returns [timestamp_ms, price] pairs — take Dec 31 per year
+                    yr_last = {}
+                    for ts_ms, px in cg_data:
+                        if px and px > 0:
+                            yr = str(datetime.fromtimestamp(ts_ms / 1000).year)
+                            if int(yr) < current_year:
+                                yr_last[yr] = _round_price(px)
+                    if yr_last:
+                        price_history = yr_last
+                        print(f"  [PRICE HIST] {symbol}: CoinGecko fallback — {len(yr_last)} years")
+            except Exception as e:
+                print(f"  [PRICE HIST] {symbol}: CoinGecko fallback failed ({str(e)[:50]})")
+
         price_history_years = len(price_history)   # years before current year
 
         # Always pin current year to today's live price as the chart anchor
@@ -3302,34 +3336,25 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                     "iv_breakdown":             iv_breakdown,
                     "method_explanation":       (
                         # Bucket A — Cash-Flow Protocol
-                        "This token is classified as a Cash-Flow Protocol — meaning it is a "
-                        "blockchain or decentralised finance (DeFi) protocol that earns real "
-                        "fee revenue from people using it, similar to how a business earns revenue. "
-                        "We use three methods to estimate its fair value. "
-                        "Network Activity (NVT) looks at how much trading volume flows through the "
-                        "network relative to its market cap — think of it like checking how busy a "
-                        "toll road is compared to what it costs to build. "
-                        "Fee/MC Multiple compares the total market cap to annual fee revenue, "
-                        "similar to a Price/Sales ratio for stocks — a lower ratio means you are "
-                        "paying less for each dollar of revenue the protocol earns. "
-                        "Rank Benchmark uses the historical relationship between a token's market "
-                        "cap rank and its price to anchor the estimate. "
-                        "The Speculative Fair Value shown is the average of whichever methods "
-                        "produced a reasonable result for this token."
+                        "How we valued this token: We treat this like a small business. "
+                        "It earns fees every time someone uses it, so we look at how much "
+                        "it earns versus what investors are paying for it. "
+                        "We combine up to three simple checks: "
+                        "(1) How busy is the network? More activity usually means more value. "
+                        "(2) Is the market cap cheap or expensive compared to the fees it earns? "
+                        "(3) What price would make sense given its size rank? "
+                        "The Speculative Fair Value is the average of whichever checks produced a sensible result."
                         if bucket == "A" else
                         # Bucket B — Store of Value
-                        "This token is classified as a Store of Value asset — meaning its primary "
-                        "purpose is to hold and preserve purchasing power over time, similar to "
-                        "gold, rather than generating fee income. "
-                        "We use two methods to estimate its fair value. "
-                        "Monetary Premium compares this asset's total market cap to gold's market cap. "
-                        "If people increasingly treat it as digital gold, its market cap should "
-                        "grow toward gold's — so even capturing a small percentage of gold's value "
-                        "implies significant upside. "
-                        "Production Cost Floor estimates how much it costs miners to produce one "
-                        "coin. Historically, prices rarely stay below production cost for long "
-                        "because miners would simply stop mining, reducing supply. "
-                        "The Speculative Fair Value is the average of both methods where available."
+                        "How we valued this token: We treat this like digital gold. "
+                        "It does not earn fees — its value comes from people trusting it as a "
+                        "safe place to store wealth, the same way people have trusted gold for centuries. "
+                        "We use two checks: "
+                        "(1) How much of gold's total value has this asset captured so far? "
+                        "If that share grows, the price goes up. "
+                        "(2) How much does it cost to produce one coin? "
+                        "Prices rarely stay below production cost for long because miners would stop mining, reducing supply. "
+                        "The Speculative Fair Value is the average of both checks."
                     ),
                     "iv_selection_rationale":   _build_rationale(
                         bucket, methods_used, iv_floor_labels, iv_breakdown,
@@ -3408,6 +3433,11 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
             "coin_id":           coin_id,
             "bucket":            bucket,
             "bucket_label":      "Store of Value" if bucket == "B" else "Cash-Flow Protocol",
+            "bucket_explanation": (
+                "A Store of Value asset is a cryptocurrency whose main purpose is to hold and protect your wealth over time — the same way people have used gold for thousands of years. It does not earn fees from users. Instead, its value comes from scarcity, trust, and the belief that it will be worth more in the future. Bitcoin is the most well-known example. We value these assets by comparing them to gold and looking at the cost of producing new coins."
+                if bucket == "B" else
+                "A Cash-Flow Protocol is a blockchain or app that earns real money from its users — just like a business. Every time someone makes a trade, borrows money, or uses the network, it collects a small fee. The more people use it, the more fees it earns. We value these tokens similarly to how you would value a business — by looking at how much it earns versus what investors are paying for it."
+            ),
             "description":       _description,
             "image_url":         _image,
             "market_cap_rank":   rank,
