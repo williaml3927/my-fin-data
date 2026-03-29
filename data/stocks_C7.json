@@ -1,4 +1,465 @@
 {
+  "CYCA": {
+    "company_profile": {
+      "name": "Cytta Corp.",
+      "ticker": "CYCA",
+      "sector": "Technology",
+      "industry": "Software - Application",
+      "company_type": "STANDARD",
+      "type_rationale": "Standard company \u2014 balanced weighting across all methods",
+      "description": "Cytta Corp. develops, markets, and distributes various video streaming products and services. Its products include CyttaComp a secure video compression technology, which delivers video streaming for airborne intelligence, surveillance, and reconnaissance applications; CyttaCOMMS incident command system, a SaaS based online platform which is designed to deliver communications composed of multiple streams of voice and video delivered from multiple sources with low latency and viewable by multiple parties over one unified secure communication system; and CyttaCARES, a SAAS solution designed to enhance safety and security in educational institutions especially during emergency situations. The company also provides video compression and streaming products; hardware/software products; and software maintenance plans, including phone, e-mail and back-office technical support, onsite troubleshooting, software maintenance releases, and software upgrades. The company was incorporated in 2006 and is headquartered in Las Vegas, Nevada.",
+      "description_summary": "Cytta Corp. develops, markets, and distributes various video streaming products and services.",
+      "website": "https://cytta.com",
+      "employees": null,
+      "country": "United States",
+      "city": "Las Vegas",
+      "exchange": "OQB",
+      "currency": "USD",
+      "quote_type": "EQUITY",
+      "market_cap": 9643176,
+      "52w_high": 0.0288,
+      "52w_low": 0.0001,
+      "avg_volume": 119216,
+      "pe_trailing": 2.0080001,
+      "pe_forward": null,
+      "dividend_yield": null,
+      "beta": 1.234
+    },
+    "current_price": 0.02,
+    "intrinsic_value": 0.03,
+    "margin_of_safety_pct": 33.1,
+    "mos_label": "Moderate Discount",
+    "valuations": {
+      "1_DCF_Operating_CF": null,
+      "2_DCF_FCF": null,
+      "3_DCF_Net_Income": 0.05,
+      "4_DCF_Terminal_Value": null,
+      "5_Mean_PS": null,
+      "6_Mean_PE": 0.02,
+      "7_Mean_PB": 0.02,
+      "8_PSG": null,
+      "9_PEG": null,
+      "10_EV_EBITDA": null,
+      "intrinsic_value": 0.03,
+      "methods_used": 3,
+      "confidence": "Low",
+      "active_methods": [
+        "3_DCF_Net_Income",
+        "6_Mean_PE",
+        "7_Mean_PB"
+      ],
+      "_meta": {
+        "pe_source": "current_trailing",
+        "ps_source": "current_trailing",
+        "pb_source": "current_trailing",
+        "ev_ebitda_source": "trailing_or_unavailable",
+        "growth_source": "default",
+        "growth_raw": 0.0,
+        "growth_peg_rate": 0.0,
+        "discount_rate": 0.12,
+        "growth_stage1": 0.02,
+        "growth_stage2": 0.02,
+        "terminal_growth": 0.02,
+        "tier": "Weak",
+        "company_type": "STANDARD",
+        "type_rationale": "Standard company \u2014 balanced weighting across all methods",
+        "method_explanation": "This company does not fit neatly into a specialist category, so we apply a balanced mix of all ten valuation methods. These include Discounted Cash Flow (which estimates the present value of future cash flows), earnings multiples (P/E and PEG), revenue multiples (P/S and PSG), book value (P/B), and EV/EBITDA. Each method approaches value from a different angle \u2014 using all of them together gives a more rounded estimate than relying on any single number.",
+        "weights_applied": {
+          "1_DCF_Operating_CF": 0.08,
+          "2_DCF_FCF": 0.08,
+          "3_DCF_Net_Income": 0.08,
+          "4_DCF_Terminal_Value": 0.08,
+          "5_Mean_PS": 0.12,
+          "6_Mean_PE": 0.08,
+          "7_Mean_PB": 0.15,
+          "8_PSG": 0.08,
+          "9_PEG": 0.08,
+          "10_EV_EBITDA": 0.17
+        },
+        "excluded_methods": [],
+        "active_methods": [
+          "3_DCF_Net_Income",
+          "6_Mean_PE",
+          "7_Mean_PB"
+        ]
+      }
+    },
+    "quality": {
+      "scores": {
+        "profitability": 6,
+        "financial_strength": 2,
+        "growth": 2,
+        "predictability": 1,
+        "valuation": 7,
+        "moat": null
+      },
+      "score_labels": {
+        "profitability": "Good",
+        "financial_strength": "Weak",
+        "growth": "Weak",
+        "predictability": "Poor",
+        "valuation": "Good",
+        "moat": "Not scored"
+      },
+      "company_type": "STANDARD",
+      "company_type_note": null,
+      "python_subtotal": 11,
+      "python_subtotal_pct": 27.5,
+      "classification": "Dangerous",
+      "penalty_pct": 8,
+      "final_score_pct": 19.5,
+      "tiebreaker_used": false,
+      "tiebreaker_inputs": {
+        "roe": 1.2557,
+        "roic": null,
+        "eps_next_5y": 0.0
+      },
+      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
+      "last_calculated": "2026-03-29 05:16"
+    },
+    "quality_narrative": {
+      "moat_score": null,
+      "moat_rationale": "",
+      "metric_assessments": {},
+      "quality_conclusion": "Cytta Corp. demonstrates weak fundamental quality, scoring 28% across four fundamental dimensions. The business is constrained by predictability. The current classification is Dangerous.",
+      "risk_profile": "Key risks for Cytta Corp. include tight liquidity (current ratio: 0.82); weak near-term growth outlook; inconsistent earnings trajectory. The company operates in the Technology sector, which carries its own cyclical and regulatory exposures. A financial strength score of 2/10 suggests the balance sheet provides limited buffer against downside scenarios.",
+      "investment_summary": "Cytta Corp. carries weak fundamental quality with elevated risk factors, and trades at a 33% discount to estimated intrinsic value.  Overall, the stock warrants caution \u2014 position sizing and ongoing monitoring are advisable.",
+      "source": "rules",
+      "generated_at": "2026-03-29 05:16"
+    },
+    "fundamentals": {
+      "roe": 1.2557,
+      "roic": null,
+      "roe_pct": "125.57%",
+      "roic_pct": null,
+      "roic_source": "unavailable",
+      "current_ratio": 0.82,
+      "debt_to_ebitda": null,
+      "debt_service_ratio": null
+    },
+    "financials_charts": {
+      "revenue_vs_net_income": {
+        "2024": {
+          "revenue": 0.0,
+          "net_income": -4.26
+        },
+        "2023": {
+          "revenue": 0.03,
+          "net_income": -4.73
+        },
+        "2022": {
+          "revenue": 0.01,
+          "net_income": -5.1
+        },
+        "2021": {
+          "revenue": 0.09,
+          "net_income": -2.59
+        },
+        "2020": {
+          "revenue": 0.05,
+          "net_income": -1.27
+        },
+        "2011": {
+          "revenue": 0.0,
+          "net_income": -1.11
+        },
+        "2010": {
+          "revenue": null,
+          "net_income": -0.26
+        }
+      },
+      "fcf_vs_debt": {
+        "2024": {
+          "cash_balance": null,
+          "free_cash_flow": -1.83,
+          "total_debt": 0.0
+        },
+        "2023": {
+          "cash_balance": null,
+          "free_cash_flow": -1.44,
+          "total_debt": 0.04
+        },
+        "2022": {
+          "cash_balance": 0.76,
+          "free_cash_flow": null,
+          "total_debt": 0.0
+        },
+        "2021": {
+          "cash_balance": 0.17,
+          "free_cash_flow": null,
+          "total_debt": null
+        },
+        "2020": {
+          "cash_balance": 0.85,
+          "free_cash_flow": null,
+          "total_debt": null
+        },
+        "2011": {
+          "cash_balance": 0.1,
+          "free_cash_flow": null,
+          "total_debt": null
+        },
+        "2010": {
+          "cash_balance": 0.02,
+          "free_cash_flow": null,
+          "total_debt": null
+        }
+      },
+      "shares_vs_buybacks": {
+        "2024": {
+          "shares_outstanding_m": 469.88,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2023": {
+          "shares_outstanding_m": 426.83,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2022": {
+          "shares_outstanding_m": 379.76,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2021": {
+          "shares_outstanding_m": 296.24,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2020": {
+          "shares_outstanding_m": 289.15,
+          "buybacks_m": null,
+          "split_adjusted": true
+        }
+      },
+      "returns_trajectory": {
+        "2022": {
+          "roe_pct": -1104.42,
+          "roic_pct": null
+        },
+        "2021": {
+          "roe_pct": -299.4,
+          "roic_pct": null
+        },
+        "2020": {
+          "roe_pct": -126.7,
+          "roic_pct": null
+        },
+        "2010": {
+          "roe_pct": -2693.04,
+          "roic_pct": null
+        }
+      },
+      "revenue_vs_ar": {
+        "2024": {
+          "revenue": 0.0,
+          "accounts_receivable": null,
+          "rev_growth_pct": -100.0,
+          "ar_growth_pct": null,
+          "ar_outpacing": null
+        },
+        "2023": {
+          "revenue": 0.03,
+          "accounts_receivable": null,
+          "rev_growth_pct": 200.0,
+          "ar_growth_pct": null,
+          "ar_outpacing": null
+        },
+        "2022": {
+          "revenue": 0.01,
+          "accounts_receivable": 0.0,
+          "rev_growth_pct": -88.9,
+          "ar_growth_pct": -100.0,
+          "ar_outpacing": false
+        },
+        "2021": {
+          "revenue": 0.09,
+          "accounts_receivable": 0.03,
+          "rev_growth_pct": 80.0,
+          "ar_growth_pct": null,
+          "ar_outpacing": null
+        },
+        "2020": {
+          "revenue": 0.05,
+          "accounts_receivable": 0.0,
+          "rev_growth_pct": null,
+          "ar_growth_pct": null,
+          "ar_outpacing": null
+        },
+        "2011": {
+          "revenue": 0.0,
+          "accounts_receivable": null,
+          "rev_growth_pct": null,
+          "ar_growth_pct": null,
+          "ar_outpacing": null
+        }
+      },
+      "_notes": {
+        "revenue_vs_net_income": "This chart shows how much money the company brings in (revenue) versus how much it actually keeps as profit (net income) each year. A healthy company should show both lines growing over time. If revenue grows but net income shrinks, the company is spending more than it is earning \u2014 a warning sign worth investigating.",
+        "fcf_vs_debt": "Free cash flow is the cash left over after the company has paid for everything it needs to run and grow the business. This chart compares that cash to the company's total debt. A company with rising free cash flow and falling debt is in a strong financial position. If debt is rising faster than cash, the company may be taking on more risk than it can comfortably manage.",
+        "shares_vs_buybacks": "When a company buys back its own shares, it reduces the total number of shares in circulation \u2014 which means each remaining share represents a larger slice of the business. This chart shows how the share count has changed over time. Consistent buybacks are generally a sign that management believes the stock is undervalued and wants to return cash to shareholders.",
+        "returns_trajectory": "Return on Equity (ROE) measures how much profit a company generates for every dollar of shareholder money invested. Return on Invested Capital (ROIC) is similar but also includes debt. Both are expressed as a percentage \u2014 higher is better. A company consistently earning above 15% ROIC is generally considered to have a genuine competitive advantage over its peers.",
+        "revenue_vs_ar": "Accounts receivable is money the company is owed by customers who have not yet paid their bills. This chart compares revenue growth to accounts receivable growth each year. If accounts receivable is growing much faster than revenue, it may mean the company is struggling to collect payments \u2014 sometimes a sign of aggressive or fictitious revenue reporting. A healthy company should see both lines move at a similar pace."
+      }
+    },
+    "valuation_chart": {
+      "2016": {
+        "market_price": 0.03,
+        "intrinsic_value": 0.02,
+        "bull_case": 0.03,
+        "bear_case": 0.02
+      },
+      "2017": {
+        "market_price": 0.02,
+        "intrinsic_value": 0.02,
+        "bull_case": 0.03,
+        "bear_case": 0.02
+      },
+      "2018": {
+        "market_price": 0.02,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.02
+      },
+      "2019": {
+        "market_price": 0.02,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.02
+      },
+      "2020": {
+        "market_price": 0.09,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2021": {
+        "market_price": 0.53,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2022": {
+        "market_price": 0.09,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2023": {
+        "market_price": 0.02,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2024": {
+        "market_price": 0.02,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2025": {
+        "market_price": 0.02,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2026": {
+        "market_price": 0.02,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 0.03,
+        "bull_case": 0.03,
+        "bear_case": 0.03
+      }
+    },
+    "forecast_meta": {
+      "eps_next_5y_raw": 0.0,
+      "fs_score": 2,
+      "fs_multiplier": 0.55,
+      "base_growth_rate": 0.02,
+      "bull_growth_rate": 0.026,
+      "bear_growth_rate": 0.011,
+      "growth_constrained": true,
+      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 2/10"
+    },
+    "bull_bear": {
+      "short_term": {
+        "bull_points": [
+          "Trading at a 33.1% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $0.03",
+          "Current market positioning in the Technology sector may attract tactical buyers",
+          "Any positive earnings surprise could act as a near-term re-rating catalyst"
+        ],
+        "bear_points": [
+          "Declining revenue of -50.0% may weigh on near-term earnings and investor sentiment",
+          "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
+          "Short-term earnings visibility is limited without additional guidance"
+        ]
+      },
+      "long_term": {
+        "bull_points": [
+          "Cytta Corp. operates in a sector with long-term structural tailwinds",
+          "Management has demonstrated consistent capital allocation discipline",
+          "The business has the scale to compound earnings over a multi-year horizon"
+        ],
+        "bear_points": [
+          "Weak balance sheet (2/10) constrains long-term capital allocation and increases vulnerability in a downturn",
+          "Unpredictable earnings (1/10) make long-term forecasting unreliable and compress the valuation multiple the market is willing to pay",
+          "Financial strength is constraining the assumed growth rate in the valuation model \u2014 EPS growth moderated from 0.0% to 2.0% due to financial strength score of 2/10"
+        ]
+      },
+      "source": "rules",
+      "generated_at": "2026-03-29 05:16"
+    },
+    "10_Year_History": {
+      "2016": 0.03,
+      "2017": 0.02,
+      "2018": 0.02,
+      "2019": 0.02,
+      "2020": 0.09,
+      "2021": 0.53,
+      "2022": 0.09,
+      "2023": 0.02,
+      "2024": 0.02,
+      "2025": 0.02,
+      "2026": 0.02
+    },
+    "5_Year_Forecast": {
+      "2027": 0.03,
+      "2028": 0.03,
+      "2029": 0.03,
+      "2030": 0.03,
+      "2031": 0.03
+    },
+    "Last_Updated": "2026-03-29 05:16"
+  },
   "CYCN": {
     "company_profile": {
       "name": "Cyclerion Therapeutics, Inc.",
@@ -19,7 +480,7 @@
       "market_cap": 5728349,
       "52w_high": 3.79,
       "52w_low": 1.027,
-      "avg_volume": 1560005,
+      "avg_volume": 1510057,
       "pe_trailing": null,
       "pe_forward": -1.148855,
       "dividend_yield": null,
@@ -113,7 +574,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-28 04:50"
+      "last_calculated": "2026-03-29 05:16"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -123,7 +584,7 @@
       "risk_profile": "Key risks for Cyclerion Therapeutics, Inc. include weak near-term growth outlook; inconsistent earnings trajectory; financial strength constraining growth assumptions. The company operates in the Healthcare sector, which carries its own cyclical and regulatory exposures. A financial strength score of 4/10 suggests the balance sheet provides limited buffer against downside scenarios.",
       "investment_summary": "Cyclerion Therapeutics, Inc. carries weak fundamental quality with elevated risk factors, and trades at a 73% discount to estimated intrinsic value.  Overall, the stock warrants caution \u2014 position sizing and ongoing monitoring are advisable.",
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "fundamentals": {
       "roe": -0.248,
@@ -429,7 +890,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "10_Year_History": {
       "2019": 54.4,
@@ -448,7 +909,7 @@
       "2030": 6.09,
       "2031": 6.22
     },
-    "Last_Updated": "2026-03-28 04:50"
+    "Last_Updated": "2026-03-29 05:16"
   },
   "CYDY": {
     "company_profile": {
@@ -470,7 +931,7 @@
       "market_cap": 330302688,
       "52w_high": 0.45,
       "52w_low": 0.19,
-      "avg_volume": 1719823,
+      "avg_volume": 1689518,
       "pe_trailing": null,
       "pe_forward": -1.4444443,
       "dividend_yield": null,
@@ -562,7 +1023,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-28 04:50"
+      "last_calculated": "2026-03-29 05:16"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -572,7 +1033,7 @@
       "risk_profile": "Key risks for CytoDyn Inc. include tight liquidity (current ratio: 0.25); weak near-term growth outlook; financial strength constraining growth assumptions. The company operates in the Healthcare sector, which carries its own cyclical and regulatory exposures. A financial strength score of 2/10 suggests the balance sheet provides limited buffer against downside scenarios.",
       "investment_summary": "CytoDyn Inc. carries weak fundamental quality with elevated risk factors, and trades at a 767% premium to estimated intrinsic value.  Overall, the stock warrants caution \u2014 position sizing and ongoing monitoring are advisable.",
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "fundamentals": {
       "roe": null,
@@ -902,7 +1363,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "10_Year_History": {
       "2016": 0.67,
@@ -924,7 +1385,7 @@
       "2030": 0.03,
       "2031": 0.03
     },
-    "Last_Updated": "2026-03-28 04:50"
+    "Last_Updated": "2026-03-29 05:16"
   },
   "CYJBF": {
     "company_profile": {
@@ -953,7 +1414,7 @@
       "beta": 1.076
     },
     "current_price": 64.0,
-    "intrinsic_value": 57.48,
+    "intrinsic_value": 57.49,
     "margin_of_safety_pct": -11.3,
     "mos_label": "Slight Premium",
     "valuations": {
@@ -963,11 +1424,11 @@
       "4_DCF_Terminal_Value": 114.69,
       "5_Mean_PS": 40.9,
       "6_Mean_PE": 26.96,
-      "7_Mean_PB": 39.73,
+      "7_Mean_PB": 39.76,
       "8_PSG": null,
       "9_PEG": null,
       "10_EV_EBITDA": 38.54,
-      "intrinsic_value": 57.48,
+      "intrinsic_value": 57.49,
       "methods_used": 8,
       "confidence": "Medium",
       "active_methods": [
@@ -1052,7 +1513,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-28 04:50"
+      "last_calculated": "2026-03-29 05:16"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -1062,7 +1523,7 @@
       "risk_profile": "Key risks for Hiab Oyj include weak near-term growth outlook; inconsistent earnings trajectory; low consensus EPS growth forecast (0.0% p.a.). The company operates in the Industrials sector, which carries its own cyclical and regulatory exposures. The balance sheet provides a reasonable buffer against near-term downside scenarios.",
       "investment_summary": "Hiab Oyj is a mixed fundamental quality business that trades at a 11% premium to estimated intrinsic value.  Overall, the stock appropriate for investors with higher risk tolerance and conviction in the growth outlook.",
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "fundamentals": {
       "roe": 0.1484,
@@ -1192,99 +1653,99 @@
     "valuation_chart": {
       "2016": {
         "market_price": 28.58,
-        "intrinsic_value": 46.23,
-        "bull_case": 50.96,
-        "bear_case": 43.34
+        "intrinsic_value": 46.24,
+        "bull_case": 50.97,
+        "bear_case": 43.35
       },
       "2017": {
         "market_price": 37.03,
-        "intrinsic_value": 47.15,
-        "bull_case": 51.52,
-        "bear_case": 44.47
+        "intrinsic_value": 47.16,
+        "bull_case": 51.53,
+        "bear_case": 44.48
       },
       "2018": {
         "market_price": 23.72,
-        "intrinsic_value": 48.1,
-        "bull_case": 52.09,
-        "bear_case": 45.62
+        "intrinsic_value": 48.11,
+        "bull_case": 52.1,
+        "bear_case": 45.63
       },
       "2019": {
         "market_price": 27.76,
-        "intrinsic_value": 49.06,
-        "bull_case": 52.66,
-        "bear_case": 46.81
+        "intrinsic_value": 49.07,
+        "bull_case": 52.67,
+        "bear_case": 46.82
       },
       "2020": {
         "market_price": 15.83,
-        "intrinsic_value": 50.04,
-        "bull_case": 53.24,
-        "bear_case": 48.03
+        "intrinsic_value": 50.05,
+        "bull_case": 53.25,
+        "bear_case": 48.04
       },
       "2021": {
         "market_price": 42.61,
-        "intrinsic_value": 51.04,
-        "bull_case": 53.83,
+        "intrinsic_value": 51.05,
+        "bull_case": 53.84,
         "bear_case": 49.28
       },
       "2022": {
         "market_price": 36.25,
-        "intrinsic_value": 52.06,
-        "bull_case": 54.42,
-        "bear_case": 50.56
+        "intrinsic_value": 52.07,
+        "bull_case": 54.43,
+        "bear_case": 50.57
       },
       "2023": {
         "market_price": 47.67,
-        "intrinsic_value": 53.1,
-        "bull_case": 55.02,
-        "bear_case": 51.87
+        "intrinsic_value": 53.11,
+        "bull_case": 55.03,
+        "bear_case": 51.88
       },
       "2024": {
         "market_price": 48.1,
-        "intrinsic_value": 54.16,
-        "bull_case": 55.62,
-        "bear_case": 53.22
+        "intrinsic_value": 54.17,
+        "bull_case": 55.63,
+        "bear_case": 53.23
       },
       "2025": {
         "market_price": 62.83,
-        "intrinsic_value": 55.25,
-        "bull_case": 56.24,
-        "bear_case": 54.6
+        "intrinsic_value": 55.26,
+        "bull_case": 56.25,
+        "bear_case": 54.61
       },
       "2026": {
         "market_price": 64.0,
-        "intrinsic_value": 57.48,
-        "bull_case": 57.82,
-        "bear_case": 56.96
+        "intrinsic_value": 57.49,
+        "bull_case": 57.83,
+        "bear_case": 56.97
       },
       "2027": {
         "market_price": null,
-        "intrinsic_value": 58.63,
-        "bull_case": 58.97,
-        "bear_case": 58.11
+        "intrinsic_value": 58.64,
+        "bull_case": 58.98,
+        "bear_case": 58.12
       },
       "2028": {
         "market_price": null,
-        "intrinsic_value": 59.8,
-        "bull_case": 60.51,
-        "bear_case": 58.75
+        "intrinsic_value": 59.81,
+        "bull_case": 60.52,
+        "bear_case": 58.76
       },
       "2029": {
         "market_price": null,
-        "intrinsic_value": 61.0,
-        "bull_case": 62.08,
-        "bear_case": 59.4
+        "intrinsic_value": 61.01,
+        "bull_case": 62.09,
+        "bear_case": 59.41
       },
       "2030": {
         "market_price": null,
-        "intrinsic_value": 62.22,
-        "bull_case": 63.7,
-        "bear_case": 60.05
+        "intrinsic_value": 62.23,
+        "bull_case": 63.71,
+        "bear_case": 60.06
       },
       "2031": {
         "market_price": null,
-        "intrinsic_value": 63.46,
-        "bull_case": 65.35,
-        "bear_case": 60.71
+        "intrinsic_value": 63.47,
+        "bull_case": 65.36,
+        "bear_case": 60.72
       }
     },
     "forecast_meta": {
@@ -1323,7 +1784,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "10_Year_History": {
       "2016": 28.58,
@@ -1339,13 +1800,13 @@
       "2026": 64.0
     },
     "5_Year_Forecast": {
-      "2027": 58.63,
-      "2028": 59.8,
-      "2029": 61.0,
-      "2030": 62.22,
-      "2031": 63.46
+      "2027": 58.64,
+      "2028": 59.81,
+      "2029": 61.01,
+      "2030": 62.23,
+      "2031": 63.47
     },
-    "Last_Updated": "2026-03-28 04:50"
+    "Last_Updated": "2026-03-29 05:16"
   },
   "CYN": {
     "company_profile": {
@@ -1367,16 +1828,16 @@
       "market_cap": 20918252,
       "52w_high": 41.54,
       "52w_low": 1.331,
-      "avg_volume": 3832993,
+      "avg_volume": 3780831,
       "pe_trailing": null,
       "pe_forward": -0.4242424,
       "dividend_yield": null,
       "beta": 0.084
     },
     "current_price": 1.54,
-    "intrinsic_value": 1.54,
-    "margin_of_safety_pct": 0.0,
-    "mos_label": "Fairly Valued (Marginal Premium)",
+    "intrinsic_value": 4.58,
+    "margin_of_safety_pct": 66.4,
+    "mos_label": "Strong Discount (Margin of Safety)",
     "valuations": {
       "1_DCF_Operating_CF": null,
       "2_DCF_FCF": null,
@@ -1384,11 +1845,11 @@
       "4_DCF_Terminal_Value": null,
       "5_Mean_PS": null,
       "6_Mean_PE": null,
-      "7_Mean_PB": 1.54,
+      "7_Mean_PB": 4.58,
       "8_PSG": null,
       "9_PEG": null,
       "10_EV_EBITDA": null,
-      "intrinsic_value": 1.54,
+      "intrinsic_value": 4.58,
       "methods_used": 1,
       "confidence": "Low",
       "active_methods": [
@@ -1397,7 +1858,7 @@
       "_meta": {
         "pe_source": "current_trailing",
         "ps_source": "current_trailing",
-        "pb_source": "current_trailing",
+        "pb_source": "historical_mean",
         "ev_ebitda_source": "trailing_or_unavailable",
         "growth_source": "finviz_no_growth",
         "growth_raw": 0.0,
@@ -1432,9 +1893,9 @@
       "scores": {
         "profitability": 0,
         "financial_strength": 3,
-        "growth": 3,
+        "growth": 2,
         "predictability": 0,
-        "valuation": 4,
+        "valuation": 7,
         "moat": null
       },
       "score_labels": {
@@ -1442,16 +1903,16 @@
         "financial_strength": "Weak",
         "growth": "Weak",
         "predictability": "Poor",
-        "valuation": "Adequate",
+        "valuation": "Good",
         "moat": "Not scored"
       },
       "company_type": "STANDARD",
       "company_type_note": null,
-      "python_subtotal": 6,
-      "python_subtotal_pct": 15.0,
+      "python_subtotal": 5,
+      "python_subtotal_pct": 12.5,
       "classification": "Dangerous",
       "penalty_pct": 8,
-      "final_score_pct": 7.0,
+      "final_score_pct": 4.5,
       "tiebreaker_used": false,
       "tiebreaker_inputs": {
         "roe": -1.4965,
@@ -1459,17 +1920,17 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-28 04:50"
+      "last_calculated": "2026-03-29 05:16"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
-      "quality_conclusion": "Cyngn Inc. demonstrates weak fundamental quality, scoring 15% across four fundamental dimensions. The business is constrained by profitability. The current classification is Dangerous.",
+      "quality_conclusion": "Cyngn Inc. demonstrates weak fundamental quality, scoring 12% across four fundamental dimensions. The business is constrained by profitability. The current classification is Dangerous.",
       "risk_profile": "Key risks for Cyngn Inc. include weak near-term growth outlook; inconsistent earnings trajectory; financial strength constraining growth assumptions. The company operates in the Technology sector, which carries its own cyclical and regulatory exposures. A financial strength score of 3/10 suggests the balance sheet provides limited buffer against downside scenarios.",
-      "investment_summary": "Cyngn Inc. carries weak fundamental quality with elevated risk factors, and trades near estimated intrinsic value.  Overall, the stock warrants caution \u2014 position sizing and ongoing monitoring are advisable.",
+      "investment_summary": "Cyngn Inc. carries weak fundamental quality with elevated risk factors, and trades at a 66% discount to estimated intrinsic value.  Overall, the stock warrants caution \u2014 position sizing and ongoing monitoring are advisable.",
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "fundamentals": {
       "roe": -1.4965,
@@ -1477,7 +1938,7 @@
       "roe_pct": "-149.65%",
       "roic_pct": null,
       "roic_source": "unavailable",
-      "current_ratio": 7.44,
+      "current_ratio": 8.29,
       "debt_to_ebitda": null,
       "debt_service_ratio": null
     },
@@ -1635,69 +2096,69 @@
     "valuation_chart": {
       "2021": {
         "market_price": 67500.0,
-        "intrinsic_value": 1.37,
-        "bull_case": 1.44,
-        "bear_case": 1.32
+        "intrinsic_value": 4.07,
+        "bull_case": 4.29,
+        "bear_case": 3.93
       },
       "2022": {
         "market_price": 10110.0,
-        "intrinsic_value": 1.39,
-        "bull_case": 1.46,
-        "bear_case": 1.35
+        "intrinsic_value": 4.15,
+        "bull_case": 4.34,
+        "bear_case": 4.03
       },
       "2023": {
         "market_price": 2175.0,
-        "intrinsic_value": 1.42,
-        "bull_case": 1.47,
-        "bear_case": 1.39
+        "intrinsic_value": 4.23,
+        "bull_case": 4.38,
+        "bear_case": 4.13
       },
       "2024": {
         "market_price": 127.35,
-        "intrinsic_value": 1.45,
-        "bull_case": 1.49,
-        "bear_case": 1.43
+        "intrinsic_value": 4.32,
+        "bull_case": 4.43,
+        "bear_case": 4.24
       },
       "2025": {
         "market_price": 2.38,
-        "intrinsic_value": 1.48,
-        "bull_case": 1.51,
-        "bear_case": 1.46
+        "intrinsic_value": 4.4,
+        "bull_case": 4.48,
+        "bear_case": 4.35
       },
       "2026": {
         "market_price": 1.54,
-        "intrinsic_value": 1.54,
-        "bull_case": 1.55,
-        "bear_case": 1.53
+        "intrinsic_value": 4.58,
+        "bull_case": 4.61,
+        "bear_case": 4.54
       },
       "2027": {
         "market_price": null,
-        "intrinsic_value": 1.57,
-        "bull_case": 1.58,
-        "bear_case": 1.56
+        "intrinsic_value": 4.67,
+        "bull_case": 4.7,
+        "bear_case": 4.63
       },
       "2028": {
         "market_price": null,
-        "intrinsic_value": 1.6,
-        "bull_case": 1.62,
-        "bear_case": 1.57
+        "intrinsic_value": 4.77,
+        "bull_case": 4.82,
+        "bear_case": 4.68
       },
       "2029": {
         "market_price": null,
-        "intrinsic_value": 1.63,
-        "bull_case": 1.66,
-        "bear_case": 1.59
+        "intrinsic_value": 4.86,
+        "bull_case": 4.95,
+        "bear_case": 4.73
       },
       "2030": {
         "market_price": null,
-        "intrinsic_value": 1.67,
-        "bull_case": 1.71,
-        "bear_case": 1.61
+        "intrinsic_value": 4.96,
+        "bull_case": 5.08,
+        "bear_case": 4.78
       },
       "2031": {
         "market_price": null,
-        "intrinsic_value": 1.7,
-        "bull_case": 1.75,
-        "bear_case": 1.63
+        "intrinsic_value": 5.06,
+        "bull_case": 5.21,
+        "bear_case": 4.84
       }
     },
     "forecast_meta": {
@@ -1713,8 +2174,8 @@
     "bull_bear": {
       "short_term": {
         "bull_points": [
+          "Trading at a 66.4% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $4.58",
           "Revenue growing at 47.1% year-over-year, indicating sustained demand momentum heading into the next quarter",
-          "Current market positioning in the Technology sector may attract tactical buyers",
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
         "bear_points": [
@@ -1736,7 +2197,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "10_Year_History": {
       "2021": 67500.0,
@@ -1747,13 +2208,13 @@
       "2026": 1.54
     },
     "5_Year_Forecast": {
-      "2027": 1.57,
-      "2028": 1.6,
-      "2029": 1.63,
-      "2030": 1.67,
-      "2031": 1.7
+      "2027": 4.67,
+      "2028": 4.77,
+      "2029": 4.86,
+      "2030": 4.96,
+      "2031": 5.06
     },
-    "Last_Updated": "2026-03-28 04:50"
+    "Last_Updated": "2026-03-29 05:16"
   },
   "CYPH": {
     "company_profile": {
@@ -1775,7 +2236,7 @@
       "market_cap": 59080616,
       "52w_high": 3.7,
       "52w_low": 0.222,
-      "avg_volume": 2919454,
+      "avg_volume": 2718196,
       "pe_trailing": 9.38,
       "pe_forward": null,
       "dividend_yield": null,
@@ -1874,7 +2335,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-28 04:50"
+      "last_calculated": "2026-03-29 05:16"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -1884,7 +2345,7 @@
       "risk_profile": "Key risks for Cypherpunk Technologies Inc. include weak near-term growth outlook; inconsistent earnings trajectory; financial strength constraining growth assumptions. The company operates in the Financial Services sector, which carries its own cyclical and regulatory exposures. A financial strength score of 3/10 suggests the balance sheet provides limited buffer against downside scenarios.",
       "investment_summary": "Cypherpunk Technologies Inc. carries weak fundamental quality with elevated risk factors, and trades at a 27% discount to estimated intrinsic value.  Overall, the stock warrants caution \u2014 position sizing and ongoing monitoring are advisable.",
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "fundamentals": {
       "roe": 0.0511,
@@ -2224,7 +2685,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "10_Year_History": {
       "2017": 62.4,
@@ -2245,7 +2706,548 @@
       "2030": 0.97,
       "2031": 0.99
     },
-    "Last_Updated": "2026-03-28 04:50"
+    "Last_Updated": "2026-03-29 05:16"
+  },
+  "CYTK": {
+    "company_profile": {
+      "name": "Cytokinetics, Incorporated",
+      "ticker": "CYTK",
+      "sector": "Healthcare",
+      "industry": "Biotechnology",
+      "company_type": "STANDARD",
+      "type_rationale": "Standard company \u2014 balanced weighting across all methods",
+      "description": "Cytokinetics, Incorporated, a biopharmaceutical company, focuses on discovering, developing, and commercializing novel muscle activators and muscle inhibitors as potential treatments for debilitating diseases in the United States. The company markets MYQORZO, a novel, oral, and small molecule cardiac myosin inhibitor for the treatment of symptomatic oHCM. It also develops Aficamten, a novel, oral, and small molecule cardiac myosin inhibitor for the treatment of HCM; and omecamtiv mecarbil, a potential treatment across the continuum of care in heart failure with severely reduced ejection fraction. In addition, the company is involved in developing and Ulacamten, a novel, selective, oral, and small molecule cardiac myosin inhibitor designed to reduce the hypercontractility associated with heart failure with preserved ejection fraction in Phase 1 clinical trials; and CK-089, a fast skeletal muscle troponin activator in Phase 1 clinical trials. Cytokinetics, Incorporated was incorporated in 1997 and is headquartered in South San Francisco, California.",
+      "description_summary": "Cytokinetics, Incorporated, a biopharmaceutical company, focuses on discovering, developing, and commercializing novel muscle activators and muscle inhibitors as potential treatments for debilitating diseases in the United States. The company markets MYQORZO, a novel, oral, and small molecule cardiac myosin inhibitor for the treatment of symptomatic oHCM.",
+      "website": "https://www.cytokinetics.com",
+      "employees": 673,
+      "country": "United States",
+      "city": "South San Francisco",
+      "exchange": "NMS",
+      "currency": "USD",
+      "quote_type": "EQUITY",
+      "market_cap": 7697675264,
+      "52w_high": 70.98,
+      "52w_low": 29.31,
+      "avg_volume": 1916649,
+      "pe_trailing": null,
+      "pe_forward": -12.665795,
+      "dividend_yield": null,
+      "beta": 0.508
+    },
+    "current_price": 62.5,
+    "intrinsic_value": 14.3,
+    "margin_of_safety_pct": -337.1,
+    "mos_label": "Significant Premium",
+    "valuations": {
+      "1_DCF_Operating_CF": null,
+      "2_DCF_FCF": null,
+      "3_DCF_Net_Income": null,
+      "4_DCF_Terminal_Value": null,
+      "5_Mean_PS": null,
+      "6_Mean_PE": null,
+      "7_Mean_PB": null,
+      "8_PSG": 14.3,
+      "9_PEG": null,
+      "10_EV_EBITDA": null,
+      "intrinsic_value": 14.3,
+      "methods_used": 1,
+      "confidence": "Low",
+      "active_methods": [
+        "8_PSG"
+      ],
+      "_meta": {
+        "pe_source": "current_trailing",
+        "ps_source": "current_trailing",
+        "pb_source": "current_trailing",
+        "ev_ebitda_source": "trailing_or_unavailable",
+        "growth_source": "finviz",
+        "growth_raw": 0.3127,
+        "growth_peg_rate": 0.2,
+        "discount_rate": 0.12,
+        "growth_stage1": 0.3,
+        "growth_stage2": 0.15,
+        "terminal_growth": 0.02,
+        "tier": "Weak",
+        "company_type": "STANDARD",
+        "type_rationale": "Standard company \u2014 balanced weighting across all methods",
+        "method_explanation": "This company does not fit neatly into a specialist category, so we apply a balanced mix of all ten valuation methods. These include Discounted Cash Flow (which estimates the present value of future cash flows), earnings multiples (P/E and PEG), revenue multiples (P/S and PSG), book value (P/B), and EV/EBITDA. Each method approaches value from a different angle \u2014 using all of them together gives a more rounded estimate than relying on any single number.",
+        "weights_applied": {
+          "1_DCF_Operating_CF": 0.08,
+          "2_DCF_FCF": 0.08,
+          "3_DCF_Net_Income": 0.08,
+          "4_DCF_Terminal_Value": 0.08,
+          "5_Mean_PS": 0.12,
+          "6_Mean_PE": 0.08,
+          "7_Mean_PB": 0.15,
+          "8_PSG": 0.08,
+          "9_PEG": 0.08,
+          "10_EV_EBITDA": 0.17
+        },
+        "excluded_methods": [],
+        "active_methods": [
+          "8_PSG"
+        ]
+      }
+    },
+    "quality": {
+      "scores": {
+        "profitability": 0,
+        "financial_strength": 4,
+        "growth": 4,
+        "predictability": 1,
+        "valuation": 0,
+        "moat": null
+      },
+      "score_labels": {
+        "profitability": "Poor",
+        "financial_strength": "Adequate",
+        "growth": "Adequate",
+        "predictability": "Poor",
+        "valuation": "Poor",
+        "moat": "Not scored"
+      },
+      "company_type": "STANDARD",
+      "company_type_note": null,
+      "python_subtotal": 9,
+      "python_subtotal_pct": 22.5,
+      "classification": "Dangerous",
+      "penalty_pct": 8,
+      "final_score_pct": 14.5,
+      "tiebreaker_used": false,
+      "tiebreaker_inputs": {
+        "roe": null,
+        "roic": null,
+        "eps_next_5y": 0.3127
+      },
+      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
+      "last_calculated": "2026-03-29 05:16"
+    },
+    "quality_narrative": {
+      "moat_score": null,
+      "moat_rationale": "",
+      "metric_assessments": {},
+      "quality_conclusion": "Cytokinetics, Incorporated demonstrates weak fundamental quality, scoring 22% across four fundamental dimensions. The business is constrained by profitability. The current classification is Dangerous.",
+      "risk_profile": "Key risks for Cytokinetics, Incorporated include inconsistent earnings trajectory; financial strength constraining growth assumptions; valuation premium (337% above estimated intrinsic value). The company operates in the Healthcare sector, which carries its own cyclical and regulatory exposures. A financial strength score of 4/10 suggests the balance sheet provides limited buffer against downside scenarios.",
+      "investment_summary": "Cytokinetics, Incorporated carries weak fundamental quality with elevated risk factors, and trades at a 337% premium to estimated intrinsic value. With 31.3% consensus EPS growth forecast, the growth outlook supports the investment case. Overall, the stock warrants caution \u2014 position sizing and ongoing monitoring are advisable.",
+      "source": "rules",
+      "generated_at": "2026-03-29 05:16"
+    },
+    "fundamentals": {
+      "roe": null,
+      "roic": null,
+      "roe_pct": null,
+      "roic_pct": null,
+      "roic_source": "unavailable",
+      "current_ratio": 4.53,
+      "debt_to_ebitda": null,
+      "debt_service_ratio": null
+    },
+    "financials_charts": {
+      "revenue_vs_net_income": {
+        "2025": {
+          "revenue": 88.04,
+          "net_income": -784.96
+        },
+        "2024": {
+          "revenue": 18.47,
+          "net_income": -589.53
+        },
+        "2023": {
+          "revenue": 7.53,
+          "net_income": -526.24
+        },
+        "2022": {
+          "revenue": 94.59,
+          "net_income": -388.95
+        },
+        "2021": {
+          "revenue": 70.43,
+          "net_income": -215.31
+        },
+        "2020": {
+          "revenue": 55.83,
+          "net_income": -127.29
+        },
+        "2019": {
+          "revenue": 26.87,
+          "net_income": -121.69
+        },
+        "2018": {
+          "revenue": 31.5,
+          "net_income": -106.29
+        },
+        "2017": {
+          "revenue": 13.37,
+          "net_income": -127.79
+        },
+        "2016": {
+          "revenue": 106.41,
+          "net_income": 16.45
+        }
+      },
+      "fcf_vs_debt": {
+        "2025": {
+          "cash_balance": 1200.0,
+          "free_cash_flow": -534.82,
+          "total_debt": 287.56
+        },
+        "2024": {
+          "cash_balance": 1221.1,
+          "free_cash_flow": -399.8,
+          "total_debt": 104.75
+        },
+        "2023": {
+          "cash_balance": 655.4,
+          "free_cash_flow": -415.75,
+          "total_debt": 68.46
+        },
+        "2022": {
+          "cash_balance": 829.3,
+          "free_cash_flow": -310.85,
+          "total_debt": 64.77
+        },
+        "2021": {
+          "cash_balance": 623.7,
+          "free_cash_flow": -191.39,
+          "total_debt": 47.37
+        },
+        "2020": {
+          "cash_balance": 501.0,
+          "free_cash_flow": -2.11,
+          "total_debt": 46.21
+        },
+        "2019": {
+          "cash_balance": 267.8,
+          "free_cash_flow": -93.53,
+          "total_debt": 45.05
+        },
+        "2018": {
+          "cash_balance": 198.7,
+          "free_cash_flow": -102.1,
+          "total_debt": 42.41
+        },
+        "2017": {
+          "cash_balance": 285.4,
+          "free_cash_flow": -104.64,
+          "total_debt": 31.78
+        },
+        "2016": {
+          "cash_balance": 163.9,
+          "free_cash_flow": null,
+          "total_debt": 32.38
+        }
+      },
+      "shares_vs_buybacks": {
+        "2025": {
+          "shares_outstanding_m": 0.12,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2024": {
+          "shares_outstanding_m": 0.11,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2023": {
+          "shares_outstanding_m": 0.1,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2022": {
+          "shares_outstanding_m": 0.09,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2021": {
+          "shares_outstanding_m": 84.8,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2020": {
+          "shares_outstanding_m": 71.02,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2019": {
+          "shares_outstanding_m": 59.17,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2018": {
+          "shares_outstanding_m": 54.72,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2017": {
+          "shares_outstanding_m": 49.4,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2016": {
+          "shares_outstanding_m": 39.94,
+          "buybacks_m": null,
+          "split_adjusted": true
+        }
+      },
+      "returns_trajectory": {
+        "2021": {
+          "roe_pct": -88.29,
+          "roic_pct": null
+        },
+        "2020": {
+          "roe_pct": -112.27,
+          "roic_pct": null
+        },
+        "2018": {
+          "roe_pct": -409.84,
+          "roic_pct": null
+        },
+        "2017": {
+          "roe_pct": -116.34,
+          "roic_pct": null
+        },
+        "2016": {
+          "roe_pct": 17.44,
+          "roic_pct": null
+        }
+      },
+      "revenue_vs_ar": {
+        "2025": {
+          "revenue": 88.04,
+          "accounts_receivable": 17.76,
+          "rev_growth_pct": 376.7,
+          "ar_growth_pct": 6.7,
+          "ar_outpacing": false
+        },
+        "2024": {
+          "revenue": 18.47,
+          "accounts_receivable": 16.65,
+          "rev_growth_pct": 145.3,
+          "ar_growth_pct": 1200.8,
+          "ar_outpacing": true
+        },
+        "2023": {
+          "revenue": 7.53,
+          "accounts_receivable": 1.28,
+          "rev_growth_pct": -92.0,
+          "ar_growth_pct": 753.3,
+          "ar_outpacing": true
+        },
+        "2022": {
+          "revenue": 94.59,
+          "accounts_receivable": 0.15,
+          "rev_growth_pct": 34.3,
+          "ar_growth_pct": -99.7,
+          "ar_outpacing": false
+        },
+        "2021": {
+          "revenue": 70.43,
+          "accounts_receivable": 51.82,
+          "rev_growth_pct": 26.2,
+          "ar_growth_pct": 1072.4,
+          "ar_outpacing": true
+        },
+        "2020": {
+          "revenue": 55.83,
+          "accounts_receivable": 4.42,
+          "rev_growth_pct": 107.8,
+          "ar_growth_pct": -14.3,
+          "ar_outpacing": false
+        },
+        "2019": {
+          "revenue": 26.87,
+          "accounts_receivable": 5.16,
+          "rev_growth_pct": -14.7,
+          "ar_growth_pct": 131.4,
+          "ar_outpacing": true
+        },
+        "2018": {
+          "revenue": 31.5,
+          "accounts_receivable": 2.23,
+          "rev_growth_pct": 135.6,
+          "ar_growth_pct": 100.9,
+          "ar_outpacing": false
+        },
+        "2017": {
+          "revenue": 13.37,
+          "accounts_receivable": 1.11,
+          "rev_growth_pct": -87.4,
+          "ar_growth_pct": 5450.0,
+          "ar_outpacing": true
+        },
+        "2016": {
+          "revenue": 106.41,
+          "accounts_receivable": 0.02,
+          "rev_growth_pct": null,
+          "ar_growth_pct": null,
+          "ar_outpacing": null
+        }
+      },
+      "_notes": {
+        "revenue_vs_net_income": "This chart shows how much money the company brings in (revenue) versus how much it actually keeps as profit (net income) each year. A healthy company should show both lines growing over time. If revenue grows but net income shrinks, the company is spending more than it is earning \u2014 a warning sign worth investigating.",
+        "fcf_vs_debt": "Free cash flow is the cash left over after the company has paid for everything it needs to run and grow the business. This chart compares that cash to the company's total debt. A company with rising free cash flow and falling debt is in a strong financial position. If debt is rising faster than cash, the company may be taking on more risk than it can comfortably manage.",
+        "shares_vs_buybacks": "When a company buys back its own shares, it reduces the total number of shares in circulation \u2014 which means each remaining share represents a larger slice of the business. This chart shows how the share count has changed over time. Consistent buybacks are generally a sign that management believes the stock is undervalued and wants to return cash to shareholders.",
+        "returns_trajectory": "Return on Equity (ROE) measures how much profit a company generates for every dollar of shareholder money invested. Return on Invested Capital (ROIC) is similar but also includes debt. Both are expressed as a percentage \u2014 higher is better. A company consistently earning above 15% ROIC is generally considered to have a genuine competitive advantage over its peers.",
+        "revenue_vs_ar": "Accounts receivable is money the company is owed by customers who have not yet paid their bills. This chart compares revenue growth to accounts receivable growth each year. If accounts receivable is growing much faster than revenue, it may mean the company is struggling to collect payments \u2014 sometimes a sign of aggressive or fictitious revenue reporting. A healthy company should see both lines move at a similar pace."
+      }
+    },
+    "valuation_chart": {
+      "2016": {
+        "market_price": 12.15,
+        "intrinsic_value": 1.41,
+        "bull_case": 3.76,
+        "bear_case": 0.8
+      },
+      "2017": {
+        "market_price": 8.15,
+        "intrinsic_value": 1.74,
+        "bull_case": 4.25,
+        "bear_case": 1.04
+      },
+      "2018": {
+        "market_price": 6.32,
+        "intrinsic_value": 2.15,
+        "bull_case": 4.8,
+        "bear_case": 1.35
+      },
+      "2019": {
+        "market_price": 10.61,
+        "intrinsic_value": 2.65,
+        "bull_case": 5.42,
+        "bear_case": 1.75
+      },
+      "2020": {
+        "market_price": 20.78,
+        "intrinsic_value": 3.27,
+        "bull_case": 6.12,
+        "bear_case": 2.28
+      },
+      "2021": {
+        "market_price": 45.58,
+        "intrinsic_value": 4.04,
+        "bull_case": 6.91,
+        "bear_case": 2.96
+      },
+      "2022": {
+        "market_price": 45.82,
+        "intrinsic_value": 4.99,
+        "bull_case": 7.8,
+        "bear_case": 3.85
+      },
+      "2023": {
+        "market_price": 83.49,
+        "intrinsic_value": 6.16,
+        "bull_case": 8.8,
+        "bear_case": 5.01
+      },
+      "2024": {
+        "market_price": 47.04,
+        "intrinsic_value": 7.6,
+        "bull_case": 9.94,
+        "bear_case": 6.51
+      },
+      "2025": {
+        "market_price": 63.54,
+        "intrinsic_value": 9.38,
+        "bull_case": 11.22,
+        "bear_case": 8.46
+      },
+      "2026": {
+        "market_price": 62.5,
+        "intrinsic_value": 14.3,
+        "bull_case": 15.24,
+        "bear_case": 12.79
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 17.65,
+        "bull_case": 18.59,
+        "bear_case": 16.14
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 21.79,
+        "bull_case": 24.17,
+        "bear_case": 18.23
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 26.91,
+        "bull_case": 31.42,
+        "bear_case": 20.58
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 33.22,
+        "bull_case": 40.84,
+        "bear_case": 23.23
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 41.0,
+        "bull_case": 53.09,
+        "bear_case": 26.23
+      }
+    },
+    "forecast_meta": {
+      "eps_next_5y_raw": 0.3127,
+      "fs_score": 4,
+      "fs_multiplier": 0.75,
+      "base_growth_rate": 0.2345,
+      "bull_growth_rate": 0.3,
+      "bear_growth_rate": 0.129,
+      "growth_constrained": true,
+      "constraint_note": "EPS growth moderated from 31.3% to 23.5% due to financial strength score of 4/10"
+    },
+    "bull_bear": {
+      "short_term": {
+        "bull_points": [
+          "Analyst consensus of 31.3% EPS growth over five years provides a near-term catalyst if the company delivers on guidance",
+          "Current market positioning in the Healthcare sector may attract tactical buyers",
+          "Any positive earnings surprise could act as a near-term re-rating catalyst"
+        ],
+        "bear_points": [
+          "Trading at a 337% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
+          "Macro uncertainty and rate expectations may suppress multiple expansion",
+          "Short-term earnings visibility is limited without additional guidance"
+        ]
+      },
+      "long_term": {
+        "bull_points": [
+          "Cytokinetics, Incorporated operates in a sector with long-term structural tailwinds",
+          "Management has demonstrated consistent capital allocation discipline",
+          "The business has the scale to compound earnings over a multi-year horizon"
+        ],
+        "bear_points": [
+          "Low profitability score (0/10) suggests thin or negative margins that structurally limit long-term earnings power",
+          "Unpredictable earnings (1/10) make long-term forecasting unreliable and compress the valuation multiple the market is willing to pay",
+          "Financial strength is constraining the assumed growth rate in the valuation model \u2014 EPS growth moderated from 31.3% to 23.5% due to financial strength score of 4/10"
+        ]
+      },
+      "source": "rules",
+      "generated_at": "2026-03-29 05:16"
+    },
+    "10_Year_History": {
+      "2016": 12.15,
+      "2017": 8.15,
+      "2018": 6.32,
+      "2019": 10.61,
+      "2020": 20.78,
+      "2021": 45.58,
+      "2022": 45.82,
+      "2023": 83.49,
+      "2024": 47.04,
+      "2025": 63.54,
+      "2026": 62.5
+    },
+    "5_Year_Forecast": {
+      "2027": 18.59,
+      "2028": 24.17,
+      "2029": 31.42,
+      "2030": 40.84,
+      "2031": 53.09
+    },
+    "Last_Updated": "2026-03-29 05:16"
   },
   "CYRX": {
     "company_profile": {
@@ -2267,7 +3269,7 @@
       "market_cap": 391538848,
       "52w_high": 11.45,
       "52w_low": 4.63,
-      "avg_volume": 378461,
+      "avg_volume": 388540,
       "pe_trailing": null,
       "pe_forward": -12.155504,
       "dividend_yield": null,
@@ -2361,7 +3363,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-28 04:50"
+      "last_calculated": "2026-03-29 05:16"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -2371,7 +3373,7 @@
       "risk_profile": "Key risks for Cryoport, Inc. include weak near-term growth outlook; inconsistent earnings trajectory; financial strength constraining growth assumptions. The company operates in the Industrials sector, which carries its own cyclical and regulatory exposures. A financial strength score of 4/10 suggests the balance sheet provides limited buffer against downside scenarios.",
       "investment_summary": "Cryoport, Inc. carries weak fundamental quality with elevated risk factors, and trades at a 33% discount to estimated intrinsic value.  Overall, the stock warrants caution \u2014 position sizing and ongoing monitoring are advisable.",
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "fundamentals": {
       "roe": -0.0751,
@@ -2786,7 +3788,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "10_Year_History": {
       "2016": 3.24,
@@ -2808,7 +3810,7 @@
       "2030": 12.72,
       "2031": 12.97
     },
-    "Last_Updated": "2026-03-28 04:50"
+    "Last_Updated": "2026-03-29 05:16"
   },
   "CYTOF": {
     "company_profile": {
@@ -2830,7 +3832,7 @@
       "market_cap": 377221,
       "52w_high": 0.148,
       "52w_low": 0.05,
-      "avg_volume": 4545,
+      "avg_volume": 4132,
       "pe_trailing": null,
       "pe_forward": null,
       "dividend_yield": null,
@@ -2918,7 +3920,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-28 04:50"
+      "last_calculated": "2026-03-29 05:16"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -2928,7 +3930,7 @@
       "risk_profile": "Key risks for Altamira Therapeutics Ltd. include weak near-term growth outlook; inconsistent earnings trajectory; low consensus EPS growth forecast (0.0% p.a.). The company operates in the Healthcare sector, which carries its own cyclical and regulatory exposures. A financial strength score of 1/10 suggests the balance sheet provides limited buffer against downside scenarios.",
       "investment_summary": "Altamira Therapeutics Ltd. carries weak fundamental quality with elevated risk factors, and trades near estimated intrinsic value.  Overall, the stock warrants caution \u2014 position sizing and ongoing monitoring are advisable.",
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "fundamentals": {
       "roe": -1.0879,
@@ -2982,7 +3984,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "10_Year_History": {
       "2016": 85600.0,
@@ -2998,548 +4000,7 @@
       "2026": 0.07
     },
     "5_Year_Forecast": {},
-    "Last_Updated": "2026-03-28 04:50"
-  },
-  "CYTK": {
-    "company_profile": {
-      "name": "Cytokinetics, Incorporated",
-      "ticker": "CYTK",
-      "sector": "Healthcare",
-      "industry": "Biotechnology",
-      "company_type": "STANDARD",
-      "type_rationale": "Standard company \u2014 balanced weighting across all methods",
-      "description": "Cytokinetics, Incorporated, a biopharmaceutical company, focuses on discovering, developing, and commercializing novel muscle activators and muscle inhibitors as potential treatments for debilitating diseases in the United States. The company markets MYQORZO, a novel, oral, and small molecule cardiac myosin inhibitor for the treatment of symptomatic oHCM. It also develops Aficamten, a novel, oral, and small molecule cardiac myosin inhibitor for the treatment of HCM; and omecamtiv mecarbil, a potential treatment across the continuum of care in heart failure with severely reduced ejection fraction. In addition, the company is involved in developing and Ulacamten, a novel, selective, oral, and small molecule cardiac myosin inhibitor designed to reduce the hypercontractility associated with heart failure with preserved ejection fraction in Phase 1 clinical trials; and CK-089, a fast skeletal muscle troponin activator in Phase 1 clinical trials. Cytokinetics, Incorporated was incorporated in 1997 and is headquartered in South San Francisco, California.",
-      "description_summary": "Cytokinetics, Incorporated, a biopharmaceutical company, focuses on discovering, developing, and commercializing novel muscle activators and muscle inhibitors as potential treatments for debilitating diseases in the United States. The company markets MYQORZO, a novel, oral, and small molecule cardiac myosin inhibitor for the treatment of symptomatic oHCM.",
-      "website": "https://www.cytokinetics.com",
-      "employees": 673,
-      "country": "United States",
-      "city": "South San Francisco",
-      "exchange": "NMS",
-      "currency": "USD",
-      "quote_type": "EQUITY",
-      "market_cap": 7697675264,
-      "52w_high": 70.98,
-      "52w_low": 29.31,
-      "avg_volume": 1890088,
-      "pe_trailing": null,
-      "pe_forward": -12.665795,
-      "dividend_yield": null,
-      "beta": 0.508
-    },
-    "current_price": 62.5,
-    "intrinsic_value": 14.3,
-    "margin_of_safety_pct": -337.1,
-    "mos_label": "Significant Premium",
-    "valuations": {
-      "1_DCF_Operating_CF": null,
-      "2_DCF_FCF": null,
-      "3_DCF_Net_Income": null,
-      "4_DCF_Terminal_Value": null,
-      "5_Mean_PS": null,
-      "6_Mean_PE": null,
-      "7_Mean_PB": null,
-      "8_PSG": 14.3,
-      "9_PEG": null,
-      "10_EV_EBITDA": null,
-      "intrinsic_value": 14.3,
-      "methods_used": 1,
-      "confidence": "Low",
-      "active_methods": [
-        "8_PSG"
-      ],
-      "_meta": {
-        "pe_source": "current_trailing",
-        "ps_source": "current_trailing",
-        "pb_source": "current_trailing",
-        "ev_ebitda_source": "trailing_or_unavailable",
-        "growth_source": "finviz",
-        "growth_raw": 0.3127,
-        "growth_peg_rate": 0.2,
-        "discount_rate": 0.12,
-        "growth_stage1": 0.3,
-        "growth_stage2": 0.15,
-        "terminal_growth": 0.02,
-        "tier": "Weak",
-        "company_type": "STANDARD",
-        "type_rationale": "Standard company \u2014 balanced weighting across all methods",
-        "method_explanation": "This company does not fit neatly into a specialist category, so we apply a balanced mix of all ten valuation methods. These include Discounted Cash Flow (which estimates the present value of future cash flows), earnings multiples (P/E and PEG), revenue multiples (P/S and PSG), book value (P/B), and EV/EBITDA. Each method approaches value from a different angle \u2014 using all of them together gives a more rounded estimate than relying on any single number.",
-        "weights_applied": {
-          "1_DCF_Operating_CF": 0.08,
-          "2_DCF_FCF": 0.08,
-          "3_DCF_Net_Income": 0.08,
-          "4_DCF_Terminal_Value": 0.08,
-          "5_Mean_PS": 0.12,
-          "6_Mean_PE": 0.08,
-          "7_Mean_PB": 0.15,
-          "8_PSG": 0.08,
-          "9_PEG": 0.08,
-          "10_EV_EBITDA": 0.17
-        },
-        "excluded_methods": [],
-        "active_methods": [
-          "8_PSG"
-        ]
-      }
-    },
-    "quality": {
-      "scores": {
-        "profitability": 0,
-        "financial_strength": 4,
-        "growth": 4,
-        "predictability": 1,
-        "valuation": 0,
-        "moat": null
-      },
-      "score_labels": {
-        "profitability": "Poor",
-        "financial_strength": "Adequate",
-        "growth": "Adequate",
-        "predictability": "Poor",
-        "valuation": "Poor",
-        "moat": "Not scored"
-      },
-      "company_type": "STANDARD",
-      "company_type_note": null,
-      "python_subtotal": 9,
-      "python_subtotal_pct": 22.5,
-      "classification": "Dangerous",
-      "penalty_pct": 8,
-      "final_score_pct": 14.5,
-      "tiebreaker_used": false,
-      "tiebreaker_inputs": {
-        "roe": null,
-        "roic": null,
-        "eps_next_5y": 0.3127
-      },
-      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-28 04:50"
-    },
-    "quality_narrative": {
-      "moat_score": null,
-      "moat_rationale": "",
-      "metric_assessments": {},
-      "quality_conclusion": "Cytokinetics, Incorporated demonstrates weak fundamental quality, scoring 22% across four fundamental dimensions. The business is constrained by profitability. The current classification is Dangerous.",
-      "risk_profile": "Key risks for Cytokinetics, Incorporated include inconsistent earnings trajectory; financial strength constraining growth assumptions; valuation premium (337% above estimated intrinsic value). The company operates in the Healthcare sector, which carries its own cyclical and regulatory exposures. A financial strength score of 4/10 suggests the balance sheet provides limited buffer against downside scenarios.",
-      "investment_summary": "Cytokinetics, Incorporated carries weak fundamental quality with elevated risk factors, and trades at a 337% premium to estimated intrinsic value. With 31.3% consensus EPS growth forecast, the growth outlook supports the investment case. Overall, the stock warrants caution \u2014 position sizing and ongoing monitoring are advisable.",
-      "source": "rules",
-      "generated_at": "2026-03-28 04:50"
-    },
-    "fundamentals": {
-      "roe": null,
-      "roic": null,
-      "roe_pct": null,
-      "roic_pct": null,
-      "roic_source": "unavailable",
-      "current_ratio": 4.53,
-      "debt_to_ebitda": null,
-      "debt_service_ratio": null
-    },
-    "financials_charts": {
-      "revenue_vs_net_income": {
-        "2025": {
-          "revenue": 88.04,
-          "net_income": -784.96
-        },
-        "2024": {
-          "revenue": 18.47,
-          "net_income": -589.53
-        },
-        "2023": {
-          "revenue": 7.53,
-          "net_income": -526.24
-        },
-        "2022": {
-          "revenue": 94.59,
-          "net_income": -388.95
-        },
-        "2021": {
-          "revenue": 70.43,
-          "net_income": -215.31
-        },
-        "2020": {
-          "revenue": 55.83,
-          "net_income": -127.29
-        },
-        "2019": {
-          "revenue": 26.87,
-          "net_income": -121.69
-        },
-        "2018": {
-          "revenue": 31.5,
-          "net_income": -106.29
-        },
-        "2017": {
-          "revenue": 13.37,
-          "net_income": -127.79
-        },
-        "2016": {
-          "revenue": 106.41,
-          "net_income": 16.45
-        }
-      },
-      "fcf_vs_debt": {
-        "2025": {
-          "cash_balance": 1200.0,
-          "free_cash_flow": -534.82,
-          "total_debt": 287.56
-        },
-        "2024": {
-          "cash_balance": 1221.1,
-          "free_cash_flow": -399.8,
-          "total_debt": 104.75
-        },
-        "2023": {
-          "cash_balance": 655.4,
-          "free_cash_flow": -415.75,
-          "total_debt": 68.46
-        },
-        "2022": {
-          "cash_balance": 829.3,
-          "free_cash_flow": -310.85,
-          "total_debt": 64.77
-        },
-        "2021": {
-          "cash_balance": 623.7,
-          "free_cash_flow": -191.39,
-          "total_debt": 47.37
-        },
-        "2020": {
-          "cash_balance": 501.0,
-          "free_cash_flow": -2.11,
-          "total_debt": 46.21
-        },
-        "2019": {
-          "cash_balance": 267.8,
-          "free_cash_flow": -93.53,
-          "total_debt": 45.05
-        },
-        "2018": {
-          "cash_balance": 198.7,
-          "free_cash_flow": -102.1,
-          "total_debt": 42.41
-        },
-        "2017": {
-          "cash_balance": 285.4,
-          "free_cash_flow": -104.64,
-          "total_debt": 31.78
-        },
-        "2016": {
-          "cash_balance": 163.9,
-          "free_cash_flow": null,
-          "total_debt": 32.38
-        }
-      },
-      "shares_vs_buybacks": {
-        "2025": {
-          "shares_outstanding_m": 0.12,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2024": {
-          "shares_outstanding_m": 0.11,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2023": {
-          "shares_outstanding_m": 0.1,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2022": {
-          "shares_outstanding_m": 0.09,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2021": {
-          "shares_outstanding_m": 84.8,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2020": {
-          "shares_outstanding_m": 71.02,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2019": {
-          "shares_outstanding_m": 59.17,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2018": {
-          "shares_outstanding_m": 54.72,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2017": {
-          "shares_outstanding_m": 49.4,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2016": {
-          "shares_outstanding_m": 39.94,
-          "buybacks_m": null,
-          "split_adjusted": true
-        }
-      },
-      "returns_trajectory": {
-        "2021": {
-          "roe_pct": -88.29,
-          "roic_pct": null
-        },
-        "2020": {
-          "roe_pct": -112.27,
-          "roic_pct": null
-        },
-        "2018": {
-          "roe_pct": -409.84,
-          "roic_pct": null
-        },
-        "2017": {
-          "roe_pct": -116.34,
-          "roic_pct": null
-        },
-        "2016": {
-          "roe_pct": 17.44,
-          "roic_pct": null
-        }
-      },
-      "revenue_vs_ar": {
-        "2025": {
-          "revenue": 88.04,
-          "accounts_receivable": 17.76,
-          "rev_growth_pct": 376.7,
-          "ar_growth_pct": 6.7,
-          "ar_outpacing": false
-        },
-        "2024": {
-          "revenue": 18.47,
-          "accounts_receivable": 16.65,
-          "rev_growth_pct": 145.3,
-          "ar_growth_pct": 1200.8,
-          "ar_outpacing": true
-        },
-        "2023": {
-          "revenue": 7.53,
-          "accounts_receivable": 1.28,
-          "rev_growth_pct": -92.0,
-          "ar_growth_pct": 753.3,
-          "ar_outpacing": true
-        },
-        "2022": {
-          "revenue": 94.59,
-          "accounts_receivable": 0.15,
-          "rev_growth_pct": 34.3,
-          "ar_growth_pct": -99.7,
-          "ar_outpacing": false
-        },
-        "2021": {
-          "revenue": 70.43,
-          "accounts_receivable": 51.82,
-          "rev_growth_pct": 26.2,
-          "ar_growth_pct": 1072.4,
-          "ar_outpacing": true
-        },
-        "2020": {
-          "revenue": 55.83,
-          "accounts_receivable": 4.42,
-          "rev_growth_pct": 107.8,
-          "ar_growth_pct": -14.3,
-          "ar_outpacing": false
-        },
-        "2019": {
-          "revenue": 26.87,
-          "accounts_receivable": 5.16,
-          "rev_growth_pct": -14.7,
-          "ar_growth_pct": 131.4,
-          "ar_outpacing": true
-        },
-        "2018": {
-          "revenue": 31.5,
-          "accounts_receivable": 2.23,
-          "rev_growth_pct": 135.6,
-          "ar_growth_pct": 100.9,
-          "ar_outpacing": false
-        },
-        "2017": {
-          "revenue": 13.37,
-          "accounts_receivable": 1.11,
-          "rev_growth_pct": -87.4,
-          "ar_growth_pct": 5450.0,
-          "ar_outpacing": true
-        },
-        "2016": {
-          "revenue": 106.41,
-          "accounts_receivable": 0.02,
-          "rev_growth_pct": null,
-          "ar_growth_pct": null,
-          "ar_outpacing": null
-        }
-      },
-      "_notes": {
-        "revenue_vs_net_income": "This chart shows how much money the company brings in (revenue) versus how much it actually keeps as profit (net income) each year. A healthy company should show both lines growing over time. If revenue grows but net income shrinks, the company is spending more than it is earning \u2014 a warning sign worth investigating.",
-        "fcf_vs_debt": "Free cash flow is the cash left over after the company has paid for everything it needs to run and grow the business. This chart compares that cash to the company's total debt. A company with rising free cash flow and falling debt is in a strong financial position. If debt is rising faster than cash, the company may be taking on more risk than it can comfortably manage.",
-        "shares_vs_buybacks": "When a company buys back its own shares, it reduces the total number of shares in circulation \u2014 which means each remaining share represents a larger slice of the business. This chart shows how the share count has changed over time. Consistent buybacks are generally a sign that management believes the stock is undervalued and wants to return cash to shareholders.",
-        "returns_trajectory": "Return on Equity (ROE) measures how much profit a company generates for every dollar of shareholder money invested. Return on Invested Capital (ROIC) is similar but also includes debt. Both are expressed as a percentage \u2014 higher is better. A company consistently earning above 15% ROIC is generally considered to have a genuine competitive advantage over its peers.",
-        "revenue_vs_ar": "Accounts receivable is money the company is owed by customers who have not yet paid their bills. This chart compares revenue growth to accounts receivable growth each year. If accounts receivable is growing much faster than revenue, it may mean the company is struggling to collect payments \u2014 sometimes a sign of aggressive or fictitious revenue reporting. A healthy company should see both lines move at a similar pace."
-      }
-    },
-    "valuation_chart": {
-      "2016": {
-        "market_price": 12.15,
-        "intrinsic_value": 1.41,
-        "bull_case": 3.76,
-        "bear_case": 0.8
-      },
-      "2017": {
-        "market_price": 8.15,
-        "intrinsic_value": 1.74,
-        "bull_case": 4.25,
-        "bear_case": 1.04
-      },
-      "2018": {
-        "market_price": 6.32,
-        "intrinsic_value": 2.15,
-        "bull_case": 4.8,
-        "bear_case": 1.35
-      },
-      "2019": {
-        "market_price": 10.61,
-        "intrinsic_value": 2.65,
-        "bull_case": 5.42,
-        "bear_case": 1.75
-      },
-      "2020": {
-        "market_price": 20.78,
-        "intrinsic_value": 3.27,
-        "bull_case": 6.12,
-        "bear_case": 2.28
-      },
-      "2021": {
-        "market_price": 45.58,
-        "intrinsic_value": 4.04,
-        "bull_case": 6.91,
-        "bear_case": 2.96
-      },
-      "2022": {
-        "market_price": 45.82,
-        "intrinsic_value": 4.99,
-        "bull_case": 7.8,
-        "bear_case": 3.85
-      },
-      "2023": {
-        "market_price": 83.49,
-        "intrinsic_value": 6.16,
-        "bull_case": 8.8,
-        "bear_case": 5.01
-      },
-      "2024": {
-        "market_price": 47.04,
-        "intrinsic_value": 7.6,
-        "bull_case": 9.94,
-        "bear_case": 6.51
-      },
-      "2025": {
-        "market_price": 63.54,
-        "intrinsic_value": 9.38,
-        "bull_case": 11.22,
-        "bear_case": 8.46
-      },
-      "2026": {
-        "market_price": 62.5,
-        "intrinsic_value": 14.3,
-        "bull_case": 15.24,
-        "bear_case": 12.79
-      },
-      "2027": {
-        "market_price": null,
-        "intrinsic_value": 17.65,
-        "bull_case": 18.59,
-        "bear_case": 16.14
-      },
-      "2028": {
-        "market_price": null,
-        "intrinsic_value": 21.79,
-        "bull_case": 24.17,
-        "bear_case": 18.23
-      },
-      "2029": {
-        "market_price": null,
-        "intrinsic_value": 26.91,
-        "bull_case": 31.42,
-        "bear_case": 20.58
-      },
-      "2030": {
-        "market_price": null,
-        "intrinsic_value": 33.22,
-        "bull_case": 40.84,
-        "bear_case": 23.23
-      },
-      "2031": {
-        "market_price": null,
-        "intrinsic_value": 41.0,
-        "bull_case": 53.09,
-        "bear_case": 26.23
-      }
-    },
-    "forecast_meta": {
-      "eps_next_5y_raw": 0.3127,
-      "fs_score": 4,
-      "fs_multiplier": 0.75,
-      "base_growth_rate": 0.2345,
-      "bull_growth_rate": 0.3,
-      "bear_growth_rate": 0.129,
-      "growth_constrained": true,
-      "constraint_note": "EPS growth moderated from 31.3% to 23.5% due to financial strength score of 4/10"
-    },
-    "bull_bear": {
-      "short_term": {
-        "bull_points": [
-          "Analyst consensus of 31.3% EPS growth over five years provides a near-term catalyst if the company delivers on guidance",
-          "Current market positioning in the Healthcare sector may attract tactical buyers",
-          "Any positive earnings surprise could act as a near-term re-rating catalyst"
-        ],
-        "bear_points": [
-          "Trading at a 337% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
-          "Macro uncertainty and rate expectations may suppress multiple expansion",
-          "Short-term earnings visibility is limited without additional guidance"
-        ]
-      },
-      "long_term": {
-        "bull_points": [
-          "Cytokinetics, Incorporated operates in a sector with long-term structural tailwinds",
-          "Management has demonstrated consistent capital allocation discipline",
-          "The business has the scale to compound earnings over a multi-year horizon"
-        ],
-        "bear_points": [
-          "Low profitability score (0/10) suggests thin or negative margins that structurally limit long-term earnings power",
-          "Unpredictable earnings (1/10) make long-term forecasting unreliable and compress the valuation multiple the market is willing to pay",
-          "Financial strength is constraining the assumed growth rate in the valuation model \u2014 EPS growth moderated from 31.3% to 23.5% due to financial strength score of 4/10"
-        ]
-      },
-      "source": "rules",
-      "generated_at": "2026-03-28 04:50"
-    },
-    "10_Year_History": {
-      "2016": 12.15,
-      "2017": 8.15,
-      "2018": 6.32,
-      "2019": 10.61,
-      "2020": 20.78,
-      "2021": 45.58,
-      "2022": 45.82,
-      "2023": 83.49,
-      "2024": 47.04,
-      "2025": 63.54,
-      "2026": 62.5
-    },
-    "5_Year_Forecast": {
-      "2027": 18.59,
-      "2028": 24.17,
-      "2029": 31.42,
-      "2030": 40.84,
-      "2031": 53.09
-    },
-    "Last_Updated": "2026-03-28 04:50"
+    "Last_Updated": "2026-03-29 05:16"
   },
   "CZFS": {
     "company_profile": {
@@ -3561,7 +4022,7 @@
       "market_cap": 289923392,
       "52w_high": 69.3,
       "52w_low": 49.99,
-      "avg_volume": 11201,
+      "avg_volume": 11513,
       "pe_trailing": 7.9146986,
       "pe_forward": 7.6052966,
       "dividend_yield": 3.38,
@@ -3664,7 +4125,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-28 04:50"
+      "last_calculated": "2026-03-29 05:16"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -3674,7 +4135,7 @@
       "risk_profile": "Key risks for Citizens Financial Services, Inc. include weak near-term growth outlook; financial strength constraining growth assumptions; low consensus EPS growth forecast (0.0% p.a.). The company operates in the Financial Services sector, which carries its own cyclical and regulatory exposures. The balance sheet provides a reasonable buffer against near-term downside scenarios.",
       "investment_summary": "Citizens Financial Services, Inc. represents a strong fundamental quality business that trades at a 26% discount to estimated intrinsic value.  Overall, the stock suitable for investors seeking quality-oriented exposure.",
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "fundamentals": {
       "roe": 0.1147,
@@ -4075,7 +4536,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "10_Year_History": {
       "2016": 38.27,
@@ -4097,7 +4558,7 @@
       "2030": 88.21,
       "2031": 89.97
     },
-    "Last_Updated": "2026-03-28 04:50"
+    "Last_Updated": "2026-03-29 05:16"
   },
   "CZNC": {
     "company_profile": {
@@ -4119,7 +4580,7 @@
       "market_cap": 394025376,
       "52w_high": 24.12,
       "52w_low": 18.02,
-      "avg_volume": 49462,
+      "avg_volume": 48459,
       "pe_trailing": 15.068493,
       "pe_forward": 8.148148,
       "dividend_yield": 5.09,
@@ -4222,7 +4683,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-28 04:50"
+      "last_calculated": "2026-03-29 05:16"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -4232,7 +4693,7 @@
       "risk_profile": "Key risks for Citizens & Northern Corporation include weak near-term growth outlook; financial strength constraining growth assumptions; low consensus EPS growth forecast (0.0% p.a.). The company operates in the Financial Services sector, which carries its own cyclical and regulatory exposures. The balance sheet provides a reasonable buffer against near-term downside scenarios.",
       "investment_summary": "Citizens & Northern Corporation is a mixed fundamental quality business that trades near estimated intrinsic value.  Overall, the stock appropriate for investors with higher risk tolerance and conviction in the growth outlook.",
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "fundamentals": {
       "roe": 0.0759,
@@ -4576,7 +5037,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "10_Year_History": {
       "2016": 16.52,
@@ -4598,7 +5059,7 @@
       "2030": 22.05,
       "2031": 22.49
     },
-    "Last_Updated": "2026-03-28 04:50"
+    "Last_Updated": "2026-03-29 05:16"
   },
   "CZWI": {
     "company_profile": {
@@ -4618,9 +5079,9 @@
       "currency": "USD",
       "quote_type": "EQUITY",
       "market_cap": 185687776,
-      "52w_high": 19.49,
+      "52w_high": 19.84,
       "52w_low": 12.69,
-      "avg_volume": 56677,
+      "avg_volume": 57075,
       "pe_trailing": 13.208903,
       "pe_forward": 9.118203,
       "dividend_yield": 2.41,
@@ -4723,7 +5184,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-03-28 04:50"
+      "last_calculated": "2026-03-29 05:16"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -4733,7 +5194,7 @@
       "risk_profile": "Key risks for Citizens Community Bancorp, Inc. include weak near-term growth outlook; financial strength constraining growth assumptions; valuation premium (35% above estimated intrinsic value). The company operates in the Financial Services sector, which carries its own cyclical and regulatory exposures. The balance sheet provides a reasonable buffer against near-term downside scenarios.",
       "investment_summary": "Citizens Community Bancorp, Inc. is a mixed fundamental quality business that trades at a 35% premium to estimated intrinsic value.  Overall, the stock appropriate for investors with higher risk tolerance and conviction in the growth outlook.",
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "fundamentals": {
       "roe": 0.0786,
@@ -5077,7 +5538,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-03-28 04:50"
+      "generated_at": "2026-03-29 05:16"
     },
     "10_Year_History": {
       "2016": 10.4,
@@ -5099,6 +5560,6 @@
       "2030": 15.51,
       "2031": 15.82
     },
-    "Last_Updated": "2026-03-28 04:50"
+    "Last_Updated": "2026-03-29 05:16"
   }
 }
