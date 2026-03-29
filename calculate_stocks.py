@@ -2759,6 +2759,43 @@ def analyze_ticker(ticker, retries=3):
 
                     # Store forecast metadata so AI Studio can explain the logic
                     was_constrained = fs_multiplier < 1.0
+                    # Plain-English explanation for the forecast growth box
+                    _raw_pct  = round(raw_eps_rate * 100, 1)
+                    _base_pct = round(base_rate * 100, 1)
+                    _bull_pct = round(bull_rate * 100, 1)
+                    _bear_pct = round(bear_rate * 100, 1)
+
+                    if was_constrained:
+                        _constraint_text = (
+                            f"The analyst consensus forecast was {_raw_pct}% per year, "
+                            f"but this has been moderated to {_base_pct}% because the "
+                            f"company's financial strength score is only {fs_score}/10. "
+                            f"A company with a weaker balance sheet — higher debt, lower cash — "
+                            f"has less room to fund the growth investors are hoping for, "
+                            f"so we apply a haircut to keep the forecast realistic. "
+                        )
+                    else:
+                        _constraint_text = (
+                            f"The base case uses the analyst consensus EPS growth forecast "
+                            f"of {_raw_pct}% per year. No adjustment was needed because the "
+                            f"company's financial strength score of {fs_score}/10 confirms "
+                            f"the balance sheet can support this level of growth. "
+                        )
+
+                    _growth_explanation = (
+                        f"Base ({_base_pct}%/yr): growth in line with analyst expectations. "
+                        f"Bull ({_bull_pct}%/yr): everything goes to plan. "
+                        f"Bear ({_bear_pct}%/yr): growth disappoints. "
+                        + (
+                            f"Growth capped at {_base_pct}% (from {_raw_pct}%) — "
+                            f"the balance sheet (financial strength {fs_score}/10) limits "
+                            f"how fast this company can realistically grow."
+                            if was_constrained else
+                            f"All scenarios capped at 30% — higher rates produce "
+                            f"unrealistically large numbers over time."
+                        )
+                    )
+
                     forecast_meta = {
                         "eps_next_5y_raw":       round(raw_eps_rate, 4),
                         "fs_score":              fs_score,
@@ -2772,6 +2809,7 @@ def analyze_ticker(ticker, retries=3):
                             f"to {round(base_rate*100,1)}% due to financial strength "
                             f"score of {fs_score}/10"
                         ) if was_constrained else None,
+                        "growth_explanation":    _growth_explanation,
                     }
 
                     # Current price for shading
