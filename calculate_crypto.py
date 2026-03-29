@@ -3380,6 +3380,24 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                         "Prices rarely stay below production cost for long because miners would stop mining, reducing supply. "
                         "The Speculative Fair Value is the average of both checks."
                     ),
+                    "growth_explanation":       (
+                        f"Base ({round(base_growth*100,1)}%/yr): projected growth based on "
+                        f"this token's quality score ({q_score}/10). "
+                        f"Bull ({round(bull_growth*100,1)}%/yr): adoption accelerates and "
+                        f"network usage grows strongly. "
+                        f"Bear ({round(bear_growth*100,1)}%/yr): adoption slows or "
+                        f"competition erodes the token's position. "
+                        + (
+                            f"The bear scenario is steeper than usual because survivability "
+                            f"is only {round(surv_pct*100,1)}% — this token has weaker "
+                            f"dilution control or holder value accrual, making it more "
+                            f"vulnerable in a downturn."
+                            if surv_mult < 1.0 else
+                            f"Unlike stocks, crypto has no analyst EPS forecasts. "
+                            f"These rates are based purely on quality and network strength — "
+                            f"treat them as a rough guide, not a precise prediction."
+                        )
+                    ),
                     "iv_selection_rationale":   _build_rationale(
                         bucket, methods_used, iv_floor_labels, iv_breakdown,
                         bucket_a_data, bucket_b_data, volume, circ, symbol,
