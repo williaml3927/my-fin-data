@@ -412,24 +412,22 @@ def get_dynamic_weights(company_type, tier):
 # =============================================================================
 # SOURCES
 # =============================================================================
-NYSE_URL  = "https://raw.githubusercontent.com/williaml3927/NYSE-list/refs/heads/main/NYSE.json"
-OTHER_URL = "https://raw.githubusercontent.com/williaml3927/NYSE-list/refs/heads/main/Other%20list.json"
+# =============================================================================
+# TICKER SOURCES — rreichel3/US-Stock-Symbols
+# Updated nightly at midnight Eastern. Covers NASDAQ, NYSE, and AMEX.
+# No manual maintenance needed — exchange transfers (like PLTR moving from
+# NYSE to NASDAQ) are automatically picked up the next day.
+# =============================================================================
+NASDAQ_URL = "https://raw.githubusercontent.com/rreichel3/US-Stock-Symbols/main/nasdaq/nasdaq_tickers.json"
+NYSE_URL   = "https://raw.githubusercontent.com/rreichel3/US-Stock-Symbols/main/nyse/nyse_tickers.json"
+AMEX_URL   = "https://raw.githubusercontent.com/rreichel3/US-Stock-Symbols/main/amex/amex_tickers.json"
+
+# Core tickers processed first to ensure they always appear
+# (belt-and-suspenders in case of any temporary source outage)
 CORE_PRIORITY = [
-    # Original top 10
     "AAPL", "TSLA", "MSFT", "NVDA", "GOOGL",
     "AMZN", "META", "BRK-B", "LLY", "AVGO",
-    # S&P 500 large caps confirmed missing from compiled JSON
-    "V", "DHR", "LOW", "SCHW", "T", "ITW",
-    # Growth & Tech confirmed missing
-    "PLTR", "SNOW", "MSTR", "UBER",
-    # Energy confirmed missing
-    "BKR",
-    # Financials confirmed missing
-    "C", "PRU", "KKR",
-    # REITs confirmed missing
-    "O", "EXR", "EQR", "VTR",
-    # International ADRs confirmed missing
-    "PBR",
+    "PLTR", "UBER", "V", "JPM", "WMT",
 ]
 
 # =============================================================================
@@ -482,24 +480,49 @@ def _is_junk_ticker(symbol: str) -> bool:
 
 
 def get_all_tickers():
-    tickers = CORE_PRIORITY.copy()
-    for url in [NYSE_URL, OTHER_URL]:
+    """
+    Loads tickers from rreichel3/US-Stock-Symbols — updated nightly.
+    Each file is a plain JSON array of strings: ["AAPL", "TSLA", ...]
+    Combines NASDAQ + NYSE + AMEX, deduplicates, and filters junk tickers.
+    Falls back to CORE_PRIORITY only if all three sources fail.
+    """
+    seen    = set()
+    tickers = []
+
+    # Add core priority first so they are always processed
+    for t in CORE_PRIORITY:
+        clean = t.strip().upper().replace('.', '-')
+        if clean not in seen and not _is_junk_ticker(clean):
+            tickers.append(clean)
+            seen.add(clean)
+
+    # Fetch from all three exchanges
+    sources = [
+        ("NASDAQ", NASDAQ_URL),
+        ("NYSE",   NYSE_URL),
+        ("AMEX",   AMEX_URL),
+    ]
+    for exchange, url in sources:
         try:
-            res  = requests.get(url)
-            data = res.json()
-            for item in data:
-                symbol = (
-                    item.get('Symbol') or
-                    item.get('ACT Symbol') or
-                    item.get('ticker')
-                )
-                if symbol:
-                    clean = symbol.strip().upper().replace('.', '-')
-                    if clean not in tickers and not _is_junk_ticker(clean):
-                        tickers.append(clean)
+            res  = requests.get(url, timeout=15)
+            data = res.json()   # plain list of strings e.g. ["AAPL", "TSLA"]
+            added = 0
+            for symbol in data:
+                if not isinstance(symbol, str):
+                    continue
+                clean = symbol.strip().upper().replace('.', '-')
+                if clean and clean not in seen and not _is_junk_ticker(clean):
+                    tickers.append(clean)
+                    seen.add(clean)
+                    added += 1
+            print(f"  [{exchange}] {added} tickers loaded")
         except Exception as e:
-            print(f"Could not read {url}: {e}")
-    print(f"  Loaded {len(tickers)} tickers after filtering warrants/rights/units")
+            print(f"  [{exchange}] Could not read {url}: {e}")
+
+    if len(tickers) <= len(CORE_PRIORITY):
+        print("  WARNING: All ticker sources failed — running on CORE_PRIORITY only")
+
+    print(f"  Total: {len(tickers)} tickers after deduplication and filtering")
     return tickers
 
 # =============================================================================
@@ -3015,12 +3038,61 @@ def analyze_ticker(ticker, retries=3):
                 "beta":              info.get("beta"),
             }
 
+            # ── Data availability flags — used by AI Studio to show
+            # appropriate messages instead of blank charts ──────────────────
+            _has_iv         = _iv is not None and _iv > 0
+            _has_price      = _cp is not None and _cp > 0
+            _has_financials = bool(
+                financials_charts.get("revenue_vs_net_income") or
+                financials_charts.get("fcf_vs_debt") or
+                financials_charts.get("shares_vs_buybacks")
+            )
+            _active_methods = valuations.get("methods_used", 0) or 0
+
+            if not _has_price:
+                _data_status = "no_price"
+                _data_message = (
+                    "Price data is currently unavailable for this ticker. "
+                    "It may be delisted, suspended, or too illiquid to trade. "
+                    "We are unable to provide a valuation without a current price."
+                )
+            elif not _has_iv and not _has_financials:
+                _data_status = "no_financial_data"
+                _data_message = (
+                    "Insufficient financial data is available for this company. "
+                    "This is common for very small, early-stage, or OTC-listed companies "
+                    "that do not report full financials publicly. "
+                    "Valuation methods require at least revenue, earnings, or cash flow data."
+                )
+            elif not _has_iv:
+                _data_status = "no_valuation"
+                _data_message = (
+                    "Financial data is available but none of our valuation methods "
+                    "produced a reliable result for this company. "
+                    "This typically happens with pre-revenue companies, financial "
+                    "holding structures, or companies with highly irregular cash flows."
+                )
+            else:
+                _data_status = "ok"
+                _data_message = None
+
+            data_availability = {
+                "status":           _data_status,
+                "message":          _data_message,
+                "has_price":        _has_price,
+                "has_iv":           _has_iv,
+                "has_financials":   _has_financials,
+                "active_methods":   _active_methods,
+                "exclude_from_search": not _has_price,  # hide no-price tickers from search
+            }
+
             return ticker, {
                 "company_profile":      company_profile,
                 "current_price":        round(_cp, 2) if _cp else None,
                 "intrinsic_value":      round(_iv, 2) if _iv else None,
                 "margin_of_safety_pct": _mos_pct,
                 "mos_label":            _mos_label,
+                "data_availability":    data_availability,
                 "valuations":         valuations,
                 "quality":            quality,
                 "quality_narrative":  quality_narrative,
