@@ -453,7 +453,10 @@ FMP_API_KEY = "p9L0gFU6BZv1UKrKn1GxA92CX3LQghKz"
 #   WS = warrant series   (legacy suffix)
 #   WW = double warrant   (e.g. BGLWW)
 #   Z  = special series   (e.g. OUSTZ, HUBCZ)
-EXCLUDED_SUFFIXES = ("W", "R", "U", "WS", "WW")
+EXCLUDED_SUFFIXES = ("W", "WS", "WW")
+# NOTE: "R" and "U" removed — too broad, incorrectly filters real tickers
+# like PLTR, UBER, FLIR, NVR. Rights/units are handled by the dot->dash
+# replacement in get_all_tickers() e.g. "AACB.R" becomes "AACB-R".
 
 # Known non-DCF-compatible security types reported by yfinance quoteType.
 # ETFs, closed-end funds, index funds etc. have no earnings or cash flow.
