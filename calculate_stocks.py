@@ -453,10 +453,14 @@ FMP_API_KEY = "p9L0gFU6BZv1UKrKn1GxA92CX3LQghKz"
 #   WS = warrant series   (legacy suffix)
 #   WW = double warrant   (e.g. BGLWW)
 #   Z  = special series   (e.g. OUSTZ, HUBCZ)
-EXCLUDED_SUFFIXES = ("W", "WS", "WW")
-# NOTE: "R" and "U" removed — too broad, incorrectly filters real tickers
-# like PLTR, UBER, FLIR, NVR. Rights/units are handled by the dot->dash
-# replacement in get_all_tickers() e.g. "AACB.R" becomes "AACB-R".
+# Suffix patterns for junk tickers (warrants, SPAC units).
+# Rules calibrated to avoid filtering real operating companies:
+#   W  → only filter if 5+ chars (catches AACIW, ABLVW but keeps LOW, CDW, SCHW, PANW, SNOW)
+#   WS → always filter (warrant series — no real ticker has this)
+#   WW → always filter (double warrant — no real ticker has this)
+#   U  → only filter if 5+ chars (catches AACIU, ADACU but keeps real 3-4 char tickers)
+#   R  → removed entirely (was catching PLTR, UBER, FLIR, NVR etc.)
+# Single-letter tickers (V=Visa, T=AT&T, F=Ford etc.) are now allowed through.
 
 # Known non-DCF-compatible security types reported by yfinance quoteType.
 # ETFs, closed-end funds, index funds etc. have no earnings or cash flow.
@@ -466,19 +470,30 @@ EXCLUDED_QUOTE_TYPES = {"ETF", "MUTUALFUND", "INDEX", "FUTURE", "OPTION",
 def _is_junk_ticker(symbol: str) -> bool:
     """
     Returns True if the ticker should be excluded from valuation.
-    Catches warrants, rights, units, and other non-operating securities
-    by suffix pattern alone — no API call needed.
+    Catches warrants and SPAC units by suffix pattern — no API call needed.
+
+    Rules:
+      WS / WW      → always junk (no real operating company uses these)
+      W (5+ chars) → warrant e.g. AACIW, ABLVW; keeps LOW, CDW, SCHW, PANW, SNOW
+      U (5+ chars) → SPAC unit e.g. AACIU, ADACU; keeps real 3-4 char tickers
+      Single char  → allowed (V=Visa, T=AT&T, F=Ford, C=Citigroup etc.)
     """
-    # Single-letter tickers are usually closed-end funds or preferred stock
-    if len(symbol) == 1:
+    n = len(symbol)
+
+    # WS/WW suffixes: only junk if 5+ chars (GWW = W.W. Grainger is real, BGLWW is a warrant)
+    if (symbol.endswith("WS") or symbol.endswith("WW")) and n >= 5:
         return True
-    # Warrants, rights and units by suffix
-    for suffix in EXCLUDED_SUFFIXES:
-        if symbol.endswith(suffix) and len(symbol) > len(suffix) + 1:
-            return True
-    # SPAC-style patterns: 4-5 uppercase letters, no numbers
-    # SPACs are identified later if they have no revenue — not pre-filtered
-    # here to avoid accidentally excluding real tickers
+
+    # W suffix: only filter if 5+ chars — warrants are BASE+W (5+ total)
+    # Real 3-4 char tickers ending in W: LOW, CDW, DOW, ITW, GLW, SCHW, PANW, SNOW etc.
+    if symbol.endswith("W") and n >= 5:
+        return True
+
+    # U suffix: only filter if 5+ chars — SPAC units are BASE+U (5+ total)
+    # Real short tickers ending in U are rare and pass through safely
+    if symbol.endswith("U") and n >= 5:
+        return True
+
     return False
 
 
