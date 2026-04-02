@@ -3104,6 +3104,52 @@ def analyze_ticker(ticker, retries=3):
                 "exclude_from_search": not _has_price,  # hide no-price tickers from search
             }
 
+
+            # ── Price Drop Alert ─────────────────────────────────────────────
+            # Detects two conditions that signal a stock worth investigating:
+            #   1. ATH Drop  — price is ≥ 20% below the 52-week high
+            #   2. Downtrend — last 3 closing prices are all falling (price_history)
+            #
+            # When triggered, the app shows a "Price Drop Analysis" panel that
+            # asks Gemini to classify the drop as macro or company-specific.
+            # The signal is stored so Gemini knows which analysis to run.
+            # ─────────────────────────────────────────────────────────────────
+            _ath        = _safe(info.get("fiftyTwoWeekHigh"))
+            _price_drop_pct  = None
+            _drop_signal     = None
+            _drop_triggered  = False
+
+            if _cp and _cp > 0:
+                # Signal 1: ATH drop ≥ 20%
+                if _ath and _ath > 0:
+                    _price_drop_pct = round((_ath - _cp) / _ath * 100, 1)
+                    if _price_drop_pct >= 20:
+                        _drop_signal    = "ath_drop"
+                        _drop_triggered = True
+
+                # Signal 2: Downtrend — last 3 annual closes all falling
+                if not _drop_triggered and price_history and len(price_history) >= 3:
+                    _sorted_years  = sorted(price_history.keys())
+                    _last3         = [price_history[y] for y in _sorted_years[-3:]]
+                    if _last3[0] > _last3[1] > _last3[2]:
+                        _drop_signal    = "downtrend"
+                        _drop_triggered = True
+
+            price_alert = {
+                "triggered":        _drop_triggered,
+                "signal":           _drop_signal,           # "ath_drop" | "downtrend" | null
+                "drop_from_ath_pct": _price_drop_pct,       # % below 52w high (or null)
+                "ath":              round(_ath, 2) if _ath else None,
+                "current_price":    round(_cp, 2) if _cp else None,
+                "message": (
+                    f"Down {_price_drop_pct:.0f}% from 52-week high of ${_ath:.2f}"
+                    if _drop_signal == "ath_drop" else
+                    "Price has been falling for 3 consecutive years"
+                    if _drop_signal == "downtrend" else
+                    None
+                ),
+            }
+
             return ticker, {
                 "company_profile":      company_profile,
                 "current_price":        round(_cp, 2) if _cp else None,
@@ -3119,6 +3165,7 @@ def analyze_ticker(ticker, retries=3):
                 "valuation_chart":    valuation_chart,
                 "forecast_meta":      forecast_meta,
                 "bull_bear":          bull_bear,
+                "price_alert":        price_alert,
                 "10_Year_History":    price_history,
                 "5_Year_Forecast":    forecast,
                 "Last_Updated":       datetime.now().strftime("%Y-%m-%d %H:%M"),
