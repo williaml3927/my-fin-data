@@ -4753,19 +4753,24 @@ def generate_quality_narrative(ticker, info, final_scores, score_labels,
                                 fundamentals, fwd_growth, forecast_meta,
                                 intrinsic_value, company_type):
     """
-    Pre-compute the three Quality tab narrative blocks so AI Studio
-    reads them from the JSON rather than generating them at query time.
+    Pre-compute quality narrative content for the Quality tab so the app
+    reads everything from the JSON rather than generating text at query time.
 
-    Blocks:
-      quality_conclusion  — 2-3 sentence overall assessment of business quality
-      risk_profile        — 2-3 sentence risk summary covering key vulnerabilities
-      investment_summary  — 2-3 sentence summary of the investment case
-
-    Each block has a rule-based fallback that fires when the API key is
-    absent, ensuring the app always has something to display.
-
-    All three are generated in a single Haiku API call to minimise
-    pipeline runtime (one call per ticker vs three).
+    Output fields
+    ─────────────
+    moat_score          — int 0-10 (None until Claude API key is set)
+    moat_rationale      — one sentence on the moat
+    metric_assessments  — per-metric plain-English explanation
+    classification_reason — NEW: plain-English explanation of WHY the stock
+                           received its Safe / Speculative / Dangerous rating,
+                           written for a beginner investor
+    investment_narrative  — NEW: single merged paragraph replacing the three
+                           separate sections (quality_conclusion + risk_profile
+                           + investment_summary). Covers what the business does
+                           well, its key risks, and the investment outlook in
+                           one cohesive, readable block.
+    source              — "api" | "rules"
+    generated_at        — timestamp
     """
     company_name   = info.get("longName") or info.get("shortName") or ticker
     sector         = info.get("sector", "Unknown")
@@ -4781,11 +4786,11 @@ def generate_quality_narrative(ticker, info, final_scores, score_labels,
     if rev_total and rev_total > 0 and ni_total is not None:
         profit_margin = round(ni_total / rev_total * 100, 1)
 
-    p   = final_scores.get("profitability", 0)   or 0
+    p   = final_scores.get("profitability", 0)    or 0
     fs  = final_scores.get("financial_strength", 0) or 0
-    g   = final_scores.get("growth", 0)           or 0
-    pre = final_scores.get("predictability", 0)   or 0
-    v   = final_scores.get("valuation", 0)        or 0
+    g   = final_scores.get("growth", 0)            or 0
+    pre = final_scores.get("predictability", 0)    or 0
+    v   = final_scores.get("valuation", 0)         or 0
 
     p_lbl   = score_labels.get("profitability",      "")
     fs_lbl  = score_labels.get("financial_strength", "")
@@ -4799,8 +4804,95 @@ def generate_quality_narrative(ticker, info, final_scores, score_labels,
     cur_rat  = fundamentals.get("current_ratio")
     eps5y    = round(fwd_growth.get("raw", 0) * 100, 1)
 
-    # ── Rule-based fallback texts ─────────────────────────────────────────────
-    # Quality conclusion
+    # ── Helpers ────────────────────────────────────────────────────────────────
+    def _roic_float():
+        if roic_pct is None: return None
+        try:
+            return float(str(roic_pct).rstrip("%"))
+        except Exception:
+            return None
+
+    roic_val = _roic_float()
+
+    # ── Classification reason (why Safe / Speculative / Dangerous) ─────────────
+    # Explains to a beginner investor exactly why the stock got this label.
+    strongest = max(
+        [("profitability", p), ("financial strength", fs),
+         ("growth", g), ("predictability", pre)],
+        key=lambda x: x[1]
+    )
+    weakest = min(
+        [("profitability", p), ("financial strength", fs),
+         ("growth", g), ("predictability", pre)],
+        key=lambda x: x[1]
+    )
+
+    if classification == "Safe":
+        if python_subtotal_pct >= 70:
+            why = (
+                f"{company_name} earns a Safe rating because it scores consistently "
+                f"well across all four fundamental measures — profitability, financial "
+                f"strength, growth, and predictability. "
+                f"{'A strong ROIC of ' + str(roic_pct) + ' means the business is highly efficient at turning invested capital into profit. ' if roic_val and roic_val > 15 else ''}"
+                f"Companies at this quality level have proven they can grow steadily "
+                f"and manage their finances well, making them lower-risk long-term investments."
+            )
+        else:
+            why = (
+                f"{company_name} earns a Safe rating primarily because of its "
+                f"strong {strongest[0]}, combined with a competitive moat that provides "
+                f"a durable business advantage. "
+                f"While not perfect across every measure, the combination of moat strength "
+                f"and solid fundamentals makes this a lower-risk holding."
+            )
+    elif classification == "Speculative":
+        mixed_dims = [
+            name for name, score in
+            [("profitability", p), ("financial strength", fs),
+             ("growth", g), ("predictability", pre)]
+            if 4 <= score <= 6
+        ]
+        low_dims = [
+            name for name, score in
+            [("profitability", p), ("financial strength", fs),
+             ("growth", g), ("predictability", pre)]
+            if score <= 3
+        ]
+        if low_dims:
+            why = (
+                f"{company_name} is rated Speculative because it has notable weaknesses "
+                f"in {' and '.join(low_dims[:2])}, which introduces meaningful uncertainty "
+                f"about future performance. "
+                f"{'There are also questions about how fast the business can grow.' if g <= 4 else ''}"
+                f"Speculative doesn't mean bad — it means the outcome is less predictable "
+                f"and the investment carries more risk than a Safe-rated company."
+            )
+        else:
+            why = (
+                f"{company_name} is rated Speculative because its fundamentals are mixed "
+                f"— decent in some areas but not consistently strong enough to qualify as Safe. "
+                f"{'The growth outlook adds uncertainty to the longer-term picture. ' if g <= 5 else ''}"
+                f"This rating means the investment could work out well, but there is more "
+                f"uncertainty involved compared to a Safe-rated company."
+            )
+    else:  # Dangerous
+        danger_dims = [
+            name for name, score in
+            [("profitability", p), ("financial strength", fs),
+             ("growth", g), ("predictability", pre)]
+            if score <= 3
+        ]
+        why = (
+            f"{company_name} carries a Dangerous rating because it shows significant "
+            f"weaknesses in {' and '.join(danger_dims[:2]) if danger_dims else 'multiple fundamental areas'}. "
+            f"{'A high debt load relative to earnings adds financial pressure on the business. ' if d_ebitda and d_ebitda > 4 else ''}"
+            f"{'Revenue and earnings have been inconsistent, making it hard to predict where this business will be in a few years. ' if pre <= 3 else ''}"
+            f"Dangerous-rated stocks can still recover, but they carry a higher risk of "
+            f"permanent capital loss and should only be held with a clear thesis and strict position sizing."
+        )
+
+    # ── Merged investment narrative (replaces 3 separate sections) ────────────
+    # Part 1: what is the quality of this business?
     quality_words = {
         "Safe":        "strong fundamental quality",
         "Speculative": "mixed fundamental quality",
@@ -4811,55 +4903,47 @@ def generate_quality_narrative(ticker, info, final_scores, score_labels,
     if python_subtotal_pct >= 70:
         qual_strength = "scores highly across profitability, financial strength, and predictability"
     elif python_subtotal_pct >= 55:
-        qual_strength = f"shows particular strength in {p_lbl.lower()} profitability" \
-                        if p >= fs else f"benefits from {fs_lbl.lower()} financial strength"
+        qual_strength = (
+            f"shows particular strength in profitability"
+            if p >= fs else "benefits from solid financial strength"
+        )
     else:
-        weak_dim = min(
-            [("profitability", p), ("financial strength", fs),
-             ("growth", g), ("predictability", pre)],
-            key=lambda x: x[1]
-        )[0]
-        qual_strength = f"is constrained by {weak_dim}"
+        qual_strength = f"is constrained by {weakest[0]}"
 
-    roic_text = f", supported by a {roic_pct}% ROIC" if roic_pct and float(roic_pct.rstrip('%') if isinstance(roic_pct, str) else roic_pct) > 12 else ""
-    rule_quality_conclusion = (
-        f"{company_name} demonstrates {q_word}, scoring {round(python_subtotal_pct)}% across "
-        f"four fundamental dimensions. The business {qual_strength}{roic_text}. "
-        f"{'Moat assessment is pending and will adjust the final classification.' if classification == 'Speculative' else f'The current classification is {classification}.'}"
+    roic_text = (
+        f", supported by a {roic_pct} ROIC"
+        if roic_val and roic_val > 12 else ""
+    )
+    quality_part = (
+        f"{company_name} demonstrates {q_word} and {qual_strength}{roic_text}. "
     )
 
-    # Risk profile
+    # Part 2: key risks
     risks = []
     if d_ebitda and d_ebitda > 3.0:
-        risks.append(f"elevated leverage (Debt/EBITDA: {d_ebitda:.1f}x)")
+        risks.append(f"elevated leverage (Debt/EBITDA {d_ebitda:.1f}x)")
     if cur_rat and cur_rat < 1.0:
-        risks.append(f"tight liquidity (current ratio: {cur_rat:.2f})")
+        risks.append(f"tight liquidity (current ratio {cur_rat:.2f})")
     if g <= 3:
-        risks.append("weak near-term growth outlook")
+        risks.append("a weak near-term growth outlook")
     if pre <= 3:
-        risks.append("inconsistent earnings trajectory")
+        risks.append("inconsistent earnings")
     if forecast_meta.get("growth_constrained"):
-        risks.append("financial strength constraining growth assumptions")
+        risks.append("balance sheet constraints on growth")
     if mos and mos < -20:
-        risks.append(f"valuation premium ({abs(mos):.0f}% above estimated intrinsic value)")
+        risks.append(f"a valuation premium of {abs(mos):.0f}% above estimated intrinsic value")
     if eps5y < 3:
-        risks.append(f"low consensus EPS growth forecast ({eps5y}% p.a.)")
+        risks.append(f"low consensus EPS growth ({eps5y}% p.a.)")
 
     if risks:
-        risk_list = "; ".join(risks[:3])
-        rule_risk_profile = (
-            f"Key risks for {company_name} include {risk_list}. "
-            f"{'The company operates in the ' + sector + ' sector, which carries its own cyclical and regulatory exposures.' if sector != 'Unknown' else 'Broader market and macroeconomic conditions present additional uncertainty.'} "
-            f"{'A financial strength score of ' + str(fs) + '/10 suggests the balance sheet provides limited buffer against downside scenarios.' if fs <= 4 else 'The balance sheet provides a reasonable buffer against near-term downside scenarios.'}"
-        )
+        risk_part = f"Key risks to watch: {'; '.join(risks[:3])}. "
     else:
-        rule_risk_profile = (
-            f"{company_name} presents a relatively contained risk profile with no major "
-            f"red flags across leverage, liquidity, or earnings consistency. "
-            f"{'The primary risk is valuation — the stock trades above estimated intrinsic value.' if mos and mos < 0 else 'The primary risks are macroeconomic and sector-level rather than company-specific.'}"
+        risk_part = (
+            "The risk profile is relatively contained with no major red flags "
+            "across leverage, liquidity, or earnings consistency. "
         )
 
-    # Investment summary
+    # Part 3: investment outlook
     if mos and mos > 20:
         val_text = f"trades at a {mos:.0f}% discount to estimated intrinsic value"
     elif mos and mos < -10:
@@ -4868,30 +4952,38 @@ def generate_quality_narrative(ticker, info, final_scores, score_labels,
         val_text = "trades near estimated intrinsic value"
 
     if classification == "Safe":
-        case_text = f"represents a {q_word} business that {val_text}"
-        action_text = "suitable for investors seeking quality-oriented exposure"
+        action_text = "suitable for quality-focused long-term investors"
     elif classification == "Speculative":
-        case_text = f"is a {q_word} business that {val_text}"
-        action_text = "appropriate for investors with higher risk tolerance and conviction in the growth outlook"
+        action_text = "appropriate for investors with higher risk tolerance and conviction in the growth thesis"
     else:
-        case_text = f"carries {q_word} with elevated risk factors, and {val_text}"
-        action_text = "warrants caution — position sizing and ongoing monitoring are advisable"
+        action_text = "warrants caution — careful position sizing and ongoing monitoring are essential"
 
-    rule_investment_summary = (
-        f"{company_name} {case_text}. "
-        f"{'With ' + str(eps5y) + '% consensus EPS growth forecast, the growth outlook ' + ('supports the investment case' if eps5y > 8 else 'adds uncertainty to the thesis') + '.' if eps5y else ''} "
-        f"Overall, the stock {action_text}."
+    growth_part = (
+        f"With {eps5y}% consensus EPS growth forecast, the growth outlook "
+        f"{'supports' if eps5y > 8 else 'adds some uncertainty to'} the investment case. "
+        if eps5y else ""
+    )
+
+    rule_investment_narrative = (
+        quality_part + risk_part + growth_part +
+        f"The stock {val_text} and is {action_text}."
     ).strip()
 
-    # ── API call — all three in one request ───────────────────────────────────
+    # Keep legacy fields populated for backward compatibility with any
+    # existing AI Studio prompts that reference them directly
+    rule_quality_conclusion = quality_part.strip()
+    rule_risk_profile = risk_part.strip()
+    rule_investment_summary = (growth_part + f"The stock {val_text} and is {action_text}.").strip()
+
+    # ── API call (single Claude Haiku request) ─────────────────────────────────
     if ANTHROPIC_API_KEY and ANTHROPIC_API_KEY.strip():
         context = {
-            "ticker":             ticker,
-            "company":            company_name,
-            "sector":             sector,
-            "company_type":       company_type,
-            "classification":     classification,
-            "quality_score_pct":  round(python_subtotal_pct),
+            "ticker":               ticker,
+            "company":              company_name,
+            "sector":               sector,
+            "company_type":         company_type,
+            "classification":       classification,
+            "quality_score_pct":    round(python_subtotal_pct),
             "scores": {
                 "profitability":      f"{p}/10 ({p_lbl})",
                 "financial_strength": f"{fs}/10 ({fs_lbl})",
@@ -4899,51 +4991,56 @@ def generate_quality_narrative(ticker, info, final_scores, score_labels,
                 "predictability":     f"{pre}/10 ({pre_lbl})",
                 "valuation":          f"{v}/10 ({v_lbl})",
             },
-            "roe_pct":            roe_pct,
-            "roic_pct":           roic_pct,
-            "debt_to_ebitda":     d_ebitda,
-            "current_ratio":      cur_rat,
-            "revenue_growth_pct": round(rev_growth * 100, 1) if rev_growth else None,
-            "profit_margin_pct":  profit_margin,
-            "eps_next_5y_pct":    eps5y,
-            "current_price":      current_price,
-            "intrinsic_value":    intrinsic_value,
+            "roe_pct":              roe_pct,
+            "roic_pct":             roic_pct,
+            "debt_to_ebitda":       d_ebitda,
+            "current_ratio":        cur_rat,
+            "revenue_growth_pct":   round(rev_growth * 100, 1) if rev_growth else None,
+            "profit_margin_pct":    profit_margin,
+            "eps_next_5y_pct":      eps5y,
+            "current_price":        current_price,
+            "intrinsic_value":      intrinsic_value,
             "margin_of_safety_pct": mos,
-            "growth_constrained": forecast_meta.get("growth_constrained"),
+            "growth_constrained":   forecast_meta.get("growth_constrained"),
         }
 
-        prompt = f"""You are a senior equity analyst writing for a professional investing app.
-Based on the financial data below, generate narrative content for {company_name} ({ticker}).
+        prompt = f"""You are a senior equity analyst writing for a beginner-friendly investing app.
+Based on the data below, generate narrative content for {company_name} ({ticker}).
 
 Data:
 {json.dumps(context, indent=2)}
 
 Generate ALL of the following in a single JSON response:
 
-1. moat_score: An integer from 0-10 representing the strength of the company's competitive moat.
-   Score on: pricing power, switching costs, network effects, cost advantages, intangible assets.
-   Use the financial data provided (ROIC, margins, predictability, growth consistency) as evidence.
-   10=exceptional durable moat, 7-9=strong moat, 4-6=moderate moat, 1-3=weak moat, 0=no moat.
+1. moat_score: Integer 0-10 for competitive moat strength.
+   Evidence: ROIC, margins, predictability, pricing power, switching costs.
+   10=exceptional, 7-9=strong, 4-6=moderate, 1-3=weak, 0=none.
 
-2. moat_rationale: One sentence explaining the moat score. Be specific to this company.
+2. moat_rationale: One sentence explaining the moat score, specific to this company.
 
-3. metric_assessments: A dict with one plain-English assessment per metric (1-2 sentences each).
-   Write for a beginner investor. Explain what the score means in practice — what the company
-   is actually doing well or poorly, and why it matters. Do NOT use labels like "weak", "strong",
-   "good", "adequate", or "poor" — describe the reality behind the number instead.
+3. metric_assessments: Dict with one plain-English assessment per metric (1-2 sentences).
+   Write for a beginner. Describe reality behind the number — what the company is actually
+   doing well or poorly and why it matters. Do NOT use label words like "weak", "strong",
+   "good", "adequate", "poor". Describe the business reality instead.
    Keys: "profitability", "financial_strength", "growth", "predictability", "valuation"
 
-4. quality_conclusion: 2-3 sentences on overall business quality. Mention classification
-   ({classification}), strongest and weakest dimensions, and what that means for the business.
+4. classification_reason: 2-3 sentences explaining in plain English WHY this company
+   received its {classification} rating. Explain what specific factors drove the rating.
+   Write for someone who has never invested before — no jargon. Focus on what this
+   means in practice (e.g. "the business earns reliably but carries more debt than ideal").
 
-5. risk_profile: 2-3 sentences on key risks. Reference actual metrics, not generic sector risks.
-
-6. investment_summary: 2-3 sentences on the investment case covering quality, valuation,
-   and growth outlook. End with a clear one-line stance.
+5. investment_narrative: A single cohesive paragraph (4-5 sentences) that covers:
+   - What the business quality is like and what it does well
+   - The main risks or weaknesses an investor should know about
+   - What the growth outlook looks like
+   - Whether the stock looks cheap, fair, or expensive right now
+   - A clear one-line investment stance at the end
+   Write in plain English. No jargon. This replaces three separate sections
+   (quality conclusion, risk profile, investment summary) so make it complete.
 
 Rules:
-- For {company_type} companies, do not flag high leverage as a risk if financial_strength ≥ 7
-- Be specific, factual, and grounded in the data provided
+- For {company_type} companies, do not flag leverage as a risk if financial_strength >= 7
+- Be specific and grounded in the data — no generic statements
 - Respond ONLY with valid JSON, no other text:
 
 {{
@@ -4956,9 +5053,8 @@ Rules:
     "predictability": "...",
     "valuation": "..."
   }},
-  "quality_conclusion": "...",
-  "risk_profile": "...",
-  "investment_summary": "..."
+  "classification_reason": "...",
+  "investment_narrative": "..."
 }}"""
 
         try:
@@ -4971,7 +5067,7 @@ Rules:
                 },
                 json={
                     "model":      "claude-haiku-4-5-20251001",
-                    "max_tokens": 1200,
+                    "max_tokens": 1400,
                     "messages":   [{"role": "user", "content": prompt}],
                 },
                 timeout=30,
@@ -4980,29 +5076,39 @@ Rules:
                 raw = response.json()["content"][0]["text"].strip()
                 raw = raw.replace("```json", "").replace("```", "").strip()
                 parsed = json.loads(raw)
+
+                # Build merged narrative from API response
+                api_narrative = parsed.get("investment_narrative", rule_investment_narrative)
+
                 return {
-                    "moat_score":          parsed.get("moat_score"),
-                    "moat_rationale":      parsed.get("moat_rationale", ""),
-                    "metric_assessments":  parsed.get("metric_assessments", {}),
-                    "quality_conclusion":  parsed.get("quality_conclusion",  rule_quality_conclusion),
-                    "risk_profile":        parsed.get("risk_profile",        rule_risk_profile),
-                    "investment_summary":  parsed.get("investment_summary",  rule_investment_summary),
-                    "source":              "api",
-                    "generated_at":        datetime.now().strftime("%Y-%m-%d %H:%M"),
+                    "moat_score":             parsed.get("moat_score"),
+                    "moat_rationale":         parsed.get("moat_rationale", ""),
+                    "metric_assessments":     parsed.get("metric_assessments", {}),
+                    "classification_reason":  parsed.get("classification_reason", why),
+                    "investment_narrative":   api_narrative,
+                    # Legacy fields — kept for backward compat
+                    "quality_conclusion":     parsed.get("quality_conclusion",  rule_quality_conclusion),
+                    "risk_profile":           parsed.get("risk_profile",        rule_risk_profile),
+                    "investment_summary":     parsed.get("investment_summary",  rule_investment_summary),
+                    "source":                 "api",
+                    "generated_at":           datetime.now().strftime("%Y-%m-%d %H:%M"),
                 }
         except Exception as e:
             print(f"  [NARRATIVE] {ticker}: API call failed ({str(e)[:60]}), using rules")
 
     # ── Rule-based fallback ───────────────────────────────────────────────────
     return {
-        "moat_score":          None,
-        "moat_rationale":      "",
-        "metric_assessments":  {},
-        "quality_conclusion":  rule_quality_conclusion,
-        "risk_profile":        rule_risk_profile,
-        "investment_summary":  rule_investment_summary,
-        "source":              "rules",
-        "generated_at":        datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "moat_score":            None,
+        "moat_rationale":        "",
+        "metric_assessments":    {},
+        "classification_reason": why,
+        "investment_narrative":  rule_investment_narrative,
+        # Legacy fields
+        "quality_conclusion":    rule_quality_conclusion,
+        "risk_profile":          rule_risk_profile,
+        "investment_summary":    rule_investment_summary,
+        "source":                "rules",
+        "generated_at":          datetime.now().strftime("%Y-%m-%d %H:%M"),
     }
 
 
