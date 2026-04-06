@@ -4040,19 +4040,7 @@ def generate_crypto_quality_narrative(symbol, name, bucket, quality, dilution,
                                        mc, rank, price, chg_30d):
     """
     Pre-compute per-metric quality assessments for the crypto Quality tab.
-    Mirrors the stocks generate_quality_narrative() pattern.
-
-    Returns:
-      {
-        "metric_assessments": {
-          "fee_growth":           "...",
-          "capital_efficiency":   "...",
-          ...
-        },
-        "quality_conclusion":  "...",
-        "source":   "api" | "rules",
-        "generated_at": "YYYY-MM-DD HH:MM"
-      }
+    Now also generates classification_reason and investment_narrative.
     """
     quality_scores = quality.get("scores", {})
     final_score    = quality.get("final_score", 0)
@@ -4060,8 +4048,6 @@ def generate_crypto_quality_narrative(symbol, name, bucket, quality, dilution,
     classification = quality.get("classification", "Speculative")
     bucket_label   = "Cash-Flow Protocol" if bucket == "A" else "Store of Value"
 
-    # Build rule-based metric descriptions (fallback)
-    rule_assessments = {}
     if bucket == "A":
         metrics = ["fee_growth", "capital_efficiency", "holder_value_accrual",
                    "network_demand", "dilution_control", "protocol_maturity"]
@@ -4069,64 +4055,153 @@ def generate_crypto_quality_narrative(symbol, name, bucket, quality, dilution,
         metrics = ["scarcity", "adoption_momentum", "security_premium",
                    "monetary_premium_quality", "dilution_control", "market_resilience"]
 
+    # Rule-based metric descriptions
+    rule_assessments = {}
     for m in metrics:
-        s = quality_scores.get(m, {})
-        score = s.get("score", 5)
-        label = s.get("label", m.replace("_", " ").title())
-        val   = s.get("value")
-        unit  = s.get("unit", "")
+        sc    = quality_scores.get(m, {})
+        score = sc.get("score", 5)
+        label = sc.get("label", m.replace("_", " ").title())
+        val   = sc.get("value")
+        unit  = sc.get("unit", "")
         val_str = f" ({val} {unit})" if val is not None else ""
         if score >= 8:
             rule_assessments[m] = (f"{label} is a clear strength{val_str}, placing this "
-                                   f"token well above most peers on this dimension.")
+                                   "token well above most peers on this dimension.")
         elif score >= 6:
             rule_assessments[m] = (f"{label} is solid{val_str}, meeting the expectations "
-                                   f"you'd want to see for a protocol at this stage.")
+                                   "you would expect for a protocol at this stage.")
         elif score >= 4:
             rule_assessments[m] = (f"{label} is middling{val_str}. The numbers are "
-                                   f"acceptable but leave room for improvement before this "
-                                   f"becomes a genuine strength.")
+                                   "acceptable but leave room for improvement.")
         else:
             rule_assessments[m] = (f"{label} is a concern{val_str}. This dimension is "
-                                   f"below par and worth monitoring as it could weigh on "
-                                   f"the protocol's long-term competitiveness.")
+                                   "below par and worth monitoring closely.")
 
+    # Helpers
+    circulating_pct = (dilution or {}).get("circulating_pct")
+    fdv_ratio       = (dilution or {}).get("fdv_to_mc_ratio")
+    dilution_flag   = bool(fdv_ratio and fdv_ratio > 2.0)
+    scored = [(m, quality_scores.get(m, {}).get("score", 5)) for m in metrics]
+    strongest_m = max(scored, key=lambda x: x[1])
+    weakest_m   = min(scored, key=lambda x: x[1])
+    strongest_label = strongest_m[0].replace("_", " ")
+    weakest_label   = weakest_m[0].replace("_", " ")
+
+    # Classification reason
+    if classification == "Safe":
+        dilution_note = ("The relatively controlled token supply reduces dilution risk. "
+                         if not dilution_flag else "")
+        why = (
+            f"{name} earns a Safe rating because its fundamentals score "
+            f"{final_score}/10 as a {bucket_label}, above the threshold that "
+            f"distinguishes established protocols from speculative ones. "
+            f"Its standout strength is {strongest_label}. "
+            + dilution_note
+        )
+    elif classification == "Speculative":
+        if weakest_m[1] <= 3:
+            dilution_note = ("The token supply dynamics add further risk. "
+                             if dilution_flag else "")
+            why = (
+                f"{name} is rated Speculative because while it has genuine strengths "
+                f"in {strongest_label}, it also has a notable weakness in "
+                f"{weakest_label} that introduces meaningful uncertainty. "
+                + dilution_note
+                + "Speculative means real potential but less predictable outcomes "
+                  "than a Safe-rated asset."
+            )
+        else:
+            why = (
+                f"{name} is rated Speculative because its quality profile is mixed "
+                f"at {final_score}/10 as a {bucket_label}. "
+                "Decent across most dimensions but not consistently strong enough "
+                "to qualify as lower-risk. The investment could work out well, but "
+                "there is meaningful uncertainty around long-term performance."
+            )
+    else:
+        dilution_note = ("Significant future token dilution potential adds further pressure. "
+                         if dilution_flag else "")
+        why = (
+            f"{name} carries a Dangerous rating because its fundamentals score only "
+            f"{final_score}/10 as a {bucket_label}, with notable weaknesses in "
+            f"{weakest_label}. "
+            + dilution_note
+            + "Dangerous-rated tokens carry a higher risk of permanent capital loss "
+              "and should only be held with strict position sizing and a clear exit plan."
+        )
+
+    # Merged investment narrative
+    q_words = {"Safe": "strong", "Speculative": "mixed", "Dangerous": "weak"}
+    q_word = q_words.get(classification, "moderate")
+    weakest_note = (f", while {weakest_label} remains the main area to watch. "
+                    if weakest_m[1] <= 5 else ". ")
+    quality_part = (
+        f"{name} is a {bucket_label} with {q_word} fundamentals, "
+        f"scoring {final_score}/10 overall. "
+        f"Its clearest strength is {strongest_label}"
+        + weakest_note
+    )
+    risks = []
+    if dilution_flag:
+        risks.append(f"future token dilution (FDV/MC ratio: {fdv_ratio:.1f}x)")
+    if weakest_m[1] <= 3:
+        risks.append(f"low {weakest_label} score ({weakest_m[1]}/10)")
+    if chg_30d and chg_30d < -20:
+        risks.append(f"recent price weakness ({chg_30d:.0f}% over 30 days)")
+    if circulating_pct and circulating_pct < 50:
+        risks.append(f"only {circulating_pct:.0f}% of supply currently circulating")
+    risk_part = (f"Key risks: {'; '.join(risks[:3])}. "
+                 if risks else "No major structural red flags in the current data. ")
+    if classification == "Safe":
+        stance = (f"{name} is suitable for investors seeking more established "
+                  "crypto exposure with lower protocol-level risk.")
+    elif classification == "Speculative":
+        stance = (f"{name} is appropriate for investors with higher risk tolerance "
+                  "and conviction in its long-term growth thesis.")
+    else:
+        stance = (f"{name} warrants caution and should only be held as a small "
+                  "position with a clear thesis and defined risk limits.")
+    rule_investment_narrative = (quality_part + risk_part + stance).strip()
+
+    # Legacy field for backward compat
     rule_conclusion = (
         f"{name} scores {final_score}/10 ({classification}) as a {bucket_label}. "
-        f"The overall quality profile reflects the protocol's maturity, fee economics, "
-        f"and token supply dynamics relative to peers."
+        "The overall quality profile reflects the protocol's maturity, fee economics, "
+        "and token supply dynamics relative to peers."
     )
 
     rule_result = {
-        "metric_assessments": rule_assessments,
-        "quality_conclusion":  rule_conclusion,
-        "source":              "rules",
-        "generated_at":        datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "metric_assessments":    rule_assessments,
+        "classification_reason": why,
+        "investment_narrative":  rule_investment_narrative,
+        "quality_conclusion":    rule_conclusion,
+        "source":                "rules",
+        "generated_at":          datetime.now().strftime("%Y-%m-%d %H:%M"),
     }
 
     if not (ANTHROPIC_API_KEY and ANTHROPIC_API_KEY.strip()):
         return rule_result
 
-    # Build context for Haiku
-    scores_summary = {m: {"score": quality_scores.get(m, {}).get("score"),
-                          "value": quality_scores.get(m, {}).get("value"),
-                          "unit":  quality_scores.get(m, {}).get("unit")}
-                      for m in metrics}
-
+    # Claude Haiku API call
+    scores_summary = {
+        m: {"score": quality_scores.get(m, {}).get("score"),
+            "value": quality_scores.get(m, {}).get("value"),
+            "unit":  quality_scores.get(m, {}).get("unit")}
+        for m in metrics
+    }
     proto_context = {}
     if bucket == "A" and bucket_a_data:
         proto_context = {
-            "annual_fees_usd":   bucket_a_data.get("annual_protocol_fees_usd"),
-            "ps_ratio":          bucket_a_data.get("ps_ratio"),
-            "pe_ratio":          bucket_a_data.get("pe_ratio_fdv_to_holders_rev"),
+            "annual_fees_usd": bucket_a_data.get("annual_protocol_fees_usd"),
+            "ps_ratio":        bucket_a_data.get("ps_ratio"),
+            "pe_ratio":        bucket_a_data.get("pe_ratio_fdv_to_holders_rev"),
         }
     elif bucket == "B" and bucket_b_data:
         mp = (bucket_b_data.get("monetary_premium") or {})
         proto_context = {
-            "gold_capture_pct":         mp.get("gold_capture_pct"),
-            "price_at_100pct_gold":     mp.get("price_at_100pct_gold"),
+            "gold_capture_pct":     mp.get("gold_capture_pct"),
+            "price_at_100pct_gold": mp.get("price_at_100pct_gold"),
         }
-
     context = {
         "symbol": symbol, "name": name, "bucket_label": bucket_label,
         "rank": rank, "market_cap_usd": mc, "current_price": price,
@@ -4134,42 +4209,31 @@ def generate_crypto_quality_narrative(symbol, name, bucket, quality, dilution,
         "classification": classification,
         "scores": scores_summary,
         "protocol_data": proto_context,
-        "circulating_pct": (dilution or {}).get("circulating_pct"),
-        "fdv_to_mc": (dilution or {}).get("fdv_to_mc_ratio"),
+        "circulating_pct": circulating_pct,
+        "fdv_to_mc": fdv_ratio,
         "price_change_30d_pct": chg_30d,
     }
-
-    metric_list = ", ".join(metrics)
-    prompt = f"""You are a senior crypto analyst writing for a beginner-friendly investing app.
-
-Analyse {name} ({symbol}) — a {bucket_label} ranked #{rank}.
-
-Data:
-{json.dumps(context, indent=2)}
-
-Generate:
-1. metric_assessments: A dict with one plain-English assessment for each metric in [{metric_list}].
-   Write 2 sentences per metric for a beginner investor. Explain what the score actually means
-   for this specific protocol — what is the protocol doing well or poorly, and why does it matter?
-   Do NOT use labels like "weak", "strong", "good", "poor", "adequate". Describe the reality.
-
-2. quality_conclusion: 2-3 sentences summarising the overall quality profile.
-   Mention the classification ({classification}), the clearest strength and biggest concern,
-   and what that means for someone considering this as an investment.
-
-Rules:
-- Be specific to {name} — avoid generic crypto boilerplate
-- Use the actual numbers from the data (scores, fees, ratios)
-- Write in plain English suitable for a beginner investor
-- Respond ONLY with valid JSON, no other text:
-
-{{
-  "metric_assessments": {{
-    {chr(10).join(f'    "{m}": "...",' for m in metrics)}
-  }},
-  "quality_conclusion": "..."
-}}"""
-
+    metric_lines = "\n".join(f'    "{m}": "...",' for m in metrics)
+    prompt = (
+        f"You are a senior crypto analyst writing for a beginner-friendly investing app.\n\n"
+        f"Analyse {name} ({symbol}) as a {bucket_label} ranked #{rank}.\n\n"
+        f"Data:\n{json.dumps(context, indent=2)}\n\n"
+        "Generate in a single JSON response:\n\n"
+        f"1. metric_assessments: One plain-English assessment (2 sentences) for each "
+        f"metric in [{', '.join(metrics)}]. Write for a beginner. Describe reality, "
+        "not labels like weak/strong/good/poor.\n\n"
+        f"2. classification_reason: 2-3 sentences explaining WHY {name} received its "
+        f"{classification} rating. Reference actual scores. No jargon.\n\n"
+        "3. investment_narrative: Single cohesive paragraph (4-5 sentences): "
+        "what kind of protocol this is, fundamental strength, main risk, "
+        "token supply dynamics, and a clear investment stance. Plain English.\n\n"
+        f"Respond ONLY with valid JSON.\n\n"
+        "{{\n"
+        f'  "metric_assessments": {{\n{metric_lines}\n  }},\n'
+        '  "classification_reason": "...",\n'
+        '  "investment_narrative": "..."\n'
+        "}}"
+    )
     try:
         resp = requests.post(
             "https://api.anthropic.com/v1/messages",
@@ -4180,7 +4244,7 @@ Rules:
             },
             json={
                 "model":      "claude-haiku-4-5-20251001",
-                "max_tokens": 1200,
+                "max_tokens": 1400,
                 "messages":   [{"role": "user", "content": prompt}],
             },
             timeout=30,
@@ -4190,10 +4254,12 @@ Rules:
             raw = raw.replace("```json", "").replace("```", "").strip()
             parsed = json.loads(raw)
             return {
-                "metric_assessments": parsed.get("metric_assessments", rule_assessments),
-                "quality_conclusion":  parsed.get("quality_conclusion",  rule_conclusion),
-                "source":              "api",
-                "generated_at":        datetime.now().strftime("%Y-%m-%d %H:%M"),
+                "metric_assessments":    parsed.get("metric_assessments",    rule_assessments),
+                "classification_reason": parsed.get("classification_reason", why),
+                "investment_narrative":  parsed.get("investment_narrative",  rule_investment_narrative),
+                "quality_conclusion":    rule_conclusion,
+                "source":                "api",
+                "generated_at":          datetime.now().strftime("%Y-%m-%d %H:%M"),
             }
         else:
             print(f"  [QUALITY] {symbol}: API returned {resp.status_code}, using rules")
