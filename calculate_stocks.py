@@ -2157,6 +2157,106 @@ def get_10yr_history(stock):
 # =============================================================================
 # MAIN ANALYSIS FUNCTION
 # =============================================================================
+def compute_watchlist_signal(classification, mos_pct, quality_scores,
+                              price_alert, forecast_meta):
+    """
+    Rules-based watchlist signal — no AI needed.
+    Combines quality, margin of safety, and price alert into one
+    actionable signal for the watchlist card.
+
+    Returns:
+      signal  — "Strong Buy" | "Buy" | "Watch" | "Hold" | "Avoid"
+      reason  — one plain-English sentence
+      score   — 0-100 composite
+    """
+    p   = (quality_scores or {}).get("profitability", 0) or 0
+    fs  = (quality_scores or {}).get("financial_strength", 0) or 0
+    g   = (quality_scores or {}).get("growth", 0) or 0
+    pre = (quality_scores or {}).get("predictability", 0) or 0
+    base_quality = round((p + fs + g + pre) / 40 * 100)
+
+    mos = mos_pct or 0
+    if mos >= 30:   val_adj = 20
+    elif mos >= 15: val_adj = 10
+    elif mos >= 0:  val_adj = 0
+    elif mos >= -15: val_adj = -10
+    else:           val_adj = -20
+
+    alert_adj = 0
+    if price_alert and price_alert.get("triggered"):
+        sig_type = price_alert.get("signal")
+        drop = price_alert.get("drop_from_ath_pct", 0) or 0
+        if sig_type == "ath_drop" and classification == "Safe" and drop >= 20:
+            alert_adj = 10
+        elif classification == "Dangerous":
+            alert_adj = -10
+
+    composite = max(0, min(100, base_quality + val_adj + alert_adj))
+
+    if classification == "Dangerous":
+        signal = "Avoid"
+    elif composite >= 75:
+        signal = "Strong Buy"
+    elif composite >= 60:
+        signal = "Buy"
+    elif composite >= 45:
+        signal = "Watch"
+    elif composite >= 30:
+        signal = "Hold"
+    else:
+        signal = "Avoid"
+
+    if classification == "Speculative" and signal == "Strong Buy":
+        signal = "Buy"
+
+    growth_rate = (forecast_meta or {}).get("base_growth_rate", 0) or 0
+    growth_pct  = round(growth_rate * 100, 1)
+
+    if signal == "Strong Buy":
+        reason = (
+            f"A Safe-rated business trading at a {mos:.0f}% discount to intrinsic value — "
+            f"quality at a genuine bargain."
+            if mos > 0 else
+            f"A Safe-rated business with strong fundamentals and "
+            f"{growth_pct}% expected annual growth."
+        )
+    elif signal == "Buy":
+        reason = (
+            f"Good fundamentals with a {mos:.0f}% margin of safety — "
+            f"worth adding at current prices."
+            if mos > 0 else
+            f"Solid quality stock near fair value. Consider accumulating on dips."
+        )
+    elif signal == "Watch":
+        reason = (
+            f"Quality business but trading {abs(mos):.0f}% above intrinsic value — "
+            f"wait for a better entry."
+            if mos < 0 else
+            f"Worth monitoring but needs a better entry point or more consistency."
+        )
+    elif signal == "Hold":
+        reason = (
+            "Fundamentals intact but not compelling enough to add at current prices."
+        )
+    else:
+        reason = (
+            "Weak fundamentals or significantly overvalued — better opportunities elsewhere."
+        )
+
+    return {
+        "signal": signal,
+        "reason": reason,
+        "score":  composite,
+        "inputs": {
+            "quality_base":   base_quality,
+            "val_adj":        val_adj,
+            "alert_adj":      alert_adj,
+            "classification": classification,
+            "mos_pct":        mos_pct,
+        }
+    }
+
+
 def analyze_ticker(ticker, retries=3):
     for attempt in range(retries):
         try:
@@ -3166,6 +3266,13 @@ def analyze_ticker(ticker, retries=3):
                 "forecast_meta":      forecast_meta,
                 "bull_bear":          bull_bear,
                 "price_alert":        price_alert,
+                "watchlist_signal":   compute_watchlist_signal(
+                    quality.get("classification"),
+                    _mos_pct,
+                    quality.get("scores"),
+                    price_alert,
+                    forecast_meta,
+                ),
                 "10_Year_History":    price_history,
                 "5_Year_Forecast":    forecast,
                 "Last_Updated":       datetime.now().strftime("%Y-%m-%d %H:%M"),
