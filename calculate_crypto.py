@@ -2365,6 +2365,136 @@ def _build_rationale(bucket, methods_used, iv_floor_labels, iv_breakdown,
     return " ".join(lines_out)
 
 
+def compute_crypto_watchlist_signal(classification, quality, chart_zones,
+                                    dilution, price, intrinsic_value,
+                                    chg_30d, bucket, rank):
+    """
+    Rules-based watchlist signal for crypto assets.
+
+    Combines quality classification, price zone (vs speculative fair value),
+    dilution risk, and market cycle into a single actionable signal.
+
+    Returns:
+      signal  — "Strong Buy" | "Buy" | "Watch" | "Hold" | "Avoid"
+      reason  — one plain-English sentence
+      score   — 0-100 composite
+    """
+    final_score = (quality or {}).get("final_score", 0) or 0
+    final_pct   = (quality or {}).get("final_score_pct", 0) or 0
+
+    # Base quality score (0-100) from the quality system
+    base_quality = round(final_pct)
+
+    # Valuation adjustment: how does price compare to speculative fair value?
+    val_adj = 0
+    mos_active = (chart_zones or {}).get("margin_of_safety", False)
+    current_zone = (chart_zones or {}).get("current_zone", "NEUTRAL_ZONE")
+
+    if mos_active:
+        val_adj = 20    # Price at or below SFV with good cycle = buy signal
+    elif current_zone == "ACCUMULATION_ZONE":
+        val_adj = 10
+    elif current_zone == "OVEREXTENDED_ZONE":
+        val_adj = -20   # Significantly above SFV
+    else:
+        val_adj = 0     # Neutral zone
+
+    # Dilution risk adjustment
+    fdv_ratio   = (dilution or {}).get("fdv_to_mc_ratio")
+    dilution_adj = 0
+    if fdv_ratio:
+        if fdv_ratio > 3.0:
+            dilution_adj = -15  # Heavy future dilution
+        elif fdv_ratio > 2.0:
+            dilution_adj = -8
+        elif fdv_ratio < 1.2:
+            dilution_adj = 5    # Mostly circulating already — low dilution
+
+    # Market rank adjustment (top 20 coins get slight boost for liquidity)
+    rank_adj = 5 if rank and rank <= 20 else 0
+
+    composite = max(0, min(100, base_quality + val_adj + dilution_adj + rank_adj))
+
+    # Map to signal
+    if classification == "Dangerous":
+        signal = "Avoid"
+    elif composite >= 72:
+        signal = "Strong Buy"
+    elif composite >= 58:
+        signal = "Buy"
+    elif composite >= 42:
+        signal = "Watch"
+    elif composite >= 28:
+        signal = "Hold"
+    else:
+        signal = "Avoid"
+
+    # Never Strong Buy a Speculative crypto
+    if classification == "Speculative" and signal == "Strong Buy":
+        signal = "Buy"
+
+    # Build reason
+    bucket_label = "Cash-Flow Protocol" if bucket == "A" else "Store of Value"
+
+    if signal == "Strong Buy":
+        reason = (
+            f"A Safe-rated {bucket_label} trading near or below its speculative "
+            f"fair value — strong quality at a favourable entry point."
+        )
+    elif signal == "Buy":
+        if mos_active:
+            reason = (
+                f"Quality {bucket_label} with a margin of safety present — "
+                f"price near speculative fair value during a constructive cycle phase."
+            )
+        else:
+            reason = (
+                f"Good fundamentals for a {bucket_label} at rank #{rank}. "
+                f"Consider accumulating at current levels."
+            )
+    elif signal == "Watch":
+        if current_zone == "OVEREXTENDED_ZONE":
+            reason = (
+                f"Strong protocol but price is running significantly above "
+                f"speculative fair value — wait for a pullback before entering."
+            )
+        elif dilution_adj < -5:
+            reason = (
+                f"Decent quality but significant token dilution ahead "
+                f"(FDV/MC: {fdv_ratio:.1f}x) — monitor before committing."
+            )
+        else:
+            reason = (
+                f"Worth monitoring but no clear margin of safety at current prices. "
+                f"Add to watchlist and revisit on weakness."
+            )
+    elif signal == "Hold":
+        reason = (
+            "Existing holders can stay in — fundamentals are intact but "
+            "no clear buying opportunity at current price levels."
+        )
+    else:
+        reason = (
+            "Weak fundamentals or heavily overextended price relative to value — "
+            "higher-quality opportunities available elsewhere."
+        )
+
+    return {
+        "signal":  signal,
+        "reason":  reason,
+        "score":   composite,
+        "inputs": {
+            "quality_base":  base_quality,
+            "val_adj":       val_adj,
+            "dilution_adj":  dilution_adj,
+            "rank_adj":      rank_adj,
+            "classification": classification,
+            "zone":          current_zone,
+            "mos_active":    mos_active,
+        }
+    }
+
+
 def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
     """Full valuation analysis for a single coin."""
     try:
@@ -3528,6 +3658,17 @@ def analyze_coin(coin, defillama_data, gold_mc, defillama_chain_data=None):
                 else "Market price (insufficient data)"
             ),
             "iv_methods_count":  len(methods_used),
+            "watchlist_signal":  compute_crypto_watchlist_signal(
+                                     classification = (quality or {}).get("classification"),
+                                     quality        = quality,
+                                     chart_zones    = chart_zones,
+                                     dilution       = dilution,
+                                     price          = price,
+                                     intrinsic_value= forecast_meta.get("base_iv") if forecast_meta else None,
+                                     chg_30d        = chg_30d,
+                                     bucket         = bucket,
+                                     rank           = rank,
+                                 ),
             "bull_bear":         generate_crypto_bull_bear(
                                      symbol       = symbol,
                                      name         = name,
