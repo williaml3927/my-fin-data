@@ -2888,15 +2888,21 @@ def analyze_ticker(ticker, retries=3):
                     except (TypeError, ValueError):
                         raw_eps_rate = growth_s1
 
-                    # Base rate — EPS growth constrained by financial strength
+                    # Growth rate caps — ensure bull > base > bear always.
+                    # High-growth stocks (raw EPS > 20%) get tighter caps for
+                    # realism: base ≤ 25%, bear ≤ 15%, bull still up to 30%.
+                    # Normal stocks: base ≤ 28% (leaves headroom for bull).
+                    _IS_HIGH_GROWTH = raw_eps_rate > 0.20
+                    _BASE_CAP = 0.25 if _IS_HIGH_GROWTH else (MAX_GROWTH_RATE - 0.02)
+                    _BEAR_CAP = 0.15 if _IS_HIGH_GROWTH else MAX_GROWTH_RATE
                     base_rate  = max(MIN_GROWTH_RATE,
-                                     min(raw_eps_rate * fs_multiplier, MAX_GROWTH_RATE))
-                    # Bull rate — optimistic: 30% above base, hard cap 30%
+                                     min(raw_eps_rate * fs_multiplier, _BASE_CAP))
+                    # Bull: 30% above base, always strictly above base
                     bull_rate  = max(MIN_GROWTH_RATE,
                                      min(base_rate * 1.30, MAX_GROWTH_RATE))
-                    # Bear rate — pessimistic: 45% below base, hard floor 1%
+                    # Bear: 45% below base, floored at 1%, capped for realism
                     bear_rate  = max(0.01,
-                                     min(base_rate * 0.55, MAX_GROWTH_RATE))
+                                     min(base_rate * 0.55, _BEAR_CAP))
 
                     # Store forecast metadata so AI Studio can explain the logic
                     was_constrained = fs_multiplier < 1.0
