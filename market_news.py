@@ -44,7 +44,9 @@ from datetime import datetime, timezone
 # CONFIGURATION
 # ─────────────────────────────────────────────────────────────────────────────
 
-NEWSAPI_KEY      = os.environ.get("NEWSAPI_KEY", "")
+NEWSAPI_KEY       = os.environ.get("NEWSAPI_KEY", "")
+BENZINGA_API_KEY  = os.environ.get("BENZINGA_API_KEY", "")
+FINNHUB_API_KEY   = os.environ.get("FINNHUB_API_KEY", "")
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 
 # GitHub target repo — same pattern as your existing pipelines
@@ -53,19 +55,13 @@ GITHUB_REPO      = "williaml3927/my-fin-data"
 OUTPUT_PATH      = "data_news/market_headlines.json"
 GITHUB_API_BASE  = "https://api.github.com"
 
-# How many headlines to fetch and store
+# How many headlines to keep in the final output
 MAX_HEADLINES    = 10
 
-# NewsAPI endpoint — business + financial news, English only, sorted by relevance
-NEWSAPI_URL      = "https://newsapi.org/v2/top-headlines"
-
-# Market-moving search queries — cast wide to capture macro, earnings, Fed, etc.
-NEWSAPI_PARAMS   = {
-    "language": "en",
-    "category": "business",
-    "pageSize": 30,         # Fetch 30, trim to best 10 after classification
-    "apiKey":   NEWSAPI_KEY,
-}
+# ── API endpoints ────────────────────────────────────────────────────────────
+BENZINGA_URL  = "https://api.benzinga.com/api/v2/news"
+FINNHUB_URL   = "https://finnhub.io/api/v1/news"
+NEWSAPI_URL   = "https://newsapi.org/v2/top-headlines"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # HELPERS
@@ -88,27 +84,174 @@ def _safe_str(v, default=""):
     return str(v).strip() if v else default
 
 
-def fetch_headlines() -> list[dict]:
+def fetch_from_benzinga() -> list[dict]:
     """
-    Pull top business headlines from NewsAPI.
-    Returns a list of raw article dicts.
+    Primary source — Benzinga News API.
+    Returns normalised article dicts with pre-tagged tickers and importance.
+    Benzinga stories already carry sentiment and ticker tags so Claude's
+    classification job is much lighter.
     """
-    if not NEWSAPI_KEY:
-        print("  [NEWS] No NEWSAPI_KEY set — skipping fetch")
+    if not BENZINGA_API_KEY:
+        return []
+    try:
+        resp = requests.get(
+            BENZINGA_URL,
+            params={
+                "token":       BENZINGA_API_KEY,
+                "pageSize":    30,
+                "displayOutput": "full",
+                "sort":        "created:desc",
+            },
+            timeout=15,
+        )
+        if resp.status_code != 200:
+            print(f"  [BENZINGA] {resp.status_code} — {resp.text[:100]}")
+            return []
+        items = resp.json() if isinstance(resp.json(), list) else resp.json().get("stories", [])
+        normalised = []
+        for a in items:
+            title = _safe_str(a.get("title"))
+            if not title or "[Removed]" in title:
+                continue
+            # Benzinga provides ticker tags — join them for the "affected" field
+            tickers = [t.get("name", "") for t in (a.get("stocks") or []) if t.get("name")]
+            normalised.append({
+                "title":        title,
+                "source":       _safe_str(a.get("source") or "Benzinga"),
+                "description":  _safe_str(a.get("teaser") or a.get("body", "")[:200]),
+                "url":          _safe_str(a.get("url")),
+                "published_at": _safe_str(a.get("created")),
+                "tickers":      tickers[:5],     # pre-tagged tickers
+                "importance":   a.get("importance", 0),  # 0=low 1=med 2=high
+                "_source_api":  "benzinga",
+            })
+        print(f"  [BENZINGA] {len(normalised)} articles fetched")
+        return normalised
+    except Exception as e:
+        print(f"  [BENZINGA] Failed: {e}")
         return []
 
-    try:
-        resp = requests.get(NEWSAPI_URL, params=NEWSAPI_PARAMS, timeout=15)
-        if resp.status_code != 200:
-            print(f"  [NEWS] NewsAPI returned {resp.status_code}: {resp.text[:200]}")
-            return []
-        data = resp.json()
-        articles = data.get("articles", [])
-        print(f"  [NEWS] Fetched {len(articles)} raw articles from NewsAPI")
-        return articles
-    except Exception as e:
-        print(f"  [NEWS] Fetch failed: {e}")
+
+def fetch_from_finnhub() -> list[dict]:
+    """
+    Fallback source — Finnhub General Market News.
+    Free, fast, and covers major macro and company stories.
+    """
+    if not FINNHUB_API_KEY:
         return []
+    try:
+        resp = requests.get(
+            FINNHUB_URL,
+            params={"category": "general", "token": FINNHUB_API_KEY},
+            timeout=15,
+        )
+        if resp.status_code != 200:
+            print(f"  [FINNHUB] {resp.status_code} — {resp.text[:100]}")
+            return []
+        items = resp.json() if isinstance(resp.json(), list) else []
+        normalised = []
+        for a in items[:30]:
+            title = _safe_str(a.get("headline"))
+            if not title:
+                continue
+            # Convert unix timestamp
+            ts = a.get("datetime", 0)
+            published = (
+                datetime.utcfromtimestamp(ts).strftime("%Y-%m-%dT%H:%M:%SZ")
+                if ts else ""
+            )
+            normalised.append({
+                "title":        title,
+                "source":       _safe_str(a.get("source") or "Finnhub"),
+                "description":  _safe_str(a.get("summary", "")[:200]),
+                "url":          _safe_str(a.get("url")),
+                "published_at": published,
+                "tickers":      [],
+                "importance":   1,
+                "_source_api":  "finnhub",
+            })
+        print(f"  [FINNHUB] {len(normalised)} articles fetched")
+        return normalised
+    except Exception as e:
+        print(f"  [FINNHUB] Failed: {e}")
+        return []
+
+
+def fetch_from_newsapi() -> list[dict]:
+    """
+    Last-resort source — NewsAPI business headlines.
+    Used when both Benzinga and Finnhub fail or are unavailable.
+    """
+    if not NEWSAPI_KEY:
+        return []
+    try:
+        resp = requests.get(
+            NEWSAPI_URL,
+            params={
+                "language": "en",
+                "category": "business",
+                "pageSize": 30,
+                "apiKey":   NEWSAPI_KEY,
+            },
+            timeout=15,
+        )
+        if resp.status_code != 200:
+            print(f"  [NEWSAPI] {resp.status_code} — {resp.text[:100]}")
+            return []
+        items = resp.json().get("articles", [])
+        normalised = []
+        for a in items:
+            title = _safe_str(a.get("title"))
+            if not title or "[Removed]" in title:
+                continue
+            normalised.append({
+                "title":        title,
+                "source":       _safe_str(a.get("source", {}).get("name")),
+                "description":  _safe_str(a.get("description", "")[:200]),
+                "url":          _safe_str(a.get("url")),
+                "published_at": _safe_str(a.get("publishedAt")),
+                "tickers":      [],
+                "importance":   1,
+                "_source_api":  "newsapi",
+            })
+        print(f"  [NEWSAPI] {len(normalised)} articles fetched")
+        return normalised
+    except Exception as e:
+        print(f"  [NEWSAPI] Failed: {e}")
+        return []
+
+
+def fetch_headlines() -> list[dict]:
+    """
+    Tiered fetch: Benzinga → Finnhub → NewsAPI.
+    Uses the best available source, falling back automatically.
+    Deduplicates by title similarity across sources.
+    """
+    articles = fetch_from_benzinga()
+
+    # If Benzinga gave us fewer than 10 stories, supplement with Finnhub
+    if len(articles) < 10:
+        print("  [FETCH] Benzinga thin — supplementing with Finnhub")
+        finnhub = fetch_from_finnhub()
+        # Simple dedup: skip if title already seen (first 40 chars)
+        seen_titles = {a["title"][:40].lower() for a in articles}
+        for a in finnhub:
+            if a["title"][:40].lower() not in seen_titles:
+                articles.append(a)
+                seen_titles.add(a["title"][:40].lower())
+
+    # If still thin, fall back to NewsAPI
+    if len(articles) < 10:
+        print("  [FETCH] Still thin — supplementing with NewsAPI")
+        newsapi = fetch_from_newsapi()
+        seen_titles = {a["title"][:40].lower() for a in articles}
+        for a in newsapi:
+            if a["title"][:40].lower() not in seen_titles:
+                articles.append(a)
+                seen_titles.add(a["title"][:40].lower())
+
+    print(f"  [FETCH] Total after merge: {len(articles)} articles")
+    return articles
 
 
 def classify_headlines(articles: list[dict]) -> list[dict]:
@@ -121,18 +264,27 @@ def classify_headlines(articles: list[dict]) -> list[dict]:
         return []
 
     # Build a compact list for the prompt — just title + source + description
-    article_list = [
-        {
-            "index":       i,
-            "title":       _safe_str(a.get("title")),
-            "source":      _safe_str(a.get("source", {}).get("name")),
-            "description": _safe_str(a.get("description"))[:200],
-            "url":         _safe_str(a.get("url")),
-            "published_at": _safe_str(a.get("publishedAt")),
+    article_list = []
+    for i, a in enumerate(articles[:25]):
+        title = _safe_str(a.get("title"))
+        if not title or "[Removed]" in title:
+            continue
+        entry = {
+            "index":        i,
+            "title":        title,
+            "source":       _safe_str(a.get("source")),
+            "description":  _safe_str(a.get("description"))[:200],
+            "url":          _safe_str(a.get("url")),
+            "published_at": _safe_str(a.get("published_at")),
+            "source_api":   a.get("_source_api", "unknown"),
         }
-        for i, a in enumerate(articles[:25])   # Cap at 25 for prompt size
-        if a.get("title") and "[Removed]" not in _safe_str(a.get("title"))
-    ]
+        # Pass through Benzinga's pre-tagged tickers and importance
+        # so Claude can use them directly rather than inferring
+        if a.get("tickers"):
+            entry["tickers"] = a["tickers"]
+        if a.get("importance") is not None:
+            entry["benzinga_importance"] = a["importance"]
+        article_list.append(entry)
 
     if not article_list:
         return []
