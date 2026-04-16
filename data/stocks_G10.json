@@ -1,4 +1,886 @@
 {
+  "GRAF": {
+    "company_profile": {
+      "name": "Graf Global Corp.",
+      "ticker": "GRAF",
+      "sector": "Financial Services",
+      "industry": "Shell Companies",
+      "company_type": "CONSUMER_FINANCE",
+      "type_rationale": "Financial services \u2014 DNI and P/B prioritised",
+      "description": "Graf Global Corp., a blank check company, focuses on effecting a merger, share exchange, asset acquisition, share purchase, reorganization, or similar business combination with one or more businesses. The company was incorporated in 2021 and is based in The Woodlands, Texas.",
+      "description_summary": "Graf Global Corp., a blank check company, focuses on effecting a merger, share exchange, asset acquisition, share purchase, reorganization, or similar business combination with one or more businesses. The company was incorporated in 2021 and is based in The Woodlands, Texas.",
+      "website": null,
+      "employees": null,
+      "country": "United States",
+      "city": "The Woodlands",
+      "exchange": "ASE",
+      "currency": "USD",
+      "quote_type": "EQUITY",
+      "market_cap": 308775008,
+      "52w_high": 11.85,
+      "52w_low": 10.21,
+      "avg_volume": 37238,
+      "pe_trailing": 34.64516,
+      "pe_forward": null,
+      "dividend_yield": null,
+      "beta": null
+    },
+    "current_price": 10.74,
+    "intrinsic_value": 6.75,
+    "margin_of_safety_pct": -59.1,
+    "mos_label": "Significant Premium",
+    "data_availability": {
+      "status": "ok",
+      "message": null,
+      "has_price": true,
+      "has_iv": true,
+      "has_financials": true,
+      "active_methods": 2,
+      "exclude_from_search": false
+    },
+    "valuations": {
+      "1_DCF_Operating_CF": null,
+      "2_DCF_FCF": null,
+      "3_DCF_Net_Income": 3.25,
+      "4_DCF_Terminal_Value": null,
+      "5_Mean_PS": null,
+      "6_Mean_PE": 13.75,
+      "7_Mean_PB": null,
+      "8_PSG": null,
+      "9_PEG": null,
+      "10_EV_EBITDA": null,
+      "intrinsic_value": 6.75,
+      "methods_used": 2,
+      "confidence": "Low",
+      "active_methods": [
+        "3_DCF_Net_Income",
+        "6_Mean_PE"
+      ],
+      "_meta": {
+        "pe_source": "historical_mean",
+        "ps_source": "current_trailing",
+        "pb_source": "historical_mean",
+        "ev_ebitda_source": "trailing_or_unavailable",
+        "growth_source": "finviz_no_growth",
+        "growth_raw": 0.0,
+        "growth_peg_rate": 0.0,
+        "discount_rate": 0.12,
+        "growth_stage1": 0.02,
+        "growth_stage2": 0.02,
+        "terminal_growth": 0.02,
+        "tier": "Weak",
+        "company_type": "CONSUMER_FINANCE",
+        "type_rationale": "Financial services \u2014 DNI and P/B prioritised",
+        "method_explanation": "Consumer finance companies \u2014 such as credit card providers or personal lenders \u2014 earn income from the interest they charge on loans. Like banks, they carry a lot of debt by design because lending money is their core business model. We use net income DCF and Price-to-Book, which together capture both the earning power and the asset value of the loan book.",
+        "weights_applied": {
+          "1_DCF_Operating_CF": 0.0,
+          "2_DCF_FCF": 0.0,
+          "3_DCF_Net_Income": 0.4,
+          "4_DCF_Terminal_Value": 0.0,
+          "5_Mean_PS": 0.15,
+          "6_Mean_PE": 0.2,
+          "7_Mean_PB": 0.15,
+          "8_PSG": 0.1,
+          "9_PEG": 0.0,
+          "10_EV_EBITDA": 0.0
+        },
+        "excluded_methods": [
+          "1_DCF_Operating_CF",
+          "2_DCF_FCF",
+          "4_DCF_Terminal_Value",
+          "9_PEG",
+          "10_EV_EBITDA"
+        ],
+        "active_methods": [
+          "3_DCF_Net_Income",
+          "6_Mean_PE"
+        ]
+      }
+    },
+    "quality": {
+      "scores": {
+        "profitability": 3,
+        "financial_strength": 1,
+        "growth": 1,
+        "predictability": 1,
+        "valuation": 2,
+        "moat": null
+      },
+      "score_labels": {
+        "profitability": "Weak",
+        "financial_strength": "Poor",
+        "growth": "Poor",
+        "predictability": "Poor",
+        "valuation": "Weak",
+        "moat": "Not scored"
+      },
+      "company_type": "CONSUMER_FINANCE",
+      "company_type_note": "Banks and REITs carry structural leverage \u2014 do not describe financial_strength scores of 7+ as 'moderate concern' for these types.",
+      "python_subtotal": 6,
+      "python_subtotal_pct": 15.0,
+      "classification": "Dangerous",
+      "penalty_pct": 8,
+      "final_score_pct": 7.0,
+      "tiebreaker_used": false,
+      "tiebreaker_inputs": {
+        "roe": null,
+        "roic": null,
+        "eps_next_5y": 0.0
+      },
+      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
+      "last_calculated": "2026-04-16 06:07"
+    },
+    "quality_narrative": {
+      "moat_score": null,
+      "moat_rationale": "",
+      "metric_assessments": {},
+      "classification_reason": "Graf Global Corp. carries a Dangerous rating because it shows significant weaknesses in profitability and financial strength. Revenue and earnings have been inconsistent, making it hard to predict where this business will be in a few years. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
+      "investment_narrative": "Graf Global Corp. demonstrates weak fundamental quality and is constrained by financial strength. Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth. The stock trades at a 59% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "quality_conclusion": "Graf Global Corp. demonstrates weak fundamental quality and is constrained by financial strength.",
+      "risk_profile": "Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth.",
+      "investment_summary": "The stock trades at a 59% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "source": "rules",
+      "generated_at": "2026-04-16 06:07"
+    },
+    "fundamentals": {
+      "roe": null,
+      "roic": null,
+      "roe_pct": null,
+      "roic_pct": null,
+      "roic_source": "unavailable",
+      "current_ratio": 4.23,
+      "debt_to_ebitda": null,
+      "debt_service_ratio": null
+    },
+    "financials_charts": {
+      "revenue_vs_net_income": {
+        "2024": {
+          "revenue": null,
+          "net_income": 5.23
+        },
+        "2023": {
+          "revenue": null,
+          "net_income": -0.0
+        }
+      },
+      "fcf_vs_debt": {
+        "2024": {
+          "cash_balance": 0.48,
+          "free_cash_flow": null,
+          "total_debt": null
+        },
+        "2023": {
+          "cash_balance": 0.0,
+          "free_cash_flow": null,
+          "total_debt": 0.01
+        }
+      },
+      "shares_vs_buybacks": {},
+      "returns_trajectory": {},
+      "revenue_vs_ar": {},
+      "_notes": {
+        "revenue_vs_net_income": "This chart shows how much money the company brings in (revenue) versus how much it actually keeps as profit (net income) each year. A healthy company should show both lines growing over time. If revenue grows but net income shrinks, the company is spending more than it is earning \u2014 a warning sign worth investigating.",
+        "fcf_vs_debt": "Free cash flow is the cash left over after the company has paid for everything it needs to run and grow the business. This chart compares that cash to the company's total debt. A company with rising free cash flow and falling debt is in a strong financial position. If debt is rising faster than cash, the company may be taking on more risk than it can comfortably manage.",
+        "shares_vs_buybacks": "When a company buys back its own shares, it reduces the total number of shares in circulation \u2014 which means each remaining share represents a larger slice of the business. This chart shows how the share count has changed over time. Consistent buybacks are generally a sign that management believes the stock is undervalued and wants to return cash to shareholders.",
+        "returns_trajectory": "Return on Equity (ROE) measures how much profit a company generates for every dollar of shareholder money invested. Return on Invested Capital (ROIC) is similar but also includes debt. Both are expressed as a percentage \u2014 higher is better. A company consistently earning above 15% ROIC is generally considered to have a genuine competitive advantage over its peers.",
+        "revenue_vs_ar": "Accounts receivable is money the company is owed by customers who have not yet paid their bills. This chart compares revenue growth to accounts receivable growth each year. If accounts receivable is growing much faster than revenue, it may mean the company is struggling to collect payments \u2014 sometimes a sign of aggressive or fictitious revenue reporting. A healthy company should see both lines move at a similar pace."
+      }
+    },
+    "valuation_chart": {
+      "2024": {
+        "market_price": 10.09,
+        "intrinsic_value": 6.36,
+        "bull_case": 6.53,
+        "bear_case": 6.25
+      },
+      "2025": {
+        "market_price": 10.76,
+        "intrinsic_value": 6.49,
+        "bull_case": 6.6,
+        "bear_case": 6.41
+      },
+      "2026": {
+        "market_price": 10.74,
+        "intrinsic_value": 6.75,
+        "bull_case": 6.79,
+        "bear_case": 6.69
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 6.88,
+        "bull_case": 6.93,
+        "bear_case": 6.82
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 7.02,
+        "bull_case": 7.11,
+        "bear_case": 6.9
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 7.16,
+        "bull_case": 7.29,
+        "bear_case": 6.98
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 7.31,
+        "bull_case": 7.48,
+        "bear_case": 7.05
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 7.45,
+        "bull_case": 7.67,
+        "bear_case": 7.13
+      }
+    },
+    "forecast_meta": {
+      "eps_next_5y_raw": 0.0,
+      "fs_score": 1,
+      "fs_multiplier": 0.35,
+      "base_growth_rate": 0.02,
+      "bull_growth_rate": 0.026,
+      "bear_growth_rate": 0.011,
+      "growth_constrained": true,
+      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 1/10",
+      "growth_explanation": "Base (2.0%/yr): growth in line with analyst expectations. Bull (2.6%/yr): everything goes to plan. Bear (1.1%/yr): growth disappoints. Growth capped at 2.0% (from 0.0%) \u2014 the balance sheet (financial strength 1/10) limits how fast this company can realistically grow."
+    },
+    "bull_bear": {
+      "short_term": {
+        "bull_points": [
+          "Consensus expectations are broadly supportive for Graf Global Corp. in the near term",
+          "Current market positioning in the Financial Services sector may attract tactical buyers",
+          "Any positive earnings surprise could act as a near-term re-rating catalyst"
+        ],
+        "bear_points": [
+          "Trading at a 59% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
+          "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
+          "Short-term earnings visibility is limited without additional guidance"
+        ]
+      },
+      "long_term": {
+        "bull_points": [
+          "Graf Global Corp. operates in a sector with long-term structural tailwinds",
+          "Management has demonstrated consistent capital allocation discipline",
+          "The business has the scale to compound earnings over a multi-year horizon"
+        ],
+        "bear_points": [
+          "Low profitability score (3/10) suggests thin or negative margins that structurally limit long-term earnings power",
+          "Weak balance sheet (1/10) constrains long-term capital allocation and increases vulnerability in a downturn",
+          "Unpredictable earnings (1/10) make long-term forecasting unreliable and compress the valuation multiple the market is willing to pay"
+        ]
+      },
+      "source": "rules",
+      "generated_at": "2026-04-16 06:07"
+    },
+    "price_alert": {
+      "triggered": false,
+      "signal": null,
+      "drop_from_ath_pct": 9.4,
+      "ath": 11.85,
+      "current_price": 10.74,
+      "message": null
+    },
+    "watchlist_signal": {
+      "signal": "Avoid",
+      "reason": "Weak fundamentals or significantly overvalued \u2014 better opportunities elsewhere.",
+      "score": 0,
+      "inputs": {
+        "quality_base": 15,
+        "val_adj": -20,
+        "alert_adj": 0,
+        "classification": "Dangerous",
+        "mos_pct": -59.1
+      }
+    },
+    "10_Year_History": {
+      "2024": 10.09,
+      "2025": 10.76,
+      "2026": 10.74
+    },
+    "5_Year_Forecast": {
+      "2027": 6.88,
+      "2028": 7.02,
+      "2029": 7.16,
+      "2030": 7.31,
+      "2031": 7.45
+    },
+    "Last_Updated": "2026-04-16 06:07"
+  },
+  "GPUS": {
+    "company_profile": {
+      "name": "Hyperscale Data, Inc.",
+      "ticker": "GPUS",
+      "sector": "Industrials",
+      "industry": "Aerospace & Defense",
+      "company_type": "STANDARD",
+      "type_rationale": "Standard company \u2014 balanced weighting across all methods",
+      "description": "Hyperscale Data, Inc., together with its subsidiaries, provides crane rental and lifting solutions for oilfield, construction, commercial, and infrastructure markets in North America, Europe, the Middle East, and internationally. It operates through Technology and Finance (Fintech); Sentinum; AGREE; Energy and Infrastructure (Energy); ROI; and TurnOnGreen segments. The company also offers colocation and hosting services; commercial lending, activist investing, and stock trading; and askROI, which operates an AI-driven platform engineered to provide pertinent and unique data insights through integration with business specific data that pushes beyond the conventional uses of existing large language models. In addition, it is involved in Bitcoin mining and data center operations; hotel operations and other commercial real estate holdings; commercial electronics solutions with operations; provision of electric vehicle charging solutions; and operation of a social gaming platform. The company sells its products directly and indirectly through its sales force. It serves the Bitcoin mining, generative AI and metaverse platform development, crane services, defense/aerospace, industrial, automotive, medical/biopharma, consumer electronics, and textiles businesses. The company was formerly known as Ault Alliance, Inc. and changed its name to Hyperscale Data, Inc. in January 2023. Hyperscale Data, Inc. was founded in 1969 and is headquartered in Las Vegas, Nevada.",
+      "description_summary": "Hyperscale Data, Inc., together with its subsidiaries, provides crane rental and lifting solutions for oilfield, construction, commercial, and infrastructure markets in North America, Europe, the Middle East, and internationally. It operates through Technology and Finance (Fintech); Sentinum; AGREE; Energy and Infrastructure (Energy); ROI; and TurnOnGreen segments.",
+      "website": "https://hyperscaledata.com",
+      "employees": 374,
+      "country": "United States",
+      "city": "Las Vegas",
+      "exchange": "ASE",
+      "currency": "USD",
+      "quote_type": "EQUITY",
+      "market_cap": 59450392,
+      "52w_high": 9.98,
+      "52w_low": 0.13,
+      "avg_volume": 26785155,
+      "pe_trailing": null,
+      "pe_forward": null,
+      "dividend_yield": null,
+      "beta": 2.581
+    },
+    "current_price": 0.15,
+    "intrinsic_value": 0.15,
+    "margin_of_safety_pct": -3.0,
+    "mos_label": "Fairly Valued (Marginal Premium)",
+    "data_availability": {
+      "status": "ok",
+      "message": null,
+      "has_price": true,
+      "has_iv": true,
+      "has_financials": true,
+      "active_methods": 1,
+      "exclude_from_search": false
+    },
+    "valuations": {
+      "1_DCF_Operating_CF": null,
+      "2_DCF_FCF": null,
+      "3_DCF_Net_Income": null,
+      "4_DCF_Terminal_Value": null,
+      "5_Mean_PS": 4.31,
+      "6_Mean_PE": null,
+      "7_Mean_PB": 0.15,
+      "8_PSG": null,
+      "9_PEG": null,
+      "10_EV_EBITDA": null,
+      "intrinsic_value": 0.15,
+      "methods_used": 1,
+      "confidence": "Low",
+      "active_methods": [
+        "7_Mean_PB"
+      ],
+      "_meta": {
+        "pe_source": "current_trailing",
+        "ps_source": "historical_mean",
+        "pb_source": "current_trailing",
+        "ev_ebitda_source": "trailing_or_unavailable",
+        "growth_source": "finviz_no_growth",
+        "growth_raw": 0.0,
+        "growth_peg_rate": 0.0,
+        "discount_rate": 0.12,
+        "growth_stage1": 0.02,
+        "growth_stage2": 0.02,
+        "terminal_growth": 0.02,
+        "tier": "Weak",
+        "company_type": "STANDARD",
+        "type_rationale": "Standard company \u2014 balanced weighting across all methods",
+        "method_explanation": "This company does not fit neatly into a specialist category, so we apply a balanced mix of all ten valuation methods. These include Discounted Cash Flow (which estimates the present value of future cash flows), earnings multiples (P/E and PEG), revenue multiples (P/S and PSG), book value (P/B), and EV/EBITDA. Each method approaches value from a different angle \u2014 using all of them together gives a more rounded estimate than relying on any single number.",
+        "weights_applied": {
+          "1_DCF_Operating_CF": 0.08,
+          "2_DCF_FCF": 0.08,
+          "3_DCF_Net_Income": 0.08,
+          "4_DCF_Terminal_Value": 0.08,
+          "5_Mean_PS": 0.12,
+          "6_Mean_PE": 0.08,
+          "7_Mean_PB": 0.15,
+          "8_PSG": 0.08,
+          "9_PEG": 0.08,
+          "10_EV_EBITDA": 0.17
+        },
+        "excluded_methods": [],
+        "active_methods": [
+          "7_Mean_PB"
+        ]
+      }
+    },
+    "quality": {
+      "scores": {
+        "profitability": 0,
+        "financial_strength": 1,
+        "growth": 1,
+        "predictability": 1,
+        "valuation": 5,
+        "moat": null
+      },
+      "score_labels": {
+        "profitability": "Poor",
+        "financial_strength": "Poor",
+        "growth": "Poor",
+        "predictability": "Poor",
+        "valuation": "Adequate",
+        "moat": "Not scored"
+      },
+      "company_type": "STANDARD",
+      "company_type_note": null,
+      "python_subtotal": 3,
+      "python_subtotal_pct": 7.5,
+      "classification": "Dangerous",
+      "penalty_pct": 8,
+      "final_score_pct": 0.0,
+      "tiebreaker_used": false,
+      "tiebreaker_inputs": {
+        "roe": -1.3147,
+        "roic": null,
+        "eps_next_5y": 0.0
+      },
+      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
+      "last_calculated": "2026-04-16 06:07"
+    },
+    "quality_narrative": {
+      "moat_score": null,
+      "moat_rationale": "",
+      "metric_assessments": {},
+      "classification_reason": "Hyperscale Data, Inc. carries a Dangerous rating because it shows significant weaknesses in profitability and financial strength. Revenue and earnings have been inconsistent, making it hard to predict where this business will be in a few years. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
+      "investment_narrative": "Hyperscale Data, Inc. demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: tight liquidity (current ratio 0.27); a weak near-term growth outlook; inconsistent earnings. The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "quality_conclusion": "Hyperscale Data, Inc. demonstrates weak fundamental quality and is constrained by profitability.",
+      "risk_profile": "Key risks to watch: tight liquidity (current ratio 0.27); a weak near-term growth outlook; inconsistent earnings.",
+      "investment_summary": "The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "source": "rules",
+      "generated_at": "2026-04-16 06:07"
+    },
+    "fundamentals": {
+      "roe": -1.3147,
+      "roic": null,
+      "roe_pct": "-131.47%",
+      "roic_pct": null,
+      "roic_source": "unavailable",
+      "current_ratio": 0.27,
+      "debt_to_ebitda": null,
+      "debt_service_ratio": null
+    },
+    "financials_charts": {
+      "revenue_vs_net_income": {
+        "2025": {
+          "revenue": 102.11,
+          "net_income": -66.4
+        },
+        "2024": {
+          "revenue": 106.66,
+          "net_income": -56.2
+        },
+        "2023": {
+          "revenue": 134.85,
+          "net_income": -231.03
+        },
+        "2022": {
+          "revenue": 117.64,
+          "net_income": -181.82
+        },
+        "2021": {
+          "revenue": 52.4,
+          "net_income": -23.25
+        },
+        "2020": {
+          "revenue": 23.87,
+          "net_income": -32.73
+        },
+        "2019": {
+          "revenue": 22.36,
+          "net_income": -32.91
+        },
+        "2018": {
+          "revenue": 27.15,
+          "net_income": -32.23
+        },
+        "2017": {
+          "revenue": 10.17,
+          "net_income": -10.62
+        },
+        "2016": {
+          "revenue": 7.6,
+          "net_income": -1.12
+        }
+      },
+      "fcf_vs_debt": {
+        "2025": {
+          "cash_balance": 13.08,
+          "free_cash_flow": -87.06,
+          "total_debt": 165.18
+        },
+        "2024": {
+          "cash_balance": 4.55,
+          "free_cash_flow": -24.24,
+          "total_debt": 192.44
+        },
+        "2023": {
+          "cash_balance": 6.13,
+          "free_cash_flow": -20.17,
+          "total_debt": 42.8
+        },
+        "2022": {
+          "cash_balance": 14.53,
+          "free_cash_flow": -72.82,
+          "total_debt": 42.72
+        },
+        "2021": {
+          "cash_balance": 56.29,
+          "free_cash_flow": -213.66,
+          "total_debt": 94.61
+        },
+        "2020": {
+          "cash_balance": 18.68,
+          "free_cash_flow": -11.76,
+          "total_debt": 3.93
+        },
+        "2019": {
+          "cash_balance": 0.48,
+          "free_cash_flow": -10.37,
+          "total_debt": 6.62
+        },
+        "2018": {
+          "cash_balance": 0.77,
+          "free_cash_flow": -19.34,
+          "total_debt": 6.87
+        },
+        "2017": {
+          "cash_balance": 1.48,
+          "free_cash_flow": -4.52,
+          "total_debt": 2.96
+        },
+        "2016": {
+          "cash_balance": 1.0,
+          "free_cash_flow": -0.44,
+          "total_debt": 0.03
+        }
+      },
+      "shares_vs_buybacks": {
+        "2025": {
+          "shares_outstanding_m": 90.71,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2024": {
+          "shares_outstanding_m": 0.9,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2023": {
+          "shares_outstanding_m": 0.71,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2022": {
+          "shares_outstanding_m": 0.03,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2018": {
+          "shares_outstanding_m": null,
+          "buybacks_m": 0.06
+        },
+        "2016": {
+          "shares_outstanding_m": 7.68,
+          "buybacks_m": null,
+          "split_adjusted": true
+        }
+      },
+      "returns_trajectory": {
+        "2025": {
+          "roe_pct": -55.44,
+          "roic_pct": null
+        },
+        "2024": {
+          "roe_pct": -650.81,
+          "roic_pct": null
+        },
+        "2023": {
+          "roe_pct": -516.62,
+          "roic_pct": null
+        },
+        "2022": {
+          "roe_pct": -88.05,
+          "roic_pct": null
+        },
+        "2021": {
+          "roe_pct": -10.25,
+          "roic_pct": null
+        },
+        "2020": {
+          "roe_pct": -67.74,
+          "roic_pct": null
+        },
+        "2019": {
+          "roe_pct": -474.21,
+          "roic_pct": null
+        },
+        "2018": {
+          "roe_pct": -178.84,
+          "roic_pct": null
+        },
+        "2017": {
+          "roe_pct": -58.95,
+          "roic_pct": null
+        },
+        "2016": {
+          "roe_pct": -31.53,
+          "roic_pct": null
+        }
+      },
+      "revenue_vs_ar": {
+        "2025": {
+          "revenue": 102.11,
+          "accounts_receivable": 14.55,
+          "rev_growth_pct": -4.3,
+          "ar_growth_pct": 135.8,
+          "ar_outpacing": true
+        },
+        "2024": {
+          "revenue": 106.66,
+          "accounts_receivable": 6.17,
+          "rev_growth_pct": -20.9,
+          "ar_growth_pct": -8.5,
+          "ar_outpacing": true
+        },
+        "2023": {
+          "revenue": 134.85,
+          "accounts_receivable": 6.74,
+          "rev_growth_pct": 14.6,
+          "ar_growth_pct": -65.1,
+          "ar_outpacing": false
+        },
+        "2022": {
+          "revenue": 117.64,
+          "accounts_receivable": 19.32,
+          "rev_growth_pct": 124.5,
+          "ar_growth_pct": 199.1,
+          "ar_outpacing": true
+        },
+        "2021": {
+          "revenue": 52.4,
+          "accounts_receivable": 6.46,
+          "rev_growth_pct": 119.5,
+          "ar_growth_pct": 67.8,
+          "ar_outpacing": false
+        },
+        "2020": {
+          "revenue": 23.87,
+          "accounts_receivable": 3.85,
+          "rev_growth_pct": 6.8,
+          "ar_growth_pct": 57.8,
+          "ar_outpacing": true
+        },
+        "2019": {
+          "revenue": 22.36,
+          "accounts_receivable": 2.44,
+          "rev_growth_pct": -17.6,
+          "ar_growth_pct": 26.4,
+          "ar_outpacing": true
+        },
+        "2018": {
+          "revenue": 27.15,
+          "accounts_receivable": 1.93,
+          "rev_growth_pct": 167.0,
+          "ar_growth_pct": 1.6,
+          "ar_outpacing": false
+        },
+        "2017": {
+          "revenue": 10.17,
+          "accounts_receivable": 1.9,
+          "rev_growth_pct": 33.8,
+          "ar_growth_pct": 31.9,
+          "ar_outpacing": false
+        },
+        "2016": {
+          "revenue": 7.6,
+          "accounts_receivable": 1.44,
+          "rev_growth_pct": null,
+          "ar_growth_pct": null,
+          "ar_outpacing": null
+        }
+      },
+      "_notes": {
+        "revenue_vs_net_income": "This chart shows how much money the company brings in (revenue) versus how much it actually keeps as profit (net income) each year. A healthy company should show both lines growing over time. If revenue grows but net income shrinks, the company is spending more than it is earning \u2014 a warning sign worth investigating.",
+        "fcf_vs_debt": "Free cash flow is the cash left over after the company has paid for everything it needs to run and grow the business. This chart compares that cash to the company's total debt. A company with rising free cash flow and falling debt is in a strong financial position. If debt is rising faster than cash, the company may be taking on more risk than it can comfortably manage.",
+        "shares_vs_buybacks": "When a company buys back its own shares, it reduces the total number of shares in circulation \u2014 which means each remaining share represents a larger slice of the business. This chart shows how the share count has changed over time. Consistent buybacks are generally a sign that management believes the stock is undervalued and wants to return cash to shareholders.",
+        "returns_trajectory": "Return on Equity (ROE) measures how much profit a company generates for every dollar of shareholder money invested. Return on Invested Capital (ROIC) is similar but also includes debt. Both are expressed as a percentage \u2014 higher is better. A company consistently earning above 15% ROIC is generally considered to have a genuine competitive advantage over its peers.",
+        "revenue_vs_ar": "Accounts receivable is money the company is owed by customers who have not yet paid their bills. This chart compares revenue growth to accounts receivable growth each year. If accounts receivable is growing much faster than revenue, it may mean the company is struggling to collect payments \u2014 sometimes a sign of aggressive or fictitious revenue reporting. A healthy company should see both lines move at a similar pace."
+      }
+    },
+    "valuation_chart": {
+      "2016": {
+        "market_price": 93301368.0,
+        "intrinsic_value": 0.12,
+        "bull_case": 0.13,
+        "bear_case": 0.11
+      },
+      "2017": {
+        "market_price": 460765216.0,
+        "intrinsic_value": 0.12,
+        "bull_case": 0.13,
+        "bear_case": 0.12
+      },
+      "2018": {
+        "market_price": 14354056.0,
+        "intrinsic_value": 0.13,
+        "bull_case": 0.14,
+        "bear_case": 0.12
+      },
+      "2019": {
+        "market_price": 213516.59,
+        "intrinsic_value": 0.13,
+        "bull_case": 0.14,
+        "bear_case": 0.12
+      },
+      "2020": {
+        "market_price": 780501.81,
+        "intrinsic_value": 0.13,
+        "bull_case": 0.14,
+        "bear_case": 0.13
+      },
+      "2021": {
+        "market_price": 213516.59,
+        "intrinsic_value": 0.13,
+        "bull_case": 0.14,
+        "bear_case": 0.13
+      },
+      "2022": {
+        "market_price": 21531.08,
+        "intrinsic_value": 0.14,
+        "bull_case": 0.14,
+        "bear_case": 0.13
+      },
+      "2023": {
+        "market_price": 76.9,
+        "intrinsic_value": 0.14,
+        "bull_case": 0.14,
+        "bear_case": 0.14
+      },
+      "2024": {
+        "market_price": 4.86,
+        "intrinsic_value": 0.14,
+        "bull_case": 0.15,
+        "bear_case": 0.14
+      },
+      "2025": {
+        "market_price": 0.18,
+        "intrinsic_value": 0.14,
+        "bull_case": 0.15,
+        "bear_case": 0.14
+      },
+      "2026": {
+        "market_price": 0.15,
+        "intrinsic_value": 0.15,
+        "bull_case": 0.15,
+        "bear_case": 0.15
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.15,
+        "bull_case": 0.15,
+        "bear_case": 0.15
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.16,
+        "bull_case": 0.16,
+        "bear_case": 0.15
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 0.16,
+        "bull_case": 0.16,
+        "bear_case": 0.16
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 0.16,
+        "bull_case": 0.17,
+        "bear_case": 0.16
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 0.17,
+        "bull_case": 0.17,
+        "bear_case": 0.16
+      }
+    },
+    "forecast_meta": {
+      "eps_next_5y_raw": 0.0,
+      "fs_score": 1,
+      "fs_multiplier": 0.35,
+      "base_growth_rate": 0.02,
+      "bull_growth_rate": 0.026,
+      "bear_growth_rate": 0.011,
+      "growth_constrained": true,
+      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 1/10",
+      "growth_explanation": "Base (2.0%/yr): growth in line with analyst expectations. Bull (2.6%/yr): everything goes to plan. Bear (1.1%/yr): growth disappoints. Growth capped at 2.0% (from 0.0%) \u2014 the balance sheet (financial strength 1/10) limits how fast this company can realistically grow."
+    },
+    "bull_bear": {
+      "short_term": {
+        "bull_points": [
+          "Consensus expectations are broadly supportive for Hyperscale Data, Inc. in the near term",
+          "Current market positioning in the Industrials sector may attract tactical buyers",
+          "Any positive earnings surprise could act as a near-term re-rating catalyst"
+        ],
+        "bear_points": [
+          "Declining revenue of -21.7% may weigh on near-term earnings and investor sentiment",
+          "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
+          "Short-term earnings visibility is limited without additional guidance"
+        ]
+      },
+      "long_term": {
+        "bull_points": [
+          "Hyperscale Data, Inc. operates in a sector with long-term structural tailwinds",
+          "Management has demonstrated consistent capital allocation discipline",
+          "The business has the scale to compound earnings over a multi-year horizon"
+        ],
+        "bear_points": [
+          "Low profitability score (0/10) suggests thin or negative margins that structurally limit long-term earnings power",
+          "Weak balance sheet (1/10) constrains long-term capital allocation and increases vulnerability in a downturn",
+          "Unpredictable earnings (1/10) make long-term forecasting unreliable and compress the valuation multiple the market is willing to pay"
+        ]
+      },
+      "source": "rules",
+      "generated_at": "2026-04-16 06:07"
+    },
+    "price_alert": {
+      "triggered": true,
+      "signal": "ath_drop",
+      "drop_from_ath_pct": 98.5,
+      "ath": 9.98,
+      "current_price": 0.15,
+      "message": "Down 98% from 52-week high of $9.98"
+    },
+    "watchlist_signal": {
+      "signal": "Avoid",
+      "reason": "Weak fundamentals or significantly overvalued \u2014 better opportunities elsewhere.",
+      "score": 0,
+      "inputs": {
+        "quality_base": 8,
+        "val_adj": -10,
+        "alert_adj": -10,
+        "classification": "Dangerous",
+        "mos_pct": -3.0
+      }
+    },
+    "10_Year_History": {
+      "2016": 93301368.0,
+      "2017": 460765216.0,
+      "2018": 14354056.0,
+      "2019": 213516.59,
+      "2020": 780501.81,
+      "2021": 213516.59,
+      "2022": 21531.08,
+      "2023": 76.9,
+      "2024": 4.86,
+      "2025": 0.18,
+      "2026": 0.15
+    },
+    "5_Year_Forecast": {
+      "2027": 0.15,
+      "2028": 0.16,
+      "2029": 0.16,
+      "2030": 0.16,
+      "2031": 0.17
+    },
+    "Last_Updated": "2026-04-16 06:07"
+  },
   "GORO": {
     "company_profile": {
       "name": "Gold Resource Corporation",
@@ -19,7 +901,7 @@
       "market_cap": 246025440,
       "52w_high": 1.87,
       "52w_low": 0.35,
-      "avg_volume": 6119428,
+      "avg_volume": 6095573,
       "pe_trailing": null,
       "pe_forward": 38.0,
       "dividend_yield": null,
@@ -126,7 +1008,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-15 23:17"
+      "last_calculated": "2026-04-16 06:07"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -138,7 +1020,7 @@
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth.",
       "investment_summary": "The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-15 23:17"
+      "generated_at": "2026-04-16 06:07"
     },
     "fundamentals": {
       "roe": -0.1812,
@@ -554,7 +1436,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-15 23:17"
+      "generated_at": "2026-04-16 06:07"
     },
     "price_alert": {
       "triggered": false,
@@ -596,891 +1478,7 @@
       "2030": 1.6,
       "2031": 1.63
     },
-    "Last_Updated": "2026-04-15 23:17"
-  },
-  "GRAF": {
-    "company_profile": {
-      "name": "Graf Global Corp.",
-      "ticker": "GRAF",
-      "sector": "Financial Services",
-      "industry": "Shell Companies",
-      "company_type": "CONSUMER_FINANCE",
-      "type_rationale": "Financial services \u2014 DNI and P/B prioritised",
-      "description": "Graf Global Corp., a blank check company, focuses on effecting a merger, share exchange, asset acquisition, share purchase, reorganization, or similar business combination with one or more businesses. The company was incorporated in 2021 and is based in The Woodlands, Texas.",
-      "description_summary": "Graf Global Corp., a blank check company, focuses on effecting a merger, share exchange, asset acquisition, share purchase, reorganization, or similar business combination with one or more businesses. The company was incorporated in 2021 and is based in The Woodlands, Texas.",
-      "website": null,
-      "employees": null,
-      "country": "United States",
-      "city": "The Woodlands",
-      "exchange": "ASE",
-      "currency": "USD",
-      "quote_type": "EQUITY",
-      "market_cap": 308775008,
-      "52w_high": 11.85,
-      "52w_low": 10.21,
-      "avg_volume": 37540,
-      "pe_trailing": 34.64516,
-      "pe_forward": null,
-      "dividend_yield": null,
-      "beta": null
-    },
-    "current_price": 10.74,
-    "intrinsic_value": 6.75,
-    "margin_of_safety_pct": -59.1,
-    "mos_label": "Significant Premium",
-    "data_availability": {
-      "status": "ok",
-      "message": null,
-      "has_price": true,
-      "has_iv": true,
-      "has_financials": true,
-      "active_methods": 2,
-      "exclude_from_search": false
-    },
-    "valuations": {
-      "1_DCF_Operating_CF": null,
-      "2_DCF_FCF": null,
-      "3_DCF_Net_Income": 3.25,
-      "4_DCF_Terminal_Value": null,
-      "5_Mean_PS": null,
-      "6_Mean_PE": 13.75,
-      "7_Mean_PB": null,
-      "8_PSG": null,
-      "9_PEG": null,
-      "10_EV_EBITDA": null,
-      "intrinsic_value": 6.75,
-      "methods_used": 2,
-      "confidence": "Low",
-      "active_methods": [
-        "3_DCF_Net_Income",
-        "6_Mean_PE"
-      ],
-      "_meta": {
-        "pe_source": "historical_mean",
-        "ps_source": "current_trailing",
-        "pb_source": "historical_mean",
-        "ev_ebitda_source": "trailing_or_unavailable",
-        "growth_source": "finviz_no_growth",
-        "growth_raw": 0.0,
-        "growth_peg_rate": 0.0,
-        "discount_rate": 0.12,
-        "growth_stage1": 0.02,
-        "growth_stage2": 0.02,
-        "terminal_growth": 0.02,
-        "tier": "Weak",
-        "company_type": "CONSUMER_FINANCE",
-        "type_rationale": "Financial services \u2014 DNI and P/B prioritised",
-        "method_explanation": "Consumer finance companies \u2014 such as credit card providers or personal lenders \u2014 earn income from the interest they charge on loans. Like banks, they carry a lot of debt by design because lending money is their core business model. We use net income DCF and Price-to-Book, which together capture both the earning power and the asset value of the loan book.",
-        "weights_applied": {
-          "1_DCF_Operating_CF": 0.0,
-          "2_DCF_FCF": 0.0,
-          "3_DCF_Net_Income": 0.4,
-          "4_DCF_Terminal_Value": 0.0,
-          "5_Mean_PS": 0.15,
-          "6_Mean_PE": 0.2,
-          "7_Mean_PB": 0.15,
-          "8_PSG": 0.1,
-          "9_PEG": 0.0,
-          "10_EV_EBITDA": 0.0
-        },
-        "excluded_methods": [
-          "1_DCF_Operating_CF",
-          "2_DCF_FCF",
-          "4_DCF_Terminal_Value",
-          "9_PEG",
-          "10_EV_EBITDA"
-        ],
-        "active_methods": [
-          "3_DCF_Net_Income",
-          "6_Mean_PE"
-        ]
-      }
-    },
-    "quality": {
-      "scores": {
-        "profitability": 3,
-        "financial_strength": 1,
-        "growth": 1,
-        "predictability": 1,
-        "valuation": 2,
-        "moat": null
-      },
-      "score_labels": {
-        "profitability": "Weak",
-        "financial_strength": "Poor",
-        "growth": "Poor",
-        "predictability": "Poor",
-        "valuation": "Weak",
-        "moat": "Not scored"
-      },
-      "company_type": "CONSUMER_FINANCE",
-      "company_type_note": "Banks and REITs carry structural leverage \u2014 do not describe financial_strength scores of 7+ as 'moderate concern' for these types.",
-      "python_subtotal": 6,
-      "python_subtotal_pct": 15.0,
-      "classification": "Dangerous",
-      "penalty_pct": 8,
-      "final_score_pct": 7.0,
-      "tiebreaker_used": false,
-      "tiebreaker_inputs": {
-        "roe": null,
-        "roic": null,
-        "eps_next_5y": 0.0
-      },
-      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-15 23:17"
-    },
-    "quality_narrative": {
-      "moat_score": null,
-      "moat_rationale": "",
-      "metric_assessments": {},
-      "classification_reason": "Graf Global Corp. carries a Dangerous rating because it shows significant weaknesses in profitability and financial strength. Revenue and earnings have been inconsistent, making it hard to predict where this business will be in a few years. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "Graf Global Corp. demonstrates weak fundamental quality and is constrained by financial strength. Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth. The stock trades at a 59% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
-      "quality_conclusion": "Graf Global Corp. demonstrates weak fundamental quality and is constrained by financial strength.",
-      "risk_profile": "Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth.",
-      "investment_summary": "The stock trades at a 59% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
-      "source": "rules",
-      "generated_at": "2026-04-15 23:17"
-    },
-    "fundamentals": {
-      "roe": null,
-      "roic": null,
-      "roe_pct": null,
-      "roic_pct": null,
-      "roic_source": "unavailable",
-      "current_ratio": 4.23,
-      "debt_to_ebitda": null,
-      "debt_service_ratio": null
-    },
-    "financials_charts": {
-      "revenue_vs_net_income": {
-        "2024": {
-          "revenue": null,
-          "net_income": 5.23
-        },
-        "2023": {
-          "revenue": null,
-          "net_income": -0.0
-        }
-      },
-      "fcf_vs_debt": {
-        "2024": {
-          "cash_balance": 0.48,
-          "free_cash_flow": null,
-          "total_debt": null
-        },
-        "2023": {
-          "cash_balance": 0.0,
-          "free_cash_flow": null,
-          "total_debt": 0.01
-        }
-      },
-      "shares_vs_buybacks": {},
-      "returns_trajectory": {},
-      "revenue_vs_ar": {},
-      "_notes": {
-        "revenue_vs_net_income": "This chart shows how much money the company brings in (revenue) versus how much it actually keeps as profit (net income) each year. A healthy company should show both lines growing over time. If revenue grows but net income shrinks, the company is spending more than it is earning \u2014 a warning sign worth investigating.",
-        "fcf_vs_debt": "Free cash flow is the cash left over after the company has paid for everything it needs to run and grow the business. This chart compares that cash to the company's total debt. A company with rising free cash flow and falling debt is in a strong financial position. If debt is rising faster than cash, the company may be taking on more risk than it can comfortably manage.",
-        "shares_vs_buybacks": "When a company buys back its own shares, it reduces the total number of shares in circulation \u2014 which means each remaining share represents a larger slice of the business. This chart shows how the share count has changed over time. Consistent buybacks are generally a sign that management believes the stock is undervalued and wants to return cash to shareholders.",
-        "returns_trajectory": "Return on Equity (ROE) measures how much profit a company generates for every dollar of shareholder money invested. Return on Invested Capital (ROIC) is similar but also includes debt. Both are expressed as a percentage \u2014 higher is better. A company consistently earning above 15% ROIC is generally considered to have a genuine competitive advantage over its peers.",
-        "revenue_vs_ar": "Accounts receivable is money the company is owed by customers who have not yet paid their bills. This chart compares revenue growth to accounts receivable growth each year. If accounts receivable is growing much faster than revenue, it may mean the company is struggling to collect payments \u2014 sometimes a sign of aggressive or fictitious revenue reporting. A healthy company should see both lines move at a similar pace."
-      }
-    },
-    "valuation_chart": {
-      "2024": {
-        "market_price": 10.09,
-        "intrinsic_value": 6.36,
-        "bull_case": 6.53,
-        "bear_case": 6.25
-      },
-      "2025": {
-        "market_price": 10.76,
-        "intrinsic_value": 6.49,
-        "bull_case": 6.6,
-        "bear_case": 6.41
-      },
-      "2026": {
-        "market_price": 10.74,
-        "intrinsic_value": 6.75,
-        "bull_case": 6.79,
-        "bear_case": 6.69
-      },
-      "2027": {
-        "market_price": null,
-        "intrinsic_value": 6.88,
-        "bull_case": 6.93,
-        "bear_case": 6.82
-      },
-      "2028": {
-        "market_price": null,
-        "intrinsic_value": 7.02,
-        "bull_case": 7.11,
-        "bear_case": 6.9
-      },
-      "2029": {
-        "market_price": null,
-        "intrinsic_value": 7.16,
-        "bull_case": 7.29,
-        "bear_case": 6.98
-      },
-      "2030": {
-        "market_price": null,
-        "intrinsic_value": 7.31,
-        "bull_case": 7.48,
-        "bear_case": 7.05
-      },
-      "2031": {
-        "market_price": null,
-        "intrinsic_value": 7.45,
-        "bull_case": 7.67,
-        "bear_case": 7.13
-      }
-    },
-    "forecast_meta": {
-      "eps_next_5y_raw": 0.0,
-      "fs_score": 1,
-      "fs_multiplier": 0.35,
-      "base_growth_rate": 0.02,
-      "bull_growth_rate": 0.026,
-      "bear_growth_rate": 0.011,
-      "growth_constrained": true,
-      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 1/10",
-      "growth_explanation": "Base (2.0%/yr): growth in line with analyst expectations. Bull (2.6%/yr): everything goes to plan. Bear (1.1%/yr): growth disappoints. Growth capped at 2.0% (from 0.0%) \u2014 the balance sheet (financial strength 1/10) limits how fast this company can realistically grow."
-    },
-    "bull_bear": {
-      "short_term": {
-        "bull_points": [
-          "Consensus expectations are broadly supportive for Graf Global Corp. in the near term",
-          "Current market positioning in the Financial Services sector may attract tactical buyers",
-          "Any positive earnings surprise could act as a near-term re-rating catalyst"
-        ],
-        "bear_points": [
-          "Trading at a 59% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
-          "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
-          "Short-term earnings visibility is limited without additional guidance"
-        ]
-      },
-      "long_term": {
-        "bull_points": [
-          "Graf Global Corp. operates in a sector with long-term structural tailwinds",
-          "Management has demonstrated consistent capital allocation discipline",
-          "The business has the scale to compound earnings over a multi-year horizon"
-        ],
-        "bear_points": [
-          "Low profitability score (3/10) suggests thin or negative margins that structurally limit long-term earnings power",
-          "Weak balance sheet (1/10) constrains long-term capital allocation and increases vulnerability in a downturn",
-          "Unpredictable earnings (1/10) make long-term forecasting unreliable and compress the valuation multiple the market is willing to pay"
-        ]
-      },
-      "source": "rules",
-      "generated_at": "2026-04-15 23:17"
-    },
-    "price_alert": {
-      "triggered": false,
-      "signal": null,
-      "drop_from_ath_pct": 9.4,
-      "ath": 11.85,
-      "current_price": 10.74,
-      "message": null
-    },
-    "watchlist_signal": {
-      "signal": "Avoid",
-      "reason": "Weak fundamentals or significantly overvalued \u2014 better opportunities elsewhere.",
-      "score": 0,
-      "inputs": {
-        "quality_base": 15,
-        "val_adj": -20,
-        "alert_adj": 0,
-        "classification": "Dangerous",
-        "mos_pct": -59.1
-      }
-    },
-    "10_Year_History": {
-      "2024": 10.09,
-      "2025": 10.76,
-      "2026": 10.74
-    },
-    "5_Year_Forecast": {
-      "2027": 6.88,
-      "2028": 7.02,
-      "2029": 7.16,
-      "2030": 7.31,
-      "2031": 7.45
-    },
-    "Last_Updated": "2026-04-15 23:17"
-  },
-  "GPUS": {
-    "company_profile": {
-      "name": "Hyperscale Data, Inc.",
-      "ticker": "GPUS",
-      "sector": "Industrials",
-      "industry": "Aerospace & Defense",
-      "company_type": "STANDARD",
-      "type_rationale": "Standard company \u2014 balanced weighting across all methods",
-      "description": "Hyperscale Data, Inc., together with its subsidiaries, provides crane rental and lifting solutions for oilfield, construction, commercial, and infrastructure markets in North America, Europe, the Middle East, and internationally. It operates through Technology and Finance (Fintech); Sentinum; AGREE; Energy and Infrastructure (Energy); ROI; and TurnOnGreen segments. The company also offers colocation and hosting services; commercial lending, activist investing, and stock trading; and askROI, which operates an AI-driven platform engineered to provide pertinent and unique data insights through integration with business specific data that pushes beyond the conventional uses of existing large language models. In addition, it is involved in Bitcoin mining and data center operations; hotel operations and other commercial real estate holdings; commercial electronics solutions with operations; provision of electric vehicle charging solutions; and operation of a social gaming platform. The company sells its products directly and indirectly through its sales force. It serves the Bitcoin mining, generative AI and metaverse platform development, crane services, defense/aerospace, industrial, automotive, medical/biopharma, consumer electronics, and textiles businesses. The company was formerly known as Ault Alliance, Inc. and changed its name to Hyperscale Data, Inc. in January 2023. Hyperscale Data, Inc. was founded in 1969 and is headquartered in Las Vegas, Nevada.",
-      "description_summary": "Hyperscale Data, Inc., together with its subsidiaries, provides crane rental and lifting solutions for oilfield, construction, commercial, and infrastructure markets in North America, Europe, the Middle East, and internationally. It operates through Technology and Finance (Fintech); Sentinum; AGREE; Energy and Infrastructure (Energy); ROI; and TurnOnGreen segments.",
-      "website": "https://hyperscaledata.com",
-      "employees": 374,
-      "country": "United States",
-      "city": "Las Vegas",
-      "exchange": "ASE",
-      "currency": "USD",
-      "quote_type": "EQUITY",
-      "market_cap": 59450392,
-      "52w_high": 9.98,
-      "52w_low": 0.13,
-      "avg_volume": 26536551,
-      "pe_trailing": 0.09420732,
-      "pe_forward": null,
-      "dividend_yield": null,
-      "beta": 2.581
-    },
-    "current_price": 0.15,
-    "intrinsic_value": 0.15,
-    "margin_of_safety_pct": -3.0,
-    "mos_label": "Fairly Valued (Marginal Premium)",
-    "data_availability": {
-      "status": "ok",
-      "message": null,
-      "has_price": true,
-      "has_iv": true,
-      "has_financials": true,
-      "active_methods": 2,
-      "exclude_from_search": false
-    },
-    "valuations": {
-      "1_DCF_Operating_CF": null,
-      "2_DCF_FCF": null,
-      "3_DCF_Net_Income": null,
-      "4_DCF_Terminal_Value": null,
-      "5_Mean_PS": 4.31,
-      "6_Mean_PE": 0.15,
-      "7_Mean_PB": 0.15,
-      "8_PSG": null,
-      "9_PEG": null,
-      "10_EV_EBITDA": null,
-      "intrinsic_value": 0.15,
-      "methods_used": 2,
-      "confidence": "Low",
-      "active_methods": [
-        "6_Mean_PE",
-        "7_Mean_PB"
-      ],
-      "_meta": {
-        "pe_source": "current_trailing",
-        "ps_source": "historical_mean",
-        "pb_source": "current_trailing",
-        "ev_ebitda_source": "trailing_or_unavailable",
-        "growth_source": "finviz_no_growth",
-        "growth_raw": 0.0,
-        "growth_peg_rate": 0.0,
-        "discount_rate": 0.12,
-        "growth_stage1": 0.02,
-        "growth_stage2": 0.02,
-        "terminal_growth": 0.02,
-        "tier": "Weak",
-        "company_type": "STANDARD",
-        "type_rationale": "Standard company \u2014 balanced weighting across all methods",
-        "method_explanation": "This company does not fit neatly into a specialist category, so we apply a balanced mix of all ten valuation methods. These include Discounted Cash Flow (which estimates the present value of future cash flows), earnings multiples (P/E and PEG), revenue multiples (P/S and PSG), book value (P/B), and EV/EBITDA. Each method approaches value from a different angle \u2014 using all of them together gives a more rounded estimate than relying on any single number.",
-        "weights_applied": {
-          "1_DCF_Operating_CF": 0.08,
-          "2_DCF_FCF": 0.08,
-          "3_DCF_Net_Income": 0.08,
-          "4_DCF_Terminal_Value": 0.08,
-          "5_Mean_PS": 0.12,
-          "6_Mean_PE": 0.08,
-          "7_Mean_PB": 0.15,
-          "8_PSG": 0.08,
-          "9_PEG": 0.08,
-          "10_EV_EBITDA": 0.17
-        },
-        "excluded_methods": [],
-        "active_methods": [
-          "6_Mean_PE",
-          "7_Mean_PB"
-        ]
-      }
-    },
-    "quality": {
-      "scores": {
-        "profitability": 0,
-        "financial_strength": 1,
-        "growth": 1,
-        "predictability": 1,
-        "valuation": 7,
-        "moat": null
-      },
-      "score_labels": {
-        "profitability": "Poor",
-        "financial_strength": "Poor",
-        "growth": "Poor",
-        "predictability": "Poor",
-        "valuation": "Good",
-        "moat": "Not scored"
-      },
-      "company_type": "STANDARD",
-      "company_type_note": null,
-      "python_subtotal": 3,
-      "python_subtotal_pct": 7.5,
-      "classification": "Dangerous",
-      "penalty_pct": 8,
-      "final_score_pct": 0.0,
-      "tiebreaker_used": false,
-      "tiebreaker_inputs": {
-        "roe": -1.3147,
-        "roic": null,
-        "eps_next_5y": 0.0
-      },
-      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-15 23:17"
-    },
-    "quality_narrative": {
-      "moat_score": null,
-      "moat_rationale": "",
-      "metric_assessments": {},
-      "classification_reason": "Hyperscale Data, Inc. carries a Dangerous rating because it shows significant weaknesses in profitability and financial strength. Revenue and earnings have been inconsistent, making it hard to predict where this business will be in a few years. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "Hyperscale Data, Inc. demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: tight liquidity (current ratio 0.27); a weak near-term growth outlook; inconsistent earnings. The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
-      "quality_conclusion": "Hyperscale Data, Inc. demonstrates weak fundamental quality and is constrained by profitability.",
-      "risk_profile": "Key risks to watch: tight liquidity (current ratio 0.27); a weak near-term growth outlook; inconsistent earnings.",
-      "investment_summary": "The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
-      "source": "rules",
-      "generated_at": "2026-04-15 23:17"
-    },
-    "fundamentals": {
-      "roe": -1.3147,
-      "roic": null,
-      "roe_pct": "-131.47%",
-      "roic_pct": null,
-      "roic_source": "unavailable",
-      "current_ratio": 0.27,
-      "debt_to_ebitda": null,
-      "debt_service_ratio": null
-    },
-    "financials_charts": {
-      "revenue_vs_net_income": {
-        "2025": {
-          "revenue": 102.11,
-          "net_income": -66.4
-        },
-        "2024": {
-          "revenue": 106.66,
-          "net_income": -56.2
-        },
-        "2023": {
-          "revenue": 134.85,
-          "net_income": -231.03
-        },
-        "2022": {
-          "revenue": 117.64,
-          "net_income": -181.82
-        },
-        "2021": {
-          "revenue": 52.4,
-          "net_income": -23.25
-        },
-        "2020": {
-          "revenue": 23.87,
-          "net_income": -32.73
-        },
-        "2019": {
-          "revenue": 22.36,
-          "net_income": -32.91
-        },
-        "2018": {
-          "revenue": 27.15,
-          "net_income": -32.23
-        },
-        "2017": {
-          "revenue": 10.17,
-          "net_income": -10.62
-        },
-        "2016": {
-          "revenue": 7.6,
-          "net_income": -1.12
-        }
-      },
-      "fcf_vs_debt": {
-        "2025": {
-          "cash_balance": 13.08,
-          "free_cash_flow": -87.06,
-          "total_debt": 165.18
-        },
-        "2024": {
-          "cash_balance": 4.55,
-          "free_cash_flow": -24.24,
-          "total_debt": 192.44
-        },
-        "2023": {
-          "cash_balance": 6.13,
-          "free_cash_flow": -20.17,
-          "total_debt": 42.8
-        },
-        "2022": {
-          "cash_balance": 14.53,
-          "free_cash_flow": -72.82,
-          "total_debt": 42.72
-        },
-        "2021": {
-          "cash_balance": 56.29,
-          "free_cash_flow": -213.66,
-          "total_debt": 94.61
-        },
-        "2020": {
-          "cash_balance": 18.68,
-          "free_cash_flow": -11.76,
-          "total_debt": 3.93
-        },
-        "2019": {
-          "cash_balance": 0.48,
-          "free_cash_flow": -10.37,
-          "total_debt": 6.62
-        },
-        "2018": {
-          "cash_balance": 0.77,
-          "free_cash_flow": -19.34,
-          "total_debt": 6.87
-        },
-        "2017": {
-          "cash_balance": 1.48,
-          "free_cash_flow": -4.52,
-          "total_debt": 2.96
-        },
-        "2016": {
-          "cash_balance": 1.0,
-          "free_cash_flow": -0.44,
-          "total_debt": 0.03
-        }
-      },
-      "shares_vs_buybacks": {
-        "2025": {
-          "shares_outstanding_m": 90.71,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2024": {
-          "shares_outstanding_m": 0.9,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2023": {
-          "shares_outstanding_m": 0.71,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2022": {
-          "shares_outstanding_m": 0.03,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2018": {
-          "shares_outstanding_m": null,
-          "buybacks_m": 0.06
-        },
-        "2016": {
-          "shares_outstanding_m": 7.68,
-          "buybacks_m": null,
-          "split_adjusted": true
-        }
-      },
-      "returns_trajectory": {
-        "2025": {
-          "roe_pct": -55.44,
-          "roic_pct": null
-        },
-        "2024": {
-          "roe_pct": -650.81,
-          "roic_pct": null
-        },
-        "2023": {
-          "roe_pct": -516.62,
-          "roic_pct": null
-        },
-        "2022": {
-          "roe_pct": -88.05,
-          "roic_pct": null
-        },
-        "2021": {
-          "roe_pct": -10.25,
-          "roic_pct": null
-        },
-        "2020": {
-          "roe_pct": -67.74,
-          "roic_pct": null
-        },
-        "2019": {
-          "roe_pct": -474.21,
-          "roic_pct": null
-        },
-        "2018": {
-          "roe_pct": -178.84,
-          "roic_pct": null
-        },
-        "2017": {
-          "roe_pct": -58.95,
-          "roic_pct": null
-        },
-        "2016": {
-          "roe_pct": -31.53,
-          "roic_pct": null
-        }
-      },
-      "revenue_vs_ar": {
-        "2025": {
-          "revenue": 102.11,
-          "accounts_receivable": 14.55,
-          "rev_growth_pct": -4.3,
-          "ar_growth_pct": 135.8,
-          "ar_outpacing": true
-        },
-        "2024": {
-          "revenue": 106.66,
-          "accounts_receivable": 6.17,
-          "rev_growth_pct": -20.9,
-          "ar_growth_pct": -8.5,
-          "ar_outpacing": true
-        },
-        "2023": {
-          "revenue": 134.85,
-          "accounts_receivable": 6.74,
-          "rev_growth_pct": 14.6,
-          "ar_growth_pct": -65.1,
-          "ar_outpacing": false
-        },
-        "2022": {
-          "revenue": 117.64,
-          "accounts_receivable": 19.32,
-          "rev_growth_pct": 124.5,
-          "ar_growth_pct": 199.1,
-          "ar_outpacing": true
-        },
-        "2021": {
-          "revenue": 52.4,
-          "accounts_receivable": 6.46,
-          "rev_growth_pct": 119.5,
-          "ar_growth_pct": 67.8,
-          "ar_outpacing": false
-        },
-        "2020": {
-          "revenue": 23.87,
-          "accounts_receivable": 3.85,
-          "rev_growth_pct": 6.8,
-          "ar_growth_pct": 57.8,
-          "ar_outpacing": true
-        },
-        "2019": {
-          "revenue": 22.36,
-          "accounts_receivable": 2.44,
-          "rev_growth_pct": -17.6,
-          "ar_growth_pct": 26.4,
-          "ar_outpacing": true
-        },
-        "2018": {
-          "revenue": 27.15,
-          "accounts_receivable": 1.93,
-          "rev_growth_pct": 167.0,
-          "ar_growth_pct": 1.6,
-          "ar_outpacing": false
-        },
-        "2017": {
-          "revenue": 10.17,
-          "accounts_receivable": 1.9,
-          "rev_growth_pct": 33.8,
-          "ar_growth_pct": 31.9,
-          "ar_outpacing": false
-        },
-        "2016": {
-          "revenue": 7.6,
-          "accounts_receivable": 1.44,
-          "rev_growth_pct": null,
-          "ar_growth_pct": null,
-          "ar_outpacing": null
-        }
-      },
-      "_notes": {
-        "revenue_vs_net_income": "This chart shows how much money the company brings in (revenue) versus how much it actually keeps as profit (net income) each year. A healthy company should show both lines growing over time. If revenue grows but net income shrinks, the company is spending more than it is earning \u2014 a warning sign worth investigating.",
-        "fcf_vs_debt": "Free cash flow is the cash left over after the company has paid for everything it needs to run and grow the business. This chart compares that cash to the company's total debt. A company with rising free cash flow and falling debt is in a strong financial position. If debt is rising faster than cash, the company may be taking on more risk than it can comfortably manage.",
-        "shares_vs_buybacks": "When a company buys back its own shares, it reduces the total number of shares in circulation \u2014 which means each remaining share represents a larger slice of the business. This chart shows how the share count has changed over time. Consistent buybacks are generally a sign that management believes the stock is undervalued and wants to return cash to shareholders.",
-        "returns_trajectory": "Return on Equity (ROE) measures how much profit a company generates for every dollar of shareholder money invested. Return on Invested Capital (ROIC) is similar but also includes debt. Both are expressed as a percentage \u2014 higher is better. A company consistently earning above 15% ROIC is generally considered to have a genuine competitive advantage over its peers.",
-        "revenue_vs_ar": "Accounts receivable is money the company is owed by customers who have not yet paid their bills. This chart compares revenue growth to accounts receivable growth each year. If accounts receivable is growing much faster than revenue, it may mean the company is struggling to collect payments \u2014 sometimes a sign of aggressive or fictitious revenue reporting. A healthy company should see both lines move at a similar pace."
-      }
-    },
-    "valuation_chart": {
-      "2016": {
-        "market_price": 93301368.0,
-        "intrinsic_value": 0.12,
-        "bull_case": 0.13,
-        "bear_case": 0.11
-      },
-      "2017": {
-        "market_price": 460765216.0,
-        "intrinsic_value": 0.12,
-        "bull_case": 0.13,
-        "bear_case": 0.12
-      },
-      "2018": {
-        "market_price": 14354056.0,
-        "intrinsic_value": 0.13,
-        "bull_case": 0.14,
-        "bear_case": 0.12
-      },
-      "2019": {
-        "market_price": 213516.59,
-        "intrinsic_value": 0.13,
-        "bull_case": 0.14,
-        "bear_case": 0.12
-      },
-      "2020": {
-        "market_price": 780501.81,
-        "intrinsic_value": 0.13,
-        "bull_case": 0.14,
-        "bear_case": 0.13
-      },
-      "2021": {
-        "market_price": 213516.59,
-        "intrinsic_value": 0.13,
-        "bull_case": 0.14,
-        "bear_case": 0.13
-      },
-      "2022": {
-        "market_price": 21531.08,
-        "intrinsic_value": 0.14,
-        "bull_case": 0.14,
-        "bear_case": 0.13
-      },
-      "2023": {
-        "market_price": 76.9,
-        "intrinsic_value": 0.14,
-        "bull_case": 0.14,
-        "bear_case": 0.14
-      },
-      "2024": {
-        "market_price": 4.86,
-        "intrinsic_value": 0.14,
-        "bull_case": 0.15,
-        "bear_case": 0.14
-      },
-      "2025": {
-        "market_price": 0.18,
-        "intrinsic_value": 0.14,
-        "bull_case": 0.15,
-        "bear_case": 0.14
-      },
-      "2026": {
-        "market_price": 0.15,
-        "intrinsic_value": 0.15,
-        "bull_case": 0.15,
-        "bear_case": 0.15
-      },
-      "2027": {
-        "market_price": null,
-        "intrinsic_value": 0.15,
-        "bull_case": 0.15,
-        "bear_case": 0.15
-      },
-      "2028": {
-        "market_price": null,
-        "intrinsic_value": 0.16,
-        "bull_case": 0.16,
-        "bear_case": 0.15
-      },
-      "2029": {
-        "market_price": null,
-        "intrinsic_value": 0.16,
-        "bull_case": 0.16,
-        "bear_case": 0.16
-      },
-      "2030": {
-        "market_price": null,
-        "intrinsic_value": 0.16,
-        "bull_case": 0.17,
-        "bear_case": 0.16
-      },
-      "2031": {
-        "market_price": null,
-        "intrinsic_value": 0.17,
-        "bull_case": 0.17,
-        "bear_case": 0.16
-      }
-    },
-    "forecast_meta": {
-      "eps_next_5y_raw": 0.0,
-      "fs_score": 1,
-      "fs_multiplier": 0.35,
-      "base_growth_rate": 0.02,
-      "bull_growth_rate": 0.026,
-      "bear_growth_rate": 0.011,
-      "growth_constrained": true,
-      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 1/10",
-      "growth_explanation": "Base (2.0%/yr): growth in line with analyst expectations. Bull (2.6%/yr): everything goes to plan. Bear (1.1%/yr): growth disappoints. Growth capped at 2.0% (from 0.0%) \u2014 the balance sheet (financial strength 1/10) limits how fast this company can realistically grow."
-    },
-    "bull_bear": {
-      "short_term": {
-        "bull_points": [
-          "Consensus expectations are broadly supportive for Hyperscale Data, Inc. in the near term",
-          "Current market positioning in the Industrials sector may attract tactical buyers",
-          "Any positive earnings surprise could act as a near-term re-rating catalyst"
-        ],
-        "bear_points": [
-          "Declining revenue of -21.7% may weigh on near-term earnings and investor sentiment",
-          "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
-          "Short-term earnings visibility is limited without additional guidance"
-        ]
-      },
-      "long_term": {
-        "bull_points": [
-          "Hyperscale Data, Inc. operates in a sector with long-term structural tailwinds",
-          "Management has demonstrated consistent capital allocation discipline",
-          "The business has the scale to compound earnings over a multi-year horizon"
-        ],
-        "bear_points": [
-          "Low profitability score (0/10) suggests thin or negative margins that structurally limit long-term earnings power",
-          "Weak balance sheet (1/10) constrains long-term capital allocation and increases vulnerability in a downturn",
-          "Unpredictable earnings (1/10) make long-term forecasting unreliable and compress the valuation multiple the market is willing to pay"
-        ]
-      },
-      "source": "rules",
-      "generated_at": "2026-04-15 23:17"
-    },
-    "price_alert": {
-      "triggered": true,
-      "signal": "ath_drop",
-      "drop_from_ath_pct": 98.5,
-      "ath": 9.98,
-      "current_price": 0.15,
-      "message": "Down 98% from 52-week high of $9.98"
-    },
-    "watchlist_signal": {
-      "signal": "Avoid",
-      "reason": "Weak fundamentals or significantly overvalued \u2014 better opportunities elsewhere.",
-      "score": 0,
-      "inputs": {
-        "quality_base": 8,
-        "val_adj": -10,
-        "alert_adj": -10,
-        "classification": "Dangerous",
-        "mos_pct": -3.0
-      }
-    },
-    "10_Year_History": {
-      "2016": 93301368.0,
-      "2017": 460765216.0,
-      "2018": 14354056.0,
-      "2019": 213516.59,
-      "2020": 780501.81,
-      "2021": 213516.59,
-      "2022": 21531.08,
-      "2023": 76.9,
-      "2024": 4.86,
-      "2025": 0.18,
-      "2026": 0.15
-    },
-    "5_Year_Forecast": {
-      "2027": 0.15,
-      "2028": 0.16,
-      "2029": 0.16,
-      "2030": 0.16,
-      "2031": 0.17
-    },
-    "Last_Updated": "2026-04-15 23:17"
+    "Last_Updated": "2026-04-16 06:07"
   },
   "GRF": {
     "company_profile": {
@@ -1501,11 +1499,11 @@
       "quote_type": "EQUITY",
       "market_cap": 38408652,
       "52w_high": 11.85,
-      "52w_low": 9.25,
-      "avg_volume": 1123,
+      "52w_low": 9.33,
+      "avg_volume": 1288,
       "pe_trailing": 7.6220474,
       "pe_forward": null,
-      "dividend_yield": 8.38,
+      "dividend_yield": 8.78,
       "beta": 0.279
     },
     "current_price": 9.68,
@@ -1614,7 +1612,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-15 23:17"
+      "last_calculated": "2026-04-16 06:07"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -1626,7 +1624,7 @@
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; balance sheet constraints on growth; low consensus EPS growth (0.0% p.a.).",
       "investment_summary": "The stock trades near estimated intrinsic value and is appropriate for investors with higher risk tolerance and conviction in the growth thesis.",
       "source": "rules",
-      "generated_at": "2026-04-15 23:17"
+      "generated_at": "2026-04-16 06:07"
     },
     "fundamentals": {
       "roe": 0.1079,
@@ -1871,7 +1869,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-15 23:17"
+      "generated_at": "2026-04-16 06:07"
     },
     "price_alert": {
       "triggered": false,
@@ -1913,7 +1911,7 @@
       "2030": 10.09,
       "2031": 10.29
     },
-    "Last_Updated": "2026-04-15 23:17"
+    "Last_Updated": "2026-04-16 06:07"
   },
   "GRO": {
     "company_profile": {
@@ -1935,7 +1933,7 @@
       "market_cap": 173583728,
       "52w_high": 3.99,
       "52w_low": 1.25,
-      "avg_volume": 836191,
+      "avg_volume": 835860,
       "pe_trailing": null,
       "pe_forward": -7.619048,
       "dividend_yield": null,
@@ -2036,7 +2034,7 @@
         "eps_next_5y": 0.3123
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-15 23:17"
+      "last_calculated": "2026-04-16 06:07"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -2048,7 +2046,7 @@
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth.",
       "investment_summary": "With 31.2% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 42% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-15 23:17"
+      "generated_at": "2026-04-16 06:07"
     },
     "fundamentals": {
       "roe": -0.3557,
@@ -2161,7 +2159,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-15 23:17"
+      "generated_at": "2026-04-16 06:07"
     },
     "price_alert": {
       "triggered": false,
@@ -2195,7 +2193,7 @@
       "2030": 15.68,
       "2031": 20.38
     },
-    "Last_Updated": "2026-04-15 23:17"
+    "Last_Updated": "2026-04-16 06:07"
   },
   "GROY": {
     "company_profile": {
@@ -2217,7 +2215,7 @@
       "market_cap": 856239040,
       "52w_high": 5.455,
       "52w_low": 1.43,
-      "avg_volume": 3286440,
+      "avg_volume": 3241771,
       "pe_trailing": null,
       "pe_forward": 30.409836,
       "dividend_yield": null,
@@ -2318,7 +2316,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-15 23:17"
+      "last_calculated": "2026-04-16 06:07"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -2330,7 +2328,7 @@
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth.",
       "investment_summary": "The stock trades at a 37% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-15 23:17"
+      "generated_at": "2026-04-16 06:07"
     },
     "fundamentals": {
       "roe": -0.0066,
@@ -2461,7 +2459,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-15 23:17"
+      "generated_at": "2026-04-16 06:07"
     },
     "price_alert": {
       "triggered": true,
@@ -2498,7 +2496,7 @@
       "2030": 2.93,
       "2031": 2.99
     },
-    "Last_Updated": "2026-04-15 23:17"
+    "Last_Updated": "2026-04-16 06:07"
   },
   "GTE": {
     "company_profile": {
@@ -2520,7 +2518,7 @@
       "market_cap": 276742400,
       "52w_high": 9.74,
       "52w_low": 3.09,
-      "avg_volume": 776976,
+      "avg_volume": 778130,
       "pe_trailing": null,
       "pe_forward": -17.838453,
       "dividend_yield": null,
@@ -2629,7 +2627,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-15 23:17"
+      "last_calculated": "2026-04-16 06:07"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -2641,7 +2639,7 @@
       "risk_profile": "Key risks to watch: tight liquidity (current ratio 0.60); a weak near-term growth outlook; balance sheet constraints on growth.",
       "investment_summary": "The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-15 23:17"
+      "generated_at": "2026-04-16 06:07"
     },
     "fundamentals": {
       "roe": -0.6013,
@@ -3057,7 +3055,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-15 23:17"
+      "generated_at": "2026-04-16 06:07"
     },
     "price_alert": {
       "triggered": false,
@@ -3099,6 +3097,6 @@
       "2030": 8.89,
       "2031": 9.06
     },
-    "Last_Updated": "2026-04-15 23:17"
+    "Last_Updated": "2026-04-16 06:07"
   }
 }
