@@ -16,19 +16,19 @@
       "exchange": "NYQ",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 293614977024,
+      "market_cap": 320899710976,
       "52w_high": 438.85,
       "52w_low": 234.6,
       "avg_volume": 10034339,
-      "pe_trailing": 24.450493,
-      "pe_forward": 16.07525,
+      "pe_trailing": 26.7226,
+      "pe_forward": 17.569073,
       "dividend_yield": 2.73,
       "beta": 0.408
     },
-    "current_price": 323.48,
+    "current_price": 353.54,
     "intrinsic_value": 436.47,
-    "margin_of_safety_pct": 25.9,
-    "mos_label": "Moderate Discount",
+    "margin_of_safety_pct": 19.0,
+    "mos_label": "Slight Discount",
     "data_availability": {
       "status": "ok",
       "message": null,
@@ -111,7 +111,7 @@
         "financial_strength": 4,
         "growth": 5,
         "predictability": 9,
-        "valuation": 7,
+        "valuation": 6,
         "moat": null
       },
       "score_labels": {
@@ -136,19 +136,19 @@
         "eps_next_5y": 0.1423
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 11:20"
+      "last_calculated": "2026-04-21 14:10"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "UnitedHealth Group Incorporated is rated Speculative because its fundamentals are mixed \u2014 decent in some areas but not consistently strong enough to qualify as Safe. The growth outlook adds uncertainty to the longer-term picture. This rating means the investment could work out well, but there is more uncertainty involved compared to a Safe-rated company.",
-      "investment_narrative": "UnitedHealth Group Incorporated demonstrates mixed fundamental quality and shows particular strength in profitability. Key risks to watch: elevated leverage (Debt/EBITDA 3.8x); tight liquidity (current ratio 0.79); balance sheet constraints on growth. With 14.2% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 26% discount to estimated intrinsic value and is appropriate for investors with higher risk tolerance and conviction in the growth thesis.",
+      "investment_narrative": "UnitedHealth Group Incorporated demonstrates mixed fundamental quality and shows particular strength in profitability. Key risks to watch: elevated leverage (Debt/EBITDA 3.8x); tight liquidity (current ratio 0.79); balance sheet constraints on growth. With 14.2% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades near estimated intrinsic value and is appropriate for investors with higher risk tolerance and conviction in the growth thesis.",
       "quality_conclusion": "UnitedHealth Group Incorporated demonstrates mixed fundamental quality and shows particular strength in profitability.",
       "risk_profile": "Key risks to watch: elevated leverage (Debt/EBITDA 3.8x); tight liquidity (current ratio 0.79); balance sheet constraints on growth.",
-      "investment_summary": "With 14.2% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 26% discount to estimated intrinsic value and is appropriate for investors with higher risk tolerance and conviction in the growth thesis.",
+      "investment_summary": "With 14.2% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades near estimated intrinsic value and is appropriate for investors with higher risk tolerance and conviction in the growth thesis.",
       "source": "rules",
-      "generated_at": "2026-04-21 11:20"
+      "generated_at": "2026-04-21 14:10"
     },
     "fundamentals": {
       "roe": 0.1254,
@@ -491,7 +491,7 @@
         "bear_case": 336.59
       },
       "2026": {
-        "market_price": 323.48,
+        "market_price": 353.54,
         "intrinsic_value": 436.47,
         "bull_case": 450.44,
         "bear_case": 415.51
@@ -541,8 +541,8 @@
     "bull_bear": {
       "short_term": {
         "bull_points": [
-          "Trading at a 25.9% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $436.47",
           "Analyst consensus of 14.2% EPS growth over five years provides a near-term catalyst if the company delivers on guidance",
+          "Current market positioning in the Healthcare sector may attract tactical buyers",
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
         "bear_points": [
@@ -564,26 +564,26 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 11:20"
+      "generated_at": "2026-04-21 14:10"
     },
     "price_alert": {
-      "triggered": true,
-      "signal": "ath_drop",
-      "drop_from_ath_pct": 26.3,
+      "triggered": false,
+      "signal": null,
+      "drop_from_ath_pct": 19.4,
       "ath": 438.85,
-      "current_price": 323.48,
-      "message": "Down 26% from 52-week high of $438.85"
+      "current_price": 353.54,
+      "message": null
     },
     "watchlist_signal": {
       "signal": "Buy",
-      "reason": "Good fundamentals with a 26% margin of safety \u2014 worth adding at current prices.",
+      "reason": "Good fundamentals with a 19% margin of safety \u2014 worth adding at current prices.",
       "score": 65,
       "inputs": {
         "quality_base": 55,
         "val_adj": 10,
         "alert_adj": 0,
         "classification": "Speculative",
-        "mos_pct": 25.9
+        "mos_pct": 19.0
       }
     },
     "10_Year_History": {
@@ -597,7 +597,7 @@
       "2023": 501.99,
       "2024": 489.89,
       "2025": 327.56,
-      "2026": 323.48
+      "2026": 353.55
     },
     "5_Year_Forecast": {
       "2027": 498.58,
@@ -606,7 +606,7 @@
       "2030": 743.15,
       "2031": 848.9
     },
-    "Last_Updated": "2026-04-21 11:20"
+    "Last_Updated": "2026-04-21 14:10"
   },
   "UBER": {
     "company_profile": {
@@ -625,18 +625,18 @@
       "exchange": "NYQ",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 159483396096,
+      "market_cap": 161542144000,
       "52w_high": 101.99,
       "52w_low": 68.46,
       "avg_volume": 19435162,
-      "pe_trailing": 16.382664,
-      "pe_forward": 18.05839,
+      "pe_trailing": 16.594145,
+      "pe_forward": 18.291504,
       "dividend_yield": null,
       "beta": 1.206
     },
-    "current_price": 77.49,
+    "current_price": 78.52,
     "intrinsic_value": 75.75,
-    "margin_of_safety_pct": -2.3,
+    "margin_of_safety_pct": -3.7,
     "mos_label": "Fairly Valued (Marginal Premium)",
     "data_availability": {
       "status": "ok",
@@ -747,7 +747,7 @@
         "eps_next_5y": 0.0438
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 11:20"
+      "last_calculated": "2026-04-21 14:10"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -759,7 +759,7 @@
       "risk_profile": "Key risks to watch: balance sheet constraints on growth.",
       "investment_summary": "With 4.4% consensus EPS growth forecast, the growth outlook adds some uncertainty to the investment case. The stock trades near estimated intrinsic value and is suitable for quality-focused long-term investors.",
       "source": "rules",
-      "generated_at": "2026-04-21 11:20"
+      "generated_at": "2026-04-21 14:10"
     },
     "fundamentals": {
       "roe": 0.3993,
@@ -1051,7 +1051,7 @@
         "bear_case": 68.54
       },
       "2026": {
-        "market_price": 77.49,
+        "market_price": 78.52,
         "intrinsic_value": 75.75,
         "bull_case": 76.65,
         "bear_case": 74.41
@@ -1124,15 +1124,15 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 11:20"
+      "generated_at": "2026-04-21 14:10"
     },
     "price_alert": {
       "triggered": true,
       "signal": "ath_drop",
-      "drop_from_ath_pct": 24.0,
+      "drop_from_ath_pct": 23.0,
       "ath": 101.99,
-      "current_price": 77.49,
-      "message": "Down 24% from 52-week high of $101.99"
+      "current_price": 78.52,
+      "message": "Down 23% from 52-week high of $101.99"
     },
     "watchlist_signal": {
       "signal": "Buy",
@@ -1143,7 +1143,7 @@
         "val_adj": -10,
         "alert_adj": 10,
         "classification": "Safe",
-        "mos_pct": -2.3
+        "mos_pct": -3.7
       }
     },
     "10_Year_History": {
@@ -1154,7 +1154,7 @@
       "2023": 61.57,
       "2024": 60.32,
       "2025": 81.71,
-      "2026": 77.49
+      "2026": 78.49
     },
     "5_Year_Forecast": {
       "2027": 79.07,
@@ -1163,7 +1163,7 @@
       "2030": 89.92,
       "2031": 93.86
     },
-    "Last_Updated": "2026-04-21 11:20"
+    "Last_Updated": "2026-04-21 14:10"
   },
   "UAL": {
     "company_profile": {
@@ -1182,18 +1182,18 @@
       "exchange": "NMS",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 32111071232,
+      "market_cap": 31939004416,
       "52w_high": 119.21,
       "52w_low": 65.26,
       "avg_volume": 7616563,
-      "pe_trailing": 9.69706,
-      "pe_forward": 6.8839235,
+      "pe_trailing": 9.645098,
+      "pe_forward": 6.847036,
       "dividend_yield": null,
       "beta": 1.286
     },
-    "current_price": 98.91,
+    "current_price": 98.38,
     "intrinsic_value": 119.04,
-    "margin_of_safety_pct": 16.9,
+    "margin_of_safety_pct": 17.4,
     "mos_label": "Slight Discount",
     "data_availability": {
       "status": "ok",
@@ -1300,7 +1300,7 @@
         "eps_next_5y": 0.1645
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -1312,7 +1312,7 @@
       "risk_profile": "Key risks to watch: elevated leverage (Debt/EBITDA 4.0x); tight liquidity (current ratio 0.65); balance sheet constraints on growth.",
       "investment_summary": "With 16.4% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades near estimated intrinsic value and is appropriate for investors with higher risk tolerance and conviction in the growth thesis.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": 0.2399,
@@ -1655,7 +1655,7 @@
         "bear_case": 88.41
       },
       "2026": {
-        "market_price": 98.91,
+        "market_price": 98.38,
         "intrinsic_value": 119.04,
         "bull_case": 123.45,
         "bear_case": 112.43
@@ -1728,14 +1728,14 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": false,
       "signal": null,
-      "drop_from_ath_pct": 17.0,
+      "drop_from_ath_pct": 17.5,
       "ath": 119.21,
-      "current_price": 98.91,
+      "current_price": 98.38,
       "message": null
     },
     "watchlist_signal": {
@@ -1747,7 +1747,7 @@
         "val_adj": 10,
         "alert_adj": 0,
         "classification": "Speculative",
-        "mos_pct": 16.9
+        "mos_pct": 17.4
       }
     },
     "10_Year_History": {
@@ -1761,7 +1761,7 @@
       "2023": 41.26,
       "2024": 97.1,
       "2025": 111.82,
-      "2026": 98.91
+      "2026": 98.38
     },
     "5_Year_Forecast": {
       "2027": 138.62,
@@ -1770,7 +1770,7 @@
       "2030": 218.9,
       "2031": 254.91
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   },
   "UBCP": {
     "company_profile": {
@@ -1789,19 +1789,19 @@
       "exchange": "NCM",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 91113896,
+      "market_cap": 95126832,
       "52w_high": 17.34,
       "52w_low": 12.25,
       "avg_volume": 10727,
-      "pe_trailing": 11.776119,
-      "pe_forward": 9.862499,
+      "pe_trailing": 12.294776,
+      "pe_forward": 10.296875,
       "dividend_yield": 4.88,
       "beta": 0.362
     },
-    "current_price": 15.78,
+    "current_price": 16.48,
     "intrinsic_value": 17.35,
-    "margin_of_safety_pct": 9.0,
-    "mos_label": "Slight Discount",
+    "margin_of_safety_pct": 5.0,
+    "mos_label": "Fairly Valued (Marginal Discount)",
     "data_availability": {
       "status": "ok",
       "message": null,
@@ -1908,7 +1908,7 @@
         "eps_next_5y": 0.1013
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -1920,7 +1920,7 @@
       "risk_profile": "Key risks to watch: balance sheet constraints on growth.",
       "investment_summary": "With 10.1% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades near estimated intrinsic value and is suitable for quality-focused long-term investors.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": 0.1157,
@@ -2192,7 +2192,7 @@
         "bear_case": 13.87
       },
       "2026": {
-        "market_price": 15.78,
+        "market_price": 16.48,
         "intrinsic_value": 17.35,
         "bull_case": 17.82,
         "bear_case": 16.64
@@ -2265,26 +2265,26 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": false,
       "signal": null,
-      "drop_from_ath_pct": 9.0,
+      "drop_from_ath_pct": 5.0,
       "ath": 17.34,
-      "current_price": 15.78,
+      "current_price": 16.48,
       "message": null
     },
     "watchlist_signal": {
       "signal": "Strong Buy",
-      "reason": "A Safe-rated business trading at a 9% discount to intrinsic value \u2014 quality at a genuine bargain.",
+      "reason": "A Safe-rated business trading at a 5% discount to intrinsic value \u2014 quality at a genuine bargain.",
       "score": 75,
       "inputs": {
         "quality_base": 75,
         "val_adj": 0,
         "alert_adj": 0,
         "classification": "Safe",
-        "mos_pct": 9.0
+        "mos_pct": 5.0
       }
     },
     "10_Year_History": {
@@ -2298,7 +2298,7 @@
       "2023": 10.96,
       "2024": 11.88,
       "2025": 14.01,
-      "2026": 15.78
+      "2026": 16.48
     },
     "5_Year_Forecast": {
       "2027": 19.11,
@@ -2307,7 +2307,7 @@
       "2030": 25.52,
       "2031": 28.11
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   },
   "UBXG": {
     "company_profile": {
@@ -2326,7 +2326,7 @@
       "exchange": "NCM",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 31646928,
+      "market_cap": 32404034,
       "52w_high": 4.5,
       "52w_low": 1.0,
       "avg_volume": 20483,
@@ -2335,9 +2335,9 @@
       "dividend_yield": null,
       "beta": -3.486
     },
-    "current_price": 1.04,
+    "current_price": 1.07,
     "intrinsic_value": 1.57,
-    "margin_of_safety_pct": 33.4,
+    "margin_of_safety_pct": 31.8,
     "mos_label": "Moderate Discount",
     "data_availability": {
       "status": "ok",
@@ -2430,19 +2430,19 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "U-BX Technology Ltd. carries a Dangerous rating because it shows significant weaknesses in profitability and growth. Revenue and earnings have been inconsistent, making it hard to predict where this business will be in a few years. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "U-BX Technology Ltd. demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth. The stock trades at a 33% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_narrative": "U-BX Technology Ltd. demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth. The stock trades at a 32% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "quality_conclusion": "U-BX Technology Ltd. demonstrates weak fundamental quality and is constrained by profitability.",
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth.",
-      "investment_summary": "The stock trades at a 33% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_summary": "The stock trades at a 32% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": -0.4659,
@@ -2587,7 +2587,7 @@
         "bear_case": 1.49
       },
       "2026": {
-        "market_price": 1.04,
+        "market_price": 1.07,
         "intrinsic_value": 1.57,
         "bull_case": 1.58,
         "bear_case": 1.56
@@ -2637,7 +2637,7 @@
     "bull_bear": {
       "short_term": {
         "bull_points": [
-          "Trading at a 33.4% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $1.57",
+          "Trading at a 31.8% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $1.57",
           "Current market positioning in the Technology sector may attract tactical buyers",
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
@@ -2660,15 +2660,15 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": true,
       "signal": "ath_drop",
-      "drop_from_ath_pct": 76.8,
+      "drop_from_ath_pct": 76.2,
       "ath": 4.5,
-      "current_price": 1.04,
-      "message": "Down 77% from 52-week high of $4.50"
+      "current_price": 1.07,
+      "message": "Down 76% from 52-week high of $4.50"
     },
     "watchlist_signal": {
       "signal": "Avoid",
@@ -2679,13 +2679,13 @@
         "val_adj": 20,
         "alert_adj": -10,
         "classification": "Dangerous",
-        "mos_pct": 33.4
+        "mos_pct": 31.8
       }
     },
     "10_Year_History": {
       "2024": 3.37,
       "2025": 2.0,
-      "2026": 1.04
+      "2026": 1.07
     },
     "5_Year_Forecast": {
       "2027": 1.6,
@@ -2694,301 +2694,7 @@
       "2030": 1.7,
       "2031": 1.73
     },
-    "Last_Updated": "2026-04-21 12:16"
-  },
-  "UCAR": {
-    "company_profile": {
-      "name": "U Power Limited",
-      "ticker": "UCAR",
-      "sector": "Consumer Cyclical",
-      "industry": "Auto & Truck Dealerships",
-      "company_type": "STANDARD",
-      "type_rationale": "Standard company \u2014 balanced weighting across all methods",
-      "description": "U Power Limited, together with its subsidiaries, develops, manufactures, and sells new energy vehicles and battery swapping stations in the People's Republic of China, Thailand, Southeast Asia, South America, Hong Kong SAR, and Macau SAR markets. It also offers battery swapping and sourcing, as well as technical and consultation services. The company is involved in the provision of two-wheeled vehicle; and new energy vehicles sales. U Power Limited was founded in 2013 and is based in Wuhu, the People's Republic of China.",
-      "description_summary": "U Power Limited, together with its subsidiaries, develops, manufactures, and sells new energy vehicles and battery swapping stations in the People's Republic of China, Thailand, Southeast Asia, South America, Hong Kong SAR, and Macau SAR markets. It also offers battery swapping and sourcing, as well as technical and consultation services.",
-      "website": "https://www.upincar.com",
-      "employees": 80,
-      "country": "China",
-      "city": "Wuhu",
-      "exchange": "NCM",
-      "currency": "USD",
-      "quote_type": "EQUITY",
-      "market_cap": 3199722,
-      "52w_high": 49.8,
-      "52w_low": 0.38,
-      "avg_volume": 12447381,
-      "pe_trailing": null,
-      "pe_forward": null,
-      "dividend_yield": null,
-      "beta": 2.433
-    },
-    "current_price": 1.5,
-    "intrinsic_value": null,
-    "margin_of_safety_pct": null,
-    "mos_label": "Unavailable",
-    "data_availability": {
-      "status": "no_valuation",
-      "message": "Financial data is available but none of our valuation methods produced a reliable result for this company. This typically happens with pre-revenue companies, financial holding structures, or companies with highly irregular cash flows.",
-      "has_price": true,
-      "has_iv": false,
-      "has_financials": true,
-      "active_methods": 0,
-      "exclude_from_search": false
-    },
-    "valuations": {
-      "1_DCF_Operating_CF": null,
-      "2_DCF_FCF": null,
-      "3_DCF_Net_Income": null,
-      "4_DCF_Terminal_Value": null,
-      "5_Mean_PS": 263.85,
-      "6_Mean_PE": null,
-      "7_Mean_PB": 39.22,
-      "8_PSG": null,
-      "9_PEG": null,
-      "10_EV_EBITDA": null,
-      "intrinsic_value": null,
-      "methods_used": 0,
-      "confidence": "Insufficient Data",
-      "active_methods": [],
-      "_meta": {
-        "pe_source": "current_trailing",
-        "ps_source": "historical_mean",
-        "pb_source": "historical_mean",
-        "ev_ebitda_source": "trailing_or_unavailable",
-        "growth_source": "finviz_no_growth",
-        "growth_raw": 0.0,
-        "growth_peg_rate": 0.0,
-        "discount_rate": 0.12,
-        "growth_stage1": 0.02,
-        "growth_stage2": 0.02,
-        "terminal_growth": 0.02,
-        "tier": "Weak",
-        "company_type": "STANDARD",
-        "type_rationale": "Standard company \u2014 balanced weighting across all methods",
-        "method_explanation": "This company does not fit neatly into a specialist category, so we apply a balanced mix of all ten valuation methods. These include Discounted Cash Flow (which estimates the present value of future cash flows), earnings multiples (P/E and PEG), revenue multiples (P/S and PSG), book value (P/B), and EV/EBITDA. Each method approaches value from a different angle \u2014 using all of them together gives a more rounded estimate than relying on any single number.",
-        "weights_applied": {
-          "1_DCF_Operating_CF": 0.08,
-          "2_DCF_FCF": 0.08,
-          "3_DCF_Net_Income": 0.08,
-          "4_DCF_Terminal_Value": 0.08,
-          "5_Mean_PS": 0.12,
-          "6_Mean_PE": 0.08,
-          "7_Mean_PB": 0.15,
-          "8_PSG": 0.08,
-          "9_PEG": 0.08,
-          "10_EV_EBITDA": 0.17
-        },
-        "excluded_methods": [],
-        "active_methods": []
-      }
-    },
-    "quality": {
-      "scores": {
-        "profitability": 0,
-        "financial_strength": 2,
-        "growth": 3,
-        "predictability": 5,
-        "valuation": 2,
-        "moat": null
-      },
-      "score_labels": {
-        "profitability": "Poor",
-        "financial_strength": "Weak",
-        "growth": "Weak",
-        "predictability": "Adequate",
-        "valuation": "Weak",
-        "moat": "Not scored"
-      },
-      "company_type": "STANDARD",
-      "company_type_note": null,
-      "python_subtotal": 10,
-      "python_subtotal_pct": 25.0,
-      "classification": "Dangerous",
-      "penalty_pct": 8,
-      "final_score_pct": 17.0,
-      "tiebreaker_used": false,
-      "tiebreaker_inputs": {
-        "roe": -0.1701,
-        "roic": null,
-        "eps_next_5y": 0.0
-      },
-      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
-    },
-    "quality_narrative": {
-      "moat_score": null,
-      "moat_rationale": "",
-      "metric_assessments": {},
-      "classification_reason": "U Power Limited carries a Dangerous rating because it shows significant weaknesses in profitability and financial strength. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "U Power Limited demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: a weak near-term growth outlook; low consensus EPS growth (0.0% p.a.). The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
-      "quality_conclusion": "U Power Limited demonstrates weak fundamental quality and is constrained by profitability.",
-      "risk_profile": "Key risks to watch: a weak near-term growth outlook; low consensus EPS growth (0.0% p.a.).",
-      "investment_summary": "The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
-      "source": "rules",
-      "generated_at": "2026-04-21 12:16"
-    },
-    "fundamentals": {
-      "roe": -0.1701,
-      "roic": null,
-      "roe_pct": "-17.01%",
-      "roic_pct": null,
-      "roic_source": "unavailable",
-      "current_ratio": 1.85,
-      "debt_to_ebitda": null,
-      "debt_service_ratio": null
-    },
-    "financials_charts": {
-      "revenue_vs_net_income": {
-        "2024": {
-          "revenue": 6.07,
-          "net_income": -6.57
-        },
-        "2023": {
-          "revenue": 2.78,
-          "net_income": -2.72
-        },
-        "2022": {
-          "revenue": 1.13,
-          "net_income": -6.66
-        }
-      },
-      "fcf_vs_debt": {
-        "2024": {
-          "cash_balance": 3.21,
-          "free_cash_flow": -10.03,
-          "total_debt": null
-        },
-        "2023": {
-          "cash_balance": 0.27,
-          "free_cash_flow": -9.34,
-          "total_debt": 0.7
-        },
-        "2022": {
-          "cash_balance": 0.71,
-          "free_cash_flow": -3.0,
-          "total_debt": 0.94
-        }
-      },
-      "shares_vs_buybacks": {
-        "2024": {
-          "shares_outstanding_m": 2.85,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2023": {
-          "shares_outstanding_m": 2.48,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2022": {
-          "shares_outstanding_m": 100.0,
-          "buybacks_m": null,
-          "split_adjusted": true
-        }
-      },
-      "returns_trajectory": {
-        "2024": {
-          "roe_pct": -16.44,
-          "roic_pct": null
-        },
-        "2023": {
-          "roe_pct": -6.31,
-          "roic_pct": null
-        },
-        "2022": {
-          "roe_pct": -27.67,
-          "roic_pct": null
-        }
-      },
-      "revenue_vs_ar": {
-        "2024": {
-          "revenue": 6.07,
-          "accounts_receivable": 1.42,
-          "rev_growth_pct": 118.3,
-          "ar_growth_pct": -36.0,
-          "ar_outpacing": false
-        },
-        "2023": {
-          "revenue": 2.78,
-          "accounts_receivable": 2.22,
-          "rev_growth_pct": 146.0,
-          "ar_growth_pct": 865.2,
-          "ar_outpacing": true
-        },
-        "2022": {
-          "revenue": 1.13,
-          "accounts_receivable": 0.23,
-          "rev_growth_pct": null,
-          "ar_growth_pct": null,
-          "ar_outpacing": null
-        }
-      },
-      "_notes": {
-        "revenue_vs_net_income": "This chart shows how much money the company brings in (revenue) versus how much it actually keeps as profit (net income) each year. A healthy company should show both lines growing over time. If revenue grows but net income shrinks, the company is spending more than it is earning \u2014 a warning sign worth investigating.",
-        "fcf_vs_debt": "Free cash flow is the cash left over after the company has paid for everything it needs to run and grow the business. This chart compares that cash to the company's total debt. A company with rising free cash flow and falling debt is in a strong financial position. If debt is rising faster than cash, the company may be taking on more risk than it can comfortably manage.",
-        "shares_vs_buybacks": "When a company buys back its own shares, it reduces the total number of shares in circulation \u2014 which means each remaining share represents a larger slice of the business. This chart shows how the share count has changed over time. Consistent buybacks are generally a sign that management believes the stock is undervalued and wants to return cash to shareholders.",
-        "returns_trajectory": "Return on Equity (ROE) measures how much profit a company generates for every dollar of shareholder money invested. Return on Invested Capital (ROIC) is similar but also includes debt. Both are expressed as a percentage \u2014 higher is better. A company consistently earning above 15% ROIC is generally considered to have a genuine competitive advantage over its peers.",
-        "revenue_vs_ar": "Accounts receivable is money the company is owed by customers who have not yet paid their bills. This chart compares revenue growth to accounts receivable growth each year. If accounts receivable is growing much faster than revenue, it may mean the company is struggling to collect payments \u2014 sometimes a sign of aggressive or fictitious revenue reporting. A healthy company should see both lines move at a similar pace."
-      }
-    },
-    "valuation_chart": {},
-    "forecast_meta": {},
-    "bull_bear": {
-      "short_term": {
-        "bull_points": [
-          "Revenue growing at 34.4% year-over-year, indicating sustained demand momentum heading into the next quarter",
-          "Current market positioning in the Consumer Cyclical sector may attract tactical buyers",
-          "Any positive earnings surprise could act as a near-term re-rating catalyst"
-        ],
-        "bear_points": [
-          "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
-          "Macro uncertainty and rate expectations may suppress multiple expansion",
-          "Short-term earnings visibility is limited without additional guidance"
-        ]
-      },
-      "long_term": {
-        "bull_points": [
-          "U Power Limited operates in a sector with long-term structural tailwinds",
-          "Management has demonstrated consistent capital allocation discipline",
-          "The business has the scale to compound earnings over a multi-year horizon"
-        ],
-        "bear_points": [
-          "Low profitability score (0/10) suggests thin or negative margins that structurally limit long-term earnings power",
-          "Weak balance sheet (2/10) constrains long-term capital allocation and increases vulnerability in a downturn",
-          "Execution risk remains a key variable over a multi-year investment horizon"
-        ]
-      },
-      "source": "rules",
-      "generated_at": "2026-04-21 12:16"
-    },
-    "price_alert": {
-      "triggered": true,
-      "signal": "ath_drop",
-      "drop_from_ath_pct": 97.0,
-      "ath": 49.8,
-      "current_price": 1.5,
-      "message": "Down 97% from 52-week high of $49.80"
-    },
-    "watchlist_signal": {
-      "signal": "Avoid",
-      "reason": "Weak fundamentals or significantly overvalued \u2014 better opportunities elsewhere.",
-      "score": 15,
-      "inputs": {
-        "quality_base": 25,
-        "val_adj": 0,
-        "alert_adj": -10,
-        "classification": "Dangerous",
-        "mos_pct": null
-      }
-    },
-    "10_Year_History": {
-      "2023": 184.0,
-      "2024": 66.31,
-      "2025": 15.2,
-      "2026": 1.5
-    },
-    "5_Year_Forecast": {},
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   },
   "UBSI": {
     "company_profile": {
@@ -3007,18 +2713,18 @@
       "exchange": "NMS",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 6215339008,
+      "market_cap": 6158074368,
       "52w_high": 45.93,
       "52w_low": 33.03,
       "avg_volume": 964947,
-      "pe_trailing": 13.608562,
-      "pe_forward": 11.866667,
+      "pe_trailing": 13.483181,
+      "pe_forward": 11.757334,
       "dividend_yield": 3.37,
       "beta": 0.749
     },
-    "current_price": 44.5,
+    "current_price": 44.09,
     "intrinsic_value": 39.24,
-    "margin_of_safety_pct": -13.4,
+    "margin_of_safety_pct": -12.4,
     "mos_label": "Slight Premium",
     "data_availability": {
       "status": "ok",
@@ -3122,19 +2828,19 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "United Bankshares, Inc. is rated Speculative because it has notable weaknesses in growth, which introduces meaningful uncertainty about future performance. There are also questions about how fast the business can grow.Speculative doesn't mean bad \u2014 it means the outcome is less predictable and the investment carries more risk than a Safe-rated company.",
-      "investment_narrative": "United Bankshares, Inc. demonstrates mixed fundamental quality and shows particular strength in profitability. Key risks to watch: a weak near-term growth outlook; balance sheet constraints on growth; low consensus EPS growth (0.0% p.a.). The stock trades at a 13% premium to estimated intrinsic value and is appropriate for investors with higher risk tolerance and conviction in the growth thesis.",
+      "investment_narrative": "United Bankshares, Inc. demonstrates mixed fundamental quality and shows particular strength in profitability. Key risks to watch: a weak near-term growth outlook; balance sheet constraints on growth; low consensus EPS growth (0.0% p.a.). The stock trades at a 12% premium to estimated intrinsic value and is appropriate for investors with higher risk tolerance and conviction in the growth thesis.",
       "quality_conclusion": "United Bankshares, Inc. demonstrates mixed fundamental quality and shows particular strength in profitability.",
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; balance sheet constraints on growth; low consensus EPS growth (0.0% p.a.).",
-      "investment_summary": "The stock trades at a 13% premium to estimated intrinsic value and is appropriate for investors with higher risk tolerance and conviction in the growth thesis.",
+      "investment_summary": "The stock trades at a 12% premium to estimated intrinsic value and is appropriate for investors with higher risk tolerance and conviction in the growth thesis.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": 0.0886,
@@ -3442,7 +3148,7 @@
         "bear_case": 37.28
       },
       "2026": {
-        "market_price": 44.5,
+        "market_price": 44.09,
         "intrinsic_value": 39.24,
         "bull_case": 39.48,
         "bear_case": 38.89
@@ -3515,26 +3221,26 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": false,
       "signal": null,
-      "drop_from_ath_pct": 3.1,
+      "drop_from_ath_pct": 4.0,
       "ath": 45.93,
-      "current_price": 44.5,
+      "current_price": 44.09,
       "message": null
     },
     "watchlist_signal": {
       "signal": "Watch",
-      "reason": "Quality business but trading 13% above intrinsic value \u2014 wait for a better entry.",
+      "reason": "Quality business but trading 12% above intrinsic value \u2014 wait for a better entry.",
       "score": 58,
       "inputs": {
         "quality_base": 68,
         "val_adj": -10,
         "alert_adj": 0,
         "classification": "Speculative",
-        "mos_pct": -13.4
+        "mos_pct": -12.4
       }
     },
     "10_Year_History": {
@@ -3548,7 +3254,7 @@
       "2023": 34.25,
       "2024": 35.71,
       "2025": 38.03,
-      "2026": 44.5
+      "2026": 44.09
     },
     "5_Year_Forecast": {
       "2027": 40.02,
@@ -3557,7 +3263,301 @@
       "2030": 42.47,
       "2031": 43.32
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
+  },
+  "UCAR": {
+    "company_profile": {
+      "name": "U Power Limited",
+      "ticker": "UCAR",
+      "sector": "Consumer Cyclical",
+      "industry": "Auto & Truck Dealerships",
+      "company_type": "STANDARD",
+      "type_rationale": "Standard company \u2014 balanced weighting across all methods",
+      "description": "U Power Limited, together with its subsidiaries, develops, manufactures, and sells new energy vehicles and battery swapping stations in the People's Republic of China, Thailand, Southeast Asia, South America, Hong Kong SAR, and Macau SAR markets. It also offers battery swapping and sourcing, as well as technical and consultation services. The company is involved in the provision of two-wheeled vehicle; and new energy vehicles sales. U Power Limited was founded in 2013 and is based in Wuhu, the People's Republic of China.",
+      "description_summary": "U Power Limited, together with its subsidiaries, develops, manufactures, and sells new energy vehicles and battery swapping stations in the People's Republic of China, Thailand, Southeast Asia, South America, Hong Kong SAR, and Macau SAR markets. It also offers battery swapping and sourcing, as well as technical and consultation services.",
+      "website": "https://www.upincar.com",
+      "employees": 80,
+      "country": "China",
+      "city": "Wuhu",
+      "exchange": "NCM",
+      "currency": "USD",
+      "quote_type": "EQUITY",
+      "market_cap": 3114396,
+      "52w_high": 49.8,
+      "52w_low": 0.38,
+      "avg_volume": 12447381,
+      "pe_trailing": null,
+      "pe_forward": null,
+      "dividend_yield": null,
+      "beta": 2.433
+    },
+    "current_price": 1.46,
+    "intrinsic_value": null,
+    "margin_of_safety_pct": null,
+    "mos_label": "Unavailable",
+    "data_availability": {
+      "status": "no_valuation",
+      "message": "Financial data is available but none of our valuation methods produced a reliable result for this company. This typically happens with pre-revenue companies, financial holding structures, or companies with highly irregular cash flows.",
+      "has_price": true,
+      "has_iv": false,
+      "has_financials": true,
+      "active_methods": 0,
+      "exclude_from_search": false
+    },
+    "valuations": {
+      "1_DCF_Operating_CF": null,
+      "2_DCF_FCF": null,
+      "3_DCF_Net_Income": null,
+      "4_DCF_Terminal_Value": null,
+      "5_Mean_PS": 263.85,
+      "6_Mean_PE": null,
+      "7_Mean_PB": 39.22,
+      "8_PSG": null,
+      "9_PEG": null,
+      "10_EV_EBITDA": null,
+      "intrinsic_value": null,
+      "methods_used": 0,
+      "confidence": "Insufficient Data",
+      "active_methods": [],
+      "_meta": {
+        "pe_source": "current_trailing",
+        "ps_source": "historical_mean",
+        "pb_source": "historical_mean",
+        "ev_ebitda_source": "trailing_or_unavailable",
+        "growth_source": "finviz_no_growth",
+        "growth_raw": 0.0,
+        "growth_peg_rate": 0.0,
+        "discount_rate": 0.12,
+        "growth_stage1": 0.02,
+        "growth_stage2": 0.02,
+        "terminal_growth": 0.02,
+        "tier": "Weak",
+        "company_type": "STANDARD",
+        "type_rationale": "Standard company \u2014 balanced weighting across all methods",
+        "method_explanation": "This company does not fit neatly into a specialist category, so we apply a balanced mix of all ten valuation methods. These include Discounted Cash Flow (which estimates the present value of future cash flows), earnings multiples (P/E and PEG), revenue multiples (P/S and PSG), book value (P/B), and EV/EBITDA. Each method approaches value from a different angle \u2014 using all of them together gives a more rounded estimate than relying on any single number.",
+        "weights_applied": {
+          "1_DCF_Operating_CF": 0.08,
+          "2_DCF_FCF": 0.08,
+          "3_DCF_Net_Income": 0.08,
+          "4_DCF_Terminal_Value": 0.08,
+          "5_Mean_PS": 0.12,
+          "6_Mean_PE": 0.08,
+          "7_Mean_PB": 0.15,
+          "8_PSG": 0.08,
+          "9_PEG": 0.08,
+          "10_EV_EBITDA": 0.17
+        },
+        "excluded_methods": [],
+        "active_methods": []
+      }
+    },
+    "quality": {
+      "scores": {
+        "profitability": 0,
+        "financial_strength": 2,
+        "growth": 3,
+        "predictability": 5,
+        "valuation": 2,
+        "moat": null
+      },
+      "score_labels": {
+        "profitability": "Poor",
+        "financial_strength": "Weak",
+        "growth": "Weak",
+        "predictability": "Adequate",
+        "valuation": "Weak",
+        "moat": "Not scored"
+      },
+      "company_type": "STANDARD",
+      "company_type_note": null,
+      "python_subtotal": 10,
+      "python_subtotal_pct": 25.0,
+      "classification": "Dangerous",
+      "penalty_pct": 8,
+      "final_score_pct": 17.0,
+      "tiebreaker_used": false,
+      "tiebreaker_inputs": {
+        "roe": -0.1701,
+        "roic": null,
+        "eps_next_5y": 0.0
+      },
+      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
+      "last_calculated": "2026-04-21 15:04"
+    },
+    "quality_narrative": {
+      "moat_score": null,
+      "moat_rationale": "",
+      "metric_assessments": {},
+      "classification_reason": "U Power Limited carries a Dangerous rating because it shows significant weaknesses in profitability and financial strength. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
+      "investment_narrative": "U Power Limited demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: a weak near-term growth outlook; low consensus EPS growth (0.0% p.a.). The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "quality_conclusion": "U Power Limited demonstrates weak fundamental quality and is constrained by profitability.",
+      "risk_profile": "Key risks to watch: a weak near-term growth outlook; low consensus EPS growth (0.0% p.a.).",
+      "investment_summary": "The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "source": "rules",
+      "generated_at": "2026-04-21 15:04"
+    },
+    "fundamentals": {
+      "roe": -0.1701,
+      "roic": null,
+      "roe_pct": "-17.01%",
+      "roic_pct": null,
+      "roic_source": "unavailable",
+      "current_ratio": 1.85,
+      "debt_to_ebitda": null,
+      "debt_service_ratio": null
+    },
+    "financials_charts": {
+      "revenue_vs_net_income": {
+        "2024": {
+          "revenue": 6.07,
+          "net_income": -6.57
+        },
+        "2023": {
+          "revenue": 2.78,
+          "net_income": -2.72
+        },
+        "2022": {
+          "revenue": 1.13,
+          "net_income": -6.66
+        }
+      },
+      "fcf_vs_debt": {
+        "2024": {
+          "cash_balance": 3.21,
+          "free_cash_flow": -10.03,
+          "total_debt": null
+        },
+        "2023": {
+          "cash_balance": 0.27,
+          "free_cash_flow": -9.34,
+          "total_debt": 0.7
+        },
+        "2022": {
+          "cash_balance": 0.71,
+          "free_cash_flow": -3.0,
+          "total_debt": 0.94
+        }
+      },
+      "shares_vs_buybacks": {
+        "2024": {
+          "shares_outstanding_m": 2.85,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2023": {
+          "shares_outstanding_m": 2.48,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2022": {
+          "shares_outstanding_m": 100.0,
+          "buybacks_m": null,
+          "split_adjusted": true
+        }
+      },
+      "returns_trajectory": {
+        "2024": {
+          "roe_pct": -16.44,
+          "roic_pct": null
+        },
+        "2023": {
+          "roe_pct": -6.31,
+          "roic_pct": null
+        },
+        "2022": {
+          "roe_pct": -27.67,
+          "roic_pct": null
+        }
+      },
+      "revenue_vs_ar": {
+        "2024": {
+          "revenue": 6.07,
+          "accounts_receivable": 1.42,
+          "rev_growth_pct": 118.3,
+          "ar_growth_pct": -36.0,
+          "ar_outpacing": false
+        },
+        "2023": {
+          "revenue": 2.78,
+          "accounts_receivable": 2.22,
+          "rev_growth_pct": 146.0,
+          "ar_growth_pct": 865.2,
+          "ar_outpacing": true
+        },
+        "2022": {
+          "revenue": 1.13,
+          "accounts_receivable": 0.23,
+          "rev_growth_pct": null,
+          "ar_growth_pct": null,
+          "ar_outpacing": null
+        }
+      },
+      "_notes": {
+        "revenue_vs_net_income": "This chart shows how much money the company brings in (revenue) versus how much it actually keeps as profit (net income) each year. A healthy company should show both lines growing over time. If revenue grows but net income shrinks, the company is spending more than it is earning \u2014 a warning sign worth investigating.",
+        "fcf_vs_debt": "Free cash flow is the cash left over after the company has paid for everything it needs to run and grow the business. This chart compares that cash to the company's total debt. A company with rising free cash flow and falling debt is in a strong financial position. If debt is rising faster than cash, the company may be taking on more risk than it can comfortably manage.",
+        "shares_vs_buybacks": "When a company buys back its own shares, it reduces the total number of shares in circulation \u2014 which means each remaining share represents a larger slice of the business. This chart shows how the share count has changed over time. Consistent buybacks are generally a sign that management believes the stock is undervalued and wants to return cash to shareholders.",
+        "returns_trajectory": "Return on Equity (ROE) measures how much profit a company generates for every dollar of shareholder money invested. Return on Invested Capital (ROIC) is similar but also includes debt. Both are expressed as a percentage \u2014 higher is better. A company consistently earning above 15% ROIC is generally considered to have a genuine competitive advantage over its peers.",
+        "revenue_vs_ar": "Accounts receivable is money the company is owed by customers who have not yet paid their bills. This chart compares revenue growth to accounts receivable growth each year. If accounts receivable is growing much faster than revenue, it may mean the company is struggling to collect payments \u2014 sometimes a sign of aggressive or fictitious revenue reporting. A healthy company should see both lines move at a similar pace."
+      }
+    },
+    "valuation_chart": {},
+    "forecast_meta": {},
+    "bull_bear": {
+      "short_term": {
+        "bull_points": [
+          "Revenue growing at 34.4% year-over-year, indicating sustained demand momentum heading into the next quarter",
+          "Current market positioning in the Consumer Cyclical sector may attract tactical buyers",
+          "Any positive earnings surprise could act as a near-term re-rating catalyst"
+        ],
+        "bear_points": [
+          "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
+          "Macro uncertainty and rate expectations may suppress multiple expansion",
+          "Short-term earnings visibility is limited without additional guidance"
+        ]
+      },
+      "long_term": {
+        "bull_points": [
+          "U Power Limited operates in a sector with long-term structural tailwinds",
+          "Management has demonstrated consistent capital allocation discipline",
+          "The business has the scale to compound earnings over a multi-year horizon"
+        ],
+        "bear_points": [
+          "Low profitability score (0/10) suggests thin or negative margins that structurally limit long-term earnings power",
+          "Weak balance sheet (2/10) constrains long-term capital allocation and increases vulnerability in a downturn",
+          "Execution risk remains a key variable over a multi-year investment horizon"
+        ]
+      },
+      "source": "rules",
+      "generated_at": "2026-04-21 15:04"
+    },
+    "price_alert": {
+      "triggered": true,
+      "signal": "ath_drop",
+      "drop_from_ath_pct": 97.1,
+      "ath": 49.8,
+      "current_price": 1.46,
+      "message": "Down 97% from 52-week high of $49.80"
+    },
+    "watchlist_signal": {
+      "signal": "Avoid",
+      "reason": "Weak fundamentals or significantly overvalued \u2014 better opportunities elsewhere.",
+      "score": 15,
+      "inputs": {
+        "quality_base": 25,
+        "val_adj": 0,
+        "alert_adj": -10,
+        "classification": "Dangerous",
+        "mos_pct": null
+      }
+    },
+    "10_Year_History": {
+      "2023": 184.0,
+      "2024": 66.31,
+      "2025": 15.2,
+      "2026": 1.46
+    },
+    "5_Year_Forecast": {},
+    "Last_Updated": "2026-04-21 15:04"
   },
   "UCL": {
     "company_profile": {
@@ -3576,18 +3576,18 @@
       "exchange": "NGM",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 50281768,
+      "market_cap": 49519920,
       "52w_high": 4.19,
       "52w_low": 0.8,
       "avg_volume": 6144,
-      "pe_trailing": 6.6000004,
-      "pe_forward": 2.7500002,
+      "pe_trailing": 6.4999995,
+      "pe_forward": 2.7083333,
       "dividend_yield": null,
       "beta": 4.626
     },
-    "current_price": 1.32,
+    "current_price": 1.3,
     "intrinsic_value": 2.1,
-    "margin_of_safety_pct": 37.1,
+    "margin_of_safety_pct": 38.1,
     "mos_label": "Moderate Discount",
     "data_availability": {
       "status": "ok",
@@ -3694,19 +3694,19 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "uCloudlink Group Inc. carries a Dangerous rating because it shows significant weaknesses in growth. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "uCloudlink Group Inc. demonstrates weak fundamental quality and is constrained by growth. Key risks to watch: a weak near-term growth outlook; low consensus EPS growth (0.0% p.a.). The stock trades at a 37% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_narrative": "uCloudlink Group Inc. demonstrates weak fundamental quality and is constrained by growth. Key risks to watch: a weak near-term growth outlook; low consensus EPS growth (0.0% p.a.). The stock trades at a 38% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "quality_conclusion": "uCloudlink Group Inc. demonstrates weak fundamental quality and is constrained by growth.",
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; low consensus EPS growth (0.0% p.a.).",
-      "investment_summary": "The stock trades at a 37% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_summary": "The stock trades at a 38% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": 0.2499,
@@ -3975,7 +3975,7 @@
         "bear_case": 1.99
       },
       "2026": {
-        "market_price": 1.32,
+        "market_price": 1.3,
         "intrinsic_value": 2.1,
         "bull_case": 2.11,
         "bear_case": 2.08
@@ -4025,7 +4025,7 @@
     "bull_bear": {
       "short_term": {
         "bull_points": [
-          "Trading at a 37.1% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $2.1",
+          "Trading at a 38.1% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $2.1",
           "Current market positioning in the Communication Services sector may attract tactical buyers",
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
@@ -4048,15 +4048,15 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": true,
       "signal": "ath_drop",
-      "drop_from_ath_pct": 68.5,
+      "drop_from_ath_pct": 69.0,
       "ath": 4.19,
-      "current_price": 1.32,
-      "message": "Down 68% from 52-week high of $4.19"
+      "current_price": 1.3,
+      "message": "Down 69% from 52-week high of $4.19"
     },
     "watchlist_signal": {
       "signal": "Avoid",
@@ -4067,7 +4067,7 @@
         "val_adj": 20,
         "alert_adj": -10,
         "classification": "Dangerous",
-        "mos_pct": 37.1
+        "mos_pct": 38.1
       }
     },
     "10_Year_History": {
@@ -4086,7 +4086,7 @@
       "2030": 2.27,
       "2031": 2.32
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   },
   "UCTT": {
     "company_profile": {
@@ -4105,18 +4105,18 @@
       "exchange": "NMS",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 3614183424,
-      "52w_high": 80.44,
+      "market_cap": 3558231040,
+      "52w_high": 80.5,
       "52w_low": 18.02,
       "avg_volume": 1370590,
       "pe_trailing": null,
-      "pe_forward": 23.062408,
+      "pe_forward": 22.70537,
       "dividend_yield": null,
       "beta": 1.811
     },
-    "current_price": 79.45,
+    "current_price": 78.22,
     "intrinsic_value": 26.68,
-    "margin_of_safety_pct": -197.8,
+    "margin_of_safety_pct": -193.2,
     "mos_label": "Significant Premium",
     "data_availability": {
       "status": "ok",
@@ -4219,19 +4219,19 @@
         "eps_next_5y": 0.2619
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "Ultra Clean Holdings, Inc. carries a Dangerous rating because it shows significant weaknesses in profitability and growth. A high debt load relative to earnings adds financial pressure on the business. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "Ultra Clean Holdings, Inc. demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: elevated leverage (Debt/EBITDA 5.5x); a weak near-term growth outlook; balance sheet constraints on growth. With 26.2% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 198% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_narrative": "Ultra Clean Holdings, Inc. demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: elevated leverage (Debt/EBITDA 5.5x); a weak near-term growth outlook; balance sheet constraints on growth. With 26.2% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 193% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "quality_conclusion": "Ultra Clean Holdings, Inc. demonstrates weak fundamental quality and is constrained by profitability.",
       "risk_profile": "Key risks to watch: elevated leverage (Debt/EBITDA 5.5x); a weak near-term growth outlook; balance sheet constraints on growth.",
-      "investment_summary": "With 26.2% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 198% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_summary": "With 26.2% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 193% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": -0.1996,
@@ -4569,7 +4569,7 @@
         "bear_case": 16.93
       },
       "2026": {
-        "market_price": 79.45,
+        "market_price": 78.22,
         "intrinsic_value": 26.68,
         "bull_case": 28.25,
         "bear_case": 24.32
@@ -4624,7 +4624,7 @@
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
         "bear_points": [
-          "Trading at a 198% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
+          "Trading at a 193% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
           "Declining revenue of -10.0% may weigh on near-term earnings and investor sentiment",
           "Short-term earnings visibility is limited without additional guidance"
         ]
@@ -4642,14 +4642,14 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": false,
       "signal": null,
-      "drop_from_ath_pct": 1.2,
-      "ath": 80.44,
-      "current_price": 79.45,
+      "drop_from_ath_pct": 2.8,
+      "ath": 80.5,
+      "current_price": 78.22,
       "message": null
     },
     "watchlist_signal": {
@@ -4661,7 +4661,7 @@
         "val_adj": -20,
         "alert_adj": 0,
         "classification": "Dangerous",
-        "mos_pct": -197.8
+        "mos_pct": -193.2
       }
     },
     "10_Year_History": {
@@ -4675,7 +4675,7 @@
       "2023": 34.14,
       "2024": 35.95,
       "2025": 25.33,
-      "2026": 79.45
+      "2026": 78.02
     },
     "5_Year_Forecast": {
       "2027": 33.67,
@@ -4684,7 +4684,7 @@
       "2030": 67.65,
       "2031": 85.37
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   },
   "UDMY": {
     "company_profile": {
@@ -4817,7 +4817,7 @@
         "eps_next_5y": 0.0972
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -4829,7 +4829,7 @@
       "risk_profile": "Key risks to watch: a weak near-term growth outlook.",
       "investment_summary": "With 9.7% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 44% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": 0.0187,
@@ -5132,7 +5132,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": true,
@@ -5160,7 +5160,7 @@
       "2023": 14.73,
       "2024": 8.23,
       "2025": 5.85,
-      "2026": 5.21
+      "2026": 5.2
     },
     "5_Year_Forecast": {
       "2027": 10.19,
@@ -5169,361 +5169,7 @@
       "2030": 13.46,
       "2031": 14.77
     },
-    "Last_Updated": "2026-04-21 12:16"
-  },
-  "UFG": {
-    "company_profile": {
-      "name": "Uni-Fuels Holdings Limited",
-      "ticker": "UFG",
-      "sector": "Industrials",
-      "industry": "Marine Shipping",
-      "company_type": "CYCLICAL",
-      "type_rationale": "Cyclical business (industrials) \u2014 EV/EBITDA and P/S prioritised over P/E",
-      "description": "Uni-Fuels Holdings Limited engages in the marketing, reselling, and brokerage of marine fuel products. The company offers very low sulfur fuel, high sulfur fuel, and marine gas oils to shipping companies operating in market sectors, such as bulk carriers, tanker vessels, offshore support vessels, container ships, general cargo vessels, tugs and barges, car carriers, cruise liners, yachts, and dredging vessels. It also provides bio marine fuel. The company serves shipping companies and marine fuel suppliers worldwide in-port and offshore. It operates in China, Hong Kong, Malaysia, Singapore, South Korea, the United Arab Emirates, Vietnam, Thailand, Indonesia, Timor-Leste, and internationally. The company was founded in 2021 and is headquartered in Singapore. Uni-Fuels Holdings Limited is a subsidiary of Garden City Private Capital Limited.",
-      "description_summary": "Uni-Fuels Holdings Limited engages in the marketing, reselling, and brokerage of marine fuel products. The company offers very low sulfur fuel, high sulfur fuel, and marine gas oils to shipping companies operating in market sectors, such as bulk carriers, tanker vessels, offshore support vessels, container ships, general cargo vessels, tugs and barges, car carriers, cruise liners, yachts, and dredging vessels.",
-      "website": "https://www.uni-fuels.com",
-      "employees": 30,
-      "country": "Singapore",
-      "city": "Singapore",
-      "exchange": "NCM",
-      "currency": "USD",
-      "quote_type": "EQUITY",
-      "market_cap": 29263952,
-      "52w_high": 11.0,
-      "52w_low": 0.6,
-      "avg_volume": 281116,
-      "pe_trailing": 90.14001,
-      "pe_forward": 18.028,
-      "dividend_yield": null,
-      "beta": null
-    },
-    "current_price": 0.9,
-    "intrinsic_value": 1.92,
-    "margin_of_safety_pct": 53.1,
-    "mos_label": "Strong Discount (Margin of Safety)",
-    "data_availability": {
-      "status": "ok",
-      "message": null,
-      "has_price": true,
-      "has_iv": true,
-      "has_financials": true,
-      "active_methods": 3,
-      "exclude_from_search": false
-    },
-    "valuations": {
-      "1_DCF_Operating_CF": null,
-      "2_DCF_FCF": null,
-      "3_DCF_Net_Income": 0.14,
-      "4_DCF_Terminal_Value": null,
-      "5_Mean_PS": 2.98,
-      "6_Mean_PE": null,
-      "7_Mean_PB": 0.9,
-      "8_PSG": null,
-      "9_PEG": null,
-      "10_EV_EBITDA": null,
-      "intrinsic_value": 1.92,
-      "methods_used": 3,
-      "confidence": "Low",
-      "active_methods": [
-        "3_DCF_Net_Income",
-        "5_Mean_PS",
-        "7_Mean_PB"
-      ],
-      "_meta": {
-        "pe_source": "current_trailing",
-        "ps_source": "current_trailing",
-        "pb_source": "current_trailing",
-        "ev_ebitda_source": "trailing_or_unavailable",
-        "growth_source": "finviz_no_growth",
-        "growth_raw": 0.0,
-        "growth_peg_rate": 0.0,
-        "discount_rate": 0.12,
-        "growth_stage1": 0.02,
-        "growth_stage2": 0.02,
-        "terminal_growth": 0.02,
-        "tier": "Weak",
-        "company_type": "CYCLICAL",
-        "type_rationale": "Cyclical business (industrials) \u2014 EV/EBITDA and P/S prioritised over P/E",
-        "method_explanation": "Cyclical companies \u2014 such as semiconductors, mining, or manufacturing \u2014 have profits that rise sharply in good times and fall sharply in downturns. This makes earnings-based methods like P/E unreliable, because the earnings figure at any single point in time can be unusually high or low. EV/EBITDA smooths out some of this distortion by looking at earnings before interest and tax, making it a fairer comparison across the economic cycle. Price-to-Sales is also useful as revenue tends to be more stable than profits for cyclical businesses.",
-        "weights_applied": {
-          "1_DCF_Operating_CF": 0.12,
-          "2_DCF_FCF": 0.1,
-          "3_DCF_Net_Income": 0.05,
-          "4_DCF_Terminal_Value": 0.1,
-          "5_Mean_PS": 0.18,
-          "6_Mean_PE": 0.05,
-          "7_Mean_PB": 0.1,
-          "8_PSG": 0.1,
-          "9_PEG": 0.05,
-          "10_EV_EBITDA": 0.15
-        },
-        "excluded_methods": [],
-        "active_methods": [
-          "3_DCF_Net_Income",
-          "5_Mean_PS",
-          "7_Mean_PB"
-        ]
-      }
-    },
-    "quality": {
-      "scores": {
-        "profitability": 2,
-        "financial_strength": 4,
-        "growth": 3,
-        "predictability": 5,
-        "valuation": 7,
-        "moat": null
-      },
-      "score_labels": {
-        "profitability": "Weak",
-        "financial_strength": "Adequate",
-        "growth": "Weak",
-        "predictability": "Adequate",
-        "valuation": "Good",
-        "moat": "Not scored"
-      },
-      "company_type": "CYCLICAL",
-      "company_type_note": null,
-      "python_subtotal": 14,
-      "python_subtotal_pct": 35.0,
-      "classification": "Dangerous",
-      "penalty_pct": 8,
-      "final_score_pct": 27.0,
-      "tiebreaker_used": false,
-      "tiebreaker_inputs": {
-        "roe": 0.0192,
-        "roic": 0.0326,
-        "eps_next_5y": 0.0
-      },
-      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
-    },
-    "quality_narrative": {
-      "moat_score": null,
-      "moat_rationale": "",
-      "metric_assessments": {},
-      "classification_reason": "Uni-Fuels Holdings Limited carries a Dangerous rating because it shows significant weaknesses in profitability and growth. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "Uni-Fuels Holdings Limited demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: a weak near-term growth outlook; balance sheet constraints on growth; low consensus EPS growth (0.0% p.a.). The stock trades at a 53% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
-      "quality_conclusion": "Uni-Fuels Holdings Limited demonstrates weak fundamental quality and is constrained by profitability.",
-      "risk_profile": "Key risks to watch: a weak near-term growth outlook; balance sheet constraints on growth; low consensus EPS growth (0.0% p.a.).",
-      "investment_summary": "The stock trades at a 53% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
-      "source": "rules",
-      "generated_at": "2026-04-21 12:16"
-    },
-    "fundamentals": {
-      "roe": 0.0192,
-      "roic": 0.0326,
-      "roe_pct": "1.92%",
-      "roic_pct": "3.26%",
-      "roic_source": "calculated",
-      "current_ratio": 1.3,
-      "debt_to_ebitda": 2.53,
-      "debt_service_ratio": null
-    },
-    "financials_charts": {
-      "revenue_vs_net_income": {
-        "2024": {
-          "revenue": 155.19,
-          "net_income": 0.17
-        },
-        "2023": {
-          "revenue": 70.79,
-          "net_income": 1.21
-        },
-        "2022": {
-          "revenue": 30.82,
-          "net_income": 1.98
-        }
-      },
-      "fcf_vs_debt": {
-        "2024": {
-          "cash_balance": 4.32,
-          "free_cash_flow": 0.32,
-          "total_debt": 1.51
-        },
-        "2023": {
-          "cash_balance": 2.56,
-          "free_cash_flow": -1.39,
-          "total_debt": 1.2
-        },
-        "2022": {
-          "cash_balance": 3.3,
-          "free_cash_flow": null,
-          "total_debt": null
-        }
-      },
-      "shares_vs_buybacks": {
-        "2024": {
-          "shares_outstanding_m": 4.0,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2023": {
-          "shares_outstanding_m": 4.0,
-          "buybacks_m": null,
-          "split_adjusted": true
-        }
-      },
-      "returns_trajectory": {
-        "2024": {
-          "roe_pct": 3.78,
-          "roic_pct": 4.04
-        },
-        "2023": {
-          "roe_pct": 27.71,
-          "roic_pct": 35.67
-        },
-        "2022": {
-          "roe_pct": 83.73,
-          "roic_pct": null
-        }
-      },
-      "revenue_vs_ar": {
-        "2024": {
-          "revenue": 155.19,
-          "accounts_receivable": 11.46,
-          "rev_growth_pct": 119.2,
-          "ar_growth_pct": -10.5,
-          "ar_outpacing": false
-        },
-        "2023": {
-          "revenue": 70.79,
-          "accounts_receivable": 12.81,
-          "rev_growth_pct": 129.7,
-          "ar_growth_pct": null,
-          "ar_outpacing": null
-        },
-        "2022": {
-          "revenue": 30.82,
-          "accounts_receivable": null,
-          "rev_growth_pct": null,
-          "ar_growth_pct": null,
-          "ar_outpacing": null
-        }
-      },
-      "_notes": {
-        "revenue_vs_net_income": "This chart shows how much money the company brings in (revenue) versus how much it actually keeps as profit (net income) each year. A healthy company should show both lines growing over time. If revenue grows but net income shrinks, the company is spending more than it is earning \u2014 a warning sign worth investigating.",
-        "fcf_vs_debt": "Free cash flow is the cash left over after the company has paid for everything it needs to run and grow the business. This chart compares that cash to the company's total debt. A company with rising free cash flow and falling debt is in a strong financial position. If debt is rising faster than cash, the company may be taking on more risk than it can comfortably manage.",
-        "shares_vs_buybacks": "When a company buys back its own shares, it reduces the total number of shares in circulation \u2014 which means each remaining share represents a larger slice of the business. This chart shows how the share count has changed over time. Consistent buybacks are generally a sign that management believes the stock is undervalued and wants to return cash to shareholders.",
-        "returns_trajectory": "Return on Equity (ROE) measures how much profit a company generates for every dollar of shareholder money invested. Return on Invested Capital (ROIC) is similar but also includes debt. Both are expressed as a percentage \u2014 higher is better. A company consistently earning above 15% ROIC is generally considered to have a genuine competitive advantage over its peers.",
-        "revenue_vs_ar": "Accounts receivable is money the company is owed by customers who have not yet paid their bills. This chart compares revenue growth to accounts receivable growth each year. If accounts receivable is growing much faster than revenue, it may mean the company is struggling to collect payments \u2014 sometimes a sign of aggressive or fictitious revenue reporting. A healthy company should see both lines move at a similar pace."
-      }
-    },
-    "valuation_chart": {
-      "2025": {
-        "market_price": 0.68,
-        "intrinsic_value": 1.85,
-        "bull_case": 1.88,
-        "bear_case": 1.82
-      },
-      "2026": {
-        "market_price": 0.9,
-        "intrinsic_value": 1.92,
-        "bull_case": 1.93,
-        "bear_case": 1.9
-      },
-      "2027": {
-        "market_price": null,
-        "intrinsic_value": 1.96,
-        "bull_case": 1.97,
-        "bear_case": 1.94
-      },
-      "2028": {
-        "market_price": null,
-        "intrinsic_value": 2.0,
-        "bull_case": 2.02,
-        "bear_case": 1.96
-      },
-      "2029": {
-        "market_price": null,
-        "intrinsic_value": 2.04,
-        "bull_case": 2.07,
-        "bear_case": 1.98
-      },
-      "2030": {
-        "market_price": null,
-        "intrinsic_value": 2.08,
-        "bull_case": 2.13,
-        "bear_case": 2.01
-      },
-      "2031": {
-        "market_price": null,
-        "intrinsic_value": 2.12,
-        "bull_case": 2.18,
-        "bear_case": 2.03
-      }
-    },
-    "forecast_meta": {
-      "eps_next_5y_raw": 0.0,
-      "fs_score": 4,
-      "fs_multiplier": 0.75,
-      "base_growth_rate": 0.02,
-      "bull_growth_rate": 0.026,
-      "bear_growth_rate": 0.011,
-      "growth_constrained": true,
-      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 4/10",
-      "growth_explanation": "Base (2.0%/yr): growth in line with analyst expectations. Bull (2.6%/yr): everything goes to plan. Bear (1.1%/yr): growth disappoints. Growth capped at 2.0% (from 0.0%) \u2014 the balance sheet (financial strength 4/10) limits how fast this company can realistically grow."
-    },
-    "bull_bear": {
-      "short_term": {
-        "bull_points": [
-          "Trading at a 53.1% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $1.92",
-          "Revenue growing at 54.5% year-over-year, indicating sustained demand momentum heading into the next quarter",
-          "Any positive earnings surprise could act as a near-term re-rating catalyst"
-        ],
-        "bear_points": [
-          "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
-          "Macro uncertainty and rate expectations may suppress multiple expansion",
-          "Short-term earnings visibility is limited without additional guidance"
-        ]
-      },
-      "long_term": {
-        "bull_points": [
-          "Uni-Fuels Holdings Limited operates in a sector with long-term structural tailwinds",
-          "Management has demonstrated consistent capital allocation discipline",
-          "The business has the scale to compound earnings over a multi-year horizon"
-        ],
-        "bear_points": [
-          "Low profitability score (2/10) suggests thin or negative margins that structurally limit long-term earnings power",
-          "ROIC of 3.26% is below most cost-of-capital benchmarks, suggesting the business destroys value over the long run",
-          "Financial strength is constraining the assumed growth rate in the valuation model \u2014 EPS growth moderated from 0.0% to 2.0% due to financial strength score of 4/10"
-        ]
-      },
-      "source": "rules",
-      "generated_at": "2026-04-21 12:16"
-    },
-    "price_alert": {
-      "triggered": true,
-      "signal": "ath_drop",
-      "drop_from_ath_pct": 91.8,
-      "ath": 11.0,
-      "current_price": 0.9,
-      "message": "Down 92% from 52-week high of $11.00"
-    },
-    "watchlist_signal": {
-      "signal": "Avoid",
-      "reason": "Weak fundamentals or significantly overvalued \u2014 better opportunities elsewhere.",
-      "score": 45,
-      "inputs": {
-        "quality_base": 35,
-        "val_adj": 20,
-        "alert_adj": -10,
-        "classification": "Dangerous",
-        "mos_pct": 53.1
-      }
-    },
-    "10_Year_History": {
-      "2025": 0.68,
-      "2026": 0.9
-    },
-    "5_Year_Forecast": {
-      "2027": 1.96,
-      "2028": 2.0,
-      "2029": 2.04,
-      "2030": 2.08,
-      "2031": 2.12
-    },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   },
   "UEIC": {
     "company_profile": {
@@ -5542,18 +5188,18 @@
       "exchange": "NMS",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 55831552,
+      "market_cap": 56539092,
       "52w_high": 7.5,
       "52w_low": 2.69,
       "avg_volume": 57642,
       "pe_trailing": null,
-      "pe_forward": 43.4,
+      "pe_forward": 43.95,
       "dividend_yield": null,
       "beta": 1.296
     },
-    "current_price": 4.34,
+    "current_price": 4.39,
     "intrinsic_value": 10.49,
-    "margin_of_safety_pct": 58.6,
+    "margin_of_safety_pct": 58.1,
     "mos_label": "Strong Discount (Margin of Safety)",
     "data_availability": {
       "status": "ok",
@@ -5654,19 +5300,19 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "Universal Electronics Inc. carries a Dangerous rating because it shows significant weaknesses in profitability and growth. Revenue and earnings have been inconsistent, making it hard to predict where this business will be in a few years. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "Universal Electronics Inc. demonstrates weak fundamental quality and is constrained by growth. Key risks to watch: elevated leverage (Debt/EBITDA 3.5x); a weak near-term growth outlook; inconsistent earnings. The stock trades at a 59% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_narrative": "Universal Electronics Inc. demonstrates weak fundamental quality and is constrained by growth. Key risks to watch: elevated leverage (Debt/EBITDA 3.5x); a weak near-term growth outlook; inconsistent earnings. The stock trades at a 58% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "quality_conclusion": "Universal Electronics Inc. demonstrates weak fundamental quality and is constrained by growth.",
       "risk_profile": "Key risks to watch: elevated leverage (Debt/EBITDA 3.5x); a weak near-term growth outlook; inconsistent earnings.",
-      "investment_summary": "The stock trades at a 59% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_summary": "The stock trades at a 58% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": -0.1243,
@@ -6009,7 +5655,7 @@
         "bear_case": 9.97
       },
       "2026": {
-        "market_price": 4.34,
+        "market_price": 4.39,
         "intrinsic_value": 10.49,
         "bull_case": 10.55,
         "bear_case": 10.4
@@ -6059,7 +5705,7 @@
     "bull_bear": {
       "short_term": {
         "bull_points": [
-          "Trading at a 58.6% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $10.49",
+          "Trading at a 58.1% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $10.49",
           "Current market positioning in the Technology sector may attract tactical buyers",
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
@@ -6082,15 +5728,15 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": true,
       "signal": "ath_drop",
-      "drop_from_ath_pct": 42.1,
+      "drop_from_ath_pct": 41.4,
       "ath": 7.5,
-      "current_price": 4.34,
-      "message": "Down 42% from 52-week high of $7.50"
+      "current_price": 4.39,
+      "message": "Down 41% from 52-week high of $7.50"
     },
     "watchlist_signal": {
       "signal": "Avoid",
@@ -6101,7 +5747,7 @@
         "val_adj": 20,
         "alert_adj": -10,
         "classification": "Dangerous",
-        "mos_pct": 58.6
+        "mos_pct": 58.1
       }
     },
     "10_Year_History": {
@@ -6115,7 +5761,7 @@
       "2023": 9.39,
       "2024": 11.0,
       "2025": 3.61,
-      "2026": 4.34
+      "2026": 4.39
     },
     "5_Year_Forecast": {
       "2027": 10.7,
@@ -6124,7 +5770,361 @@
       "2030": 11.35,
       "2031": 11.58
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
+  },
+  "UFG": {
+    "company_profile": {
+      "name": "Uni-Fuels Holdings Limited",
+      "ticker": "UFG",
+      "sector": "Industrials",
+      "industry": "Marine Shipping",
+      "company_type": "CYCLICAL",
+      "type_rationale": "Cyclical business (industrials) \u2014 EV/EBITDA and P/S prioritised over P/E",
+      "description": "Uni-Fuels Holdings Limited engages in the marketing, reselling, and brokerage of marine fuel products. The company offers very low sulfur fuel, high sulfur fuel, and marine gas oils to shipping companies operating in market sectors, such as bulk carriers, tanker vessels, offshore support vessels, container ships, general cargo vessels, tugs and barges, car carriers, cruise liners, yachts, and dredging vessels. It also provides bio marine fuel. The company serves shipping companies and marine fuel suppliers worldwide in-port and offshore. It operates in China, Hong Kong, Malaysia, Singapore, South Korea, the United Arab Emirates, Vietnam, Thailand, Indonesia, Timor-Leste, and internationally. The company was founded in 2021 and is headquartered in Singapore. Uni-Fuels Holdings Limited is a subsidiary of Garden City Private Capital Limited.",
+      "description_summary": "Uni-Fuels Holdings Limited engages in the marketing, reselling, and brokerage of marine fuel products. The company offers very low sulfur fuel, high sulfur fuel, and marine gas oils to shipping companies operating in market sectors, such as bulk carriers, tanker vessels, offshore support vessels, container ships, general cargo vessels, tugs and barges, car carriers, cruise liners, yachts, and dredging vessels.",
+      "website": "https://www.uni-fuels.com",
+      "employees": 30,
+      "country": "Singapore",
+      "city": "Singapore",
+      "exchange": "NCM",
+      "currency": "USD",
+      "quote_type": "EQUITY",
+      "market_cap": 29871046,
+      "52w_high": 11.0,
+      "52w_low": 0.6,
+      "avg_volume": 281116,
+      "pe_trailing": 92.01,
+      "pe_forward": 18.401999,
+      "dividend_yield": null,
+      "beta": null
+    },
+    "current_price": 0.92,
+    "intrinsic_value": 1.96,
+    "margin_of_safety_pct": 53.1,
+    "mos_label": "Strong Discount (Margin of Safety)",
+    "data_availability": {
+      "status": "ok",
+      "message": null,
+      "has_price": true,
+      "has_iv": true,
+      "has_financials": true,
+      "active_methods": 3,
+      "exclude_from_search": false
+    },
+    "valuations": {
+      "1_DCF_Operating_CF": null,
+      "2_DCF_FCF": null,
+      "3_DCF_Net_Income": 0.14,
+      "4_DCF_Terminal_Value": null,
+      "5_Mean_PS": 3.04,
+      "6_Mean_PE": null,
+      "7_Mean_PB": 0.92,
+      "8_PSG": null,
+      "9_PEG": null,
+      "10_EV_EBITDA": null,
+      "intrinsic_value": 1.96,
+      "methods_used": 3,
+      "confidence": "Low",
+      "active_methods": [
+        "3_DCF_Net_Income",
+        "5_Mean_PS",
+        "7_Mean_PB"
+      ],
+      "_meta": {
+        "pe_source": "current_trailing",
+        "ps_source": "current_trailing",
+        "pb_source": "current_trailing",
+        "ev_ebitda_source": "trailing_or_unavailable",
+        "growth_source": "finviz_no_growth",
+        "growth_raw": 0.0,
+        "growth_peg_rate": 0.0,
+        "discount_rate": 0.12,
+        "growth_stage1": 0.02,
+        "growth_stage2": 0.02,
+        "terminal_growth": 0.02,
+        "tier": "Weak",
+        "company_type": "CYCLICAL",
+        "type_rationale": "Cyclical business (industrials) \u2014 EV/EBITDA and P/S prioritised over P/E",
+        "method_explanation": "Cyclical companies \u2014 such as semiconductors, mining, or manufacturing \u2014 have profits that rise sharply in good times and fall sharply in downturns. This makes earnings-based methods like P/E unreliable, because the earnings figure at any single point in time can be unusually high or low. EV/EBITDA smooths out some of this distortion by looking at earnings before interest and tax, making it a fairer comparison across the economic cycle. Price-to-Sales is also useful as revenue tends to be more stable than profits for cyclical businesses.",
+        "weights_applied": {
+          "1_DCF_Operating_CF": 0.12,
+          "2_DCF_FCF": 0.1,
+          "3_DCF_Net_Income": 0.05,
+          "4_DCF_Terminal_Value": 0.1,
+          "5_Mean_PS": 0.18,
+          "6_Mean_PE": 0.05,
+          "7_Mean_PB": 0.1,
+          "8_PSG": 0.1,
+          "9_PEG": 0.05,
+          "10_EV_EBITDA": 0.15
+        },
+        "excluded_methods": [],
+        "active_methods": [
+          "3_DCF_Net_Income",
+          "5_Mean_PS",
+          "7_Mean_PB"
+        ]
+      }
+    },
+    "quality": {
+      "scores": {
+        "profitability": 2,
+        "financial_strength": 4,
+        "growth": 3,
+        "predictability": 5,
+        "valuation": 7,
+        "moat": null
+      },
+      "score_labels": {
+        "profitability": "Weak",
+        "financial_strength": "Adequate",
+        "growth": "Weak",
+        "predictability": "Adequate",
+        "valuation": "Good",
+        "moat": "Not scored"
+      },
+      "company_type": "CYCLICAL",
+      "company_type_note": null,
+      "python_subtotal": 14,
+      "python_subtotal_pct": 35.0,
+      "classification": "Dangerous",
+      "penalty_pct": 8,
+      "final_score_pct": 27.0,
+      "tiebreaker_used": false,
+      "tiebreaker_inputs": {
+        "roe": 0.0192,
+        "roic": 0.0326,
+        "eps_next_5y": 0.0
+      },
+      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
+      "last_calculated": "2026-04-21 15:04"
+    },
+    "quality_narrative": {
+      "moat_score": null,
+      "moat_rationale": "",
+      "metric_assessments": {},
+      "classification_reason": "Uni-Fuels Holdings Limited carries a Dangerous rating because it shows significant weaknesses in profitability and growth. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
+      "investment_narrative": "Uni-Fuels Holdings Limited demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: a weak near-term growth outlook; balance sheet constraints on growth; low consensus EPS growth (0.0% p.a.). The stock trades at a 53% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "quality_conclusion": "Uni-Fuels Holdings Limited demonstrates weak fundamental quality and is constrained by profitability.",
+      "risk_profile": "Key risks to watch: a weak near-term growth outlook; balance sheet constraints on growth; low consensus EPS growth (0.0% p.a.).",
+      "investment_summary": "The stock trades at a 53% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "source": "rules",
+      "generated_at": "2026-04-21 15:04"
+    },
+    "fundamentals": {
+      "roe": 0.0192,
+      "roic": 0.0326,
+      "roe_pct": "1.92%",
+      "roic_pct": "3.26%",
+      "roic_source": "calculated",
+      "current_ratio": 1.3,
+      "debt_to_ebitda": 2.53,
+      "debt_service_ratio": null
+    },
+    "financials_charts": {
+      "revenue_vs_net_income": {
+        "2024": {
+          "revenue": 155.19,
+          "net_income": 0.17
+        },
+        "2023": {
+          "revenue": 70.79,
+          "net_income": 1.21
+        },
+        "2022": {
+          "revenue": 30.82,
+          "net_income": 1.98
+        }
+      },
+      "fcf_vs_debt": {
+        "2024": {
+          "cash_balance": 4.32,
+          "free_cash_flow": 0.32,
+          "total_debt": 1.51
+        },
+        "2023": {
+          "cash_balance": 2.56,
+          "free_cash_flow": -1.39,
+          "total_debt": 1.2
+        },
+        "2022": {
+          "cash_balance": 3.3,
+          "free_cash_flow": null,
+          "total_debt": null
+        }
+      },
+      "shares_vs_buybacks": {
+        "2024": {
+          "shares_outstanding_m": 4.0,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2023": {
+          "shares_outstanding_m": 4.0,
+          "buybacks_m": null,
+          "split_adjusted": true
+        }
+      },
+      "returns_trajectory": {
+        "2024": {
+          "roe_pct": 3.78,
+          "roic_pct": 4.04
+        },
+        "2023": {
+          "roe_pct": 27.71,
+          "roic_pct": 35.67
+        },
+        "2022": {
+          "roe_pct": 83.73,
+          "roic_pct": null
+        }
+      },
+      "revenue_vs_ar": {
+        "2024": {
+          "revenue": 155.19,
+          "accounts_receivable": 11.46,
+          "rev_growth_pct": 119.2,
+          "ar_growth_pct": -10.5,
+          "ar_outpacing": false
+        },
+        "2023": {
+          "revenue": 70.79,
+          "accounts_receivable": 12.81,
+          "rev_growth_pct": 129.7,
+          "ar_growth_pct": null,
+          "ar_outpacing": null
+        },
+        "2022": {
+          "revenue": 30.82,
+          "accounts_receivable": null,
+          "rev_growth_pct": null,
+          "ar_growth_pct": null,
+          "ar_outpacing": null
+        }
+      },
+      "_notes": {
+        "revenue_vs_net_income": "This chart shows how much money the company brings in (revenue) versus how much it actually keeps as profit (net income) each year. A healthy company should show both lines growing over time. If revenue grows but net income shrinks, the company is spending more than it is earning \u2014 a warning sign worth investigating.",
+        "fcf_vs_debt": "Free cash flow is the cash left over after the company has paid for everything it needs to run and grow the business. This chart compares that cash to the company's total debt. A company with rising free cash flow and falling debt is in a strong financial position. If debt is rising faster than cash, the company may be taking on more risk than it can comfortably manage.",
+        "shares_vs_buybacks": "When a company buys back its own shares, it reduces the total number of shares in circulation \u2014 which means each remaining share represents a larger slice of the business. This chart shows how the share count has changed over time. Consistent buybacks are generally a sign that management believes the stock is undervalued and wants to return cash to shareholders.",
+        "returns_trajectory": "Return on Equity (ROE) measures how much profit a company generates for every dollar of shareholder money invested. Return on Invested Capital (ROIC) is similar but also includes debt. Both are expressed as a percentage \u2014 higher is better. A company consistently earning above 15% ROIC is generally considered to have a genuine competitive advantage over its peers.",
+        "revenue_vs_ar": "Accounts receivable is money the company is owed by customers who have not yet paid their bills. This chart compares revenue growth to accounts receivable growth each year. If accounts receivable is growing much faster than revenue, it may mean the company is struggling to collect payments \u2014 sometimes a sign of aggressive or fictitious revenue reporting. A healthy company should see both lines move at a similar pace."
+      }
+    },
+    "valuation_chart": {
+      "2025": {
+        "market_price": 0.68,
+        "intrinsic_value": 1.88,
+        "bull_case": 1.92,
+        "bear_case": 1.86
+      },
+      "2026": {
+        "market_price": 0.92,
+        "intrinsic_value": 1.96,
+        "bull_case": 1.97,
+        "bear_case": 1.94
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 2.0,
+        "bull_case": 2.01,
+        "bear_case": 1.98
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 2.04,
+        "bull_case": 2.06,
+        "bear_case": 2.0
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 2.08,
+        "bull_case": 2.12,
+        "bear_case": 2.03
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 2.12,
+        "bull_case": 2.17,
+        "bear_case": 2.05
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 2.16,
+        "bull_case": 2.23,
+        "bear_case": 2.07
+      }
+    },
+    "forecast_meta": {
+      "eps_next_5y_raw": 0.0,
+      "fs_score": 4,
+      "fs_multiplier": 0.75,
+      "base_growth_rate": 0.02,
+      "bull_growth_rate": 0.026,
+      "bear_growth_rate": 0.011,
+      "growth_constrained": true,
+      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 4/10",
+      "growth_explanation": "Base (2.0%/yr): growth in line with analyst expectations. Bull (2.6%/yr): everything goes to plan. Bear (1.1%/yr): growth disappoints. Growth capped at 2.0% (from 0.0%) \u2014 the balance sheet (financial strength 4/10) limits how fast this company can realistically grow."
+    },
+    "bull_bear": {
+      "short_term": {
+        "bull_points": [
+          "Trading at a 53.1% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $1.96",
+          "Revenue growing at 54.5% year-over-year, indicating sustained demand momentum heading into the next quarter",
+          "Any positive earnings surprise could act as a near-term re-rating catalyst"
+        ],
+        "bear_points": [
+          "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
+          "Macro uncertainty and rate expectations may suppress multiple expansion",
+          "Short-term earnings visibility is limited without additional guidance"
+        ]
+      },
+      "long_term": {
+        "bull_points": [
+          "Uni-Fuels Holdings Limited operates in a sector with long-term structural tailwinds",
+          "Management has demonstrated consistent capital allocation discipline",
+          "The business has the scale to compound earnings over a multi-year horizon"
+        ],
+        "bear_points": [
+          "Low profitability score (2/10) suggests thin or negative margins that structurally limit long-term earnings power",
+          "ROIC of 3.26% is below most cost-of-capital benchmarks, suggesting the business destroys value over the long run",
+          "Financial strength is constraining the assumed growth rate in the valuation model \u2014 EPS growth moderated from 0.0% to 2.0% due to financial strength score of 4/10"
+        ]
+      },
+      "source": "rules",
+      "generated_at": "2026-04-21 15:04"
+    },
+    "price_alert": {
+      "triggered": true,
+      "signal": "ath_drop",
+      "drop_from_ath_pct": 91.6,
+      "ath": 11.0,
+      "current_price": 0.92,
+      "message": "Down 92% from 52-week high of $11.00"
+    },
+    "watchlist_signal": {
+      "signal": "Avoid",
+      "reason": "Weak fundamentals or significantly overvalued \u2014 better opportunities elsewhere.",
+      "score": 45,
+      "inputs": {
+        "quality_base": 35,
+        "val_adj": 20,
+        "alert_adj": -10,
+        "classification": "Dangerous",
+        "mos_pct": 53.1
+      }
+    },
+    "10_Year_History": {
+      "2025": 0.68,
+      "2026": 0.92
+    },
+    "5_Year_Forecast": {
+      "2027": 2.0,
+      "2028": 2.04,
+      "2029": 2.08,
+      "2030": 2.12,
+      "2031": 2.16
+    },
+    "Last_Updated": "2026-04-21 15:04"
   },
   "UFCS": {
     "company_profile": {
@@ -6143,18 +6143,18 @@
       "exchange": "NMS",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 1015862336,
+      "market_cap": 1013172864,
       "52w_high": 40.79,
       "52w_low": 25.79,
       "avg_volume": 117995,
-      "pe_trailing": 8.852678,
-      "pe_forward": 10.632708,
+      "pe_trailing": 8.829241,
+      "pe_forward": 10.604558,
       "dividend_yield": 2.01,
       "beta": 0.408
     },
-    "current_price": 39.66,
+    "current_price": 39.55,
     "intrinsic_value": 58.04,
-    "margin_of_safety_pct": 31.7,
+    "margin_of_safety_pct": 31.8,
     "mos_label": "Moderate Discount",
     "data_availability": {
       "status": "ok",
@@ -6259,7 +6259,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -6271,7 +6271,7 @@
       "risk_profile": "Key risks to watch: tight liquidity (current ratio 0.68); a weak near-term growth outlook; low consensus EPS growth (0.0% p.a.).",
       "investment_summary": "The stock trades at a 32% discount to estimated intrinsic value and is suitable for quality-focused long-term investors.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": 0.1372,
@@ -6614,7 +6614,7 @@
         "bear_case": 55.14
       },
       "2026": {
-        "market_price": 39.66,
+        "market_price": 39.55,
         "intrinsic_value": 58.04,
         "bull_case": 58.39,
         "bear_case": 57.52
@@ -6664,7 +6664,7 @@
     "bull_bear": {
       "short_term": {
         "bull_points": [
-          "Trading at a 31.7% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $58.04",
+          "Trading at a 31.8% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $58.04",
           "Current market positioning in the Financial Services sector may attract tactical buyers",
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
@@ -6687,14 +6687,14 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": false,
       "signal": null,
-      "drop_from_ath_pct": 2.8,
+      "drop_from_ath_pct": 3.0,
       "ath": 40.79,
-      "current_price": 39.66,
+      "current_price": 39.55,
       "message": null
     },
     "watchlist_signal": {
@@ -6706,7 +6706,7 @@
         "val_adj": 20,
         "alert_adj": 0,
         "classification": "Safe",
-        "mos_pct": 31.7
+        "mos_pct": 31.8
       }
     },
     "10_Year_History": {
@@ -6720,7 +6720,7 @@
       "2023": 19.17,
       "2024": 27.86,
       "2025": 36.35,
-      "2026": 39.66
+      "2026": 39.56
     },
     "5_Year_Forecast": {
       "2027": 59.2,
@@ -6729,7 +6729,7 @@
       "2030": 62.82,
       "2031": 64.08
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   },
   "UFPI": {
     "company_profile": {
@@ -6748,18 +6748,18 @@
       "exchange": "NMS",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 5521518080,
+      "market_cap": 5508738048,
       "52w_high": 118.0,
       "52w_low": 84.82,
       "avg_volume": 367259,
-      "pe_trailing": 19.442,
-      "pe_forward": 15.791098,
+      "pe_trailing": 19.397,
+      "pe_forward": 15.754548,
       "dividend_yield": 1.48,
       "beta": 1.442
     },
-    "current_price": 97.21,
+    "current_price": 96.98,
     "intrinsic_value": 81.82,
-    "margin_of_safety_pct": -18.8,
+    "margin_of_safety_pct": -18.5,
     "mos_label": "Slight Premium",
     "data_availability": {
       "status": "ok",
@@ -6868,19 +6868,19 @@
         "eps_next_5y": 0.0832
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "UFP Industries, Inc. is rated Speculative because it has notable weaknesses in profitability and growth, which introduces meaningful uncertainty about future performance. There are also questions about how fast the business can grow.Speculative doesn't mean bad \u2014 it means the outcome is less predictable and the investment carries more risk than a Safe-rated company.",
-      "investment_narrative": "UFP Industries, Inc. demonstrates mixed fundamental quality and is constrained by growth. Key risks to watch: a weak near-term growth outlook. With 8.3% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 19% premium to estimated intrinsic value and is appropriate for investors with higher risk tolerance and conviction in the growth thesis.",
+      "investment_narrative": "UFP Industries, Inc. demonstrates mixed fundamental quality and is constrained by growth. Key risks to watch: a weak near-term growth outlook. With 8.3% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 18% premium to estimated intrinsic value and is appropriate for investors with higher risk tolerance and conviction in the growth thesis.",
       "quality_conclusion": "UFP Industries, Inc. demonstrates mixed fundamental quality and is constrained by growth.",
       "risk_profile": "Key risks to watch: a weak near-term growth outlook.",
-      "investment_summary": "With 8.3% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 19% premium to estimated intrinsic value and is appropriate for investors with higher risk tolerance and conviction in the growth thesis.",
+      "investment_summary": "With 8.3% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 18% premium to estimated intrinsic value and is appropriate for investors with higher risk tolerance and conviction in the growth thesis.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": 0.0934,
@@ -7223,7 +7223,7 @@
         "bear_case": 66.63
       },
       "2026": {
-        "market_price": 97.21,
+        "market_price": 96.98,
         "intrinsic_value": 81.82,
         "bull_case": 83.86,
         "bear_case": 78.76
@@ -7296,14 +7296,14 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": false,
       "signal": null,
-      "drop_from_ath_pct": 17.6,
+      "drop_from_ath_pct": 17.8,
       "ath": 118.0,
-      "current_price": 97.21,
+      "current_price": 96.98,
       "message": null
     },
     "watchlist_signal": {
@@ -7315,7 +7315,7 @@
         "val_adj": -20,
         "alert_adj": 0,
         "classification": "Speculative",
-        "mos_pct": -18.8
+        "mos_pct": -18.5
       }
     },
     "10_Year_History": {
@@ -7329,7 +7329,7 @@
       "2023": 122.03,
       "2024": 110.69,
       "2025": 90.73,
-      "2026": 97.21
+      "2026": 96.99
     },
     "5_Year_Forecast": {
       "2027": 88.63,
@@ -7338,7 +7338,7 @@
       "2030": 112.64,
       "2031": 122.01
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   },
   "UFPT": {
     "company_profile": {
@@ -7357,18 +7357,18 @@
       "exchange": "NCM",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 1550990336,
+      "market_cap": 1541425792,
       "52w_high": 274.93,
       "52w_low": 182.87,
       "avg_volume": 200224,
-      "pe_trailing": 22.980572,
-      "pe_forward": 17.557737,
+      "pe_trailing": 22.838858,
+      "pe_forward": 17.449465,
       "dividend_yield": null,
       "beta": 1.168
     },
-    "current_price": 201.08,
+    "current_price": 199.84,
     "intrinsic_value": 190.15,
-    "margin_of_safety_pct": -5.7,
+    "margin_of_safety_pct": -5.1,
     "mos_label": "Slight Premium",
     "data_availability": {
       "status": "ok",
@@ -7475,7 +7475,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -7487,7 +7487,7 @@
       "risk_profile": "Key risks to watch: balance sheet constraints on growth; low consensus EPS growth (0.0% p.a.).",
       "investment_summary": "The stock trades near estimated intrinsic value and is suitable for quality-focused long-term investors.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": 0.1782,
@@ -7830,7 +7830,7 @@
         "bear_case": 180.63
       },
       "2026": {
-        "market_price": 201.08,
+        "market_price": 199.84,
         "intrinsic_value": 190.15,
         "bull_case": 191.29,
         "bear_case": 188.44
@@ -7903,14 +7903,14 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": true,
       "signal": "ath_drop",
-      "drop_from_ath_pct": 26.9,
+      "drop_from_ath_pct": 27.3,
       "ath": 274.93,
-      "current_price": 201.08,
+      "current_price": 199.84,
       "message": "Down 27% from 52-week high of $274.93"
     },
     "watchlist_signal": {
@@ -7922,7 +7922,7 @@
         "val_adj": -10,
         "alert_adj": 10,
         "classification": "Safe",
-        "mos_pct": -5.7
+        "mos_pct": -5.1
       }
     },
     "10_Year_History": {
@@ -7936,7 +7936,7 @@
       "2023": 172.04,
       "2024": 244.51,
       "2025": 222.03,
-      "2026": 201.08
+      "2026": 199.84
     },
     "5_Year_Forecast": {
       "2027": 193.95,
@@ -7945,7 +7945,7 @@
       "2030": 205.82,
       "2031": 209.94
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   },
   "UG": {
     "company_profile": {
@@ -8082,7 +8082,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -8094,7 +8094,7 @@
       "risk_profile": "Key risks to watch: a valuation premium of 26% above estimated intrinsic value; low consensus EPS growth (0.0% p.a.).",
       "investment_summary": "The stock trades at a 26% premium to estimated intrinsic value and is suitable for quality-focused long-term investors.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": 0.1822,
@@ -8510,7 +8510,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": true,
@@ -8552,7 +8552,7 @@
       "2030": 5.74,
       "2031": 5.85
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   },
   "UGRO": {
     "company_profile": {
@@ -8571,18 +8571,18 @@
       "exchange": "NCM",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 11721385,
+      "market_cap": 12162488,
       "52w_high": 37.0,
       "52w_low": 2.02,
       "avg_volume": 5129227,
       "pe_trailing": null,
-      "pe_forward": -43.291668,
+      "pe_forward": -44.920834,
       "dividend_yield": null,
       "beta": null
     },
-    "current_price": 10.39,
+    "current_price": 10.78,
     "intrinsic_value": 9.58,
-    "margin_of_safety_pct": -8.5,
+    "margin_of_safety_pct": -12.5,
     "mos_label": "Slight Premium",
     "data_availability": {
       "status": "ok",
@@ -8677,19 +8677,19 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "urban-gro, Inc. carries a Dangerous rating because it shows significant weaknesses in profitability and financial strength. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "urban-gro, Inc. demonstrates weak fundamental quality and is constrained by growth. Key risks to watch: a weak near-term growth outlook; balance sheet constraints on growth; low consensus EPS growth (0.0% p.a.). The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_narrative": "urban-gro, Inc. demonstrates weak fundamental quality and is constrained by growth. Key risks to watch: a weak near-term growth outlook; balance sheet constraints on growth; low consensus EPS growth (0.0% p.a.). The stock trades at a 12% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "quality_conclusion": "urban-gro, Inc. demonstrates weak fundamental quality and is constrained by growth.",
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; balance sheet constraints on growth; low consensus EPS growth (0.0% p.a.).",
-      "investment_summary": "The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_summary": "The stock trades at a 12% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": null,
@@ -8965,7 +8965,7 @@
         "bear_case": 9.1
       },
       "2026": {
-        "market_price": 10.39,
+        "market_price": 10.78,
         "intrinsic_value": 9.58,
         "bull_case": 9.64,
         "bear_case": 9.49
@@ -9038,15 +9038,15 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": true,
       "signal": "ath_drop",
-      "drop_from_ath_pct": 71.9,
+      "drop_from_ath_pct": 70.9,
       "ath": 37.0,
-      "current_price": 10.39,
-      "message": "Down 72% from 52-week high of $37.00"
+      "current_price": 10.78,
+      "message": "Down 71% from 52-week high of $37.00"
     },
     "watchlist_signal": {
       "signal": "Avoid",
@@ -9057,7 +9057,7 @@
         "val_adj": -10,
         "alert_adj": -10,
         "classification": "Dangerous",
-        "mos_pct": -8.5
+        "mos_pct": -12.5
       }
     },
     "10_Year_History": {
@@ -9068,7 +9068,7 @@
       "2023": 35.0,
       "2024": 23.62,
       "2025": 7.0,
-      "2026": 10.39
+      "2026": 10.78
     },
     "5_Year_Forecast": {
       "2027": 9.77,
@@ -9077,7 +9077,7 @@
       "2030": 10.37,
       "2031": 10.58
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   },
   "UHG": {
     "company_profile": {
@@ -9096,7 +9096,7 @@
       "exchange": "NGM",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 68827840,
+      "market_cap": 69416112,
       "52w_high": 4.78,
       "52w_low": 0.987,
       "avg_volume": 360304,
@@ -9105,9 +9105,9 @@
       "dividend_yield": null,
       "beta": 1.154
     },
-    "current_price": 1.17,
+    "current_price": 1.18,
     "intrinsic_value": 3.47,
-    "margin_of_safety_pct": 66.3,
+    "margin_of_safety_pct": 66.0,
     "mos_label": "Strong Discount (Margin of Safety)",
     "data_availability": {
       "status": "ok",
@@ -9202,7 +9202,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -9214,7 +9214,7 @@
       "risk_profile": "Key risks to watch: elevated leverage (Debt/EBITDA 151.8x); a weak near-term growth outlook; inconsistent earnings.",
       "investment_summary": "The stock trades at a 66% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": -0.2616,
@@ -9391,7 +9391,7 @@
         "bear_case": 3.3
       },
       "2026": {
-        "market_price": 1.17,
+        "market_price": 1.18,
         "intrinsic_value": 3.47,
         "bull_case": 3.49,
         "bear_case": 3.44
@@ -9441,7 +9441,7 @@
     "bull_bear": {
       "short_term": {
         "bull_points": [
-          "Trading at a 66.3% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $3.47",
+          "Trading at a 66.0% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $3.47",
           "Current market positioning in the Consumer Cyclical sector may attract tactical buyers",
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
@@ -9464,15 +9464,15 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": true,
       "signal": "ath_drop",
-      "drop_from_ath_pct": 75.5,
+      "drop_from_ath_pct": 75.3,
       "ath": 4.78,
-      "current_price": 1.17,
-      "message": "Down 76% from 52-week high of $4.78"
+      "current_price": 1.18,
+      "message": "Down 75% from 52-week high of $4.78"
     },
     "watchlist_signal": {
       "signal": "Avoid",
@@ -9483,7 +9483,7 @@
         "val_adj": 20,
         "alert_adj": -10,
         "classification": "Dangerous",
-        "mos_pct": 66.3
+        "mos_pct": 66.0
       }
     },
     "10_Year_History": {
@@ -9492,7 +9492,7 @@
       "2023": 8.43,
       "2024": 4.23,
       "2025": 1.56,
-      "2026": 1.17
+      "2026": 1.18
     },
     "5_Year_Forecast": {
       "2027": 3.54,
@@ -9501,7 +9501,7 @@
       "2030": 3.76,
       "2031": 3.83
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   },
   "UK": {
     "company_profile": {
@@ -9520,7 +9520,7 @@
       "exchange": "NCM",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 2081306,
+      "market_cap": 2054187,
       "52w_high": 1.55,
       "52w_low": 0.283,
       "avg_volume": 199826,
@@ -9529,9 +9529,9 @@
       "dividend_yield": null,
       "beta": 0.92
     },
-    "current_price": 0.31,
+    "current_price": 0.3,
     "intrinsic_value": 0.62,
-    "margin_of_safety_pct": 50.5,
+    "margin_of_safety_pct": 51.1,
     "mos_label": "Strong Discount (Margin of Safety)",
     "data_availability": {
       "status": "ok",
@@ -9624,19 +9624,19 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "Ucommune International Ltd carries a Dangerous rating because it shows significant weaknesses in profitability and financial strength. Revenue and earnings have been inconsistent, making it hard to predict where this business will be in a few years. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "Ucommune International Ltd demonstrates weak fundamental quality and is constrained by growth. Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth. The stock trades at a 50% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_narrative": "Ucommune International Ltd demonstrates weak fundamental quality and is constrained by growth. Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth. The stock trades at a 51% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "quality_conclusion": "Ucommune International Ltd demonstrates weak fundamental quality and is constrained by growth.",
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth.",
-      "investment_summary": "The stock trades at a 50% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_summary": "The stock trades at a 51% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": -0.2611,
@@ -9853,7 +9853,7 @@
         "bear_case": 0.59
       },
       "2026": {
-        "market_price": 0.31,
+        "market_price": 0.3,
         "intrinsic_value": 0.62,
         "bull_case": 0.62,
         "bear_case": 0.61
@@ -9903,7 +9903,7 @@
     "bull_bear": {
       "short_term": {
         "bull_points": [
-          "Trading at a 50.5% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $0.62",
+          "Trading at a 51.1% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $0.62",
           "Current market positioning in the Real Estate sector may attract tactical buyers",
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
@@ -9926,14 +9926,14 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": true,
       "signal": "ath_drop",
-      "drop_from_ath_pct": 80.2,
+      "drop_from_ath_pct": 80.5,
       "ath": 1.55,
-      "current_price": 0.31,
+      "current_price": 0.3,
       "message": "Down 80% from 52-week high of $1.55"
     },
     "watchlist_signal": {
@@ -9945,7 +9945,7 @@
         "val_adj": 20,
         "alert_adj": -10,
         "classification": "Dangerous",
-        "mos_pct": 50.5
+        "mos_pct": 51.1
       }
     },
     "10_Year_History": {
@@ -9956,7 +9956,7 @@
       "2023": 3.71,
       "2024": 1.17,
       "2025": 0.63,
-      "2026": 0.31
+      "2026": 0.3
     },
     "5_Year_Forecast": {
       "2027": 0.63,
@@ -9965,7 +9965,7 @@
       "2030": 0.67,
       "2031": 0.68
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   },
   "ULCC": {
     "company_profile": {
@@ -9984,18 +9984,18 @@
       "exchange": "NMS",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 1105011584,
+      "market_cap": 998163136,
       "52w_high": 6.66,
       "52w_low": 2.891,
       "avg_volume": 4555691,
       "pe_trailing": null,
-      "pe_forward": 38.89383,
+      "pe_forward": 35.13302,
       "dividend_yield": null,
       "beta": 2.576
     },
-    "current_price": 4.81,
+    "current_price": 4.34,
     "intrinsic_value": 6.94,
-    "margin_of_safety_pct": 30.7,
+    "margin_of_safety_pct": 37.4,
     "mos_label": "Moderate Discount",
     "data_availability": {
       "status": "ok",
@@ -10090,19 +10090,19 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "Frontier Group Holdings, Inc. carries a Dangerous rating because it shows significant weaknesses in profitability and financial strength. Revenue and earnings have been inconsistent, making it hard to predict where this business will be in a few years. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "Frontier Group Holdings, Inc. demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: tight liquidity (current ratio 0.46); a weak near-term growth outlook; inconsistent earnings. The stock trades at a 31% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_narrative": "Frontier Group Holdings, Inc. demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: tight liquidity (current ratio 0.46); a weak near-term growth outlook; inconsistent earnings. The stock trades at a 37% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "quality_conclusion": "Frontier Group Holdings, Inc. demonstrates weak fundamental quality and is constrained by profitability.",
       "risk_profile": "Key risks to watch: tight liquidity (current ratio 0.46); a weak near-term growth outlook; inconsistent earnings.",
-      "investment_summary": "The stock trades at a 31% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_summary": "The stock trades at a 37% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": -0.2502,
@@ -10110,7 +10110,7 @@
       "roe_pct": "-25.02%",
       "roic_pct": null,
       "roic_source": "unavailable",
-      "current_ratio": 0.456,
+      "current_ratio": 0.46,
       "debt_to_ebitda": null,
       "debt_service_ratio": null
     },
@@ -10340,7 +10340,7 @@
         "bear_case": 6.59
       },
       "2026": {
-        "market_price": 4.81,
+        "market_price": 4.34,
         "intrinsic_value": 6.94,
         "bull_case": 6.98,
         "bear_case": 6.88
@@ -10390,7 +10390,7 @@
     "bull_bear": {
       "short_term": {
         "bull_points": [
-          "Trading at a 30.7% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $6.94",
+          "Trading at a 37.4% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $6.94",
           "Current market positioning in the Industrials sector may attract tactical buyers",
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
@@ -10413,15 +10413,15 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": true,
       "signal": "ath_drop",
-      "drop_from_ath_pct": 27.8,
+      "drop_from_ath_pct": 34.8,
       "ath": 6.66,
-      "current_price": 4.81,
-      "message": "Down 28% from 52-week high of $6.66"
+      "current_price": 4.34,
+      "message": "Down 35% from 52-week high of $6.66"
     },
     "watchlist_signal": {
       "signal": "Avoid",
@@ -10432,7 +10432,7 @@
         "val_adj": 20,
         "alert_adj": -10,
         "classification": "Dangerous",
-        "mos_pct": 30.7
+        "mos_pct": 37.4
       }
     },
     "10_Year_History": {
@@ -10441,7 +10441,7 @@
       "2023": 5.46,
       "2024": 7.11,
       "2025": 4.71,
-      "2026": 4.81
+      "2026": 4.34
     },
     "5_Year_Forecast": {
       "2027": 7.08,
@@ -10450,7 +10450,7 @@
       "2030": 7.51,
       "2031": 7.66
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   },
   "ULBI": {
     "company_profile": {
@@ -10469,18 +10469,18 @@
       "exchange": "NGM",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 132419192,
+      "market_cap": 134921008,
       "52w_high": 9.52,
       "52w_low": 4.1,
       "avg_volume": 45855,
       "pe_trailing": null,
-      "pe_forward": 8.833333,
+      "pe_forward": 9.000222,
       "dividend_yield": null,
       "beta": 0.722
     },
-    "current_price": 7.95,
+    "current_price": 8.1,
     "intrinsic_value": 4.86,
-    "margin_of_safety_pct": -63.6,
+    "margin_of_safety_pct": -66.7,
     "mos_label": "Significant Premium",
     "data_availability": {
       "status": "ok",
@@ -10583,19 +10583,19 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "Ultralife Corporation carries a Dangerous rating because it shows significant weaknesses in profitability and growth. A high debt load relative to earnings adds financial pressure on the business. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "Ultralife Corporation demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: elevated leverage (Debt/EBITDA 5.6x); a weak near-term growth outlook; balance sheet constraints on growth. The stock trades at a 64% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_narrative": "Ultralife Corporation demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: elevated leverage (Debt/EBITDA 5.6x); a weak near-term growth outlook; balance sheet constraints on growth. The stock trades at a 67% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "quality_conclusion": "Ultralife Corporation demonstrates weak fundamental quality and is constrained by profitability.",
       "risk_profile": "Key risks to watch: elevated leverage (Debt/EBITDA 5.6x); a weak near-term growth outlook; balance sheet constraints on growth.",
-      "investment_summary": "The stock trades at a 64% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_summary": "The stock trades at a 67% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": -0.045,
@@ -10938,7 +10938,7 @@
         "bear_case": 4.62
       },
       "2026": {
-        "market_price": 7.95,
+        "market_price": 8.1,
         "intrinsic_value": 4.86,
         "bull_case": 4.89,
         "bear_case": 4.82
@@ -10993,7 +10993,7 @@
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
         "bear_points": [
-          "Trading at a 64% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
+          "Trading at a 67% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
           "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
           "Short-term earnings visibility is limited without additional guidance"
         ]
@@ -11011,14 +11011,14 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": false,
       "signal": null,
-      "drop_from_ath_pct": 16.5,
+      "drop_from_ath_pct": 14.9,
       "ath": 9.52,
-      "current_price": 7.95,
+      "current_price": 8.1,
       "message": null
     },
     "watchlist_signal": {
@@ -11030,7 +11030,7 @@
         "val_adj": -20,
         "alert_adj": 0,
         "classification": "Dangerous",
-        "mos_pct": -63.6
+        "mos_pct": -66.7
       }
     },
     "10_Year_History": {
@@ -11044,7 +11044,7 @@
       "2023": 6.82,
       "2024": 7.45,
       "2025": 5.72,
-      "2026": 7.95
+      "2026": 8.1
     },
     "5_Year_Forecast": {
       "2027": 4.96,
@@ -11053,7 +11053,7 @@
       "2030": 5.26,
       "2031": 5.37
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   },
   "ULH": {
     "company_profile": {
@@ -11072,18 +11072,18 @@
       "exchange": "NMS",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 634245952,
+      "market_cap": 623705920,
       "52w_high": 30.76,
       "52w_low": 12.78,
       "avg_volume": 53549,
       "pe_trailing": null,
-      "pe_forward": 16.832169,
+      "pe_forward": 16.552448,
       "dividend_yield": 1.74,
       "beta": 0.714
     },
-    "current_price": 24.07,
+    "current_price": 23.67,
     "intrinsic_value": 30.88,
-    "margin_of_safety_pct": 22.1,
+    "margin_of_safety_pct": 23.3,
     "mos_label": "Moderate Discount",
     "data_availability": {
       "status": "ok",
@@ -11182,19 +11182,19 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "Universal Logistics Holdings, Inc. carries a Dangerous rating because it shows significant weaknesses in profitability and financial strength. A high debt load relative to earnings adds financial pressure on the business. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "Universal Logistics Holdings, Inc. demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: elevated leverage (Debt/EBITDA 4.7x); a weak near-term growth outlook; balance sheet constraints on growth. The stock trades at a 22% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_narrative": "Universal Logistics Holdings, Inc. demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: elevated leverage (Debt/EBITDA 4.7x); a weak near-term growth outlook; balance sheet constraints on growth. The stock trades at a 23% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "quality_conclusion": "Universal Logistics Holdings, Inc. demonstrates weak fundamental quality and is constrained by profitability.",
       "risk_profile": "Key risks to watch: elevated leverage (Debt/EBITDA 4.7x); a weak near-term growth outlook; balance sheet constraints on growth.",
-      "investment_summary": "The stock trades at a 22% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_summary": "The stock trades at a 23% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": -0.1682,
@@ -11537,7 +11537,7 @@
         "bear_case": 29.33
       },
       "2026": {
-        "market_price": 24.07,
+        "market_price": 23.67,
         "intrinsic_value": 30.88,
         "bull_case": 31.07,
         "bear_case": 30.6
@@ -11587,7 +11587,7 @@
     "bull_bear": {
       "short_term": {
         "bull_points": [
-          "Trading at a 22.1% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $30.88",
+          "Trading at a 23.3% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $30.88",
           "Current market positioning in the Industrials sector may attract tactical buyers",
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
@@ -11610,15 +11610,15 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": true,
       "signal": "ath_drop",
-      "drop_from_ath_pct": 21.7,
+      "drop_from_ath_pct": 23.0,
       "ath": 30.76,
-      "current_price": 24.07,
-      "message": "Down 22% from 52-week high of $30.76"
+      "current_price": 23.67,
+      "message": "Down 23% from 52-week high of $30.76"
     },
     "watchlist_signal": {
       "signal": "Avoid",
@@ -11629,7 +11629,7 @@
         "val_adj": 10,
         "alert_adj": -10,
         "classification": "Dangerous",
-        "mos_pct": 22.1
+        "mos_pct": 23.3
       }
     },
     "10_Year_History": {
@@ -11643,7 +11643,7 @@
       "2023": 27.05,
       "2024": 44.8,
       "2025": 15.1,
-      "2026": 24.07
+      "2026": 23.67
     },
     "5_Year_Forecast": {
       "2027": 31.5,
@@ -11652,7 +11652,7 @@
       "2030": 33.43,
       "2031": 34.09
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   },
   "ULTA": {
     "company_profile": {
@@ -11671,18 +11671,18 @@
       "exchange": "NMS",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 25385807872,
+      "market_cap": 25197713408,
       "52w_high": 714.97,
       "52w_low": 369.39,
       "avg_volume": 692165,
-      "pe_trailing": 22.318253,
-      "pe_forward": 18.133686,
+      "pe_trailing": 22.152887,
+      "pe_forward": 17.999325,
       "dividend_yield": null,
       "beta": 0.953
     },
-    "current_price": 572.24,
-    "intrinsic_value": 690.36,
-    "margin_of_safety_pct": 17.1,
+    "current_price": 568.0,
+    "intrinsic_value": 689.99,
+    "margin_of_safety_pct": 17.7,
     "mos_label": "Slight Discount",
     "data_availability": {
       "status": "ok",
@@ -11698,13 +11698,13 @@
       "2_DCF_FCF": 489.63,
       "3_DCF_Net_Income": 627.46,
       "4_DCF_Terminal_Value": 1308.86,
-      "5_Mean_PS": 577.95,
-      "6_Mean_PE": 485.31,
-      "7_Mean_PB": 616.37,
+      "5_Mean_PS": 576.87,
+      "6_Mean_PE": 484.28,
+      "7_Mean_PB": 615.33,
       "8_PSG": 3029.02,
       "9_PEG": 274.09,
-      "10_EV_EBITDA": 505.13,
-      "intrinsic_value": 690.36,
+      "10_EV_EBITDA": 504.08,
+      "intrinsic_value": 689.99,
       "methods_used": 9,
       "confidence": "Medium",
       "active_methods": [
@@ -11791,7 +11791,7 @@
         "eps_next_5y": 0.1069
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -11803,7 +11803,7 @@
       "risk_profile": "Key risks to watch: balance sheet constraints on growth.",
       "investment_summary": "With 10.7% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades near estimated intrinsic value and is suitable for quality-focused long-term investors.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": 0.436,
@@ -12087,99 +12087,99 @@
     "valuation_chart": {
       "2016": {
         "market_price": 254.94,
-        "intrinsic_value": 251.33,
-        "bull_case": 391.51,
-        "bear_case": 188.84
+        "intrinsic_value": 251.2,
+        "bull_case": 391.3,
+        "bear_case": 188.74
       },
       "2017": {
         "market_price": 223.66,
-        "intrinsic_value": 275.51,
-        "bull_case": 412.23,
-        "bear_case": 212.46
+        "intrinsic_value": 275.36,
+        "bull_case": 412.01,
+        "bear_case": 212.34
       },
       "2018": {
         "market_price": 244.84,
-        "intrinsic_value": 302.02,
-        "bull_case": 434.04,
-        "bear_case": 239.03
+        "intrinsic_value": 301.86,
+        "bull_case": 433.81,
+        "bear_case": 238.9
       },
       "2019": {
         "market_price": 253.14,
-        "intrinsic_value": 331.07,
-        "bull_case": 457.01,
-        "bear_case": 268.92
+        "intrinsic_value": 330.9,
+        "bull_case": 456.77,
+        "bear_case": 268.78
       },
       "2020": {
         "market_price": 287.16,
-        "intrinsic_value": 362.93,
-        "bull_case": 481.19,
-        "bear_case": 302.56
+        "intrinsic_value": 362.73,
+        "bull_case": 480.94,
+        "bear_case": 302.4
       },
       "2021": {
         "market_price": 412.34,
-        "intrinsic_value": 397.84,
-        "bull_case": 506.66,
-        "bear_case": 340.4
+        "intrinsic_value": 397.63,
+        "bull_case": 506.39,
+        "bear_case": 340.22
       },
       "2022": {
         "market_price": 469.07,
-        "intrinsic_value": 436.12,
-        "bull_case": 533.47,
-        "bear_case": 382.98
+        "intrinsic_value": 435.89,
+        "bull_case": 533.18,
+        "bear_case": 382.77
       },
       "2023": {
         "market_price": 489.99,
-        "intrinsic_value": 478.08,
-        "bull_case": 561.7,
-        "bear_case": 430.88
+        "intrinsic_value": 477.82,
+        "bull_case": 561.4,
+        "bear_case": 430.65
       },
       "2024": {
         "market_price": 434.93,
-        "intrinsic_value": 524.08,
-        "bull_case": 591.42,
-        "bear_case": 484.77
+        "intrinsic_value": 523.8,
+        "bull_case": 591.1,
+        "bear_case": 484.51
       },
       "2025": {
         "market_price": 605.01,
-        "intrinsic_value": 574.5,
-        "bull_case": 622.71,
-        "bear_case": 545.4
+        "intrinsic_value": 574.19,
+        "bull_case": 622.38,
+        "bear_case": 545.11
       },
       "2026": {
-        "market_price": 572.24,
-        "intrinsic_value": 690.36,
-        "bull_case": 710.29,
-        "bear_case": 660.47
+        "market_price": 568.0,
+        "intrinsic_value": 689.99,
+        "bull_case": 709.91,
+        "bear_case": 660.12
       },
       "2027": {
         "market_price": null,
-        "intrinsic_value": 756.78,
-        "bull_case": 776.71,
-        "bear_case": 726.89
+        "intrinsic_value": 756.37,
+        "bull_case": 776.29,
+        "bear_case": 726.5
       },
       "2028": {
         "market_price": null,
-        "intrinsic_value": 829.59,
-        "bull_case": 873.85,
-        "bear_case": 765.35
+        "intrinsic_value": 829.14,
+        "bull_case": 873.38,
+        "bear_case": 764.94
       },
       "2029": {
         "market_price": null,
-        "intrinsic_value": 909.4,
-        "bull_case": 983.15,
-        "bear_case": 805.85
+        "intrinsic_value": 908.92,
+        "bull_case": 982.62,
+        "bear_case": 805.42
       },
       "2030": {
         "market_price": null,
-        "intrinsic_value": 996.9,
-        "bull_case": 1106.11,
-        "bear_case": 848.5
+        "intrinsic_value": 996.36,
+        "bull_case": 1105.52,
+        "bear_case": 848.04
       },
       "2031": {
         "market_price": null,
-        "intrinsic_value": 1092.81,
-        "bull_case": 1244.45,
-        "bear_case": 893.39
+        "intrinsic_value": 1092.22,
+        "bull_case": 1243.79,
+        "bear_case": 892.92
       }
     },
     "forecast_meta": {
@@ -12219,26 +12219,26 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": true,
       "signal": "ath_drop",
-      "drop_from_ath_pct": 20.0,
+      "drop_from_ath_pct": 20.6,
       "ath": 714.97,
-      "current_price": 572.24,
-      "message": "Down 20% from 52-week high of $714.97"
+      "current_price": 568.0,
+      "message": "Down 21% from 52-week high of $714.97"
     },
     "watchlist_signal": {
       "signal": "Strong Buy",
-      "reason": "A Safe-rated business trading at a 17% discount to intrinsic value \u2014 quality at a genuine bargain.",
+      "reason": "A Safe-rated business trading at a 18% discount to intrinsic value \u2014 quality at a genuine bargain.",
       "score": 95,
       "inputs": {
         "quality_base": 75,
         "val_adj": 10,
         "alert_adj": 10,
         "classification": "Safe",
-        "mos_pct": 17.1
+        "mos_pct": 17.7
       }
     },
     "10_Year_History": {
@@ -12252,16 +12252,16 @@
       "2023": 489.99,
       "2024": 434.93,
       "2025": 605.01,
-      "2026": 572.24
+      "2026": 568.0
     },
     "5_Year_Forecast": {
-      "2027": 764.16,
-      "2028": 845.85,
-      "2029": 936.27,
-      "2030": 1036.36,
-      "2031": 1147.14
+      "2027": 763.75,
+      "2028": 845.39,
+      "2029": 935.77,
+      "2030": 1035.8,
+      "2031": 1146.53
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   },
   "UMBF": {
     "company_profile": {
@@ -12280,18 +12280,18 @@
       "exchange": "NMS",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 9451596800,
+      "market_cap": 9425710080,
       "52w_high": 136.11,
       "52w_low": 90.96,
       "avg_volume": 583173,
-      "pe_trailing": 13.362756,
-      "pe_forward": 9.416773,
+      "pe_trailing": 13.326158,
+      "pe_forward": 9.390982,
       "dividend_yield": 1.39,
       "beta": 0.765
     },
-    "current_price": 124.14,
+    "current_price": 123.8,
     "intrinsic_value": 178.54,
-    "margin_of_safety_pct": 30.5,
+    "margin_of_safety_pct": 30.7,
     "mos_label": "Moderate Discount",
     "data_availability": {
       "status": "ok",
@@ -12399,19 +12399,19 @@
         "eps_next_5y": 0.099
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 12:16"
+      "last_calculated": "2026-04-21 15:04"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "UMB Financial Corporation earns a Safe rating because it scores consistently well across all four fundamental measures \u2014 profitability, financial strength, growth, and predictability. Companies at this quality level have proven they can grow steadily and manage their finances well, making them lower-risk long-term investments.",
-      "investment_narrative": "UMB Financial Corporation demonstrates strong fundamental quality and scores highly across profitability, financial strength, and predictability. The risk profile is relatively contained with no major red flags across leverage, liquidity, or earnings consistency. With 9.9% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 30% discount to estimated intrinsic value and is suitable for quality-focused long-term investors.",
+      "investment_narrative": "UMB Financial Corporation demonstrates strong fundamental quality and scores highly across profitability, financial strength, and predictability. The risk profile is relatively contained with no major red flags across leverage, liquidity, or earnings consistency. With 9.9% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 31% discount to estimated intrinsic value and is suitable for quality-focused long-term investors.",
       "quality_conclusion": "UMB Financial Corporation demonstrates strong fundamental quality and scores highly across profitability, financial strength, and predictability.",
       "risk_profile": "The risk profile is relatively contained with no major red flags across leverage, liquidity, or earnings consistency.",
-      "investment_summary": "With 9.9% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 30% discount to estimated intrinsic value and is suitable for quality-focused long-term investors.",
+      "investment_summary": "With 9.9% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 31% discount to estimated intrinsic value and is suitable for quality-focused long-term investors.",
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "fundamentals": {
       "roe": 0.1259,
@@ -12683,7 +12683,7 @@
         "bear_case": 140.15
       },
       "2026": {
-        "market_price": 124.14,
+        "market_price": 123.8,
         "intrinsic_value": 178.54,
         "bull_case": 183.84,
         "bear_case": 170.59
@@ -12733,7 +12733,7 @@
     "bull_bear": {
       "short_term": {
         "bull_points": [
-          "Trading at a 30.5% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $178.54",
+          "Trading at a 30.7% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $178.54",
           "Revenue growing at 67.6% year-over-year, indicating sustained demand momentum heading into the next quarter",
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
@@ -12756,26 +12756,26 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 12:16"
+      "generated_at": "2026-04-21 15:04"
     },
     "price_alert": {
       "triggered": false,
       "signal": null,
-      "drop_from_ath_pct": 8.8,
+      "drop_from_ath_pct": 9.0,
       "ath": 136.11,
-      "current_price": 124.14,
+      "current_price": 123.8,
       "message": null
     },
     "watchlist_signal": {
       "signal": "Strong Buy",
-      "reason": "A Safe-rated business trading at a 30% discount to intrinsic value \u2014 quality at a genuine bargain.",
+      "reason": "A Safe-rated business trading at a 31% discount to intrinsic value \u2014 quality at a genuine bargain.",
       "score": 98,
       "inputs": {
         "quality_base": 78,
         "val_adj": 20,
         "alert_adj": 0,
         "classification": "Safe",
-        "mos_pct": 30.5
+        "mos_pct": 30.7
       }
     },
     "10_Year_History": {
@@ -12789,7 +12789,7 @@
       "2023": 80.67,
       "2024": 110.79,
       "2025": 114.61,
-      "2026": 124.14
+      "2026": 123.8
     },
     "5_Year_Forecast": {
       "2027": 196.22,
@@ -12798,6 +12798,6 @@
       "2030": 260.45,
       "2031": 286.24
     },
-    "Last_Updated": "2026-04-21 12:16"
+    "Last_Updated": "2026-04-21 15:04"
   }
 }
