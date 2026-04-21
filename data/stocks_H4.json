@@ -136,7 +136,7 @@
         "eps_next_5y": 0.0928
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:38"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -148,7 +148,7 @@
       "risk_profile": "Key risks to watch: elevated leverage (Debt/EBITDA 3.4x); a weak near-term growth outlook; balance sheet constraints on growth.",
       "investment_summary": "With 9.3% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 18% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": 0.087,
@@ -564,7 +564,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": false,
@@ -606,320 +606,7 @@
       "2030": 95.84,
       "2031": 104.73
     },
-    "Last_Updated": "2026-04-21 04:38"
-  },
-  "HSPT": {
-    "company_profile": {
-      "name": "Horizon Space Acquisition II Corp.",
-      "ticker": "HSPT",
-      "sector": "Financial Services",
-      "industry": "Shell Companies",
-      "company_type": "CONSUMER_FINANCE",
-      "type_rationale": "Financial services \u2014 DNI and P/B prioritised",
-      "description": "Horizon Space Acquisition II Corp. does not have significant operations. It intends to effect a merger, share exchange, asset acquisition, share purchase, recapitalization, reorganization, or similar business combination with one or more businesses or entities. The company was incorporated in 2023 and is based in New York, New York.",
-      "description_summary": "Horizon Space Acquisition II Corp. does not have significant operations.",
-      "website": null,
-      "employees": null,
-      "country": "United States",
-      "city": "New York",
-      "exchange": "NGM",
-      "currency": "USD",
-      "quote_type": "EQUITY",
-      "market_cap": 48350692,
-      "52w_high": 14.31,
-      "52w_low": 5.25,
-      "avg_volume": 20598,
-      "pe_trailing": 41.25,
-      "pe_forward": null,
-      "dividend_yield": null,
-      "beta": null
-    },
-    "current_price": 8.25,
-    "intrinsic_value": 4.05,
-    "margin_of_safety_pct": -103.7,
-    "mos_label": "Significant Premium",
-    "data_availability": {
-      "status": "ok",
-      "message": null,
-      "has_price": true,
-      "has_iv": true,
-      "has_financials": true,
-      "active_methods": 2,
-      "exclude_from_search": false
-    },
-    "valuations": {
-      "1_DCF_Operating_CF": null,
-      "2_DCF_FCF": null,
-      "3_DCF_Net_Income": 2.66,
-      "4_DCF_Terminal_Value": null,
-      "5_Mean_PS": null,
-      "6_Mean_PE": 6.83,
-      "7_Mean_PB": null,
-      "8_PSG": null,
-      "9_PEG": null,
-      "10_EV_EBITDA": null,
-      "intrinsic_value": 4.05,
-      "methods_used": 2,
-      "confidence": "Low",
-      "active_methods": [
-        "3_DCF_Net_Income",
-        "6_Mean_PE"
-      ],
-      "_meta": {
-        "pe_source": "historical_mean",
-        "ps_source": "current_trailing",
-        "pb_source": "historical_mean",
-        "ev_ebitda_source": "trailing_or_unavailable",
-        "growth_source": "finviz_no_growth",
-        "growth_raw": 0.0,
-        "growth_peg_rate": 0.0,
-        "discount_rate": 0.12,
-        "growth_stage1": 0.02,
-        "growth_stage2": 0.02,
-        "terminal_growth": 0.02,
-        "tier": "Weak",
-        "company_type": "CONSUMER_FINANCE",
-        "type_rationale": "Financial services \u2014 DNI and P/B prioritised",
-        "method_explanation": "Consumer finance companies \u2014 such as credit card providers or personal lenders \u2014 earn income from the interest they charge on loans. Like banks, they carry a lot of debt by design because lending money is their core business model. We use net income DCF and Price-to-Book, which together capture both the earning power and the asset value of the loan book.",
-        "weights_applied": {
-          "1_DCF_Operating_CF": 0.0,
-          "2_DCF_FCF": 0.0,
-          "3_DCF_Net_Income": 0.4,
-          "4_DCF_Terminal_Value": 0.0,
-          "5_Mean_PS": 0.15,
-          "6_Mean_PE": 0.2,
-          "7_Mean_PB": 0.15,
-          "8_PSG": 0.1,
-          "9_PEG": 0.0,
-          "10_EV_EBITDA": 0.0
-        },
-        "excluded_methods": [
-          "1_DCF_Operating_CF",
-          "2_DCF_FCF",
-          "4_DCF_Terminal_Value",
-          "9_PEG",
-          "10_EV_EBITDA"
-        ],
-        "active_methods": [
-          "3_DCF_Net_Income",
-          "6_Mean_PE"
-        ]
-      }
-    },
-    "quality": {
-      "scores": {
-        "profitability": 3,
-        "financial_strength": 1,
-        "growth": 1,
-        "predictability": 1,
-        "valuation": 0,
-        "moat": null
-      },
-      "score_labels": {
-        "profitability": "Weak",
-        "financial_strength": "Poor",
-        "growth": "Poor",
-        "predictability": "Poor",
-        "valuation": "Poor",
-        "moat": "Not scored"
-      },
-      "company_type": "CONSUMER_FINANCE",
-      "company_type_note": "Banks and REITs carry structural leverage \u2014 do not describe financial_strength scores of 7+ as 'moderate concern' for these types.",
-      "python_subtotal": 6,
-      "python_subtotal_pct": 15.0,
-      "classification": "Dangerous",
-      "penalty_pct": 8,
-      "final_score_pct": 7.0,
-      "tiebreaker_used": false,
-      "tiebreaker_inputs": {
-        "roe": null,
-        "roic": null,
-        "eps_next_5y": 0.0
-      },
-      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:38"
-    },
-    "quality_narrative": {
-      "moat_score": null,
-      "moat_rationale": "",
-      "metric_assessments": {},
-      "classification_reason": "Horizon Space Acquisition II Corp. carries a Dangerous rating because it shows significant weaknesses in profitability and financial strength. Revenue and earnings have been inconsistent, making it hard to predict where this business will be in a few years. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "Horizon Space Acquisition II Corp. demonstrates weak fundamental quality and is constrained by financial strength. Key risks to watch: tight liquidity (current ratio 0.02); a weak near-term growth outlook; inconsistent earnings. The stock trades at a 104% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
-      "quality_conclusion": "Horizon Space Acquisition II Corp. demonstrates weak fundamental quality and is constrained by financial strength.",
-      "risk_profile": "Key risks to watch: tight liquidity (current ratio 0.02); a weak near-term growth outlook; inconsistent earnings.",
-      "investment_summary": "The stock trades at a 104% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
-      "source": "rules",
-      "generated_at": "2026-04-21 04:38"
-    },
-    "fundamentals": {
-      "roe": null,
-      "roic": null,
-      "roe_pct": null,
-      "roic_pct": null,
-      "roic_source": "unavailable",
-      "current_ratio": 0.02,
-      "debt_to_ebitda": null,
-      "debt_service_ratio": null
-    },
-    "financials_charts": {
-      "revenue_vs_net_income": {
-        "2025": {
-          "revenue": null,
-          "net_income": 1.81
-        },
-        "2024": {
-          "revenue": null,
-          "net_income": 0.14
-        }
-      },
-      "fcf_vs_debt": {},
-      "shares_vs_buybacks": {
-        "2025": {
-          "shares_outstanding_m": 2.18,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2024": {
-          "shares_outstanding_m": 2.18,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2023": {
-          "shares_outstanding_m": 1.73,
-          "buybacks_m": null,
-          "split_adjusted": true
-        }
-      },
-      "returns_trajectory": {
-        "2024": {
-          "roe_pct": 31.69,
-          "roic_pct": 0.16
-        }
-      },
-      "revenue_vs_ar": {},
-      "_notes": {
-        "revenue_vs_net_income": "This chart shows how much money the company brings in (revenue) versus how much it actually keeps as profit (net income) each year. A healthy company should show both lines growing over time. If revenue grows but net income shrinks, the company is spending more than it is earning \u2014 a warning sign worth investigating.",
-        "fcf_vs_debt": "Free cash flow is the cash left over after the company has paid for everything it needs to run and grow the business. This chart compares that cash to the company's total debt. A company with rising free cash flow and falling debt is in a strong financial position. If debt is rising faster than cash, the company may be taking on more risk than it can comfortably manage.",
-        "shares_vs_buybacks": "When a company buys back its own shares, it reduces the total number of shares in circulation \u2014 which means each remaining share represents a larger slice of the business. This chart shows how the share count has changed over time. Consistent buybacks are generally a sign that management believes the stock is undervalued and wants to return cash to shareholders.",
-        "returns_trajectory": "Return on Equity (ROE) measures how much profit a company generates for every dollar of shareholder money invested. Return on Invested Capital (ROIC) is similar but also includes debt. Both are expressed as a percentage \u2014 higher is better. A company consistently earning above 15% ROIC is generally considered to have a genuine competitive advantage over its peers.",
-        "revenue_vs_ar": "Accounts receivable is money the company is owed by customers who have not yet paid their bills. This chart compares revenue growth to accounts receivable growth each year. If accounts receivable is growing much faster than revenue, it may mean the company is struggling to collect payments \u2014 sometimes a sign of aggressive or fictitious revenue reporting. A healthy company should see both lines move at a similar pace."
-      }
-    },
-    "valuation_chart": {
-      "2025": {
-        "market_price": 10.55,
-        "intrinsic_value": 3.89,
-        "bull_case": 3.96,
-        "bear_case": 3.85
-      },
-      "2026": {
-        "market_price": 8.25,
-        "intrinsic_value": 4.05,
-        "bull_case": 4.07,
-        "bear_case": 4.01
-      },
-      "2027": {
-        "market_price": null,
-        "intrinsic_value": 4.13,
-        "bull_case": 4.16,
-        "bear_case": 4.09
-      },
-      "2028": {
-        "market_price": null,
-        "intrinsic_value": 4.21,
-        "bull_case": 4.26,
-        "bear_case": 4.14
-      },
-      "2029": {
-        "market_price": null,
-        "intrinsic_value": 4.3,
-        "bull_case": 4.37,
-        "bear_case": 4.19
-      },
-      "2030": {
-        "market_price": null,
-        "intrinsic_value": 4.38,
-        "bull_case": 4.49,
-        "bear_case": 4.23
-      },
-      "2031": {
-        "market_price": null,
-        "intrinsic_value": 4.47,
-        "bull_case": 4.6,
-        "bear_case": 4.28
-      }
-    },
-    "forecast_meta": {
-      "eps_next_5y_raw": 0.0,
-      "fs_score": 1,
-      "fs_multiplier": 0.35,
-      "base_growth_rate": 0.02,
-      "bull_growth_rate": 0.026,
-      "bear_growth_rate": 0.011,
-      "growth_constrained": true,
-      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 1/10",
-      "growth_explanation": "Base (2.0%/yr): growth in line with analyst expectations. Bull (2.6%/yr): everything goes to plan. Bear (1.1%/yr): growth disappoints. Growth capped at 2.0% (from 0.0%) \u2014 the balance sheet (financial strength 1/10) limits how fast this company can realistically grow."
-    },
-    "bull_bear": {
-      "short_term": {
-        "bull_points": [
-          "Consensus expectations are broadly supportive for Horizon Space Acquisition II Corp. in the near term",
-          "Current market positioning in the Financial Services sector may attract tactical buyers",
-          "Any positive earnings surprise could act as a near-term re-rating catalyst"
-        ],
-        "bear_points": [
-          "Trading at a 104% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
-          "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
-          "Short-term earnings visibility is limited without additional guidance"
-        ]
-      },
-      "long_term": {
-        "bull_points": [
-          "Horizon Space Acquisition II Corp. operates in a sector with long-term structural tailwinds",
-          "Management has demonstrated consistent capital allocation discipline",
-          "The business has the scale to compound earnings over a multi-year horizon"
-        ],
-        "bear_points": [
-          "Low profitability score (3/10) suggests thin or negative margins that structurally limit long-term earnings power",
-          "Weak balance sheet (1/10) constrains long-term capital allocation and increases vulnerability in a downturn",
-          "Unpredictable earnings (1/10) make long-term forecasting unreliable and compress the valuation multiple the market is willing to pay"
-        ]
-      },
-      "source": "rules",
-      "generated_at": "2026-04-21 04:38"
-    },
-    "price_alert": {
-      "triggered": true,
-      "signal": "ath_drop",
-      "drop_from_ath_pct": 42.3,
-      "ath": 14.31,
-      "current_price": 8.25,
-      "message": "Down 42% from 52-week high of $14.31"
-    },
-    "watchlist_signal": {
-      "signal": "Avoid",
-      "reason": "Weak fundamentals or significantly overvalued \u2014 better opportunities elsewhere.",
-      "score": 0,
-      "inputs": {
-        "quality_base": 15,
-        "val_adj": -20,
-        "alert_adj": -10,
-        "classification": "Dangerous",
-        "mos_pct": -103.7
-      }
-    },
-    "10_Year_History": {
-      "2025": 10.55,
-      "2026": 8.25
-    },
-    "5_Year_Forecast": {
-      "2027": 4.13,
-      "2028": 4.21,
-      "2029": 4.3,
-      "2030": 4.38,
-      "2031": 4.47
-    },
-    "Last_Updated": "2026-04-21 04:38"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HST": {
     "company_profile": {
@@ -1057,7 +744,7 @@
         "eps_next_5y": -0.0477
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:38"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -1069,7 +756,7 @@
       "risk_profile": "Key risks to watch: elevated leverage (Debt/EBITDA 3.4x); tight liquidity (current ratio 0.79); a weak near-term growth outlook.",
       "investment_summary": "With -4.8% consensus EPS growth forecast, the growth outlook adds some uncertainty to the investment case. The stock trades near estimated intrinsic value and is suitable for quality-focused long-term investors.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": 0.1149,
@@ -1481,7 +1168,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": false,
@@ -1523,7 +1210,7 @@
       "2030": 23.3,
       "2031": 23.77
     },
-    "Last_Updated": "2026-04-21 04:38"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HSTM": {
     "company_profile": {
@@ -1660,7 +1347,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:38"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -1672,7 +1359,7 @@
       "risk_profile": "Key risks to watch: tight liquidity (current ratio 0.96); a weak near-term growth outlook; low consensus EPS growth (0.0% p.a.).",
       "investment_summary": "The stock trades near estimated intrinsic value and is appropriate for investors with higher risk tolerance and conviction in the growth thesis.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": 0.0514,
@@ -2088,7 +1775,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": true,
@@ -2130,7 +1817,7 @@
       "2030": 22.9,
       "2031": 23.36
     },
-    "Last_Updated": "2026-04-21 04:38"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HTBK": {
     "company_profile": {
@@ -2150,9 +1837,9 @@
       "currency": "USD",
       "quote_type": "EQUITY",
       "market_cap": 828429632,
-      "52w_high": 13.825,
+      "52w_high": 13.83,
       "52w_low": 8.73,
-      "avg_volume": 681038,
+      "avg_volume": 740823,
       "pe_trailing": 17.24359,
       "pe_forward": 12.932693,
       "dividend_yield": 3.87,
@@ -2264,7 +1951,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:38"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -2276,7 +1963,7 @@
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; balance sheet constraints on growth; a valuation premium of 39% above estimated intrinsic value.",
       "investment_summary": "The stock trades at a 39% premium to estimated intrinsic value and is appropriate for investors with higher risk tolerance and conviction in the growth thesis.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": 0.0684,
@@ -2685,13 +2372,13 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": false,
       "signal": null,
       "drop_from_ath_pct": 2.7,
-      "ath": 13.82,
+      "ath": 13.83,
       "current_price": 13.45,
       "message": null
     },
@@ -2727,7 +2414,7 @@
       "2030": 10.45,
       "2031": 10.65
     },
-    "Last_Updated": "2026-04-21 04:38"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HTCO": {
     "company_profile": {
@@ -2856,7 +2543,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:38"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -2868,7 +2555,7 @@
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; balance sheet constraints on growth; low consensus EPS growth (0.0% p.a.).",
       "investment_summary": "The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": -1.885,
@@ -3146,7 +2833,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": true,
@@ -3183,356 +2870,7 @@
       "2030": 10.88,
       "2031": 11.1
     },
-    "Last_Updated": "2026-04-21 04:38"
-  },
-  "HTFL": {
-    "company_profile": {
-      "name": "Heartflow, Inc.",
-      "ticker": "HTFL",
-      "sector": "Healthcare",
-      "industry": "Health Information Services",
-      "company_type": "STANDARD",
-      "type_rationale": "Standard company \u2014 balanced weighting across all methods",
-      "description": "HeartFlow, Inc., a medical technology company, provides non-invasive solutions for diagnosing and managing coronary artery diseases the United States and worldwide. Its HeartFlow Platform uses AI and computational fluid dynamics to creates a personalized 3D model of a patient's heart from a single coronary computed tomography angiography, a specialized type of scan that provides detailed images of the heart's arteries. The company provides Heartflow RoadMap Analysis that offers an intuitive anatomic visualization of the coronary arteries; Heartflow FFRCT Analysis, which calculates blood flow and pinpoints clinically; and Heartflow Plaque Analysis that provides a comprehensive assessment of coronary plaque, enabling optimized medical treatment strategies. Its platform provides insights on blood flow, stenosis, and plaque volume and composition by overcoming the limitations of traditional non-invasive imaging tests. HeartFlow, Inc. was formerly known as Cardiovascular Simulation, Inc. and changed its name to HeartFlow, Inc. in May 2009. The company was incorporated in 2007 and is headquartered in Mountain View, California.",
-      "description_summary": "HeartFlow, Inc., a medical technology company, provides non-invasive solutions for diagnosing and managing coronary artery diseases the United States and worldwide. Its HeartFlow Platform uses AI and computational fluid dynamics to creates a personalized 3D model of a patient's heart from a single coronary computed tomography angiography, a specialized type of scan that provides detailed images of the heart's arteries.",
-      "website": "https://www.heartflow.com",
-      "employees": 843,
-      "country": "United States",
-      "city": "Mountain View",
-      "exchange": "NMS",
-      "currency": "USD",
-      "quote_type": "EQUITY",
-      "market_cap": 2691078144,
-      "52w_high": 41.223,
-      "52w_low": 20.13,
-      "avg_volume": 1591331,
-      "pe_trailing": null,
-      "pe_forward": -104.523346,
-      "dividend_yield": null,
-      "beta": null
-    },
-    "current_price": 31.38,
-    "intrinsic_value": 29.24,
-    "margin_of_safety_pct": -7.3,
-    "mos_label": "Slight Premium",
-    "data_availability": {
-      "status": "ok",
-      "message": null,
-      "has_price": true,
-      "has_iv": true,
-      "has_financials": true,
-      "active_methods": 2,
-      "exclude_from_search": false
-    },
-    "valuations": {
-      "1_DCF_Operating_CF": null,
-      "2_DCF_FCF": null,
-      "3_DCF_Net_Income": null,
-      "4_DCF_Terminal_Value": null,
-      "5_Mean_PS": 29.15,
-      "6_Mean_PE": null,
-      "7_Mean_PB": 29.31,
-      "8_PSG": null,
-      "9_PEG": null,
-      "10_EV_EBITDA": null,
-      "intrinsic_value": 29.24,
-      "methods_used": 2,
-      "confidence": "Low",
-      "active_methods": [
-        "5_Mean_PS",
-        "7_Mean_PB"
-      ],
-      "_meta": {
-        "pe_source": "current_trailing",
-        "ps_source": "historical_mean",
-        "pb_source": "historical_mean",
-        "ev_ebitda_source": "trailing_or_unavailable",
-        "growth_source": "finviz_no_growth",
-        "growth_raw": 0.0,
-        "growth_peg_rate": 0.0,
-        "discount_rate": 0.12,
-        "growth_stage1": 0.02,
-        "growth_stage2": 0.02,
-        "terminal_growth": 0.02,
-        "tier": "Weak",
-        "company_type": "STANDARD",
-        "type_rationale": "Standard company \u2014 balanced weighting across all methods",
-        "method_explanation": "This company does not fit neatly into a specialist category, so we apply a balanced mix of all ten valuation methods. These include Discounted Cash Flow (which estimates the present value of future cash flows), earnings multiples (P/E and PEG), revenue multiples (P/S and PSG), book value (P/B), and EV/EBITDA. Each method approaches value from a different angle \u2014 using all of them together gives a more rounded estimate than relying on any single number.",
-        "weights_applied": {
-          "1_DCF_Operating_CF": 0.08,
-          "2_DCF_FCF": 0.08,
-          "3_DCF_Net_Income": 0.08,
-          "4_DCF_Terminal_Value": 0.08,
-          "5_Mean_PS": 0.12,
-          "6_Mean_PE": 0.08,
-          "7_Mean_PB": 0.15,
-          "8_PSG": 0.08,
-          "9_PEG": 0.08,
-          "10_EV_EBITDA": 0.17
-        },
-        "excluded_methods": [],
-        "active_methods": [
-          "5_Mean_PS",
-          "7_Mean_PB"
-        ]
-      }
-    },
-    "quality": {
-      "scores": {
-        "profitability": 0,
-        "financial_strength": 4,
-        "growth": 3,
-        "predictability": 3,
-        "valuation": 3,
-        "moat": null
-      },
-      "score_labels": {
-        "profitability": "Poor",
-        "financial_strength": "Adequate",
-        "growth": "Weak",
-        "predictability": "Weak",
-        "valuation": "Weak",
-        "moat": "Not scored"
-      },
-      "company_type": "STANDARD",
-      "company_type_note": null,
-      "python_subtotal": 10,
-      "python_subtotal_pct": 25.0,
-      "classification": "Dangerous",
-      "penalty_pct": 8,
-      "final_score_pct": 17.0,
-      "tiebreaker_used": false,
-      "tiebreaker_inputs": {
-        "roe": -1.1137,
-        "roic": null,
-        "eps_next_5y": 0.0
-      },
-      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:38"
-    },
-    "quality_narrative": {
-      "moat_score": null,
-      "moat_rationale": "",
-      "metric_assessments": {},
-      "classification_reason": "Heartflow, Inc. carries a Dangerous rating because it shows significant weaknesses in profitability and growth. Revenue and earnings have been inconsistent, making it hard to predict where this business will be in a few years. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "Heartflow, Inc. demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth. The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
-      "quality_conclusion": "Heartflow, Inc. demonstrates weak fundamental quality and is constrained by profitability.",
-      "risk_profile": "Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth.",
-      "investment_summary": "The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
-      "source": "rules",
-      "generated_at": "2026-04-21 04:38"
-    },
-    "fundamentals": {
-      "roe": -1.1137,
-      "roic": null,
-      "roe_pct": "-111.37%",
-      "roic_pct": null,
-      "roic_source": "unavailable",
-      "current_ratio": 5.2,
-      "debt_to_ebitda": null,
-      "debt_service_ratio": null
-    },
-    "financials_charts": {
-      "revenue_vs_net_income": {
-        "2025": {
-          "revenue": 176.03,
-          "net_income": -116.79
-        },
-        "2024": {
-          "revenue": 125.81,
-          "net_income": -96.43
-        },
-        "2023": {
-          "revenue": 87.17,
-          "net_income": -95.66
-        }
-      },
-      "fcf_vs_debt": {
-        "2025": {
-          "cash_balance": 280.2,
-          "free_cash_flow": -59.05,
-          "total_debt": null
-        },
-        "2024": {
-          "cash_balance": 51.37,
-          "free_cash_flow": -73.36,
-          "total_debt": null
-        },
-        "2023": {
-          "cash_balance": 122.77,
-          "free_cash_flow": -82.54,
-          "total_debt": null
-        }
-      },
-      "shares_vs_buybacks": {
-        "2025": {
-          "shares_outstanding_m": 36.85,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2024": {
-          "shares_outstanding_m": 5.36,
-          "buybacks_m": null,
-          "split_adjusted": true
-        },
-        "2023": {
-          "shares_outstanding_m": 4.89,
-          "buybacks_m": 0.23,
-          "split_adjusted": true
-        }
-      },
-      "returns_trajectory": {
-        "2025": {
-          "roe_pct": -38.85,
-          "roic_pct": null
-        }
-      },
-      "revenue_vs_ar": {
-        "2025": {
-          "revenue": 176.03,
-          "accounts_receivable": 29.34,
-          "rev_growth_pct": 39.9,
-          "ar_growth_pct": 19.1,
-          "ar_outpacing": false
-        },
-        "2024": {
-          "revenue": 125.81,
-          "accounts_receivable": 24.64,
-          "rev_growth_pct": 44.3,
-          "ar_growth_pct": null,
-          "ar_outpacing": null
-        },
-        "2023": {
-          "revenue": 87.17,
-          "accounts_receivable": null,
-          "rev_growth_pct": null,
-          "ar_growth_pct": null,
-          "ar_outpacing": null
-        }
-      },
-      "_notes": {
-        "revenue_vs_net_income": "This chart shows how much money the company brings in (revenue) versus how much it actually keeps as profit (net income) each year. A healthy company should show both lines growing over time. If revenue grows but net income shrinks, the company is spending more than it is earning \u2014 a warning sign worth investigating.",
-        "fcf_vs_debt": "Free cash flow is the cash left over after the company has paid for everything it needs to run and grow the business. This chart compares that cash to the company's total debt. A company with rising free cash flow and falling debt is in a strong financial position. If debt is rising faster than cash, the company may be taking on more risk than it can comfortably manage.",
-        "shares_vs_buybacks": "When a company buys back its own shares, it reduces the total number of shares in circulation \u2014 which means each remaining share represents a larger slice of the business. This chart shows how the share count has changed over time. Consistent buybacks are generally a sign that management believes the stock is undervalued and wants to return cash to shareholders.",
-        "returns_trajectory": "Return on Equity (ROE) measures how much profit a company generates for every dollar of shareholder money invested. Return on Invested Capital (ROIC) is similar but also includes debt. Both are expressed as a percentage \u2014 higher is better. A company consistently earning above 15% ROIC is generally considered to have a genuine competitive advantage over its peers.",
-        "revenue_vs_ar": "Accounts receivable is money the company is owed by customers who have not yet paid their bills. This chart compares revenue growth to accounts receivable growth each year. If accounts receivable is growing much faster than revenue, it may mean the company is struggling to collect payments \u2014 sometimes a sign of aggressive or fictitious revenue reporting. A healthy company should see both lines move at a similar pace."
-      }
-    },
-    "valuation_chart": {
-      "2025": {
-        "market_price": 29.15,
-        "intrinsic_value": 28.1,
-        "bull_case": 28.61,
-        "bear_case": 27.78
-      },
-      "2026": {
-        "market_price": 31.38,
-        "intrinsic_value": 29.24,
-        "bull_case": 29.42,
-        "bear_case": 28.98
-      },
-      "2027": {
-        "market_price": null,
-        "intrinsic_value": 29.82,
-        "bull_case": 30.0,
-        "bear_case": 29.56
-      },
-      "2028": {
-        "market_price": null,
-        "intrinsic_value": 30.42,
-        "bull_case": 30.78,
-        "bear_case": 29.89
-      },
-      "2029": {
-        "market_price": null,
-        "intrinsic_value": 31.03,
-        "bull_case": 31.58,
-        "bear_case": 30.22
-      },
-      "2030": {
-        "market_price": null,
-        "intrinsic_value": 31.65,
-        "bull_case": 32.4,
-        "bear_case": 30.55
-      },
-      "2031": {
-        "market_price": null,
-        "intrinsic_value": 32.28,
-        "bull_case": 33.24,
-        "bear_case": 30.88
-      }
-    },
-    "forecast_meta": {
-      "eps_next_5y_raw": 0.0,
-      "fs_score": 4,
-      "fs_multiplier": 0.75,
-      "base_growth_rate": 0.02,
-      "bull_growth_rate": 0.026,
-      "bear_growth_rate": 0.011,
-      "growth_constrained": true,
-      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 4/10",
-      "growth_explanation": "Base (2.0%/yr): growth in line with analyst expectations. Bull (2.6%/yr): everything goes to plan. Bear (1.1%/yr): growth disappoints. Growth capped at 2.0% (from 0.0%) \u2014 the balance sheet (financial strength 4/10) limits how fast this company can realistically grow."
-    },
-    "bull_bear": {
-      "short_term": {
-        "bull_points": [
-          "Revenue growing at 40.5% year-over-year, indicating sustained demand momentum heading into the next quarter",
-          "Current market positioning in the Healthcare sector may attract tactical buyers",
-          "Any positive earnings surprise could act as a near-term re-rating catalyst"
-        ],
-        "bear_points": [
-          "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
-          "Macro uncertainty and rate expectations may suppress multiple expansion",
-          "Short-term earnings visibility is limited without additional guidance"
-        ]
-      },
-      "long_term": {
-        "bull_points": [
-          "Heartflow, Inc. operates in a sector with long-term structural tailwinds",
-          "Management has demonstrated consistent capital allocation discipline",
-          "The business has the scale to compound earnings over a multi-year horizon"
-        ],
-        "bear_points": [
-          "Low profitability score (0/10) suggests thin or negative margins that structurally limit long-term earnings power",
-          "Unpredictable earnings (3/10) make long-term forecasting unreliable and compress the valuation multiple the market is willing to pay",
-          "Financial strength is constraining the assumed growth rate in the valuation model \u2014 EPS growth moderated from 0.0% to 2.0% due to financial strength score of 4/10"
-        ]
-      },
-      "source": "rules",
-      "generated_at": "2026-04-21 04:38"
-    },
-    "price_alert": {
-      "triggered": true,
-      "signal": "ath_drop",
-      "drop_from_ath_pct": 23.9,
-      "ath": 41.22,
-      "current_price": 31.38,
-      "message": "Down 24% from 52-week high of $41.22"
-    },
-    "watchlist_signal": {
-      "signal": "Avoid",
-      "reason": "Weak fundamentals or significantly overvalued \u2014 better opportunities elsewhere.",
-      "score": 5,
-      "inputs": {
-        "quality_base": 25,
-        "val_adj": -10,
-        "alert_adj": -10,
-        "classification": "Dangerous",
-        "mos_pct": -7.3
-      }
-    },
-    "10_Year_History": {
-      "2025": 29.15,
-      "2026": 31.38
-    },
-    "5_Year_Forecast": {
-      "2027": 29.82,
-      "2028": 30.42,
-      "2029": 31.03,
-      "2030": 31.65,
-      "2031": 32.28
-    },
-    "Last_Updated": "2026-04-21 04:38"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HTCR": {
     "company_profile": {
@@ -3657,7 +2995,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:38"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -3669,7 +3007,7 @@
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth.",
       "investment_summary": "The stock trades at a 26% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": -0.7788,
@@ -3949,7 +3287,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": true,
@@ -3985,7 +3323,356 @@
       "2030": 4.9,
       "2031": 5.0
     },
-    "Last_Updated": "2026-04-21 04:38"
+    "Last_Updated": "2026-04-21 11:46"
+  },
+  "HTFL": {
+    "company_profile": {
+      "name": "Heartflow, Inc.",
+      "ticker": "HTFL",
+      "sector": "Healthcare",
+      "industry": "Health Information Services",
+      "company_type": "STANDARD",
+      "type_rationale": "Standard company \u2014 balanced weighting across all methods",
+      "description": "HeartFlow, Inc., a medical technology company, provides non-invasive solutions for diagnosing and managing coronary artery diseases the United States and worldwide. Its HeartFlow Platform uses AI and computational fluid dynamics to creates a personalized 3D model of a patient's heart from a single coronary computed tomography angiography, a specialized type of scan that provides detailed images of the heart's arteries. The company provides Heartflow RoadMap Analysis that offers an intuitive anatomic visualization of the coronary arteries; Heartflow FFRCT Analysis, which calculates blood flow and pinpoints clinically; and Heartflow Plaque Analysis that provides a comprehensive assessment of coronary plaque, enabling optimized medical treatment strategies. Its platform provides insights on blood flow, stenosis, and plaque volume and composition by overcoming the limitations of traditional non-invasive imaging tests. HeartFlow, Inc. was formerly known as Cardiovascular Simulation, Inc. and changed its name to HeartFlow, Inc. in May 2009. The company was incorporated in 2007 and is headquartered in Mountain View, California.",
+      "description_summary": "HeartFlow, Inc., a medical technology company, provides non-invasive solutions for diagnosing and managing coronary artery diseases the United States and worldwide. Its HeartFlow Platform uses AI and computational fluid dynamics to creates a personalized 3D model of a patient's heart from a single coronary computed tomography angiography, a specialized type of scan that provides detailed images of the heart's arteries.",
+      "website": "https://www.heartflow.com",
+      "employees": 843,
+      "country": "United States",
+      "city": "Mountain View",
+      "exchange": "NMS",
+      "currency": "USD",
+      "quote_type": "EQUITY",
+      "market_cap": 2691078144,
+      "52w_high": 41.223,
+      "52w_low": 20.13,
+      "avg_volume": 1591331,
+      "pe_trailing": null,
+      "pe_forward": -104.523346,
+      "dividend_yield": null,
+      "beta": null
+    },
+    "current_price": 31.38,
+    "intrinsic_value": 29.24,
+    "margin_of_safety_pct": -7.3,
+    "mos_label": "Slight Premium",
+    "data_availability": {
+      "status": "ok",
+      "message": null,
+      "has_price": true,
+      "has_iv": true,
+      "has_financials": true,
+      "active_methods": 2,
+      "exclude_from_search": false
+    },
+    "valuations": {
+      "1_DCF_Operating_CF": null,
+      "2_DCF_FCF": null,
+      "3_DCF_Net_Income": null,
+      "4_DCF_Terminal_Value": null,
+      "5_Mean_PS": 29.15,
+      "6_Mean_PE": null,
+      "7_Mean_PB": 29.31,
+      "8_PSG": null,
+      "9_PEG": null,
+      "10_EV_EBITDA": null,
+      "intrinsic_value": 29.24,
+      "methods_used": 2,
+      "confidence": "Low",
+      "active_methods": [
+        "5_Mean_PS",
+        "7_Mean_PB"
+      ],
+      "_meta": {
+        "pe_source": "current_trailing",
+        "ps_source": "historical_mean",
+        "pb_source": "historical_mean",
+        "ev_ebitda_source": "trailing_or_unavailable",
+        "growth_source": "finviz_no_growth",
+        "growth_raw": 0.0,
+        "growth_peg_rate": 0.0,
+        "discount_rate": 0.12,
+        "growth_stage1": 0.02,
+        "growth_stage2": 0.02,
+        "terminal_growth": 0.02,
+        "tier": "Weak",
+        "company_type": "STANDARD",
+        "type_rationale": "Standard company \u2014 balanced weighting across all methods",
+        "method_explanation": "This company does not fit neatly into a specialist category, so we apply a balanced mix of all ten valuation methods. These include Discounted Cash Flow (which estimates the present value of future cash flows), earnings multiples (P/E and PEG), revenue multiples (P/S and PSG), book value (P/B), and EV/EBITDA. Each method approaches value from a different angle \u2014 using all of them together gives a more rounded estimate than relying on any single number.",
+        "weights_applied": {
+          "1_DCF_Operating_CF": 0.08,
+          "2_DCF_FCF": 0.08,
+          "3_DCF_Net_Income": 0.08,
+          "4_DCF_Terminal_Value": 0.08,
+          "5_Mean_PS": 0.12,
+          "6_Mean_PE": 0.08,
+          "7_Mean_PB": 0.15,
+          "8_PSG": 0.08,
+          "9_PEG": 0.08,
+          "10_EV_EBITDA": 0.17
+        },
+        "excluded_methods": [],
+        "active_methods": [
+          "5_Mean_PS",
+          "7_Mean_PB"
+        ]
+      }
+    },
+    "quality": {
+      "scores": {
+        "profitability": 0,
+        "financial_strength": 4,
+        "growth": 3,
+        "predictability": 3,
+        "valuation": 3,
+        "moat": null
+      },
+      "score_labels": {
+        "profitability": "Poor",
+        "financial_strength": "Adequate",
+        "growth": "Weak",
+        "predictability": "Weak",
+        "valuation": "Weak",
+        "moat": "Not scored"
+      },
+      "company_type": "STANDARD",
+      "company_type_note": null,
+      "python_subtotal": 10,
+      "python_subtotal_pct": 25.0,
+      "classification": "Dangerous",
+      "penalty_pct": 8,
+      "final_score_pct": 17.0,
+      "tiebreaker_used": false,
+      "tiebreaker_inputs": {
+        "roe": -1.1137,
+        "roic": null,
+        "eps_next_5y": 0.0
+      },
+      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
+      "last_calculated": "2026-04-21 11:46"
+    },
+    "quality_narrative": {
+      "moat_score": null,
+      "moat_rationale": "",
+      "metric_assessments": {},
+      "classification_reason": "Heartflow, Inc. carries a Dangerous rating because it shows significant weaknesses in profitability and growth. Revenue and earnings have been inconsistent, making it hard to predict where this business will be in a few years. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
+      "investment_narrative": "Heartflow, Inc. demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth. The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "quality_conclusion": "Heartflow, Inc. demonstrates weak fundamental quality and is constrained by profitability.",
+      "risk_profile": "Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth.",
+      "investment_summary": "The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "source": "rules",
+      "generated_at": "2026-04-21 11:46"
+    },
+    "fundamentals": {
+      "roe": -1.1137,
+      "roic": null,
+      "roe_pct": "-111.37%",
+      "roic_pct": null,
+      "roic_source": "unavailable",
+      "current_ratio": 5.2,
+      "debt_to_ebitda": null,
+      "debt_service_ratio": null
+    },
+    "financials_charts": {
+      "revenue_vs_net_income": {
+        "2025": {
+          "revenue": 176.03,
+          "net_income": -116.79
+        },
+        "2024": {
+          "revenue": 125.81,
+          "net_income": -96.43
+        },
+        "2023": {
+          "revenue": 87.17,
+          "net_income": -95.66
+        }
+      },
+      "fcf_vs_debt": {
+        "2025": {
+          "cash_balance": 280.2,
+          "free_cash_flow": -59.05,
+          "total_debt": null
+        },
+        "2024": {
+          "cash_balance": 51.37,
+          "free_cash_flow": -73.36,
+          "total_debt": null
+        },
+        "2023": {
+          "cash_balance": 122.77,
+          "free_cash_flow": -82.54,
+          "total_debt": null
+        }
+      },
+      "shares_vs_buybacks": {
+        "2025": {
+          "shares_outstanding_m": 36.85,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2024": {
+          "shares_outstanding_m": 5.36,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2023": {
+          "shares_outstanding_m": 4.89,
+          "buybacks_m": 0.23,
+          "split_adjusted": true
+        }
+      },
+      "returns_trajectory": {
+        "2025": {
+          "roe_pct": -38.85,
+          "roic_pct": null
+        }
+      },
+      "revenue_vs_ar": {
+        "2025": {
+          "revenue": 176.03,
+          "accounts_receivable": 29.34,
+          "rev_growth_pct": 39.9,
+          "ar_growth_pct": 19.1,
+          "ar_outpacing": false
+        },
+        "2024": {
+          "revenue": 125.81,
+          "accounts_receivable": 24.64,
+          "rev_growth_pct": 44.3,
+          "ar_growth_pct": null,
+          "ar_outpacing": null
+        },
+        "2023": {
+          "revenue": 87.17,
+          "accounts_receivable": null,
+          "rev_growth_pct": null,
+          "ar_growth_pct": null,
+          "ar_outpacing": null
+        }
+      },
+      "_notes": {
+        "revenue_vs_net_income": "This chart shows how much money the company brings in (revenue) versus how much it actually keeps as profit (net income) each year. A healthy company should show both lines growing over time. If revenue grows but net income shrinks, the company is spending more than it is earning \u2014 a warning sign worth investigating.",
+        "fcf_vs_debt": "Free cash flow is the cash left over after the company has paid for everything it needs to run and grow the business. This chart compares that cash to the company's total debt. A company with rising free cash flow and falling debt is in a strong financial position. If debt is rising faster than cash, the company may be taking on more risk than it can comfortably manage.",
+        "shares_vs_buybacks": "When a company buys back its own shares, it reduces the total number of shares in circulation \u2014 which means each remaining share represents a larger slice of the business. This chart shows how the share count has changed over time. Consistent buybacks are generally a sign that management believes the stock is undervalued and wants to return cash to shareholders.",
+        "returns_trajectory": "Return on Equity (ROE) measures how much profit a company generates for every dollar of shareholder money invested. Return on Invested Capital (ROIC) is similar but also includes debt. Both are expressed as a percentage \u2014 higher is better. A company consistently earning above 15% ROIC is generally considered to have a genuine competitive advantage over its peers.",
+        "revenue_vs_ar": "Accounts receivable is money the company is owed by customers who have not yet paid their bills. This chart compares revenue growth to accounts receivable growth each year. If accounts receivable is growing much faster than revenue, it may mean the company is struggling to collect payments \u2014 sometimes a sign of aggressive or fictitious revenue reporting. A healthy company should see both lines move at a similar pace."
+      }
+    },
+    "valuation_chart": {
+      "2025": {
+        "market_price": 29.15,
+        "intrinsic_value": 28.1,
+        "bull_case": 28.61,
+        "bear_case": 27.78
+      },
+      "2026": {
+        "market_price": 31.38,
+        "intrinsic_value": 29.24,
+        "bull_case": 29.42,
+        "bear_case": 28.98
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 29.82,
+        "bull_case": 30.0,
+        "bear_case": 29.56
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 30.42,
+        "bull_case": 30.78,
+        "bear_case": 29.89
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 31.03,
+        "bull_case": 31.58,
+        "bear_case": 30.22
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 31.65,
+        "bull_case": 32.4,
+        "bear_case": 30.55
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 32.28,
+        "bull_case": 33.24,
+        "bear_case": 30.88
+      }
+    },
+    "forecast_meta": {
+      "eps_next_5y_raw": 0.0,
+      "fs_score": 4,
+      "fs_multiplier": 0.75,
+      "base_growth_rate": 0.02,
+      "bull_growth_rate": 0.026,
+      "bear_growth_rate": 0.011,
+      "growth_constrained": true,
+      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 4/10",
+      "growth_explanation": "Base (2.0%/yr): growth in line with analyst expectations. Bull (2.6%/yr): everything goes to plan. Bear (1.1%/yr): growth disappoints. Growth capped at 2.0% (from 0.0%) \u2014 the balance sheet (financial strength 4/10) limits how fast this company can realistically grow."
+    },
+    "bull_bear": {
+      "short_term": {
+        "bull_points": [
+          "Revenue growing at 40.5% year-over-year, indicating sustained demand momentum heading into the next quarter",
+          "Current market positioning in the Healthcare sector may attract tactical buyers",
+          "Any positive earnings surprise could act as a near-term re-rating catalyst"
+        ],
+        "bear_points": [
+          "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
+          "Macro uncertainty and rate expectations may suppress multiple expansion",
+          "Short-term earnings visibility is limited without additional guidance"
+        ]
+      },
+      "long_term": {
+        "bull_points": [
+          "Heartflow, Inc. operates in a sector with long-term structural tailwinds",
+          "Management has demonstrated consistent capital allocation discipline",
+          "The business has the scale to compound earnings over a multi-year horizon"
+        ],
+        "bear_points": [
+          "Low profitability score (0/10) suggests thin or negative margins that structurally limit long-term earnings power",
+          "Unpredictable earnings (3/10) make long-term forecasting unreliable and compress the valuation multiple the market is willing to pay",
+          "Financial strength is constraining the assumed growth rate in the valuation model \u2014 EPS growth moderated from 0.0% to 2.0% due to financial strength score of 4/10"
+        ]
+      },
+      "source": "rules",
+      "generated_at": "2026-04-21 11:46"
+    },
+    "price_alert": {
+      "triggered": true,
+      "signal": "ath_drop",
+      "drop_from_ath_pct": 23.9,
+      "ath": 41.22,
+      "current_price": 31.38,
+      "message": "Down 24% from 52-week high of $41.22"
+    },
+    "watchlist_signal": {
+      "signal": "Avoid",
+      "reason": "Weak fundamentals or significantly overvalued \u2014 better opportunities elsewhere.",
+      "score": 5,
+      "inputs": {
+        "quality_base": 25,
+        "val_adj": -10,
+        "alert_adj": -10,
+        "classification": "Dangerous",
+        "mos_pct": -7.3
+      }
+    },
+    "10_Year_History": {
+      "2025": 29.15,
+      "2026": 31.38
+    },
+    "5_Year_Forecast": {
+      "2027": 29.82,
+      "2028": 30.42,
+      "2029": 31.03,
+      "2030": 31.65,
+      "2031": 32.28
+    },
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HTHT": {
     "company_profile": {
@@ -4008,14 +3695,14 @@
       "52w_high": 56.64,
       "52w_low": 30.41,
       "avg_volume": 1814522,
-      "pe_trailing": 23.952991,
+      "pe_trailing": 23.851065,
       "pe_forward": 18.00164,
       "dividend_yield": 3.76,
       "beta": 0.154
     },
     "current_price": 56.05,
-    "intrinsic_value": 23.69,
-    "margin_of_safety_pct": -136.6,
+    "intrinsic_value": 23.72,
+    "margin_of_safety_pct": -136.3,
     "mos_label": "Significant Premium",
     "data_availability": {
       "status": "ok",
@@ -4032,12 +3719,12 @@
       "3_DCF_Net_Income": 477.49,
       "4_DCF_Terminal_Value": 1558.06,
       "5_Mean_PS": 51.31,
-      "6_Mean_PE": 6.43,
-      "7_Mean_PB": 5.91,
+      "6_Mean_PE": 6.46,
+      "7_Mean_PB": 5.92,
       "8_PSG": 1068.48,
-      "9_PEG": 30.4,
+      "9_PEG": 30.53,
       "10_EV_EBITDA": 315.17,
-      "intrinsic_value": 23.69,
+      "intrinsic_value": 23.72,
       "methods_used": 4,
       "confidence": "Medium",
       "active_methods": [
@@ -4114,19 +3801,19 @@
         "eps_next_5y": 0.1299
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:38"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "H World Group Limited earns a Safe rating primarily because of its strong profitability, combined with a competitive moat that provides a durable business advantage. While not perfect across every measure, the combination of moat strength and solid fundamentals makes this a lower-risk holding.",
-      "investment_narrative": "H World Group Limited demonstrates strong fundamental quality and shows particular strength in profitability. Key risks to watch: elevated leverage (Debt/EBITDA 4.5x); tight liquidity (current ratio 0.99); balance sheet constraints on growth. With 13.0% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 137% premium to estimated intrinsic value and is suitable for quality-focused long-term investors.",
+      "investment_narrative": "H World Group Limited demonstrates strong fundamental quality and shows particular strength in profitability. Key risks to watch: elevated leverage (Debt/EBITDA 4.5x); tight liquidity (current ratio 0.99); balance sheet constraints on growth. With 13.0% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 136% premium to estimated intrinsic value and is suitable for quality-focused long-term investors.",
       "quality_conclusion": "H World Group Limited demonstrates strong fundamental quality and shows particular strength in profitability.",
       "risk_profile": "Key risks to watch: elevated leverage (Debt/EBITDA 4.5x); tight liquidity (current ratio 0.99); balance sheet constraints on growth.",
-      "investment_summary": "With 13.0% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 137% premium to estimated intrinsic value and is suitable for quality-focused long-term investors.",
+      "investment_summary": "With 13.0% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 136% premium to estimated intrinsic value and is suitable for quality-focused long-term investors.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": 0.4055,
@@ -4410,99 +4097,99 @@
     "valuation_chart": {
       "2016": {
         "market_price": 11.33,
-        "intrinsic_value": 7.02,
-        "bull_case": 11.94,
+        "intrinsic_value": 7.03,
+        "bull_case": 11.95,
         "bear_case": 5.0
       },
       "2017": {
         "market_price": 31.75,
-        "intrinsic_value": 7.84,
-        "bull_case": 12.7,
+        "intrinsic_value": 7.85,
+        "bull_case": 12.72,
         "bear_case": 5.76
       },
       "2018": {
         "market_price": 25.46,
-        "intrinsic_value": 8.76,
-        "bull_case": 13.52,
-        "bear_case": 6.63
+        "intrinsic_value": 8.77,
+        "bull_case": 13.54,
+        "bear_case": 6.64
       },
       "2019": {
         "market_price": 35.64,
-        "intrinsic_value": 9.78,
-        "bull_case": 14.39,
-        "bear_case": 7.64
+        "intrinsic_value": 9.79,
+        "bull_case": 14.41,
+        "bear_case": 7.65
       },
       "2020": {
         "market_price": 40.39,
-        "intrinsic_value": 10.93,
-        "bull_case": 15.31,
-        "bear_case": 8.8
+        "intrinsic_value": 10.94,
+        "bull_case": 15.33,
+        "bear_case": 8.81
       },
       "2021": {
         "market_price": 33.49,
-        "intrinsic_value": 12.2,
-        "bull_case": 16.3,
-        "bear_case": 10.14
+        "intrinsic_value": 12.22,
+        "bull_case": 16.32,
+        "bear_case": 10.15
       },
       "2022": {
         "market_price": 38.29,
-        "intrinsic_value": 13.63,
-        "bull_case": 17.35,
-        "bear_case": 11.68
+        "intrinsic_value": 13.65,
+        "bull_case": 17.37,
+        "bear_case": 11.69
       },
       "2023": {
         "market_price": 31.02,
-        "intrinsic_value": 15.22,
-        "bull_case": 18.46,
-        "bear_case": 13.45
+        "intrinsic_value": 15.24,
+        "bull_case": 18.49,
+        "bear_case": 13.47
       },
       "2024": {
         "market_price": 31.31,
-        "intrinsic_value": 17.0,
-        "bull_case": 19.65,
-        "bear_case": 15.5
+        "intrinsic_value": 17.02,
+        "bull_case": 19.68,
+        "bear_case": 15.52
       },
       "2025": {
         "market_price": 47.05,
-        "intrinsic_value": 18.99,
-        "bull_case": 20.91,
-        "bear_case": 17.85
+        "intrinsic_value": 19.01,
+        "bull_case": 20.94,
+        "bear_case": 17.87
       },
       "2026": {
         "market_price": 56.05,
-        "intrinsic_value": 23.69,
-        "bull_case": 24.52,
-        "bear_case": 22.44
+        "intrinsic_value": 23.72,
+        "bull_case": 24.55,
+        "bear_case": 22.47
       },
       "2027": {
         "market_price": null,
-        "intrinsic_value": 26.46,
-        "bull_case": 27.29,
-        "bear_case": 25.21
+        "intrinsic_value": 26.49,
+        "bull_case": 27.33,
+        "bear_case": 25.25
       },
       "2028": {
         "market_price": null,
-        "intrinsic_value": 29.55,
-        "bull_case": 31.44,
-        "bear_case": 26.83
+        "intrinsic_value": 29.59,
+        "bull_case": 31.48,
+        "bear_case": 26.87
       },
       "2029": {
         "market_price": null,
-        "intrinsic_value": 33.01,
-        "bull_case": 36.22,
-        "bear_case": 28.56
+        "intrinsic_value": 33.05,
+        "bull_case": 36.26,
+        "bear_case": 28.6
       },
       "2030": {
         "market_price": null,
-        "intrinsic_value": 36.87,
-        "bull_case": 41.72,
-        "bear_case": 30.4
+        "intrinsic_value": 36.91,
+        "bull_case": 41.77,
+        "bear_case": 30.43
       },
       "2031": {
         "market_price": null,
-        "intrinsic_value": 41.18,
-        "bull_case": 48.06,
-        "bear_case": 32.35
+        "intrinsic_value": 41.23,
+        "bull_case": 48.12,
+        "bear_case": 32.39
       }
     },
     "forecast_meta": {
@@ -4524,7 +4211,7 @@
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
         "bear_points": [
-          "Trading at a 137% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
+          "Trading at a 136% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
           "Macro uncertainty and rate expectations may suppress multiple expansion",
           "Short-term earnings visibility is limited without additional guidance"
         ]
@@ -4542,7 +4229,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": false,
@@ -4554,14 +4241,14 @@
     },
     "watchlist_signal": {
       "signal": "Watch",
-      "reason": "Quality business but trading 137% above intrinsic value \u2014 wait for a better entry.",
+      "reason": "Quality business but trading 136% above intrinsic value \u2014 wait for a better entry.",
       "score": 48,
       "inputs": {
         "quality_base": 68,
         "val_adj": -20,
         "alert_adj": 0,
         "classification": "Safe",
-        "mos_pct": -136.6
+        "mos_pct": -136.3
       }
     },
     "10_Year_History": {
@@ -4578,13 +4265,13 @@
       "2026": 56.05
     },
     "5_Year_Forecast": {
-      "2027": 26.77,
-      "2028": 30.24,
-      "2029": 34.17,
-      "2030": 38.61,
-      "2031": 43.63
+      "2027": 26.8,
+      "2028": 30.28,
+      "2029": 34.22,
+      "2030": 38.66,
+      "2031": 43.68
     },
-    "Last_Updated": "2026-04-21 04:38"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HTLM": {
     "company_profile": {
@@ -4721,7 +4408,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:38"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -4733,7 +4420,7 @@
       "risk_profile": "Key risks to watch: balance sheet constraints on growth; low consensus EPS growth (0.0% p.a.).",
       "investment_summary": "The stock trades near estimated intrinsic value and is suitable for quality-focused long-term investors.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": 0.8588,
@@ -4951,7 +4638,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": true,
@@ -4985,7 +4672,7 @@
       "2030": 2.4,
       "2031": 2.45
     },
-    "Last_Updated": "2026-04-21 04:38"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HTLD": {
     "company_profile": {
@@ -5114,7 +4801,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:38"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -5126,7 +4813,7 @@
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth.",
       "investment_summary": "The stock trades at a 31% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": -0.0665,
@@ -5542,7 +5229,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": false,
@@ -5584,7 +5271,7 @@
       "2030": 9.74,
       "2031": 9.94
     },
-    "Last_Updated": "2026-04-21 04:38"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HTO": {
     "company_profile": {
@@ -5721,7 +5408,7 @@
         "eps_next_5y": 0.0737
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:38"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -5733,7 +5420,7 @@
       "risk_profile": "Key risks to watch: elevated leverage (Debt/EBITDA 6.4x); tight liquidity (current ratio 0.70); a weak near-term growth outlook.",
       "investment_summary": "With 7.4% consensus EPS growth forecast, the growth outlook adds some uncertainty to the investment case. The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": 0.0706,
@@ -6149,7 +5836,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": false,
@@ -6191,7 +5878,7 @@
       "2030": 93.76,
       "2031": 100.67
     },
-    "Last_Updated": "2026-04-21 04:38"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HTOO": {
     "company_profile": {
@@ -6314,7 +6001,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:38"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -6326,7 +6013,7 @@
       "risk_profile": "Key risks to watch: tight liquidity (current ratio 0.54); a weak near-term growth outlook; inconsistent earnings.",
       "investment_summary": "The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": -1.7298,
@@ -6463,7 +6150,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": true,
@@ -6501,7 +6188,7 @@
       "2030": 3.46,
       "2031": 3.53
     },
-    "Last_Updated": "2026-04-21 04:38"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HTZ": {
     "company_profile": {
@@ -6624,7 +6311,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:38"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -6636,7 +6323,7 @@
       "risk_profile": "Key risks to watch: elevated leverage (Debt/EBITDA 132.4x); tight liquidity (current ratio 0.69); a weak near-term growth outlook.",
       "investment_summary": "The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": null,
@@ -7018,7 +6705,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:38"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": false,
@@ -7055,7 +6742,7 @@
       "2030": 8.95,
       "2031": 9.13
     },
-    "Last_Updated": "2026-04-21 04:38"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HUBC": {
     "company_profile": {
@@ -7178,7 +6865,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:38"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -7190,7 +6877,7 @@
       "risk_profile": "Key risks to watch: tight liquidity (current ratio 0.17); a weak near-term growth outlook; inconsistent earnings.",
       "investment_summary": "The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": null,
@@ -7309,7 +6996,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": true,
@@ -7344,7 +7031,7 @@
       "2030": 6.01,
       "2031": 6.13
     },
-    "Last_Updated": "2026-04-21 04:39"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HUBG": {
     "company_profile": {
@@ -7483,7 +7170,7 @@
         "eps_next_5y": 0.1083
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:39"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -7495,7 +7182,7 @@
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; balance sheet constraints on growth; a valuation premium of 37% above estimated intrinsic value.",
       "investment_summary": "With 10.8% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 37% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": 0.0624,
@@ -7911,7 +7598,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": false,
@@ -7953,7 +7640,7 @@
       "2030": 47.75,
       "2031": 52.92
     },
-    "Last_Updated": "2026-04-21 04:39"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HUDI": {
     "company_profile": {
@@ -8078,7 +7765,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:39"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -8090,7 +7777,7 @@
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth.",
       "investment_summary": "The stock trades at a 52% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": -0.0182,
@@ -8415,7 +8102,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": true,
@@ -8452,7 +8139,7 @@
       "2030": 2.89,
       "2031": 2.95
     },
-    "Last_Updated": "2026-04-21 04:39"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HUHU": {
     "company_profile": {
@@ -8577,7 +8264,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:39"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -8589,7 +8276,7 @@
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; balance sheet constraints on growth; a valuation premium of 95% above estimated intrinsic value.",
       "investment_summary": "The stock trades at a 95% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": -1.7395,
@@ -8782,7 +8469,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": false,
@@ -8816,7 +8503,7 @@
       "2030": 5.75,
       "2031": 5.86
     },
-    "Last_Updated": "2026-04-21 04:39"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HUIZ": {
     "company_profile": {
@@ -8947,7 +8634,7 @@
         "eps_next_5y": 0.3345
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:39"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -8959,7 +8646,7 @@
       "risk_profile": "Key risks to watch: elevated leverage (Debt/EBITDA 5.1x); balance sheet constraints on growth.",
       "investment_summary": "With 33.5% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades at a 34% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": 0.0082,
@@ -9251,7 +8938,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": true,
@@ -9289,7 +8976,7 @@
       "2030": 7.28,
       "2031": 9.47
     },
-    "Last_Updated": "2026-04-21 04:39"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HUMA": {
     "company_profile": {
@@ -9408,7 +9095,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:39"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -9420,7 +9107,7 @@
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; low consensus EPS growth (0.0% p.a.).",
       "investment_summary": "The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": null,
@@ -9621,7 +9308,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": true,
@@ -9653,7 +9340,7 @@
       "2026": 0.69
     },
     "5_Year_Forecast": {},
-    "Last_Updated": "2026-04-21 04:39"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HURA": {
     "company_profile": {
@@ -9776,7 +9463,7 @@
         "eps_next_5y": 0.2191
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:39"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -9788,7 +9475,7 @@
       "risk_profile": "Key risks to watch: tight liquidity (current ratio 0.78); a weak near-term growth outlook; inconsistent earnings.",
       "investment_summary": "With 21.9% consensus EPS growth forecast, the growth outlook supports the investment case. The stock trades near estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": -1.6918,
@@ -10151,7 +9838,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": true,
@@ -10193,7 +9880,7 @@
       "2030": 7.73,
       "2031": 9.42
     },
-    "Last_Updated": "2026-04-21 04:39"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HURC": {
     "company_profile": {
@@ -10324,7 +10011,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:39"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -10336,7 +10023,7 @@
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; a valuation premium of 34% above estimated intrinsic value; low consensus EPS growth (0.0% p.a.).",
       "investment_summary": "The stock trades at a 34% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": -0.0726,
@@ -10752,7 +10439,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": true,
@@ -10794,7 +10481,7 @@
       "2030": 13.13,
       "2031": 13.39
     },
-    "Last_Updated": "2026-04-21 04:39"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HURN": {
     "company_profile": {
@@ -10931,7 +10618,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:39"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -10943,7 +10630,7 @@
       "risk_profile": "Key risks to watch: balance sheet constraints on growth; low consensus EPS growth (0.0% p.a.).",
       "investment_summary": "The stock trades near estimated intrinsic value and is appropriate for investors with higher risk tolerance and conviction in the growth thesis.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": 0.1927,
@@ -11359,7 +11046,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": true,
@@ -11401,7 +11088,7 @@
       "2030": 126.75,
       "2031": 129.29
     },
-    "Last_Updated": "2026-04-21 04:39"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HUT": {
     "company_profile": {
@@ -11531,7 +11218,7 @@
         "eps_next_5y": -0.1352
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:39"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -11543,7 +11230,7 @@
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth.",
       "investment_summary": "With -13.5% consensus EPS growth forecast, the growth outlook adds some uncertainty to the investment case. The stock trades at a 158% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": -0.1858,
@@ -11788,7 +11475,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": false,
@@ -11828,7 +11515,7 @@
       "2030": 33.15,
       "2031": 33.82
     },
-    "Last_Updated": "2026-04-21 04:39"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HVII": {
     "company_profile": {
@@ -11957,7 +11644,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:39"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -11969,7 +11656,7 @@
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth.",
       "investment_summary": "The stock trades at a 541% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": null,
@@ -12100,7 +11787,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": false,
@@ -12133,7 +11820,7 @@
       "2030": 1.75,
       "2031": 1.79
     },
-    "Last_Updated": "2026-04-21 04:39"
+    "Last_Updated": "2026-04-21 11:46"
   },
   "HVMC": {
     "company_profile": {
@@ -12262,7 +11949,7 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 04:39"
+      "last_calculated": "2026-04-21 11:46"
     },
     "quality_narrative": {
       "moat_score": null,
@@ -12274,7 +11961,7 @@
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth.",
       "investment_summary": "The stock trades at a 489% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "fundamentals": {
       "roe": null,
@@ -12387,7 +12074,7 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 04:39"
+      "generated_at": "2026-04-21 11:46"
     },
     "price_alert": {
       "triggered": false,
@@ -12420,6 +12107,539 @@
       "2030": 1.86,
       "2031": 1.9
     },
-    "Last_Updated": "2026-04-21 04:39"
+    "Last_Updated": "2026-04-21 11:46"
+  },
+  "HWBK": {
+    "company_profile": {
+      "name": "Hawthorn Bancshares, Inc.",
+      "ticker": "HWBK",
+      "sector": "Financial Services",
+      "industry": "Banks - Regional",
+      "company_type": "BANK",
+      "type_rationale": "Bank or thrift \u2014 P/Tangible Book prioritised; DCF excluded",
+      "description": "Hawthorn Bancshares, Inc. operates as the bank holding company for Hawthorn Bank that provides various banking products and services to families and businesses. It offers checking and savings accounts, and certificates of deposit. The company also provides commercial and industrial, single payment personal, mortgage, installment, and commercial and residential real estate loans. In addition, it provides trust, wealth and treasury management, and brokerage services; and safety deposit boxes, debit cards, and internet banking services. Hawthorn Bancshares, Inc. was formerly known as Exchange National Bancshares, Inc. and changed its name to Hawthorn Bancshares, Inc. in 2007. The company was founded in 1865 and is headquartered in Jefferson City, Missouri.",
+      "description_summary": "Hawthorn Bancshares, Inc. operates as the bank holding company for Hawthorn Bank that provides various banking products and services to families and businesses.",
+      "website": "https://www.hawthornbancshares.com",
+      "employees": 255,
+      "country": "United States",
+      "city": "Jefferson City",
+      "exchange": "NMS",
+      "currency": "USD",
+      "quote_type": "EQUITY",
+      "market_cap": 234109376,
+      "52w_high": 36.49,
+      "52w_low": 27.07,
+      "avg_volume": 7152,
+      "pe_trailing": 9.889212,
+      "pe_forward": null,
+      "dividend_yield": 2.39,
+      "beta": 0.485
+    },
+    "current_price": 33.92,
+    "intrinsic_value": 32.38,
+    "margin_of_safety_pct": -4.8,
+    "mos_label": "Fairly Valued (Marginal Premium)",
+    "data_availability": {
+      "status": "ok",
+      "message": null,
+      "has_price": true,
+      "has_iv": true,
+      "has_financials": true,
+      "active_methods": 4,
+      "exclude_from_search": false
+    },
+    "valuations": {
+      "1_DCF_Operating_CF": 47.11,
+      "2_DCF_FCF": null,
+      "3_DCF_Net_Income": 41.65,
+      "4_DCF_Terminal_Value": null,
+      "5_Mean_PS": 29.97,
+      "6_Mean_PE": 30.49,
+      "7_Mean_PB": 30.68,
+      "8_PSG": null,
+      "9_PEG": null,
+      "10_EV_EBITDA": null,
+      "intrinsic_value": 32.38,
+      "methods_used": 4,
+      "confidence": "Medium",
+      "active_methods": [
+        "3_DCF_Net_Income",
+        "5_Mean_PS",
+        "6_Mean_PE",
+        "7_Mean_PB"
+      ],
+      "_meta": {
+        "pe_source": "historical_mean",
+        "ps_source": "historical_mean",
+        "pb_source": "historical_mean",
+        "ev_ebitda_source": "trailing_or_unavailable",
+        "growth_source": "finviz_no_growth",
+        "growth_raw": 0.0,
+        "growth_peg_rate": 0.0,
+        "discount_rate": 0.075,
+        "growth_stage1": 0.02,
+        "growth_stage2": 0.02,
+        "terminal_growth": 0.04,
+        "tier": "Strong",
+        "company_type": "BANK",
+        "type_rationale": "Bank or thrift \u2014 P/Tangible Book prioritised; DCF excluded",
+        "method_explanation": "Banks make money from the difference between what they charge on loans and what they pay on deposits \u2014 not from traditional business cash flows. Because of this, standard cash flow models (DCF) do not work well for banks. Instead, we focus on Price-to-Book (P/B), which compares the stock price to the value of the bank's assets on its books. Banks also carry a lot of debt by design \u2014 they borrow money to lend it out \u2014 so high leverage is normal and not a red flag.",
+        "weights_applied": {
+          "1_DCF_Operating_CF": 0.0,
+          "2_DCF_FCF": 0.0,
+          "3_DCF_Net_Income": 0.15,
+          "4_DCF_Terminal_Value": 0.0,
+          "5_Mean_PS": 0.1,
+          "6_Mean_PE": 0.25,
+          "7_Mean_PB": 0.4,
+          "8_PSG": 0.05,
+          "9_PEG": 0.05,
+          "10_EV_EBITDA": 0.0
+        },
+        "excluded_methods": [
+          "1_DCF_Operating_CF",
+          "2_DCF_FCF",
+          "4_DCF_Terminal_Value",
+          "10_EV_EBITDA"
+        ],
+        "active_methods": [
+          "3_DCF_Net_Income",
+          "5_Mean_PS",
+          "6_Mean_PE",
+          "7_Mean_PB"
+        ]
+      }
+    },
+    "quality": {
+      "scores": {
+        "profitability": 9,
+        "financial_strength": 8,
+        "growth": 3,
+        "predictability": 10,
+        "valuation": 5,
+        "moat": null
+      },
+      "score_labels": {
+        "profitability": "Strong",
+        "financial_strength": "Strong",
+        "growth": "Weak",
+        "predictability": "Excellent",
+        "valuation": "Adequate",
+        "moat": "Not scored"
+      },
+      "company_type": "BANK",
+      "company_type_note": "Banks and REITs carry structural leverage \u2014 do not describe financial_strength scores of 7+ as 'moderate concern' for these types.",
+      "python_subtotal": 30,
+      "python_subtotal_pct": 75.0,
+      "classification": "Safe",
+      "penalty_pct": 0,
+      "final_score_pct": 75.0,
+      "tiebreaker_used": false,
+      "tiebreaker_inputs": {
+        "roe": 0.147,
+        "roic": null,
+        "eps_next_5y": 0.0
+      },
+      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
+      "last_calculated": "2026-04-21 11:46"
+    },
+    "quality_narrative": {
+      "moat_score": null,
+      "moat_rationale": "",
+      "metric_assessments": {},
+      "classification_reason": "Hawthorn Bancshares, Inc. earns a Safe rating because it scores consistently well across all four fundamental measures \u2014 profitability, financial strength, growth, and predictability. Companies at this quality level have proven they can grow steadily and manage their finances well, making them lower-risk long-term investments.",
+      "investment_narrative": "Hawthorn Bancshares, Inc. demonstrates strong fundamental quality and scores highly across profitability, financial strength, and predictability. Key risks to watch: a weak near-term growth outlook; low consensus EPS growth (0.0% p.a.). The stock trades near estimated intrinsic value and is suitable for quality-focused long-term investors.",
+      "quality_conclusion": "Hawthorn Bancshares, Inc. demonstrates strong fundamental quality and scores highly across profitability, financial strength, and predictability.",
+      "risk_profile": "Key risks to watch: a weak near-term growth outlook; low consensus EPS growth (0.0% p.a.).",
+      "investment_summary": "The stock trades near estimated intrinsic value and is suitable for quality-focused long-term investors.",
+      "source": "rules",
+      "generated_at": "2026-04-21 11:46"
+    },
+    "fundamentals": {
+      "roe": 0.147,
+      "roic": null,
+      "roe_pct": "14.7%",
+      "roic_pct": null,
+      "roic_source": "unavailable",
+      "current_ratio": null,
+      "debt_to_ebitda": null,
+      "debt_service_ratio": 1.1805
+    },
+    "financials_charts": {
+      "revenue_vs_net_income": {
+        "2025": {
+          "revenue": null,
+          "net_income": 23.8
+        },
+        "2024": {
+          "revenue": null,
+          "net_income": 18.26
+        },
+        "2023": {
+          "revenue": null,
+          "net_income": 0.96
+        },
+        "2022": {
+          "revenue": null,
+          "net_income": 20.75
+        },
+        "2021": {
+          "revenue": null,
+          "net_income": 22.52
+        },
+        "2020": {
+          "revenue": null,
+          "net_income": 14.29
+        },
+        "2019": {
+          "revenue": null,
+          "net_income": 16.11
+        },
+        "2018": {
+          "revenue": null,
+          "net_income": 10.71
+        },
+        "2017": {
+          "revenue": null,
+          "net_income": 3.41
+        },
+        "2016": {
+          "revenue": null,
+          "net_income": 7.28
+        }
+      },
+      "fcf_vs_debt": {
+        "2025": {
+          "cash_balance": 104.31,
+          "free_cash_flow": 22.84,
+          "total_debt": null
+        },
+        "2024": {
+          "cash_balance": 50.99,
+          "free_cash_flow": 22.59,
+          "total_debt": null
+        },
+        "2023": {
+          "cash_balance": 93.45,
+          "free_cash_flow": 15.51,
+          "total_debt": 0.0
+        },
+        "2022": {
+          "cash_balance": 83.72,
+          "free_cash_flow": 17.71,
+          "total_debt": 5.19
+        },
+        "2021": {
+          "cash_balance": 159.91,
+          "free_cash_flow": 29.62,
+          "total_debt": 23.83
+        },
+        "2020": {
+          "cash_balance": 180.36,
+          "free_cash_flow": 19.19,
+          "total_debt": 45.15
+        },
+        "2019": {
+          "cash_balance": 78.12,
+          "free_cash_flow": 17.21,
+          "total_debt": 27.27
+        },
+        "2018": {
+          "cash_balance": 42.08,
+          "free_cash_flow": 13.98,
+          "total_debt": 24.65
+        },
+        "2017": {
+          "cash_balance": 62.88,
+          "free_cash_flow": 11.21,
+          "total_debt": 27.56
+        },
+        "2016": {
+          "cash_balance": 26.0,
+          "free_cash_flow": 12.27,
+          "total_debt": 31.02
+        }
+      },
+      "shares_vs_buybacks": {
+        "2025": {
+          "shares_outstanding_m": 6.93,
+          "buybacks_m": 2.86,
+          "split_adjusted": true
+        },
+        "2024": {
+          "shares_outstanding_m": 7.0,
+          "buybacks_m": 1.12,
+          "split_adjusted": true
+        },
+        "2023": {
+          "shares_outstanding_m": 7.04,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2022": {
+          "shares_outstanding_m": 6.79,
+          "buybacks_m": 2.89,
+          "split_adjusted": true
+        },
+        "2021": {
+          "shares_outstanding_m": 6.62,
+          "buybacks_m": 2.15,
+          "split_adjusted": true
+        },
+        "2020": {
+          "shares_outstanding_m": 6.49,
+          "buybacks_m": 0.91,
+          "split_adjusted": true
+        },
+        "2019": {
+          "shares_outstanding_m": 6.28,
+          "buybacks_m": null,
+          "split_adjusted": true
+        },
+        "2018": {
+          "shares_outstanding_m": 6.03,
+          "buybacks_m": 0.18,
+          "split_adjusted": true
+        },
+        "2017": {
+          "shares_outstanding_m": 5.83,
+          "buybacks_m": 0.88,
+          "split_adjusted": true
+        },
+        "2016": {
+          "shares_outstanding_m": 5.64,
+          "buybacks_m": 0.62,
+          "split_adjusted": true
+        }
+      },
+      "returns_trajectory": {
+        "2025": {
+          "roe_pct": 13.66,
+          "roic_pct": null
+        },
+        "2024": {
+          "roe_pct": 12.21,
+          "roic_pct": null
+        },
+        "2023": {
+          "roe_pct": 0.7,
+          "roic_pct": null
+        },
+        "2022": {
+          "roe_pct": 16.29,
+          "roic_pct": null
+        },
+        "2021": {
+          "roe_pct": 15.12,
+          "roic_pct": null
+        },
+        "2020": {
+          "roe_pct": 10.95,
+          "roic_pct": null
+        },
+        "2019": {
+          "roe_pct": 14.01,
+          "roic_pct": null
+        },
+        "2018": {
+          "roe_pct": 10.78,
+          "roic_pct": null
+        },
+        "2017": {
+          "roe_pct": 3.74,
+          "roic_pct": null
+        },
+        "2016": {
+          "roe_pct": 8.0,
+          "roic_pct": null
+        }
+      },
+      "revenue_vs_ar": {},
+      "_notes": {
+        "revenue_vs_net_income": "This chart shows how much money the company brings in (revenue) versus how much it actually keeps as profit (net income) each year. A healthy company should show both lines growing over time. If revenue grows but net income shrinks, the company is spending more than it is earning \u2014 a warning sign worth investigating.",
+        "fcf_vs_debt": "Free cash flow is the cash left over after the company has paid for everything it needs to run and grow the business. This chart compares that cash to the company's total debt. A company with rising free cash flow and falling debt is in a strong financial position. If debt is rising faster than cash, the company may be taking on more risk than it can comfortably manage.",
+        "shares_vs_buybacks": "When a company buys back its own shares, it reduces the total number of shares in circulation \u2014 which means each remaining share represents a larger slice of the business. This chart shows how the share count has changed over time. Consistent buybacks are generally a sign that management believes the stock is undervalued and wants to return cash to shareholders.",
+        "returns_trajectory": "Return on Equity (ROE) measures how much profit a company generates for every dollar of shareholder money invested. Return on Invested Capital (ROIC) is similar but also includes debt. Both are expressed as a percentage \u2014 higher is better. A company consistently earning above 15% ROIC is generally considered to have a genuine competitive advantage over its peers.",
+        "revenue_vs_ar": "Accounts receivable is money the company is owed by customers who have not yet paid their bills. This chart compares revenue growth to accounts receivable growth each year. If accounts receivable is growing much faster than revenue, it may mean the company is struggling to collect payments \u2014 sometimes a sign of aggressive or fictitious revenue reporting. A healthy company should see both lines move at a similar pace."
+      }
+    },
+    "valuation_chart": {
+      "2016": {
+        "market_price": 12.55,
+        "intrinsic_value": 26.04,
+        "bull_case": 28.71,
+        "bear_case": 24.41
+      },
+      "2017": {
+        "market_price": 14.91,
+        "intrinsic_value": 26.56,
+        "bull_case": 29.02,
+        "bear_case": 25.05
+      },
+      "2018": {
+        "market_price": 15.98,
+        "intrinsic_value": 27.09,
+        "bull_case": 29.34,
+        "bear_case": 25.7
+      },
+      "2019": {
+        "market_price": 19.74,
+        "intrinsic_value": 27.64,
+        "bull_case": 29.67,
+        "bear_case": 26.37
+      },
+      "2020": {
+        "market_price": 17.38,
+        "intrinsic_value": 28.19,
+        "bull_case": 29.99,
+        "bear_case": 27.05
+      },
+      "2021": {
+        "market_price": 21.1,
+        "intrinsic_value": 28.75,
+        "bull_case": 30.32,
+        "bear_case": 27.76
+      },
+      "2022": {
+        "market_price": 18.93,
+        "intrinsic_value": 29.33,
+        "bull_case": 30.66,
+        "bear_case": 28.48
+      },
+      "2023": {
+        "market_price": 23.77,
+        "intrinsic_value": 29.91,
+        "bull_case": 30.99,
+        "bear_case": 29.22
+      },
+      "2024": {
+        "market_price": 27.44,
+        "intrinsic_value": 30.51,
+        "bull_case": 31.33,
+        "bear_case": 29.98
+      },
+      "2025": {
+        "market_price": 34.66,
+        "intrinsic_value": 31.12,
+        "bull_case": 31.68,
+        "bear_case": 30.76
+      },
+      "2026": {
+        "market_price": 33.92,
+        "intrinsic_value": 32.38,
+        "bull_case": 32.57,
+        "bear_case": 32.09
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 33.03,
+        "bull_case": 33.22,
+        "bear_case": 32.74
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 33.69,
+        "bull_case": 34.09,
+        "bear_case": 33.1
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 34.36,
+        "bull_case": 34.97,
+        "bear_case": 33.46
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 35.05,
+        "bull_case": 35.88,
+        "bear_case": 33.83
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 35.75,
+        "bull_case": 36.81,
+        "bear_case": 34.2
+      }
+    },
+    "forecast_meta": {
+      "eps_next_5y_raw": 0.0,
+      "fs_score": 8,
+      "fs_multiplier": 1.0,
+      "base_growth_rate": 0.02,
+      "bull_growth_rate": 0.026,
+      "bear_growth_rate": 0.011,
+      "growth_constrained": false,
+      "constraint_note": null,
+      "growth_explanation": "Base (2.0%/yr): growth in line with analyst expectations. Bull (2.6%/yr): everything goes to plan. Bear (1.1%/yr): growth disappoints. All scenarios capped at 30% \u2014 higher rates produce unrealistically large numbers over time."
+    },
+    "bull_bear": {
+      "short_term": {
+        "bull_points": [
+          "Consensus expectations are broadly supportive for Hawthorn Bancshares, Inc. in the near term",
+          "Current market positioning in the Financial Services sector may attract tactical buyers",
+          "Any positive earnings surprise could act as a near-term re-rating catalyst"
+        ],
+        "bear_points": [
+          "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
+          "Macro uncertainty and rate expectations may suppress multiple expansion",
+          "Short-term earnings visibility is limited without additional guidance"
+        ]
+      },
+      "long_term": {
+        "bull_points": [
+          "High profitability score (9/10) reflects durable margins and returns that compound value over a multi-year horizon",
+          "Strong balance sheet (8/10) provides the financial flexibility to invest through cycles and return capital to shareholders",
+          "Highly predictable earnings trajectory (10/10) supports reliable long-term DCF modelling and reduces reinvestment risk"
+        ],
+        "bear_points": [
+          "Competitive intensity in the Financial Services sector may erode margins over time",
+          "Long-term technology or regulatory disruption risk cannot be ruled out",
+          "Execution risk remains a key variable over a multi-year investment horizon"
+        ]
+      },
+      "source": "rules",
+      "generated_at": "2026-04-21 11:46"
+    },
+    "price_alert": {
+      "triggered": false,
+      "signal": null,
+      "drop_from_ath_pct": 7.0,
+      "ath": 36.49,
+      "current_price": 33.92,
+      "message": null
+    },
+    "watchlist_signal": {
+      "signal": "Buy",
+      "reason": "Solid quality stock near fair value. Consider accumulating on dips.",
+      "score": 65,
+      "inputs": {
+        "quality_base": 75,
+        "val_adj": -10,
+        "alert_adj": 0,
+        "classification": "Safe",
+        "mos_pct": -4.8
+      }
+    },
+    "10_Year_History": {
+      "2016": 12.55,
+      "2017": 14.91,
+      "2018": 15.98,
+      "2019": 19.74,
+      "2020": 17.38,
+      "2021": 21.1,
+      "2022": 18.93,
+      "2023": 23.77,
+      "2024": 27.44,
+      "2025": 34.66,
+      "2026": 33.92
+    },
+    "5_Year_Forecast": {
+      "2027": 33.03,
+      "2028": 33.69,
+      "2029": 34.36,
+      "2030": 35.05,
+      "2031": 35.75
+    },
+    "Last_Updated": "2026-04-21 11:46"
   }
 }
