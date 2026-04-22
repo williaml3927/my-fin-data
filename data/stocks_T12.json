@@ -1,348 +1,4 @@
 {
-  "TRX": {
-    "company_profile": {
-      "name": "TRX Gold Corporation",
-      "ticker": "TRX",
-      "sector": "Basic Materials",
-      "industry": "Gold",
-      "company_type": "CYCLICAL",
-      "type_rationale": "Cyclical business (basic materials) \u2014 EV/EBITDA and P/S prioritised over P/E",
-      "description": "TRX Gold Corporation engages in the exploration, development, and production of mineral property in Tanzania. Its flagship project is the Buckreef Gold Project in Tanzania. The company was formerly known as Tanzanian Gold Corporation and changed its name to TRX Gold Corporation in May 2022. The company was incorporated in 1990 and is based in Oakville, Canada.",
-      "description_summary": "TRX Gold Corporation engages in the exploration, development, and production of mineral property in Tanzania. Its flagship project is the Buckreef Gold Project in Tanzania.",
-      "website": "https://www.trxgold.com",
-      "employees": 241,
-      "country": "Canada",
-      "city": "Oakville",
-      "exchange": "ASE",
-      "currency": "USD",
-      "quote_type": "EQUITY",
-      "market_cap": 425016128,
-      "52w_high": 2.8,
-      "52w_low": 0.3,
-      "avg_volume": 7770168,
-      "pe_trailing": null,
-      "pe_forward": 6.6923075,
-      "dividend_yield": null,
-      "beta": 0.904
-    },
-    "current_price": 1.3,
-    "intrinsic_value": 0.87,
-    "margin_of_safety_pct": -50.0,
-    "mos_label": "Significant Premium",
-    "data_availability": {
-      "status": "ok",
-      "message": null,
-      "has_price": true,
-      "has_iv": true,
-      "has_financials": false,
-      "active_methods": 4,
-      "exclude_from_search": false
-    },
-    "valuations": {
-      "1_DCF_Operating_CF": 0.66,
-      "2_DCF_FCF": null,
-      "3_DCF_Net_Income": null,
-      "4_DCF_Terminal_Value": null,
-      "5_Mean_PS": 1.33,
-      "6_Mean_PE": null,
-      "7_Mean_PB": 0.76,
-      "8_PSG": null,
-      "9_PEG": null,
-      "10_EV_EBITDA": 0.57,
-      "intrinsic_value": 0.87,
-      "methods_used": 4,
-      "confidence": "Medium",
-      "active_methods": [
-        "1_DCF_Operating_CF",
-        "5_Mean_PS",
-        "7_Mean_PB",
-        "10_EV_EBITDA"
-      ],
-      "_meta": {
-        "pe_source": "current_trailing",
-        "ps_source": "historical_mean",
-        "pb_source": "historical_mean",
-        "ev_ebitda_source": "historical_mean",
-        "growth_source": "finviz_no_growth",
-        "growth_raw": 0.0,
-        "growth_peg_rate": 0.0,
-        "discount_rate": 0.12,
-        "growth_stage1": 0.02,
-        "growth_stage2": 0.02,
-        "terminal_growth": 0.02,
-        "tier": "Weak",
-        "company_type": "CYCLICAL",
-        "type_rationale": "Cyclical business (basic materials) \u2014 EV/EBITDA and P/S prioritised over P/E",
-        "method_explanation": "Cyclical companies \u2014 such as semiconductors, mining, or manufacturing \u2014 have profits that rise sharply in good times and fall sharply in downturns. This makes earnings-based methods like P/E unreliable, because the earnings figure at any single point in time can be unusually high or low. EV/EBITDA smooths out some of this distortion by looking at earnings before interest and tax, making it a fairer comparison across the economic cycle. Price-to-Sales is also useful as revenue tends to be more stable than profits for cyclical businesses.",
-        "weights_applied": {
-          "1_DCF_Operating_CF": 0.12,
-          "2_DCF_FCF": 0.1,
-          "3_DCF_Net_Income": 0.05,
-          "4_DCF_Terminal_Value": 0.1,
-          "5_Mean_PS": 0.18,
-          "6_Mean_PE": 0.05,
-          "7_Mean_PB": 0.1,
-          "8_PSG": 0.1,
-          "9_PEG": 0.05,
-          "10_EV_EBITDA": 0.15
-        },
-        "excluded_methods": [],
-        "active_methods": [
-          "1_DCF_Operating_CF",
-          "5_Mean_PS",
-          "7_Mean_PB",
-          "10_EV_EBITDA"
-        ]
-      }
-    },
-    "quality": {
-      "scores": {
-        "profitability": 1,
-        "financial_strength": 6,
-        "growth": 4,
-        "predictability": 4,
-        "valuation": 2,
-        "moat": null
-      },
-      "score_labels": {
-        "profitability": "Poor",
-        "financial_strength": "Good",
-        "growth": "Adequate",
-        "predictability": "Adequate",
-        "valuation": "Weak",
-        "moat": "Not scored"
-      },
-      "company_type": "CYCLICAL",
-      "company_type_note": null,
-      "python_subtotal": 15,
-      "python_subtotal_pct": 37.5,
-      "classification": "Dangerous",
-      "penalty_pct": 8,
-      "final_score_pct": 29.5,
-      "tiebreaker_used": false,
-      "tiebreaker_inputs": {
-        "roe": -0.0878,
-        "roic": 0.0912,
-        "eps_next_5y": 0.0
-      },
-      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 18:31"
-    },
-    "quality_narrative": {
-      "moat_score": null,
-      "moat_rationale": "",
-      "metric_assessments": {},
-      "classification_reason": "TRX Gold Corporation carries a Dangerous rating because it shows significant weaknesses in profitability. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "TRX Gold Corporation demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: balance sheet constraints on growth; a valuation premium of 50% above estimated intrinsic value; low consensus EPS growth (0.0% p.a.). The stock trades at a 50% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
-      "quality_conclusion": "TRX Gold Corporation demonstrates weak fundamental quality and is constrained by profitability.",
-      "risk_profile": "Key risks to watch: balance sheet constraints on growth; a valuation premium of 50% above estimated intrinsic value; low consensus EPS growth (0.0% p.a.).",
-      "investment_summary": "The stock trades at a 50% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
-      "source": "rules",
-      "generated_at": "2026-04-21 18:31"
-    },
-    "fundamentals": {
-      "roe": -0.0878,
-      "roic": 0.0912,
-      "roe_pct": "-8.78%",
-      "roic_pct": "9.12%",
-      "roic_source": "calculated",
-      "current_ratio": 1.05,
-      "debt_to_ebitda": 0.32,
-      "debt_service_ratio": 0.0159
-    },
-    "financials_charts": {
-      "revenue_vs_net_income": {},
-      "fcf_vs_debt": {},
-      "shares_vs_buybacks": {},
-      "returns_trajectory": {},
-      "revenue_vs_ar": {},
-      "_notes": {
-        "revenue_vs_net_income": "This chart shows how much money the company brings in (revenue) versus how much it actually keeps as profit (net income) each year. A healthy company should show both lines growing over time. If revenue grows but net income shrinks, the company is spending more than it is earning \u2014 a warning sign worth investigating.",
-        "fcf_vs_debt": "Free cash flow is the cash left over after the company has paid for everything it needs to run and grow the business. This chart compares that cash to the company's total debt. A company with rising free cash flow and falling debt is in a strong financial position. If debt is rising faster than cash, the company may be taking on more risk than it can comfortably manage.",
-        "shares_vs_buybacks": "When a company buys back its own shares, it reduces the total number of shares in circulation \u2014 which means each remaining share represents a larger slice of the business. This chart shows how the share count has changed over time. Consistent buybacks are generally a sign that management believes the stock is undervalued and wants to return cash to shareholders.",
-        "returns_trajectory": "Return on Equity (ROE) measures how much profit a company generates for every dollar of shareholder money invested. Return on Invested Capital (ROIC) is similar but also includes debt. Both are expressed as a percentage \u2014 higher is better. A company consistently earning above 15% ROIC is generally considered to have a genuine competitive advantage over its peers.",
-        "revenue_vs_ar": "Accounts receivable is money the company is owed by customers who have not yet paid their bills. This chart compares revenue growth to accounts receivable growth each year. If accounts receivable is growing much faster than revenue, it may mean the company is struggling to collect payments \u2014 sometimes a sign of aggressive or fictitious revenue reporting. A healthy company should see both lines move at a similar pace."
-      }
-    },
-    "valuation_chart": {
-      "2016": {
-        "market_price": 0.5,
-        "intrinsic_value": 0.7,
-        "bull_case": 0.77,
-        "bear_case": 0.66
-      },
-      "2017": {
-        "market_price": 0.28,
-        "intrinsic_value": 0.71,
-        "bull_case": 0.78,
-        "bear_case": 0.67
-      },
-      "2018": {
-        "market_price": 0.35,
-        "intrinsic_value": 0.73,
-        "bull_case": 0.79,
-        "bear_case": 0.69
-      },
-      "2019": {
-        "market_price": 0.62,
-        "intrinsic_value": 0.74,
-        "bull_case": 0.8,
-        "bear_case": 0.71
-      },
-      "2020": {
-        "market_price": 0.66,
-        "intrinsic_value": 0.76,
-        "bull_case": 0.81,
-        "bear_case": 0.73
-      },
-      "2021": {
-        "market_price": 0.4,
-        "intrinsic_value": 0.77,
-        "bull_case": 0.81,
-        "bear_case": 0.75
-      },
-      "2022": {
-        "market_price": 0.34,
-        "intrinsic_value": 0.79,
-        "bull_case": 0.82,
-        "bear_case": 0.77
-      },
-      "2023": {
-        "market_price": 0.38,
-        "intrinsic_value": 0.8,
-        "bull_case": 0.83,
-        "bear_case": 0.79
-      },
-      "2024": {
-        "market_price": 0.31,
-        "intrinsic_value": 0.82,
-        "bull_case": 0.84,
-        "bear_case": 0.81
-      },
-      "2025": {
-        "market_price": 0.92,
-        "intrinsic_value": 0.84,
-        "bull_case": 0.85,
-        "bear_case": 0.83
-      },
-      "2026": {
-        "market_price": 1.3,
-        "intrinsic_value": 0.87,
-        "bull_case": 0.88,
-        "bear_case": 0.86
-      },
-      "2027": {
-        "market_price": null,
-        "intrinsic_value": 0.89,
-        "bull_case": 0.89,
-        "bear_case": 0.88
-      },
-      "2028": {
-        "market_price": null,
-        "intrinsic_value": 0.91,
-        "bull_case": 0.92,
-        "bear_case": 0.89
-      },
-      "2029": {
-        "market_price": null,
-        "intrinsic_value": 0.92,
-        "bull_case": 0.94,
-        "bear_case": 0.9
-      },
-      "2030": {
-        "market_price": null,
-        "intrinsic_value": 0.94,
-        "bull_case": 0.96,
-        "bear_case": 0.91
-      },
-      "2031": {
-        "market_price": null,
-        "intrinsic_value": 0.96,
-        "bull_case": 0.99,
-        "bear_case": 0.92
-      }
-    },
-    "forecast_meta": {
-      "eps_next_5y_raw": 0.0,
-      "fs_score": 6,
-      "fs_multiplier": 0.9,
-      "base_growth_rate": 0.02,
-      "bull_growth_rate": 0.026,
-      "bear_growth_rate": 0.011,
-      "growth_constrained": true,
-      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 6/10",
-      "growth_explanation": "Base (2.0%/yr): growth in line with analyst expectations. Bull (2.6%/yr): everything goes to plan. Bear (1.1%/yr): growth disappoints. Growth capped at 2.0% (from 0.0%) \u2014 the balance sheet (financial strength 6/10) limits how fast this company can realistically grow."
-    },
-    "bull_bear": {
-      "short_term": {
-        "bull_points": [
-          "Revenue growing at 274.1% year-over-year, indicating sustained demand momentum heading into the next quarter",
-          "Current market positioning in the Basic Materials sector may attract tactical buyers",
-          "Any positive earnings surprise could act as a near-term re-rating catalyst"
-        ],
-        "bear_points": [
-          "Trading at a 50% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
-          "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
-          "Short-term earnings visibility is limited without additional guidance"
-        ]
-      },
-      "long_term": {
-        "bull_points": [
-          "TRX Gold Corporation operates in a sector with long-term structural tailwinds",
-          "Management has demonstrated consistent capital allocation discipline",
-          "The business has the scale to compound earnings over a multi-year horizon"
-        ],
-        "bear_points": [
-          "Low profitability score (1/10) suggests thin or negative margins that structurally limit long-term earnings power",
-          "Financial strength is constraining the assumed growth rate in the valuation model \u2014 EPS growth moderated from 0.0% to 2.0% due to financial strength score of 6/10",
-          "Execution risk remains a key variable over a multi-year investment horizon"
-        ]
-      },
-      "source": "rules",
-      "generated_at": "2026-04-21 18:31"
-    },
-    "price_alert": {
-      "triggered": true,
-      "signal": "ath_drop",
-      "drop_from_ath_pct": 53.4,
-      "ath": 2.8,
-      "current_price": 1.3,
-      "message": "Down 53% from 52-week high of $2.80"
-    },
-    "watchlist_signal": {
-      "signal": "Avoid",
-      "reason": "Weak fundamentals or significantly overvalued \u2014 better opportunities elsewhere.",
-      "score": 8,
-      "inputs": {
-        "quality_base": 38,
-        "val_adj": -20,
-        "alert_adj": -10,
-        "classification": "Dangerous",
-        "mos_pct": -50.0
-      }
-    },
-    "10_Year_History": {
-      "2016": 0.5,
-      "2017": 0.28,
-      "2018": 0.35,
-      "2019": 0.62,
-      "2020": 0.66,
-      "2021": 0.4,
-      "2022": 0.34,
-      "2023": 0.38,
-      "2024": 0.31,
-      "2025": 0.92,
-      "2026": 1.3
-    },
-    "5_Year_Forecast": {
-      "2027": 0.89,
-      "2028": 0.91,
-      "2029": 0.92,
-      "2030": 0.94,
-      "2031": 0.96
-    },
-    "Last_Updated": "2026-04-21 18:31"
-  },
   "TRT": {
     "company_profile": {
       "name": "Trio-Tech International",
@@ -360,18 +16,18 @@
       "exchange": "ASE",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 61816036,
+      "market_cap": 61684796,
       "52w_high": 7.6,
       "52w_low": 2.31,
-      "avg_volume": 60439,
+      "avg_volume": 60618,
       "pe_trailing": null,
       "pe_forward": null,
       "dividend_yield": null,
       "beta": 0.965
     },
-    "current_price": 7.07,
+    "current_price": 7.05,
     "intrinsic_value": 3.23,
-    "margin_of_safety_pct": -118.7,
+    "margin_of_safety_pct": -118.3,
     "mos_label": "Significant Premium",
     "data_availability": {
       "status": "ok",
@@ -474,19 +130,19 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-04-21 18:31"
+      "last_calculated": "2026-04-22 05:57"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "Trio-Tech International carries a Dangerous rating because it shows significant weaknesses in profitability and growth. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "Trio-Tech International demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: a weak near-term growth outlook; a valuation premium of 119% above estimated intrinsic value; low consensus EPS growth (0.0% p.a.). The stock trades at a 119% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_narrative": "Trio-Tech International demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: a weak near-term growth outlook; a valuation premium of 118% above estimated intrinsic value; low consensus EPS growth (0.0% p.a.). The stock trades at a 118% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "quality_conclusion": "Trio-Tech International demonstrates weak fundamental quality and is constrained by profitability.",
-      "risk_profile": "Key risks to watch: a weak near-term growth outlook; a valuation premium of 119% above estimated intrinsic value; low consensus EPS growth (0.0% p.a.).",
-      "investment_summary": "The stock trades at a 119% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "risk_profile": "Key risks to watch: a weak near-term growth outlook; a valuation premium of 118% above estimated intrinsic value; low consensus EPS growth (0.0% p.a.).",
+      "investment_summary": "The stock trades at a 118% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-04-21 18:31"
+      "generated_at": "2026-04-22 05:57"
     },
     "fundamentals": {
       "roe": 0.003,
@@ -827,7 +483,7 @@
         "bear_case": 3.07
       },
       "2026": {
-        "market_price": 7.07,
+        "market_price": 7.05,
         "intrinsic_value": 3.23,
         "bull_case": 3.25,
         "bear_case": 3.2
@@ -882,7 +538,7 @@
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
         "bear_points": [
-          "Trading at a 119% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
+          "Trading at a 118% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
           "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
           "Short-term earnings visibility is limited without additional guidance"
         ]
@@ -900,14 +556,14 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-04-21 18:31"
+      "generated_at": "2026-04-22 05:57"
     },
     "price_alert": {
       "triggered": false,
       "signal": null,
-      "drop_from_ath_pct": 7.0,
+      "drop_from_ath_pct": 7.2,
       "ath": 7.6,
-      "current_price": 7.07,
+      "current_price": 7.05,
       "message": null
     },
     "watchlist_signal": {
@@ -919,7 +575,7 @@
         "val_adj": -20,
         "alert_adj": 0,
         "classification": "Dangerous",
-        "mos_pct": -118.7
+        "mos_pct": -118.3
       }
     },
     "10_Year_History": {
@@ -933,7 +589,7 @@
       "2023": 2.54,
       "2024": 2.9,
       "2025": 6.62,
-      "2026": 7.07
+      "2026": 7.05
     },
     "5_Year_Forecast": {
       "2027": 3.29,
@@ -942,6 +598,350 @@
       "2030": 3.5,
       "2031": 3.57
     },
-    "Last_Updated": "2026-04-21 18:31"
+    "Last_Updated": "2026-04-22 05:57"
+  },
+  "TRX": {
+    "company_profile": {
+      "name": "TRX Gold Corporation",
+      "ticker": "TRX",
+      "sector": "Basic Materials",
+      "industry": "Gold",
+      "company_type": "CYCLICAL",
+      "type_rationale": "Cyclical business (basic materials) \u2014 EV/EBITDA and P/S prioritised over P/E",
+      "description": "TRX Gold Corporation engages in the exploration, development, and production of mineral property in Tanzania. Its flagship project is the Buckreef Gold Project in Tanzania. The company was formerly known as Tanzanian Gold Corporation and changed its name to TRX Gold Corporation in May 2022. The company was incorporated in 1990 and is based in Oakville, Canada.",
+      "description_summary": "TRX Gold Corporation engages in the exploration, development, and production of mineral property in Tanzania. Its flagship project is the Buckreef Gold Project in Tanzania.",
+      "website": "https://www.trxgold.com",
+      "employees": 241,
+      "country": "Canada",
+      "city": "Oakville",
+      "exchange": "ASE",
+      "currency": "USD",
+      "quote_type": "EQUITY",
+      "market_cap": 423387744,
+      "52w_high": 2.8,
+      "52w_low": 0.3,
+      "avg_volume": 7814652,
+      "pe_trailing": null,
+      "pe_forward": 6.6666665,
+      "dividend_yield": null,
+      "beta": 0.904
+    },
+    "current_price": 1.3,
+    "intrinsic_value": 0.87,
+    "margin_of_safety_pct": -49.4,
+    "mos_label": "Significant Premium",
+    "data_availability": {
+      "status": "ok",
+      "message": null,
+      "has_price": true,
+      "has_iv": true,
+      "has_financials": false,
+      "active_methods": 4,
+      "exclude_from_search": false
+    },
+    "valuations": {
+      "1_DCF_Operating_CF": 0.66,
+      "2_DCF_FCF": null,
+      "3_DCF_Net_Income": null,
+      "4_DCF_Terminal_Value": null,
+      "5_Mean_PS": 1.33,
+      "6_Mean_PE": null,
+      "7_Mean_PB": 0.76,
+      "8_PSG": null,
+      "9_PEG": null,
+      "10_EV_EBITDA": 0.57,
+      "intrinsic_value": 0.87,
+      "methods_used": 4,
+      "confidence": "Medium",
+      "active_methods": [
+        "1_DCF_Operating_CF",
+        "5_Mean_PS",
+        "7_Mean_PB",
+        "10_EV_EBITDA"
+      ],
+      "_meta": {
+        "pe_source": "current_trailing",
+        "ps_source": "historical_mean",
+        "pb_source": "historical_mean",
+        "ev_ebitda_source": "historical_mean",
+        "growth_source": "finviz_no_growth",
+        "growth_raw": 0.0,
+        "growth_peg_rate": 0.0,
+        "discount_rate": 0.12,
+        "growth_stage1": 0.02,
+        "growth_stage2": 0.02,
+        "terminal_growth": 0.02,
+        "tier": "Weak",
+        "company_type": "CYCLICAL",
+        "type_rationale": "Cyclical business (basic materials) \u2014 EV/EBITDA and P/S prioritised over P/E",
+        "method_explanation": "Cyclical companies \u2014 such as semiconductors, mining, or manufacturing \u2014 have profits that rise sharply in good times and fall sharply in downturns. This makes earnings-based methods like P/E unreliable, because the earnings figure at any single point in time can be unusually high or low. EV/EBITDA smooths out some of this distortion by looking at earnings before interest and tax, making it a fairer comparison across the economic cycle. Price-to-Sales is also useful as revenue tends to be more stable than profits for cyclical businesses.",
+        "weights_applied": {
+          "1_DCF_Operating_CF": 0.12,
+          "2_DCF_FCF": 0.1,
+          "3_DCF_Net_Income": 0.05,
+          "4_DCF_Terminal_Value": 0.1,
+          "5_Mean_PS": 0.18,
+          "6_Mean_PE": 0.05,
+          "7_Mean_PB": 0.1,
+          "8_PSG": 0.1,
+          "9_PEG": 0.05,
+          "10_EV_EBITDA": 0.15
+        },
+        "excluded_methods": [],
+        "active_methods": [
+          "1_DCF_Operating_CF",
+          "5_Mean_PS",
+          "7_Mean_PB",
+          "10_EV_EBITDA"
+        ]
+      }
+    },
+    "quality": {
+      "scores": {
+        "profitability": 1,
+        "financial_strength": 6,
+        "growth": 4,
+        "predictability": 4,
+        "valuation": 2,
+        "moat": null
+      },
+      "score_labels": {
+        "profitability": "Poor",
+        "financial_strength": "Good",
+        "growth": "Adequate",
+        "predictability": "Adequate",
+        "valuation": "Weak",
+        "moat": "Not scored"
+      },
+      "company_type": "CYCLICAL",
+      "company_type_note": null,
+      "python_subtotal": 15,
+      "python_subtotal_pct": 37.5,
+      "classification": "Dangerous",
+      "penalty_pct": 8,
+      "final_score_pct": 29.5,
+      "tiebreaker_used": false,
+      "tiebreaker_inputs": {
+        "roe": -0.0878,
+        "roic": 0.0912,
+        "eps_next_5y": 0.0
+      },
+      "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
+      "last_calculated": "2026-04-22 05:57"
+    },
+    "quality_narrative": {
+      "moat_score": null,
+      "moat_rationale": "",
+      "metric_assessments": {},
+      "classification_reason": "TRX Gold Corporation carries a Dangerous rating because it shows significant weaknesses in profitability. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
+      "investment_narrative": "TRX Gold Corporation demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: balance sheet constraints on growth; a valuation premium of 49% above estimated intrinsic value; low consensus EPS growth (0.0% p.a.). The stock trades at a 49% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "quality_conclusion": "TRX Gold Corporation demonstrates weak fundamental quality and is constrained by profitability.",
+      "risk_profile": "Key risks to watch: balance sheet constraints on growth; a valuation premium of 49% above estimated intrinsic value; low consensus EPS growth (0.0% p.a.).",
+      "investment_summary": "The stock trades at a 49% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "source": "rules",
+      "generated_at": "2026-04-22 05:57"
+    },
+    "fundamentals": {
+      "roe": -0.0878,
+      "roic": 0.0912,
+      "roe_pct": "-8.78%",
+      "roic_pct": "9.12%",
+      "roic_source": "calculated",
+      "current_ratio": 1.05,
+      "debt_to_ebitda": 0.32,
+      "debt_service_ratio": 0.0159
+    },
+    "financials_charts": {
+      "revenue_vs_net_income": {},
+      "fcf_vs_debt": {},
+      "shares_vs_buybacks": {},
+      "returns_trajectory": {},
+      "revenue_vs_ar": {},
+      "_notes": {
+        "revenue_vs_net_income": "This chart shows how much money the company brings in (revenue) versus how much it actually keeps as profit (net income) each year. A healthy company should show both lines growing over time. If revenue grows but net income shrinks, the company is spending more than it is earning \u2014 a warning sign worth investigating.",
+        "fcf_vs_debt": "Free cash flow is the cash left over after the company has paid for everything it needs to run and grow the business. This chart compares that cash to the company's total debt. A company with rising free cash flow and falling debt is in a strong financial position. If debt is rising faster than cash, the company may be taking on more risk than it can comfortably manage.",
+        "shares_vs_buybacks": "When a company buys back its own shares, it reduces the total number of shares in circulation \u2014 which means each remaining share represents a larger slice of the business. This chart shows how the share count has changed over time. Consistent buybacks are generally a sign that management believes the stock is undervalued and wants to return cash to shareholders.",
+        "returns_trajectory": "Return on Equity (ROE) measures how much profit a company generates for every dollar of shareholder money invested. Return on Invested Capital (ROIC) is similar but also includes debt. Both are expressed as a percentage \u2014 higher is better. A company consistently earning above 15% ROIC is generally considered to have a genuine competitive advantage over its peers.",
+        "revenue_vs_ar": "Accounts receivable is money the company is owed by customers who have not yet paid their bills. This chart compares revenue growth to accounts receivable growth each year. If accounts receivable is growing much faster than revenue, it may mean the company is struggling to collect payments \u2014 sometimes a sign of aggressive or fictitious revenue reporting. A healthy company should see both lines move at a similar pace."
+      }
+    },
+    "valuation_chart": {
+      "2016": {
+        "market_price": 0.5,
+        "intrinsic_value": 0.7,
+        "bull_case": 0.77,
+        "bear_case": 0.66
+      },
+      "2017": {
+        "market_price": 0.28,
+        "intrinsic_value": 0.71,
+        "bull_case": 0.78,
+        "bear_case": 0.67
+      },
+      "2018": {
+        "market_price": 0.35,
+        "intrinsic_value": 0.73,
+        "bull_case": 0.79,
+        "bear_case": 0.69
+      },
+      "2019": {
+        "market_price": 0.62,
+        "intrinsic_value": 0.74,
+        "bull_case": 0.8,
+        "bear_case": 0.71
+      },
+      "2020": {
+        "market_price": 0.66,
+        "intrinsic_value": 0.76,
+        "bull_case": 0.81,
+        "bear_case": 0.73
+      },
+      "2021": {
+        "market_price": 0.4,
+        "intrinsic_value": 0.77,
+        "bull_case": 0.81,
+        "bear_case": 0.75
+      },
+      "2022": {
+        "market_price": 0.34,
+        "intrinsic_value": 0.79,
+        "bull_case": 0.82,
+        "bear_case": 0.77
+      },
+      "2023": {
+        "market_price": 0.38,
+        "intrinsic_value": 0.8,
+        "bull_case": 0.83,
+        "bear_case": 0.79
+      },
+      "2024": {
+        "market_price": 0.31,
+        "intrinsic_value": 0.82,
+        "bull_case": 0.84,
+        "bear_case": 0.81
+      },
+      "2025": {
+        "market_price": 0.92,
+        "intrinsic_value": 0.84,
+        "bull_case": 0.85,
+        "bear_case": 0.83
+      },
+      "2026": {
+        "market_price": 1.3,
+        "intrinsic_value": 0.87,
+        "bull_case": 0.88,
+        "bear_case": 0.86
+      },
+      "2027": {
+        "market_price": null,
+        "intrinsic_value": 0.89,
+        "bull_case": 0.89,
+        "bear_case": 0.88
+      },
+      "2028": {
+        "market_price": null,
+        "intrinsic_value": 0.91,
+        "bull_case": 0.92,
+        "bear_case": 0.89
+      },
+      "2029": {
+        "market_price": null,
+        "intrinsic_value": 0.92,
+        "bull_case": 0.94,
+        "bear_case": 0.9
+      },
+      "2030": {
+        "market_price": null,
+        "intrinsic_value": 0.94,
+        "bull_case": 0.96,
+        "bear_case": 0.91
+      },
+      "2031": {
+        "market_price": null,
+        "intrinsic_value": 0.96,
+        "bull_case": 0.99,
+        "bear_case": 0.92
+      }
+    },
+    "forecast_meta": {
+      "eps_next_5y_raw": 0.0,
+      "fs_score": 6,
+      "fs_multiplier": 0.9,
+      "base_growth_rate": 0.02,
+      "bull_growth_rate": 0.026,
+      "bear_growth_rate": 0.011,
+      "growth_constrained": true,
+      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 6/10",
+      "growth_explanation": "Base (2.0%/yr): growth in line with analyst expectations. Bull (2.6%/yr): everything goes to plan. Bear (1.1%/yr): growth disappoints. Growth capped at 2.0% (from 0.0%) \u2014 the balance sheet (financial strength 6/10) limits how fast this company can realistically grow."
+    },
+    "bull_bear": {
+      "short_term": {
+        "bull_points": [
+          "Revenue growing at 274.1% year-over-year, indicating sustained demand momentum heading into the next quarter",
+          "Current market positioning in the Basic Materials sector may attract tactical buyers",
+          "Any positive earnings surprise could act as a near-term re-rating catalyst"
+        ],
+        "bear_points": [
+          "Trading at a 49% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
+          "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
+          "Short-term earnings visibility is limited without additional guidance"
+        ]
+      },
+      "long_term": {
+        "bull_points": [
+          "TRX Gold Corporation operates in a sector with long-term structural tailwinds",
+          "Management has demonstrated consistent capital allocation discipline",
+          "The business has the scale to compound earnings over a multi-year horizon"
+        ],
+        "bear_points": [
+          "Low profitability score (1/10) suggests thin or negative margins that structurally limit long-term earnings power",
+          "Financial strength is constraining the assumed growth rate in the valuation model \u2014 EPS growth moderated from 0.0% to 2.0% due to financial strength score of 6/10",
+          "Execution risk remains a key variable over a multi-year investment horizon"
+        ]
+      },
+      "source": "rules",
+      "generated_at": "2026-04-22 05:57"
+    },
+    "price_alert": {
+      "triggered": true,
+      "signal": "ath_drop",
+      "drop_from_ath_pct": 53.6,
+      "ath": 2.8,
+      "current_price": 1.3,
+      "message": "Down 54% from 52-week high of $2.80"
+    },
+    "watchlist_signal": {
+      "signal": "Avoid",
+      "reason": "Weak fundamentals or significantly overvalued \u2014 better opportunities elsewhere.",
+      "score": 8,
+      "inputs": {
+        "quality_base": 38,
+        "val_adj": -20,
+        "alert_adj": -10,
+        "classification": "Dangerous",
+        "mos_pct": -49.4
+      }
+    },
+    "10_Year_History": {
+      "2016": 0.5,
+      "2017": 0.28,
+      "2018": 0.35,
+      "2019": 0.62,
+      "2020": 0.66,
+      "2021": 0.4,
+      "2022": 0.34,
+      "2023": 0.38,
+      "2024": 0.31,
+      "2025": 0.92,
+      "2026": 1.3
+    },
+    "5_Year_Forecast": {
+      "2027": 0.89,
+      "2028": 0.91,
+      "2029": 0.92,
+      "2030": 0.94,
+      "2031": 0.96
+    },
+    "Last_Updated": "2026-04-22 05:57"
   }
 }
