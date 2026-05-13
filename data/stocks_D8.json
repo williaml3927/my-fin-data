@@ -16,18 +16,18 @@
       "exchange": "ASE",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 182352944,
+      "market_cap": 183389040,
       "52w_high": 2.15,
       "52w_low": 0.01,
-      "avg_volume": 746983,
-      "pe_trailing": 14.666667,
+      "avg_volume": 756138,
+      "pe_trailing": 14.75,
       "pe_forward": null,
-      "dividend_yield": 10.57,
+      "dividend_yield": null,
       "beta": 0.507
     },
-    "current_price": 1.76,
+    "current_price": 1.77,
     "intrinsic_value": 1.36,
-    "margin_of_safety_pct": -29.4,
+    "margin_of_safety_pct": -30.1,
     "mos_label": "Moderate Premium",
     "data_availability": {
       "status": "ok",
@@ -103,47 +103,47 @@
     "quality": {
       "scores": {
         "profitability": 7,
-        "financial_strength": 6,
+        "financial_strength": 5,
         "growth": 1,
-        "predictability": 7,
-        "valuation": 6,
+        "predictability": 3,
+        "valuation": 5,
         "moat": null
       },
       "score_labels": {
         "profitability": "Good",
-        "financial_strength": "Good",
+        "financial_strength": "Adequate",
         "growth": "Poor",
-        "predictability": "Good",
-        "valuation": "Good",
+        "predictability": "Weak",
+        "valuation": "Adequate",
         "moat": "Not scored"
       },
       "company_type": "ASSET_MGR",
       "company_type_note": "Banks and REITs carry structural leverage \u2014 do not describe financial_strength scores of 7+ as 'moderate concern' for these types.",
-      "python_subtotal": 21,
-      "python_subtotal_pct": 52.5,
+      "python_subtotal": 16,
+      "python_subtotal_pct": 40.0,
       "classification": "Dangerous",
       "penalty_pct": 8,
-      "final_score_pct": 44.5,
-      "tiebreaker_used": true,
+      "final_score_pct": 32.0,
+      "tiebreaker_used": false,
       "tiebreaker_inputs": {
         "roe": 0.0549,
         "roic": null,
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-05-12 06:19"
+      "last_calculated": "2026-05-13 06:28"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
-      "classification_reason": "Credit Suisse High Yield Credit Fund carries a Dangerous rating because it shows significant weaknesses in growth. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "Credit Suisse High Yield Credit Fund demonstrates weak fundamental quality and is constrained by growth. Key risks to watch: tight liquidity (current ratio 0.17); a weak near-term growth outlook; balance sheet constraints on growth. The stock trades at a 29% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "classification_reason": "Credit Suisse High Yield Credit Fund carries a Dangerous rating because it shows significant weaknesses in growth and predictability. Revenue and earnings have been inconsistent, making it hard to predict where this business will be in a few years. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
+      "investment_narrative": "Credit Suisse High Yield Credit Fund demonstrates weak fundamental quality and is constrained by growth. Key risks to watch: tight liquidity (current ratio 0.17); a weak near-term growth outlook; inconsistent earnings. The stock trades at a 30% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "quality_conclusion": "Credit Suisse High Yield Credit Fund demonstrates weak fundamental quality and is constrained by growth.",
-      "risk_profile": "Key risks to watch: tight liquidity (current ratio 0.17); a weak near-term growth outlook; balance sheet constraints on growth.",
-      "investment_summary": "The stock trades at a 29% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "risk_profile": "Key risks to watch: tight liquidity (current ratio 0.17); a weak near-term growth outlook; inconsistent earnings.",
+      "investment_summary": "The stock trades at a 30% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-05-12 06:19"
+      "generated_at": "2026-05-13 06:28"
     },
     "fundamentals": {
       "roe": 0.0549,
@@ -231,7 +231,7 @@
         "bear_case": 1.29
       },
       "2026": {
-        "market_price": 1.76,
+        "market_price": 1.77,
         "intrinsic_value": 1.36,
         "bull_case": 1.37,
         "bear_case": 1.35
@@ -269,14 +269,14 @@
     },
     "forecast_meta": {
       "eps_next_5y_raw": 0.0,
-      "fs_score": 6,
-      "fs_multiplier": 0.9,
+      "fs_score": 5,
+      "fs_multiplier": 0.75,
       "base_growth_rate": 0.02,
       "bull_growth_rate": 0.026,
       "bear_growth_rate": 0.011,
       "growth_constrained": true,
-      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 6/10",
-      "growth_explanation": "Base (2.0%/yr): growth in line with analyst expectations. Bull (2.6%/yr): everything goes to plan. Bear (1.1%/yr): growth disappoints. Growth capped at 2.0% (from 0.0%) \u2014 the balance sheet (financial strength 6/10) limits how fast this company can realistically grow."
+      "constraint_note": "EPS growth moderated from 0.0% to 2.0% due to financial strength score of 5/10",
+      "growth_explanation": "Base (2.0%/yr): growth in line with analyst expectations. Bull (2.6%/yr): everything goes to plan. Bear (1.1%/yr): growth disappoints. Growth capped at 2.0% (from 0.0%) \u2014 the balance sheet (financial strength 5/10) limits how fast this company can realistically grow."
     },
     "bull_bear": {
       "short_term": {
@@ -286,7 +286,7 @@
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
         "bear_points": [
-          "Trading at a 29% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
+          "Trading at a 30% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
           "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
           "Short-term earnings visibility is limited without additional guidance"
         ]
@@ -298,32 +298,32 @@
           "The business has the scale to compound earnings over a multi-year horizon"
         ],
         "bear_points": [
-          "Financial strength is constraining the assumed growth rate in the valuation model \u2014 EPS growth moderated from 0.0% to 2.0% due to financial strength score of 6/10",
-          "Long-term technology or regulatory disruption risk cannot be ruled out",
+          "Unpredictable earnings (3/10) make long-term forecasting unreliable and compress the valuation multiple the market is willing to pay",
+          "Financial strength is constraining the assumed growth rate in the valuation model \u2014 EPS growth moderated from 0.0% to 2.0% due to financial strength score of 5/10",
           "Execution risk remains a key variable over a multi-year investment horizon"
         ]
       },
       "source": "rules",
-      "generated_at": "2026-05-12 06:19"
+      "generated_at": "2026-05-13 06:28"
     },
     "price_alert": {
       "triggered": false,
       "signal": null,
-      "drop_from_ath_pct": 18.1,
+      "drop_from_ath_pct": 17.7,
       "ath": 2.15,
-      "current_price": 1.76,
+      "current_price": 1.77,
       "message": null
     },
     "watchlist_signal": {
       "signal": "Avoid",
       "reason": "Weak fundamentals or significantly overvalued \u2014 better opportunities elsewhere.",
-      "score": 32,
+      "score": 20,
       "inputs": {
-        "quality_base": 52,
+        "quality_base": 40,
         "val_adj": -20,
         "alert_adj": 0,
         "classification": "Dangerous",
-        "mos_pct": -29.4
+        "mos_pct": -30.1
       }
     },
     "10_Year_History": {
@@ -337,7 +337,7 @@
       "2023": 1.58,
       "2024": 1.87,
       "2025": 1.92,
-      "2026": 1.76
+      "2026": 1.77
     },
     "5_Year_Forecast": {
       "2027": 1.39,
@@ -346,7 +346,7 @@
       "2030": 1.47,
       "2031": 1.5
     },
-    "Last_Updated": "2026-05-12 06:19"
+    "Last_Updated": "2026-05-13 06:28"
   },
   "DNN": {
     "company_profile": {
@@ -365,18 +365,18 @@
       "exchange": "ASE",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 3480461312,
+      "market_cap": 3344858880,
       "52w_high": 4.43,
       "52w_low": 1.39,
-      "avg_volume": 34969096,
+      "avg_volume": 34626071,
       "pe_trailing": null,
-      "pe_forward": -97.56458,
+      "pe_forward": -93.763374,
       "dividend_yield": null,
       "beta": 1.652
     },
-    "current_price": 3.85,
+    "current_price": 3.7,
     "intrinsic_value": 1.07,
-    "margin_of_safety_pct": -259.8,
+    "margin_of_safety_pct": -245.8,
     "mos_label": "Significant Premium",
     "data_availability": {
       "status": "ok",
@@ -469,19 +469,19 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-05-12 06:19"
+      "last_calculated": "2026-05-13 06:28"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "Denison Mines Corp. carries a Dangerous rating because it shows significant weaknesses in profitability and financial strength. Revenue and earnings have been inconsistent, making it hard to predict where this business will be in a few years. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "Denison Mines Corp. demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth. The stock trades at a 260% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_narrative": "Denison Mines Corp. demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth. The stock trades at a 246% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "quality_conclusion": "Denison Mines Corp. demonstrates weak fundamental quality and is constrained by profitability.",
       "risk_profile": "Key risks to watch: a weak near-term growth outlook; inconsistent earnings; balance sheet constraints on growth.",
-      "investment_summary": "The stock trades at a 260% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_summary": "The stock trades at a 246% premium to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-05-12 06:19"
+      "generated_at": "2026-05-13 06:28"
     },
     "fundamentals": {
       "roe": -0.4659,
@@ -569,7 +569,7 @@
         "bear_case": 1.02
       },
       "2026": {
-        "market_price": 3.85,
+        "market_price": 3.7,
         "intrinsic_value": 1.07,
         "bull_case": 1.08,
         "bear_case": 1.06
@@ -624,7 +624,7 @@
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
         "bear_points": [
-          "Trading at a 260% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
+          "Trading at a 246% premium to intrinsic value \u2014 elevated risk of near-term multiple compression",
           "Low consensus EPS growth forecast of 0.0% p.a. limits re-rating potential in the near term",
           "Short-term earnings visibility is limited without additional guidance"
         ]
@@ -642,14 +642,14 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-05-12 06:19"
+      "generated_at": "2026-05-13 06:28"
     },
     "price_alert": {
       "triggered": false,
       "signal": null,
-      "drop_from_ath_pct": 13.1,
+      "drop_from_ath_pct": 16.5,
       "ath": 4.43,
-      "current_price": 3.85,
+      "current_price": 3.7,
       "message": null
     },
     "watchlist_signal": {
@@ -661,7 +661,7 @@
         "val_adj": -20,
         "alert_adj": 0,
         "classification": "Dangerous",
-        "mos_pct": -259.8
+        "mos_pct": -245.8
       }
     },
     "10_Year_History": {
@@ -675,7 +675,7 @@
       "2023": 1.77,
       "2024": 1.8,
       "2025": 2.66,
-      "2026": 3.85
+      "2026": 3.7
     },
     "5_Year_Forecast": {
       "2027": 1.09,
@@ -684,7 +684,7 @@
       "2030": 1.16,
       "2031": 1.18
     },
-    "Last_Updated": "2026-05-12 06:19"
+    "Last_Updated": "2026-05-13 06:28"
   },
   "DIT": {
     "company_profile": {
@@ -703,18 +703,18 @@
       "exchange": "ASE",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 87103864,
+      "market_cap": 80242136,
       "52w_high": 95.59,
       "52w_low": 63.28,
-      "avg_volume": 836,
-      "pe_trailing": 189.87233,
+      "avg_volume": 813,
+      "pe_trailing": 171.27083,
       "pe_forward": null,
-      "dividend_yield": 0.54,
+      "dividend_yield": 0.58,
       "beta": -0.182
     },
-    "current_price": 89.24,
+    "current_price": 82.21,
     "intrinsic_value": 124.83,
-    "margin_of_safety_pct": 28.5,
+    "margin_of_safety_pct": 34.1,
     "mos_label": "Moderate Discount",
     "data_availability": {
       "status": "ok",
@@ -731,7 +731,7 @@
       "3_DCF_Net_Income": 3.79,
       "4_DCF_Terminal_Value": 248.39,
       "5_Mean_PS": 97.85,
-      "6_Mean_PE": 5.74,
+      "6_Mean_PE": 5.86,
       "7_Mean_PB": 109.58,
       "8_PSG": null,
       "9_PEG": null,
@@ -817,19 +817,19 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-05-12 06:19"
+      "last_calculated": "2026-05-13 06:28"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "AMCON Distributing Company carries a Dangerous rating because it shows significant weaknesses in profitability and growth. A high debt load relative to earnings adds financial pressure on the business. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "AMCON Distributing Company demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: elevated leverage (Debt/EBITDA 8.3x); a weak near-term growth outlook; balance sheet constraints on growth. The stock trades at a 28% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_narrative": "AMCON Distributing Company demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: elevated leverage (Debt/EBITDA 8.3x); a weak near-term growth outlook; balance sheet constraints on growth. The stock trades at a 34% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "quality_conclusion": "AMCON Distributing Company demonstrates weak fundamental quality and is constrained by profitability.",
       "risk_profile": "Key risks to watch: elevated leverage (Debt/EBITDA 8.3x); a weak near-term growth outlook; balance sheet constraints on growth.",
-      "investment_summary": "The stock trades at a 28% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_summary": "The stock trades at a 34% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-05-12 06:19"
+      "generated_at": "2026-05-13 06:28"
     },
     "fundamentals": {
       "roe": 0.0037,
@@ -1172,7 +1172,7 @@
         "bear_case": 118.58
       },
       "2026": {
-        "market_price": 89.24,
+        "market_price": 82.21,
         "intrinsic_value": 124.83,
         "bull_case": 125.58,
         "bear_case": 123.71
@@ -1222,7 +1222,7 @@
     "bull_bear": {
       "short_term": {
         "bull_points": [
-          "Trading at a 28.5% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $124.83",
+          "Trading at a 34.1% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $124.83",
           "Revenue growing at 17.1% year-over-year, indicating sustained demand momentum heading into the next quarter",
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
@@ -1245,26 +1245,26 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-05-12 06:19"
+      "generated_at": "2026-05-13 06:28"
     },
     "price_alert": {
       "triggered": false,
       "signal": null,
-      "drop_from_ath_pct": 6.6,
+      "drop_from_ath_pct": 14.0,
       "ath": 95.59,
-      "current_price": 89.24,
+      "current_price": 82.21,
       "message": null
     },
     "watchlist_signal": {
       "signal": "Avoid",
       "reason": "Weak fundamentals or significantly overvalued \u2014 better opportunities elsewhere.",
-      "score": 52,
+      "score": 62,
       "inputs": {
         "quality_base": 42,
-        "val_adj": 10,
+        "val_adj": 20,
         "alert_adj": 0,
         "classification": "Dangerous",
-        "mos_pct": 28.5
+        "mos_pct": 34.1
       }
     },
     "10_Year_History": {
@@ -1278,7 +1278,7 @@
       "2023": 127.47,
       "2024": 84.46,
       "2025": 73.65,
-      "2026": 89.36
+      "2026": 82.21
     },
     "5_Year_Forecast": {
       "2027": 127.33,
@@ -1287,7 +1287,7 @@
       "2030": 135.12,
       "2031": 137.82
     },
-    "Last_Updated": "2026-05-12 06:19"
+    "Last_Updated": "2026-05-13 06:28"
   },
   "DSS": {
     "company_profile": {
@@ -1306,18 +1306,18 @@
       "exchange": "ASE",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 5503299,
+      "market_cap": 5374755,
       "52w_high": 1.895,
       "52w_low": 0.51,
-      "avg_volume": 62358,
+      "avg_volume": 62771,
       "pe_trailing": null,
-      "pe_forward": -0.68499994,
+      "pe_forward": -0.66899997,
       "dividend_yield": null,
       "beta": 1.0
     },
-    "current_price": 0.55,
+    "current_price": 0.54,
     "intrinsic_value": 1.51,
-    "margin_of_safety_pct": 63.7,
+    "margin_of_safety_pct": 64.6,
     "mos_label": "Strong Discount (Margin of Safety)",
     "data_availability": {
       "status": "ok",
@@ -1410,19 +1410,19 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-05-12 06:19"
+      "last_calculated": "2026-05-13 06:28"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "DSS, Inc. carries a Dangerous rating because it shows significant weaknesses in profitability and financial strength. Revenue and earnings have been inconsistent, making it hard to predict where this business will be in a few years. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "DSS, Inc. demonstrates weak fundamental quality and is constrained by growth. Key risks to watch: tight liquidity (current ratio 0.30); a weak near-term growth outlook; inconsistent earnings. The stock trades at a 64% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_narrative": "DSS, Inc. demonstrates weak fundamental quality and is constrained by growth. Key risks to watch: tight liquidity (current ratio 0.30); a weak near-term growth outlook; inconsistent earnings. The stock trades at a 65% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "quality_conclusion": "DSS, Inc. demonstrates weak fundamental quality and is constrained by growth.",
       "risk_profile": "Key risks to watch: tight liquidity (current ratio 0.30); a weak near-term growth outlook; inconsistent earnings.",
-      "investment_summary": "The stock trades at a 64% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_summary": "The stock trades at a 65% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-05-12 06:19"
+      "generated_at": "2026-05-13 06:28"
     },
     "fundamentals": {
       "roe": -1.3269,
@@ -1761,7 +1761,7 @@
         "bear_case": 1.43
       },
       "2026": {
-        "market_price": 0.55,
+        "market_price": 0.54,
         "intrinsic_value": 1.51,
         "bull_case": 1.52,
         "bear_case": 1.5
@@ -1811,7 +1811,7 @@
     "bull_bear": {
       "short_term": {
         "bull_points": [
-          "Trading at a 63.7% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $1.51",
+          "Trading at a 64.6% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $1.51",
           "Current market positioning in the Consumer Cyclical sector may attract tactical buyers",
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
@@ -1834,15 +1834,15 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-05-12 06:19"
+      "generated_at": "2026-05-13 06:28"
     },
     "price_alert": {
       "triggered": true,
       "signal": "ath_drop",
-      "drop_from_ath_pct": 71.1,
+      "drop_from_ath_pct": 71.8,
       "ath": 1.9,
-      "current_price": 0.55,
-      "message": "Down 71% from 52-week high of $1.90"
+      "current_price": 0.54,
+      "message": "Down 72% from 52-week high of $1.90"
     },
     "watchlist_signal": {
       "signal": "Avoid",
@@ -1853,7 +1853,7 @@
         "val_adj": 20,
         "alert_adj": -10,
         "classification": "Dangerous",
-        "mos_pct": 63.7
+        "mos_pct": 64.6
       }
     },
     "10_Year_History": {
@@ -1867,7 +1867,7 @@
       "2023": 2.4,
       "2024": 0.9,
       "2025": 0.93,
-      "2026": 0.55
+      "2026": 0.54
     },
     "5_Year_Forecast": {
       "2027": 1.54,
@@ -1876,7 +1876,7 @@
       "2030": 1.63,
       "2031": 1.67
     },
-    "Last_Updated": "2026-05-12 06:19"
+    "Last_Updated": "2026-05-13 06:28"
   },
   "DXF": {
     "company_profile": {
@@ -1895,18 +1895,18 @@
       "exchange": "ASE",
       "currency": "USD",
       "quote_type": "EQUITY",
-      "market_cap": 1339685,
-      "52w_high": 8.49,
-      "52w_low": 0.3852,
-      "avg_volume": 322075,
+      "market_cap": 1905978,
+      "52w_high": 8.0,
+      "52w_low": 0.39,
+      "avg_volume": 1463081,
       "pe_trailing": null,
       "pe_forward": null,
       "dividend_yield": null,
       "beta": null
     },
-    "current_price": 0.41,
+    "current_price": 0.59,
     "intrinsic_value": 1.12,
-    "margin_of_safety_pct": 63.0,
+    "margin_of_safety_pct": 47.4,
     "mos_label": "Strong Discount (Margin of Safety)",
     "data_availability": {
       "status": "ok",
@@ -2007,19 +2007,19 @@
         "eps_next_5y": 0.0
       },
       "note": "Moat score is null \u2014 AI Studio adds moat (0-10) and recalculates.\nWith moat: final_pct = (profitability + financial_strength + growth + predictability + moat) / 50 \u00d7 100.\nThen re-classify using tiebreaker_inputs:\n  \u226570%      \u2192 Safe (no penalty)\n  65\u201369%    \u2192 Safe if 2+ of (roe\u22650.13, roic\u22650.13, eps_next_5y\u22650.10) else Speculative (\u22123pts)\n  55\u201364%    \u2192 Speculative (\u22123pts)\n  50\u201354%    \u2192 Speculative if 2+ of (roe\u22650.08, roic\u22650.08, eps_next_5y\u22650.08) else Dangerous (\u22128pts)\n  <50%      \u2192 Dangerous (\u22128pts)\nMoat override: if moat\u22657 AND (profitability\u22657 OR fs\u22657) AND pct\u226555 \u2192 Safe.\nfinal_score_pct = max(0, final_pct \u2212 penalty)",
-      "last_calculated": "2026-05-12 06:19"
+      "last_calculated": "2026-05-13 06:28"
     },
     "quality_narrative": {
       "moat_score": null,
       "moat_rationale": "",
       "metric_assessments": {},
       "classification_reason": "Eason Technology Limited carries a Dangerous rating because it shows significant weaknesses in profitability and financial strength. Revenue and earnings have been inconsistent, making it hard to predict where this business will be in a few years. Dangerous-rated stocks can still recover, but they carry a higher risk of permanent capital loss and should only be held with a clear thesis and strict position sizing.",
-      "investment_narrative": "Eason Technology Limited demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: tight liquidity (current ratio 0.77); a weak near-term growth outlook; inconsistent earnings. The stock trades at a 63% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_narrative": "Eason Technology Limited demonstrates weak fundamental quality and is constrained by profitability. Key risks to watch: tight liquidity (current ratio 0.77); a weak near-term growth outlook; inconsistent earnings. The stock trades at a 47% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "quality_conclusion": "Eason Technology Limited demonstrates weak fundamental quality and is constrained by profitability.",
       "risk_profile": "Key risks to watch: tight liquidity (current ratio 0.77); a weak near-term growth outlook; inconsistent earnings.",
-      "investment_summary": "The stock trades at a 63% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
+      "investment_summary": "The stock trades at a 47% discount to estimated intrinsic value and is warrants caution \u2014 careful position sizing and ongoing monitoring are essential.",
       "source": "rules",
-      "generated_at": "2026-05-12 06:19"
+      "generated_at": "2026-05-13 06:28"
     },
     "fundamentals": {
       "roe": -0.2152,
@@ -2053,7 +2053,7 @@
         "bear_case": 1.06
       },
       "2026": {
-        "market_price": 0.41,
+        "market_price": 0.59,
         "intrinsic_value": 1.12,
         "bull_case": 1.13,
         "bear_case": 1.11
@@ -2103,7 +2103,7 @@
     "bull_bear": {
       "short_term": {
         "bull_points": [
-          "Trading at a 63.0% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $1.12",
+          "Trading at a 47.4% discount to estimated intrinsic value \u2014 technical setup favours near-term mean reversion toward $1.12",
           "Current market positioning in the Financial Services sector may attract tactical buyers",
           "Any positive earnings surprise could act as a near-term re-rating catalyst"
         ],
@@ -2126,15 +2126,15 @@
         ]
       },
       "source": "rules",
-      "generated_at": "2026-05-12 06:19"
+      "generated_at": "2026-05-13 06:28"
     },
     "price_alert": {
       "triggered": true,
       "signal": "ath_drop",
-      "drop_from_ath_pct": 95.1,
-      "ath": 8.49,
-      "current_price": 0.41,
-      "message": "Down 95% from 52-week high of $8.49"
+      "drop_from_ath_pct": 92.6,
+      "ath": 8.0,
+      "current_price": 0.59,
+      "message": "Down 93% from 52-week high of $8.00"
     },
     "watchlist_signal": {
       "signal": "Avoid",
@@ -2145,12 +2145,12 @@
         "val_adj": 20,
         "alert_adj": -10,
         "classification": "Dangerous",
-        "mos_pct": 63.0
+        "mos_pct": 47.4
       }
     },
     "10_Year_History": {
       "2025": 1.53,
-      "2026": 0.41
+      "2026": 0.59
     },
     "5_Year_Forecast": {
       "2027": 1.14,
@@ -2159,6 +2159,6 @@
       "2030": 1.21,
       "2031": 1.24
     },
-    "Last_Updated": "2026-05-12 06:19"
+    "Last_Updated": "2026-05-13 06:28"
   }
 }
